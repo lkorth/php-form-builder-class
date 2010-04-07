@@ -1,0 +1,29 @@
+body, td, pre {
+	font: 12px Arial, Helvetica, sans-serif; 
+	line-height: 18px;
+}
+
+body, #pfbc_banner h2, #pfbc_banner h5 {
+	padding: 0; 
+	margin: 0; 
+}	
+
+#pfbc_links {
+	text-align: right;
+	padding: 5px;
+}
+
+#pfbc_banner {
+	border-top: 1px solid #cccccc; 
+	border-bottom: 1px solid #cccccc; 
+	padding: 10px 5px; 
+	background-color: #efefef;
+}
+
+#pfbc_banner h5 {
+	font-style: italic;
+}
+
+#pfbc_content {
+	padding: 10px 5px;
+}

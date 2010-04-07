@@ -1,15 +1,7 @@
 <?php
 /*
----------------------------------INCLUDE THIS SECTION IN ANY MODIFICATION OR REDISTRIBUTION----------------------------------
-Project: Form Builder Class
-Author: Andrew Porterfield
-Original Release Date: 2009-04-24
-Latest Release Date: 2010-04-02
-License: GPL - for more information visit http://www.gnu.org/licenses/quick-guide-gplv3.html
-Current Version: 1.0.2
-
-CKEditor integration courtesy of moncojhr.
----------------------------------INCLUDE THIS SECTION IN ANY MODIFICATION OR REDISTRIBUTION----------------------------------
+Google Code Project Hosting - http://code.google.com/p/php-form-builder-class/
+Google Groups - http://groups.google.com/group/php-form-builder-class/
 */
 
 class base {
@@ -1290,7 +1282,7 @@ class form extends base {
 		$str = "";
 
 		if(empty($this->includesRelativePath) || !file_exists($this->includesRelativePath) || !is_dir($this->includesRelativePath))
-			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesRelativePath form attribute to identify the location of the inclues directory included within php-form-builder-class folder.");</script>';
+			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesRelativePath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.");</script>';
 
 		if(empty($this->noAutoFocus))
 			$focus = true;

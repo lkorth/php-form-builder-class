@@ -31,50 +31,51 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 	<html>
 		<head>
 			<title>PHP Form Builder Class | Examples | Captcha and Ajax</title>
+			<link href="../style.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
-			<h2 style="text-align: center; margin: 0; padding: 0;">PHP Form Builder Class</h2>
-			<h5 style="text-align: center; margin: 0; padding: 0;"><span style="padding-right: 10px;">Author: Andrew Porterfield</span><span style="padding-right: 10px;">Released: <?php echo(file_get_contents('../release'));?></span><span>Version: <?php echo(file_get_contents('../version'));?></span></h5>
-			<div style="text-align: center; padding-bottom: 10px;"><a href="http://code.google.com/p/php-form-builder-class/" target="_blank">View Project's Homepage</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download Latest Stable Release</a></div>
-			<a href="../index.php">Back to Project Home Page</a>
-			<p>
-			<b>reCAPTCHA and Ajax</b> - When you submit the captcha form element via ajax, the reCAPTCHA challenge will not refresh on its own because the webpage does not reload.
-			To force the reCAPTCHA challenge to reset once the form is submitted, the Recaptcha.reload() javascript method will need to be envoked.  In this example, the <i>ajaxCallback</i>
-			form attribute has been set to a js function, reCAPTCHAHandler, which alerts a response message, reloads reCAPTCHA, and resets the form if appropriate.
-			</p>
+			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" target="_blank">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" target="_blank">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download Version <?php echo(file_get_contents('../version'));?></a></div>
+			<div id="pfbc_banner">
+				<h2>PHP Form Builder Class / Examples / Captcha and Ajax</h2>
+				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
+			</div>
 
-			<?php
-			$form = new form("ajax_captcha");
-			$form->setAttributes(array(
-				"includesRelativePath" => "../includes",
-				"tableAttributes" => array("width" => "400"),
-				"ajax" => 1,
-				"ajaxCallback" => "reCAPTCHAHandler",
-				"ajaxDataType" => "xml"
-			));
-			$form->addHidden("cmd", "submit");
-			$form->addTextarea("Comments:", "field0");
-			$form->addCaptcha();
-			$form->addButton();
-			$form->render();
-			?>
-			<a href="../index.php">Back to Project Home Page</a>
+			<div id="pfbc_content">
+				<p><b>reCAPTCHA and Ajax</b> - When you submit the captcha form element via ajax, the reCAPTCHA challenge will not refresh on its own because the webpage does not reload.
+				To force the reCAPTCHA challenge to reset once the form is submitted, the Recaptcha.reload() javascript method will need to be invoked.  In this example, the <i>ajaxCallback</i>
+				form attribute has been set to a js function, reCAPTCHAHandler, which alerts a response message, reloads reCAPTCHA, and resets the form if appropriate.</p>
 
-			<script type="text/javascript">
-				function reCAPTCHAHandler(msg)
-				{
-					var response = msg.getElementsByTagName("response")[0];
-					alert(response.getElementsByTagName("message")[0].firstChild.data);
+				<?php
+				$form = new form("ajax_captcha");
+				$form->setAttributes(array(
+					"includesRelativePath" => "../includes",
+					"tableAttributes" => array("width" => "400"),
+					"ajax" => 1,
+					"ajaxCallback" => "reCAPTCHAHandler",
+					"ajaxDataType" => "xml"
+				));
+				$form->addHidden("cmd", "submit");
+				$form->addTextarea("Comments:", "field0");
+				$form->addCaptcha();
+				$form->addButton();
+				$form->render();
+				?>
 
-					/*This line resets the reCAPTCHA challenge.*/
-					Recaptcha.reload();
+				<script type="text/javascript">
+					function reCAPTCHAHandler(msg)
+					{
+						var response = msg.getElementsByTagName("response")[0];
+						alert(response.getElementsByTagName("message")[0].firstChild.data);
 
-					if(response.getElementsByTagName("status")[0].firstChild.data == "Success")
-						document.ajax_captcha.reset();
-				}
-			</script>	
+						/*This line resets the reCAPTCHA challenge.*/
+						Recaptcha.reload();
 
-			<?
+						if(response.getElementsByTagName("status")[0].firstChild.data == "Success")
+							document.ajax_captcha.reset();
+					}
+				</script>	
+				<?php
+
 echo '<pre>' . htmlentities('<?php
 $form = new form("ajax_captcha");
 $form->setAttributes(array(
@@ -104,7 +105,9 @@ $form->render();
 			document.ajax_captcha.reset();
 	}
 </script>') . '</pre>';	
-?>
+
+				?>
+			</div>	
 		</body>
 	</html>	
 	<?php
