@@ -2818,10 +2818,10 @@ class form extends base {
 	public function validate()
 	{
 		/*Determine if the form's submit method was get or post.*/
-		if(!empty($_GET))
-			$referenceValues = $_GET;
-		elseif(!empty($_POST))
+		if(!empty($_POST))
 			$referenceValues = $_POST;
+		elseif(!empty($_GET))
+			$referenceValues = $_GET;
 		else
 		{
 			$this->errorMsg = 'The $_GET/$_POST array containing the form\'s submitted values does not exists.';
@@ -2926,8 +2926,7 @@ class form extends base {
 	/*This function can be used to bind nested form elements rendered through elementsToString to the parent form object.*/
 	public function bind($ref)
 	{
-		foreach($ref->elements as $ele)
-			$this->boundElements[] = $ele;
+		$this->boundElements = $ref->elements;
 		if(!empty($ref->emailExists))
 			$this->emailExists = 1;
 	}
