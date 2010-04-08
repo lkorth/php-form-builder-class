@@ -146,7 +146,7 @@ class form extends base {
 			"radio" => array("name", "style", "class", "onclick", "type"),
 			"checksort" => array("style", "class"),
 			"button" => array("name", "value", "type", "id", "onclick", "class", "style"),
-			"a" => array("id", "name", "href", "class", "style"),
+			"a" => array("id", "name", "href", "class", "style", "target"),
 			"latlng" => array("id", "name", "type", "class", "style", "onclick", "onkeyup", "maxlength", "size")
 		);
 
