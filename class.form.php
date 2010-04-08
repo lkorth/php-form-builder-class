@@ -86,7 +86,7 @@ class form extends base {
 
 	/*Variables that can only be set inside this class.*/
 	private $elements;					/*Contains all element objects for a form.*/
-	private $boundElements;				/*Contains all bound element objects for a form.*/
+	private $bindRules;					/*Contains information about nested forms.*/
 	private $buttons;					/*Contains all button objects for a form.*/
 	private $checkform;					/*If a field has the required attribute set, this field will be set causing javascript error checking.*/
 	private $allowedFields;				/*Controls what attributes can be attached to various html elements.*/
@@ -930,285 +930,32 @@ class form extends base {
 		*/
 		if(!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists))
 		{
-			if(!empty($this->boundElements))
-				$this->elements = array_merge($this->elements, $this->boundElements);
-
 			echo '<script type="text/javascript">';
 			if(!empty($this->emailExists))
 				echo "\n\tvar validemail_", $this->attributes["name"], ";";
 			echo "\n\tfunction ", $this->onsubmitFunctionOverride, "(formObj) {";
-			$elementSize = sizeof($this->elements);
 			/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
 			key/value pair and acts as the GET or POST string.*/
 			if(!empty($this->ajax))
 				echo "\n\t\t", 'var form_data = ""';
-			for($i = 0; $i < $elementSize; ++$i)
+
+			$this->jsCycleElements($this->elements);
+			if(!empty($this->bindRules))
 			{
-				$ele = $this->elements[$i];
-				$eleType = $ele->attributes["type"];
-				$eleName = str_replace('"', '&quot;', $ele->attributes["name"]);
-				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->label));
-				$alertMsg = 'alert("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '");';
-
-				if($eleType == "html")
-					continue;
-
-				if($eleType == "checkbox")
+				$bindRuleKeys = array_keys($this->bindRules);
+				$bindRuleSize = sizeof($bindRuleKeys);
+				for($b = 0; $b < $bindRuleSize; $b++)
 				{
-					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
-						if(!empty($ele->required))
-							echo "\n\t\t\tvar is_checked = false;";
-						echo "\n\t\t\t", 'for(i = 0; i < formObj.elements["', $eleName, '"].length; i++) {';
-							echo "\n\t\t\t\t", 'if(formObj.elements["', $eleName, '"][i].checked) {';
-							if(!empty($this->ajax))
-								echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][i].value);';
-							if(!empty($ele->required))
-								echo "\n\t\t\t\t\tis_checked = true;";
-							echo "\n\t\t\t\t}";
-						echo "\n\t\t\t}";		
-						if(!empty($ele->required))
-						{
-							echo "\n\t\t\tif(!is_checked) {";
-								echo "\n\t\t\t\t", $alertMsg;
-								echo "\n\t\t\t\treturn false;";
-							echo "\n\t\t\t}";
-						}
-					echo "\n\t\t}";		
-					echo "\n\t\telse {";
-					if(!empty($this->ajax))
+					if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements))
 					{
-						echo "\n\t\t\t", 'if(formObj.elements["', $eleName, '"].checked)';
-							echo "\n\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
-					}	
-					if(!empty($ele->required))
-					{
-						echo "\n\t\t\t", 'if(!formObj.elements["', $eleName, '"].checked) {';
-							echo "\n\t\t\t\t", $alertMsg;
-							echo "\n\t\t\t\treturn false;";
-						echo "\n\t\t\t}";
-					}
-					echo "\n\t\t}";
-				}
-				elseif($eleType == "radio")
-				{
-					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
-						if(!empty($ele->required))
-							echo "\n\t\t\tvar is_checked = false;";
-						echo "\n\t\t\t", 'for(i = 0; i < formObj.elements["', $eleName, '"].length; i++) {';
-							echo "\n\t\t\t\t", 'if(formObj.elements["', $eleName, '"][i].checked) {';
-							if(!empty($this->ajax))
-								echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][i].value);';
-							if(!empty($ele->required))
-								echo "\n\t\t\t\t\tis_checked = true;";
-							echo "\n\t\t\t\t}";
-						echo "\n\t\t\t}";		
-						if(!empty($ele->required))
-						{
-							echo "\n\t\t\tif(!is_checked) {";
-								echo "\n\t\t\t\t", $alertMsg;
-								echo "\n\t\t\t\treturn false;";
-							echo "\n\t\t\t}";
-						}
-					echo "\n\t\t}";		
-					echo "\n\t\telse {";
-					if(!empty($this->ajax))
-					{
-						echo "\n\t\t\t", 'if(formObj.elements["', $eleName, '"].checked)';
-							echo "\n\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
-					}	
-					if(!empty($ele->required))
-					{
-						echo "\n\t\t\t", 'if(!formObj.elements["', $eleName, '"].checked) {';
-							echo "\n\t\t\t\t", $alertMsg;
-							echo "\n\t\t\t\treturn false;";
-						echo "\n\t\t\t}";
-					}
-					echo "\n\t\t}";
-				}
-				elseif($eleType == "text" || $eleType == "textarea" || $eleType == "date" || $eleType == "daterange" || $eleType == "latlng" || $eleType == "colorpicker" || $eleType == "email")
-				{
-					$eleHint = str_replace('"', '&quot;', $ele->hint);
-					if(!empty($this->ajax))
-					{
-						echo "\n\t\t", 'form_data += "&', $eleName, '="';
-						echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value != "', $eleHint, '")';
-							echo "\n\t\t\t", 'form_data += formObj.elements["', $eleName, '"].value;';
-					}	
-					if(!empty($ele->required))
-					{
-						echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value == "', $eleHint, '") {';
-							echo "\n\t\t\t", $alertMsg;
-							echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
-							echo "\n\t\t\treturn false;";
-						echo "\n\t\t}";
+						if(!empty($this->bindRules[$bindRuleKeys[$b]][1]))
+							echo "\n\t\tif(", $this->bindRules[$bindRuleKeys[$b]][1] , ") {";
+						$this->jsCycleElements($this->bindRules[$bindRuleKeys[$b]][0]->elements);
+						if(!empty($this->bindRules[$bindRuleKeys[$b]][1]))
+							echo "\n\t\t}";
 					}
 				}
-				elseif($eleType == "select" || $eleType == "hidden" || $eleType == "file" || $eleType == "password")
-				{
-					if(!empty($this->ajax))
-						echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
-					if(!empty($ele->required))
-					{
-						echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value == "") {';
-							echo "\n\t\t\t", $alertMsg;
-							echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
-							echo "\n\t\t\treturn false;";
-						echo "\n\t\t}";
-					}
-				}
-				elseif($eleType == "rating")
-				{
-					if(!empty($this->ajax))
-					{
-						echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value != "") {';
-							echo "\n\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
-					}	
-					if(!empty($ele->required))
-					{
-						echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value == "") {';
-							echo "\n\t\t\t", $alertMsg;
-							echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
-							echo "\n\t\t\treturn false;";
-						echo "\n\t\t}";
-					}
-				}
-				elseif($eleType == "slider")
-				{
-					if(!empty($this->ajax))
-					{
-						echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
-							echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][0].value);';
-							echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][1].value);';
-						echo "\n\t\t}";		
-						echo "\n\t\telse {";
-							echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
-						echo "\n\t\t}";		
-					}	
-				}
-				elseif($eleType == "captcha")
-				{
-					if(!empty($ele->required))
-					{
-						echo "\n\t\t" , 'if(formObj.elements["recaptcha_response_field"].value == "") {';
-							echo "\n\t\t\t", $alertMsg;
-							echo "\n\t\t\t", 'formObj.elements["recaptcha_response_field"].focus();';
-							echo "\n\t\t\treturn false;";
-						echo "\n\t\t}";
-					}
-					if(!empty($this->ajax))
-					{
-						echo "\n\t\t", 'form_data += "&recaptcha_challenge_field=" + escape(Recaptcha.get_challenge());';
-						echo "\n\t\t", 'form_data += "&recaptcha_response_field=" + escape(Recaptcha.get_response());';
-					}	
-				}
-				elseif($eleType == "webeditor")
-				{
-					if(!empty($this->ajax))
-						echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(tinyMCE.get("', $ele->attributes["id"], '").getContent());';
-					if(!empty($ele->required))
-					{
-						echo "\n\t\t", 'if(tinyMCE.get("', $ele->attributes["id"], '").getContent() == "") {';
-							echo "\n\t\t\t", $alertMsg;
-							echo "\n\t\t\t" , 'tinyMCE.get("', $ele->attributes["id"], '").focus();';
-							echo "\n\t\t\treturn false;";
-						echo "\n\t\t}";
-					}
-				}
-				elseif($eleType == "ckeditor")
-                {
-					if(!empty($this->ajax))
-                        echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(CKEDITOR.instances.' . $ele->attributes["id"] . '.getData());';
-                    if(!empty($ele->required))
-                    {
-                        echo "\n\t\t" , 'if( CKEDITOR.instances.' . $ele->attributes["id"] . '.getData() == "") {';
-							echo "\n\t\t\t", $alertMsg;
-                            echo "\n\t\t\t" , 'CKEDITOR.instances.' . $ele->attributes["id"] . '.focus();';
-                            echo "\n\t\t\treturn false;";
-                        echo "\n\t\t}";
-                    }
-                }
-				elseif($eleType == "checksort")
-				{
-					if(!empty($this->ajax))
-					{
-						echo "\n\t\t", 'if(formObj.elements["', $eleName, '"]) {';
-							echo "\n\t\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
-								echo "\n\t\t\t\t" , 'var ulObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '");';
-								echo "\n\t\t\t\tvar childLen = ulObj.childNodes.length;";
-								echo "\n\t\t\t\tfor(i = 0; i < childLen; i++) {";
-									echo "\n\t\t\t\t\t", 'childObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '").childNodes[i];';
-										echo "\n\t\t\t\t\t", 'if(childObj.tagName && childObj.tagName.toLowerCase() == "li")';
-											echo "\n\t\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(childObj.childNodes[0].value);';
-								echo "\n\t\t\t\t}";
-							echo "\n\t\t\t}";
-							echo "\n\t\t\telse";
-								echo "\n\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
-						echo "\n\t\t}";
-					}
-					if(!empty($ele->required))
-					{
-						echo "\n\t\t", 'if(!formObj.elements["', $eleName, '"]) {';
-							echo "\n\t\t\t", $alertMsg;
-							echo "\n\t\t\treturn false;";
-						echo "\n\t\t}";	
-					}	
-				}
-				elseif(!empty($this->ajax) && $eleType == "sort")
-				{
-					echo "\n\t\t", 'if(formObj.elements["', $eleName, '"]) {';
-						echo "\n\t\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
-							echo "\n\t\t\t\t" , 'var ulObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '");';
-							echo "\n\t\t\t\tvar childLen = ulObj.childNodes.length;";
-							echo "\n\t\t\t\tfor(i = 0; i < childLen; i++) {";
-								echo "\n\t\t\t\t\t", 'childObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '").childNodes[i];';
-									echo "\n\t\t\t\t\t", 'if(childObj.tagName && childObj.tagName.toLowerCase() == "li")';
-										echo "\n\t\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(childObj.childNodes[0].value);';
-							echo "\n\t\t\t\t}";
-						echo "\n\t\t\t}";
-						echo "\n\t\t\telse";
-							echo "\n\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
-					echo "\n\t\t}";
-				}
-				
-				if($eleType == "email")
-				{
-					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value != "', $eleHint, '") {';
-						echo "\n\t\t\t$.ajax({";
-							echo "\n\t\t\t\t", 'async: false,';
-							echo "\n\t\t\t\t", 'type: "post",';
-							echo "\n\t\t\t\t", 'url: "', $this->includesRelativePath, '/php-email-address-validation/ajax-handler.php",';
-							echo "\n\t\t\t\t", 'dataType: "text",';
-							echo "\n\t\t\t\t", 'data: "email=" + escape(formObj.elements["', $eleName, '"].value) + "&label=" + escape("', $eleLabel, '") + "&format=" + escape("', $this->emailErrorMsgFormat, '"),';
-							echo "\n\t\t\t\tsuccess: function(responseMsg, textStatus) {";
-								echo "\n\t\t\t\t\t", 'if(responseMsg != "") {';
-									echo "\n\t\t\t\t\t\tvalidemail_", $this->attributes["name"], " = false;";
-									echo "\n\t\t\t\t\t\talert(responseMsg);";
-								echo "\n\t\t\t\t\t}";
-								echo "\n\t\t\t\t\telse";
-									echo "\n\t\t\t\t\t\tvalidemail_", $this->attributes["name"], " = true;";
-							echo "\n\t\t\t\t},";
-							echo "\n\t\t\t\terror: function(XMLHttpRequest, textStatus, errorThrown) { alert(XMLHttpRequest.responseText); }";
-						echo "\n\t\t\t});";
-
-						echo "\n\t\t\tif(!validemail_", $this->attributes["name"], ") {";
-							echo "\n\t\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
-							echo "\n\t\t\t\treturn false;";
-						echo "\n\t\t\t}";
-					echo "\n\t\t}";
-				}
-			}	
-
-			/*Remove hints if they remain as form element values.*/
-			for($i = 0; $i < $elementSize; ++$i)
-			{
-				$ele = $this->elements[$i];
-				if(!empty($ele->hint))
-				{
-					$eleName = str_replace('"', '&quot;', $ele->attributes["name"]);
-					echo "\n\t\t", 'if(formObj.elements["', $eleName, '"].value == formObj.elements["', $eleName, '"].defaultValue)';
-						echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].value = "";';
-				}
-			}	
+			}
 				
 			if(!empty($this->ajax))
 			{
@@ -2810,6 +2557,278 @@ class form extends base {
 		return $str;
 	}
 
+	private function jsCycleElements($elements)
+	{
+		$elementSize = sizeof($elements);
+		for($i = 0; $i < $elementSize; ++$i)
+		{
+			$ele = $elements[$i];
+			$eleType = $ele->attributes["type"];
+			$eleName = str_replace('"', '&quot;', $ele->attributes["name"]);
+			$eleLabel = str_replace('"', '&quot;', strip_tags($ele->label));
+			$alertMsg = 'alert("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '");';
+
+			if($eleType == "html")
+				continue;
+
+			if($eleType == "checkbox")
+			{
+				echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
+					if(!empty($ele->required))
+						echo "\n\t\t\tvar is_checked = false;";
+					echo "\n\t\t\t", 'for(i = 0; i < formObj.elements["', $eleName, '"].length; i++) {';
+						echo "\n\t\t\t\t", 'if(formObj.elements["', $eleName, '"][i].checked) {';
+						if(!empty($this->ajax))
+							echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][i].value);';
+						if(!empty($ele->required))
+							echo "\n\t\t\t\t\tis_checked = true;";
+						echo "\n\t\t\t\t}";
+					echo "\n\t\t\t}";		
+					if(!empty($ele->required))
+					{
+						echo "\n\t\t\tif(!is_checked) {";
+							echo "\n\t\t\t\t", $alertMsg;
+							echo "\n\t\t\t\treturn false;";
+						echo "\n\t\t\t}";
+					}
+				echo "\n\t\t}";		
+				echo "\n\t\telse {";
+				if(!empty($this->ajax))
+				{
+					echo "\n\t\t\t", 'if(formObj.elements["', $eleName, '"].checked)';
+						echo "\n\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+				}	
+				if(!empty($ele->required))
+				{
+					echo "\n\t\t\t", 'if(!formObj.elements["', $eleName, '"].checked) {';
+						echo "\n\t\t\t\t", $alertMsg;
+						echo "\n\t\t\t\treturn false;";
+					echo "\n\t\t\t}";
+				}
+				echo "\n\t\t}";
+			}
+			elseif($eleType == "radio")
+			{
+				echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
+					if(!empty($ele->required))
+						echo "\n\t\t\tvar is_checked = false;";
+					echo "\n\t\t\t", 'for(i = 0; i < formObj.elements["', $eleName, '"].length; i++) {';
+						echo "\n\t\t\t\t", 'if(formObj.elements["', $eleName, '"][i].checked) {';
+						if(!empty($this->ajax))
+							echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][i].value);';
+						if(!empty($ele->required))
+							echo "\n\t\t\t\t\tis_checked = true;";
+						echo "\n\t\t\t\t}";
+					echo "\n\t\t\t}";		
+					if(!empty($ele->required))
+					{
+						echo "\n\t\t\tif(!is_checked) {";
+							echo "\n\t\t\t\t", $alertMsg;
+							echo "\n\t\t\t\treturn false;";
+						echo "\n\t\t\t}";
+					}
+				echo "\n\t\t}";		
+				echo "\n\t\telse {";
+				if(!empty($this->ajax))
+				{
+					echo "\n\t\t\t", 'if(formObj.elements["', $eleName, '"].checked)';
+						echo "\n\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+				}	
+				if(!empty($ele->required))
+				{
+					echo "\n\t\t\t", 'if(!formObj.elements["', $eleName, '"].checked) {';
+						echo "\n\t\t\t\t", $alertMsg;
+						echo "\n\t\t\t\treturn false;";
+					echo "\n\t\t\t}";
+				}
+				echo "\n\t\t}";
+			}
+			elseif($eleType == "text" || $eleType == "textarea" || $eleType == "date" || $eleType == "daterange" || $eleType == "latlng" || $eleType == "colorpicker" || $eleType == "email")
+			{
+				$eleHint = str_replace('"', '&quot;', $ele->hint);
+				if(!empty($this->ajax))
+				{
+					echo "\n\t\t", 'form_data += "&', $eleName, '="';
+					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value != "', $eleHint, '")';
+						echo "\n\t\t\t", 'form_data += formObj.elements["', $eleName, '"].value;';
+				}	
+				if(!empty($ele->required))
+				{
+					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value == "', $eleHint, '") {';
+						echo "\n\t\t\t", $alertMsg;
+						echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
+						echo "\n\t\t\treturn false;";
+					echo "\n\t\t}";
+				}
+			}
+			elseif($eleType == "select" || $eleType == "hidden" || $eleType == "file" || $eleType == "password")
+			{
+				if(!empty($this->ajax))
+					echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+				if(!empty($ele->required))
+				{
+					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value == "") {';
+						echo "\n\t\t\t", $alertMsg;
+						echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
+						echo "\n\t\t\treturn false;";
+					echo "\n\t\t}";
+				}
+			}
+			elseif($eleType == "rating")
+			{
+				if(!empty($this->ajax))
+				{
+					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value != "") {';
+						echo "\n\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+				}	
+				if(!empty($ele->required))
+				{
+					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value == "") {';
+						echo "\n\t\t\t", $alertMsg;
+						echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
+						echo "\n\t\t\treturn false;";
+					echo "\n\t\t}";
+				}
+			}
+			elseif($eleType == "slider")
+			{
+				if(!empty($this->ajax))
+				{
+					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
+						echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][0].value);';
+						echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][1].value);';
+					echo "\n\t\t}";		
+					echo "\n\t\telse {";
+						echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+					echo "\n\t\t}";		
+				}	
+			}
+			elseif($eleType == "captcha")
+			{
+				if(!empty($ele->required))
+				{
+					echo "\n\t\t" , 'if(formObj.elements["recaptcha_response_field"].value == "") {';
+						echo "\n\t\t\t", $alertMsg;
+						echo "\n\t\t\t", 'formObj.elements["recaptcha_response_field"].focus();';
+						echo "\n\t\t\treturn false;";
+					echo "\n\t\t}";
+				}
+				if(!empty($this->ajax))
+				{
+					echo "\n\t\t", 'form_data += "&recaptcha_challenge_field=" + escape(Recaptcha.get_challenge());';
+					echo "\n\t\t", 'form_data += "&recaptcha_response_field=" + escape(Recaptcha.get_response());';
+				}	
+			}
+			elseif($eleType == "webeditor")
+			{
+				if(!empty($this->ajax))
+					echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(tinyMCE.get("', $ele->attributes["id"], '").getContent());';
+				if(!empty($ele->required))
+				{
+					echo "\n\t\t", 'if(tinyMCE.get("', $ele->attributes["id"], '").getContent() == "") {';
+						echo "\n\t\t\t", $alertMsg;
+						echo "\n\t\t\t" , 'tinyMCE.get("', $ele->attributes["id"], '").focus();';
+						echo "\n\t\t\treturn false;";
+					echo "\n\t\t}";
+				}
+			}
+			elseif($eleType == "ckeditor")
+			{
+				if(!empty($this->ajax))
+					echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(CKEDITOR.instances.' . $ele->attributes["id"] . '.getData());';
+				if(!empty($ele->required))
+				{
+					echo "\n\t\t" , 'if( CKEDITOR.instances.' . $ele->attributes["id"] . '.getData() == "") {';
+						echo "\n\t\t\t", $alertMsg;
+						echo "\n\t\t\t" , 'CKEDITOR.instances.' . $ele->attributes["id"] . '.focus();';
+						echo "\n\t\t\treturn false;";
+					echo "\n\t\t}";
+				}
+			}
+			elseif($eleType == "checksort")
+			{
+				if(!empty($this->ajax))
+				{
+					echo "\n\t\t", 'if(formObj.elements["', $eleName, '"]) {';
+						echo "\n\t\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
+							echo "\n\t\t\t\t" , 'var ulObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '");';
+							echo "\n\t\t\t\tvar childLen = ulObj.childNodes.length;";
+							echo "\n\t\t\t\tfor(i = 0; i < childLen; i++) {";
+								echo "\n\t\t\t\t\t", 'childObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '").childNodes[i];';
+									echo "\n\t\t\t\t\t", 'if(childObj.tagName && childObj.tagName.toLowerCase() == "li")';
+										echo "\n\t\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(childObj.childNodes[0].value);';
+							echo "\n\t\t\t\t}";
+						echo "\n\t\t\t}";
+						echo "\n\t\t\telse";
+							echo "\n\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+					echo "\n\t\t}";
+				}
+				if(!empty($ele->required))
+				{
+					echo "\n\t\t", 'if(!formObj.elements["', $eleName, '"]) {';
+						echo "\n\t\t\t", $alertMsg;
+						echo "\n\t\t\treturn false;";
+					echo "\n\t\t}";	
+				}	
+			}
+			elseif(!empty($this->ajax) && $eleType == "sort")
+			{
+				echo "\n\t\t", 'if(formObj.elements["', $eleName, '"]) {';
+					echo "\n\t\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
+						echo "\n\t\t\t\t" , 'var ulObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '");';
+						echo "\n\t\t\t\tvar childLen = ulObj.childNodes.length;";
+						echo "\n\t\t\t\tfor(i = 0; i < childLen; i++) {";
+							echo "\n\t\t\t\t\t", 'childObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '").childNodes[i];';
+								echo "\n\t\t\t\t\t", 'if(childObj.tagName && childObj.tagName.toLowerCase() == "li")';
+									echo "\n\t\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(childObj.childNodes[0].value);';
+						echo "\n\t\t\t\t}";
+					echo "\n\t\t\t}";
+					echo "\n\t\t\telse";
+						echo "\n\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+				echo "\n\t\t}";
+			}
+			
+			if($eleType == "email")
+			{
+				echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value != "', $eleHint, '") {';
+					echo "\n\t\t\t$.ajax({";
+						echo "\n\t\t\t\t", 'async: false,';
+						echo "\n\t\t\t\t", 'type: "post",';
+						echo "\n\t\t\t\t", 'url: "', $this->includesRelativePath, '/php-email-address-validation/ajax-handler.php",';
+						echo "\n\t\t\t\t", 'dataType: "text",';
+						echo "\n\t\t\t\t", 'data: "email=" + escape(formObj.elements["', $eleName, '"].value) + "&label=" + escape("', $eleLabel, '") + "&format=" + escape("', $this->emailErrorMsgFormat, '"),';
+						echo "\n\t\t\t\tsuccess: function(responseMsg, textStatus) {";
+							echo "\n\t\t\t\t\t", 'if(responseMsg != "") {';
+								echo "\n\t\t\t\t\t\tvalidemail_", $this->attributes["name"], " = false;";
+								echo "\n\t\t\t\t\t\talert(responseMsg);";
+							echo "\n\t\t\t\t\t}";
+							echo "\n\t\t\t\t\telse";
+								echo "\n\t\t\t\t\t\tvalidemail_", $this->attributes["name"], " = true;";
+						echo "\n\t\t\t\t},";
+						echo "\n\t\t\t\terror: function(XMLHttpRequest, textStatus, errorThrown) { alert(XMLHttpRequest.responseText); }";
+					echo "\n\t\t\t});";
+
+					echo "\n\t\t\tif(!validemail_", $this->attributes["name"], ") {";
+						echo "\n\t\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
+						echo "\n\t\t\t\treturn false;";
+					echo "\n\t\t\t}";
+				echo "\n\t\t}";
+			}
+		}	
+
+		/*Remove hints if they remain as form element values.*/
+		for($i = 0; $i < $elementSize; ++$i)
+		{
+			$ele = $elements[$i];
+			if(!empty($ele->hint))
+			{
+				$eleName = str_replace('"', '&quot;', $ele->attributes["name"]);
+				echo "\n\t\t", 'if(formObj.elements["', $eleName, '"].value == formObj.elements["', $eleName, '"].defaultValue)';
+					echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].value = "";';
+			}
+		}	
+	}
+
 	/*
 	This function validates all required fields.  If a captcha field is found, it is validated as well.  This function returns 
 	true if the form successfully passes validation or false if errors were found.  If the form does return false, the errorMsg 
@@ -2845,65 +2864,24 @@ class form extends base {
 					
 			}	
 
-			if(!empty($form->boundElements))
-				$form->elements = array_merge($form->elements, $form->boundElements);
-			
-			$elementSize = sizeof($form->elements);
-			for($i = 0; $i < $elementSize; ++$i)
+			if(!$this->phpCycleElements($form->elements, $referenceValues, $form))
+				return false;
+			if(!empty($form->bindRules))
 			{
-				$ele = $form->elements[$i];
-
-				/*The html, sort, and element types are ignored.*/
-				if($ele->attributes["type"] == "html" || $ele->attributes["type"] == "sort" || $ele->attributes["type"] == "hidden")
-					continue;
-				elseif($ele->attributes["type"] == "captcha")
+				$bindRuleKeys = array_keys($form->bindRules);
+				$bindRuleSize = sizeof($bindRuleKeys);
+				for($b = 0; $b < $bindRuleSize; $b++)
 				{
-					require_once($form->includesRelativePath . "/recaptchalib.php");
-					$recaptchaResp = recaptcha_check_answer($form->captchaPrivateKey, $_SERVER["REMOTE_ADDR"], $referenceValues["recaptcha_challenge_field"], $referenceValues["recaptcha_response_field"]);
-					if(!$recaptchaResp->is_valid)
+					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements))
 					{
-						if($recaptchaResp->error == "invalid-site-public-key")
-							$this->errorMsg = "The reCAPTCHA public key could not be verified.";
-						elseif($recaptchaResp->error == "invalid-site-private-key")
-							$this->errorMsg = "The reCAPTCHA private key could not be verified.";
-						elseif($recaptchaResp->error == "invalid-request-cookie")
-							$this->errorMsg = "The reCAPTCHA challenge parameter of the verify script was incorrect.";
-						elseif($recaptchaResp->error == "incorrect-captcha-sol")
-							$this->errorMsg = "The reCATPCHA solution entered was incorrect.";
-						elseif($recaptchaResp->error == "verify-params-incorrect")
-							$this->errorMsg = "The reCAPTCHA parameters passed to the verification script were incorrect, make sure you are passing all the required parameters.";
-						elseif($recaptchaResp->error == "invalid-referrer")
-							$this->errorMsg = "The reCAPTCHA API public/private keys are tied to a specific domain name for security reasons.";
-						else
-							$this->errorMsg = "An unknown reCAPTCHA error has occurred.";
-						return false;
+						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
+						{
+							if(!$this->phpCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements, $referenceValues, $form))
+								return false;
+						}	
 					}
 				}
-				elseif(!empty($ele->required))
-				{
-					if(($ele->attributes["type"] == "checkbox" || $ele->attributes["type"] == "radio" || $ele->attributes["type"] == "checksort" || $ele->attributes["type"] == "rating") && !isset($referenceValues[$ele->attributes["name"]]))
-					{
-						$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->errorMsgFormat);
-						return false;
-					}
-					elseif(empty($referenceValues[$ele->attributes["name"]]))
-					{
-						$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->errorMsgFormat);
-						return false;
-					}	
-				}
-
-				if($ele->attributes["type"] == "email" && !empty($referenceValues[$ele->attributes["name"]]))
-				{
-					require_once($form->includesRelativePath . "/php-email-address-validation/EmailAddressValidator.php");
-					$emailObj = new EmailAddressValidator;
-					if(!$emailObj->check_email_address($referenceValues[$ele->attributes["name"]]))
-					{
-						$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->emailErrorMsgFormat);
-						return false;
-					}	
-				}
-			}	
+			}
 
 			if(!empty($form->enableSessionAutoFill))
 				unset($_SESSION["formclass_values"][$this->attributes["name"]]);
@@ -2917,6 +2895,67 @@ class form extends base {
 		}
 	}
 
+	private function phpCycleElements($elements, $referenceValues, $form)
+	{
+		$elementSize = sizeof($elements);
+		for($i = 0; $i < $elementSize; ++$i)
+		{
+			$ele = $elements[$i];
+
+			/*The html, sort, and element types are ignored.*/
+			if($ele->attributes["type"] == "html" || $ele->attributes["type"] == "sort" || $ele->attributes["type"] == "hidden")
+				continue;
+			elseif($ele->attributes["type"] == "captcha")
+			{
+				require_once($form->includesRelativePath . "/recaptchalib.php");
+				$recaptchaResp = recaptcha_check_answer($form->captchaPrivateKey, $_SERVER["REMOTE_ADDR"], $referenceValues["recaptcha_challenge_field"], $referenceValues["recaptcha_response_field"]);
+				if(!$recaptchaResp->is_valid)
+				{
+					if($recaptchaResp->error == "invalid-site-public-key")
+						$this->errorMsg = "The reCAPTCHA public key could not be verified.";
+					elseif($recaptchaResp->error == "invalid-site-private-key")
+						$this->errorMsg = "The reCAPTCHA private key could not be verified.";
+					elseif($recaptchaResp->error == "invalid-request-cookie")
+						$this->errorMsg = "The reCAPTCHA challenge parameter of the verify script was incorrect.";
+					elseif($recaptchaResp->error == "incorrect-captcha-sol")
+						$this->errorMsg = "The reCATPCHA solution entered was incorrect.";
+					elseif($recaptchaResp->error == "verify-params-incorrect")
+						$this->errorMsg = "The reCAPTCHA parameters passed to the verification script were incorrect, make sure you are passing all the required parameters.";
+					elseif($recaptchaResp->error == "invalid-referrer")
+						$this->errorMsg = "The reCAPTCHA API public/private keys are tied to a specific domain name for security reasons.";
+					else
+						$this->errorMsg = "An unknown reCAPTCHA error has occurred.";
+					return false;
+				}
+			}
+			elseif(!empty($ele->required))
+			{
+				if(($ele->attributes["type"] == "checkbox" || $ele->attributes["type"] == "radio" || $ele->attributes["type"] == "checksort" || $ele->attributes["type"] == "rating") && !isset($referenceValues[$ele->attributes["name"]]))
+				{
+					$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->errorMsgFormat);
+					return false;
+				}
+				elseif(empty($referenceValues[$ele->attributes["name"]]))
+				{
+					$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->errorMsgFormat);
+					return false;
+				}	
+			}
+
+			if($ele->attributes["type"] == "email" && !empty($referenceValues[$ele->attributes["name"]]))
+			{
+				require_once($form->includesRelativePath . "/php-email-address-validation/EmailAddressValidator.php");
+				$emailObj = new EmailAddressValidator;
+				if(!$emailObj->check_email_address($referenceValues[$ele->attributes["name"]]))
+				{
+					$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->emailErrorMsgFormat);
+					return false;
+				}	
+			}
+		}
+		return true;
+	}	
+
 	/*This function sets the referenceValues variables which can be used to pre-fill form fields.  This function needs to be called before the render function.*/
 	public function setReferenceValues($ref)
 	{
@@ -2924,9 +2963,9 @@ class form extends base {
 	}
 
 	/*This function can be used to bind nested form elements rendered through elementsToString to the parent form object.*/
-	public function bind($ref)
+	public function bind($ref, $jsIfCondition = "", $phpIfCondition = "")
 	{
-		$this->boundElements = $ref->elements;
+		$this->bindRules[$ref->attributes["name"]] = array($ref, $jsIfCondition, $phpIfCondition);
 		if(!empty($ref->emailExists))
 			$this->emailExists = 1;
 	}
