@@ -22,7 +22,8 @@ class base {
 					if(is_array($this->$key) && !empty($this->$key))
 					{
 						/*Using array_merge prevents any default values from being overwritten.*/
-						$this->$key = array_merge($this->$key, $value);
+						if(is_array($value))
+							$this->$key = array_merge($this->$key, $value);
 					}	
 					else
 						$this->$key = $value;
@@ -135,7 +136,7 @@ class form extends base {
 		/*This array prevents junk from being inserted into the form's HTML.  If you find that an attributes you need to use is not included
 		in this list, feel free to customize to fit your needs.*/
 		$this->allowedFields = array(
-			"form" => array("method", "action", "enctype", "onsubmit", "id", "class", "name"),
+			"form" => array("method", "action", "target", "enctype", "onsubmit", "id", "class", "name"),
 			"table" => array("cellpadding", "cellspacing", "border", "style", "id", "class", "name", "align", "width"),
 			"td" => array("id", "name", "valign", "align", "style", "id", "class", "width"),
 			"div" => array("id", "name", "valign", "align", "style", "id", "class"),
