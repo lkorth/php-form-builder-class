@@ -1,5 +1,4 @@
 <?php
-session_start();
 error_reporting(E_ALL);
 include("../class.form.php");
 
@@ -10,8 +9,6 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 {
-	if(!empty($_GET["error_message"]))
-		echo("<div style='text-align: center; font-weight: bold; color: #990000;'>" . htmlentities(stripslashes($_GET["error_message"])) . "</div>");
 	?>
 	<html>
 		<head>
