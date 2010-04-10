@@ -773,7 +773,7 @@ class form extends base {
 			{
 				/*If an onsubmit function is defined and the form is setup for javascript error checking (checkform) or ajax submission (ajax), the user
 				defined onsubmit function will be overwritten and discarded.*/
-				if($key == "onsubmit" && (!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists)))
+				if($key == "onsubmit" && (!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists)))
 					continue;
 				if(in_array($key, $tmpAllowFieldArr))
 					echo ' ', $key, '="', str_replace('"', '&quot;', $value), '"';
