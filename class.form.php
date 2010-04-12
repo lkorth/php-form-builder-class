@@ -1029,12 +1029,13 @@ class form extends base {
 	{
 		$str = "";
 
-                if(
-                        ( empty($this->includesRelativePath )) ||
-                        ( !is_dir($this->includesRelativePath) && !is_dir($_SERVER['DOCUMENT_ROOT'].$this->includesRelativePath) )
-                  ){
+		if(empty($this->includesRelativePath) || !is_dir($this->includesRelativePath))
 			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesRelativePath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.");</script>';
-                }
+
+		/*
+		if(empty($this->includesRelativePath) || (!is_dir($this->includesRelativePath) && !is_dir($_SERVER['DOCUMENT_ROOT'] . $this->includesRelativePath)))
+			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesRelativePath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.");</script>';
+		*/
 
 		if(empty($this->noAutoFocus))
 			$focus = true;
@@ -1676,6 +1677,25 @@ class form extends base {
 						if(substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
 
+						if(!empty($ele->attributes["value"]))
+						{
+                            $options = array();
+                            $optionSize = sizeof($ele->options);
+                            for($o = 0; $o < $optionSize; ++$o)
+                                $options[$ele->options[$o]->value] = $ele->options[$o]->text;
+
+							foreach($options as $key => $value)
+							{
+								$index = array_search($key, $ele->attributes["value"]);
+								if($index !== false)
+								{
+									$opt = new option();
+									$opt->setAttributes(array("value" => $key, "text" => $value));
+									$ele->options[$index] = $opt;
+								}	
+							}
+						}
+
 						/*This section ensures that each sort field has a unique identifier.*/
 						if(!isset($jquerySortIDArr))
 							$jquerySortIDArr = array();
@@ -1707,6 +1727,9 @@ class form extends base {
 					if(empty($ele->attributes["id"]))
 						$ele->attributes["id"] = "latlnginput_" . rand(0, 999);
 					
+					/*If the value is formatted "Latitude: 123.45, Longitude: -67.89" parse and convert to array.*/
+					if(!empty($ele->attributes["value"]) && !is_array($ele->attributes["value"]) && strpos($ele->attributes["value"], "Latitude:", 0) === 0)
+						$ele->attributes["value"] = array(substr($ele->attributes["value"], strpos($ele->attributes["value"], ":") + 2, strpos($ele->attributes["value"], ",") - strpos($ele->attributes["value"], ":") - 2), substr($ele->attributes["value"], strrpos($ele->attributes["value"], ":") + 1));
 
 					/*If there is a hint included, handle accordingly.*/
 					if(!empty($ele->hint) && empty($ele->attributes["value"]))
@@ -2562,6 +2585,7 @@ class form extends base {
 		return $str;
 	}
 
+	/*This function handles javascript validation of all required form elements.  It was moved from within the render function to it's own function to be reused by nested forms.*/
 	private function jsCycleElements($elements)
 	{
 		$elementSize = sizeof($elements);
@@ -2860,7 +2884,7 @@ class form extends base {
 			/*If session autofill is enabled, store the submitted values in the session.*/
 			if(!empty($form->enableSessionAutoFill))
 			{
-				$_SESSION["formclass_values"][$this->attributes["name"]] = $referenceValues;
+				$_SESSION["formclass_values"][$this->attributes["name"]] = $this->stripslashes($referenceValues);
 				/*Unset reCAPTCHA field if applicable.*/
 				if(array_key_exists("recaptcha_challenge_field", $_SESSION["formclass_values"][$this->attributes["name"]]))
 					unset($_SESSION["formclass_values"][$this->attributes["name"]]["recaptcha_challenge_field"]);
@@ -2900,6 +2924,27 @@ class form extends base {
 		}
 	}
 
+	/*This function is used to strip any slashes from $_SESSION array housing the form's submitted values.*/
+	private function stripslashes($array)
+	{
+		foreach($array as $key => $value)
+		{
+			if(!is_array($array[$key]))
+			{
+				if(!empty($value))
+					$array[$key] = stripslashes($value);
+			}
+			else
+			{
+				$arraySize = sizeof($array[$key]);
+				for($zz = 0; $zz < $arraySize; $zz++)
+					$array[$key][$zz] = stripslashes($array[$key][$zz]);
+			}
+		}
+		return $array;
+	}
+
+	/*This function handles php validation of all required form elements.  It was moved from within the validate function to it's own function to be reused by nested forms.*/
 	private function phpCycleElements($elements, $referenceValues, $form)
 	{
 		$elementSize = sizeof($elements);
