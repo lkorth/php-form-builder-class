@@ -1030,14 +1030,10 @@ class form extends base {
 		$str = "";
 
                 if(
-                        empty($this->includesRelativePath) ||
-                        !is_dir($this->includesRelativePath) &&
-                        ( !file_exists($this->includesRelativePath) && !file_exists($_SERVER['DOCUMENT_ROOT'].$this->includesRelativePath) )
+                        ( empty($this->includesRelativePath )) ||
+                        ( !is_dir($this->includesRelativePath) && !is_dir($_SERVER['DOCUMENT_ROOT'].$this->includesRelativePath) )
                   ){
-			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class
-                                            Configuration Error: Invalid includes Directory Path\n\nUse the includesRelativePath
-                                            form attribute to identify the location of the inclues directory included within the
-                                            php-form-builder-class folder.");</script>';
+			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesRelativePath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.");</script>';
                 }
 
 		if(empty($this->noAutoFocus))
