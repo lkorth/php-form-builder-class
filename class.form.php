@@ -82,26 +82,26 @@ class form extends base {
 	protected $latlngDefaultLocation;	/*Allow you to customize the default location of latlng form elements.*/
 	protected $parentFormOverride;		/*When using the latlng form element with the elementsToString() function, this attribute will need to be set to the parent form name.*/
 	protected $includesRelativePath;	/*DEPRECATED: Specifies where the includes directory is located.  This path must be relative b/c it is used for both js and php includes.*/
-	protected $includesPath;               /*Specifies where the includes directory is located. This path can be relative or absolute  */
-        protected $onsubmitFunctionOverride;/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
+	protected $includesPath;            /*Specifies where the includes directory is located. This path can be relative or absolute  */
+	protected $onsubmitFunctionOverride;/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
 
 	/*Variables that can only be set inside this class.*/
-        private $elements;					/*Contains all element objects for a form.*/
-        private $bindRules;					/*Contains information about nested forms.*/
-        private $buttons;					/*Contains all button objects for a form.*/
-        private $checkform;					/*If a field has the required attribute set, this field will be set causing javascript error checking.*/
-        private $allowedFields;				/*Controls what attributes can be attached to various html elements.*/
-        private $stateArr;					/*Associative array holding states.  Prevents generating array each time state form field is used.*/
-        private $countryArr;				/*Associative array holding countries.  Prevents generating array each time country form field is used.*/
-        private $referenceValues;			/*Associative array of values to pre-fill form fields.*/
-        private $captchaExists;				/*If there is a captcha element attached to the form, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
-        private $focusElement;				/*Sets focus of first form element.*/
-        private $tinymceIDArr;				/*Uniquely identifies each tinyMCE web editor.*/
-        private $ckeditorIDArr;				/*Uniquely identifies each CKEditor web editor.*/
-        private $hintExists;				/*If one or more form elements have hints, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
-        private $emailExists;				/*If one or more form elements of type email exist, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
-        private $jsIncludesPath;                        /*For use on client side, holds either absolute path or document root path*/
-        private $phpIncludesPath;                       /*For use on server side, holds either absolute path or full path */
+	private $elements;					/*Contains all element objects for a form.*/
+	private $bindRules;					/*Contains information about nested forms.*/
+	private $buttons;					/*Contains all button objects for a form.*/
+	private $checkform;					/*If a field has the required attribute set, this field will be set causing javascript error checking.*/
+	private $allowedFields;				/*Controls what attributes can be attached to various html elements.*/
+	private $stateArr;					/*Associative array holding states.  Prevents generating array each time state form field is used.*/
+	private $countryArr;				/*Associative array holding countries.  Prevents generating array each time country form field is used.*/
+	private $referenceValues;			/*Associative array of values to pre-fill form fields.*/
+	private $captchaExists;				/*If there is a captcha element attached to the form, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
+	private $focusElement;				/*Sets focus of first form element.*/
+	private $tinymceIDArr;				/*Uniquely identifies each tinyMCE web editor.*/
+	private $ckeditorIDArr;				/*Uniquely identifies each CKEditor web editor.*/
+	private $hintExists;				/*If one or more form elements have hints, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
+	private $emailExists;				/*If one or more form elements of type email exist, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
+	private $jsIncludesPath;            /*For use on client side, holds either absolute path or document root path*/
+	private $phpIncludesPath;           /*For use on server side, holds either absolute path or full path */
 
 
 	/*Variables that can be accessed outside this class directly.*/
@@ -1024,30 +1024,28 @@ class form extends base {
 		if(empty($this->referenceValues) && !empty($_SESSION["formclass_values"]) && array_key_exists($this->attributes["name"], $_SESSION["formclass_values"]))
 			$this->setReferenceValues($_SESSION["formclass_values"][$this->attributes["name"]]);
 
-                //assign DEPRECATED includesRelativePath variable to new includesPath variable
-                if(!empty($this->includesRelativePath))
-                        $this->includesPath = $this->includesRelativePath;
+		//assign DEPRECATED includesRelativePath variable to new includesPath variable
+		if(!empty($this->includesRelativePath))
+			$this->includesPath = $this->includesRelativePath;
 
-
-                //check if includesPath is absolute or not, then create variables for where you need to use it
-                if($this->includesPath[0] != '/') {
-                        $this->jsIncludesPath = $this->includesPath;
-                        $this->phpIncludesPath = $this->includesPath;
-                }
-                else {
-                        if(strpos($this->includesPath , $_SERVER['DOCUMENT_ROOT']) === 0) {
-                                $this->jsIncludesPath = substr($this->includesPath , strlen($_SERVER['DOCUMENT_ROOT']));
-                                $this->phpIncludesPath = $this->includesPath;
-                        }
-                        else {
-                                $this->jsIncludesPath = $this->includesPath;
-                                $this->phpIncludesPath = $_SERVER['DOCUMENT_ROOT'] . $this->includesPath;
-                        }
-                }
+		//check if includesPath is absolute or not, then create variables for where you need to use it
+		if($this->includesPath[0] != '/') {
+			$this->jsIncludesPath = $this->includesPath;
+			$this->phpIncludesPath = $this->includesPath;
+		}
+		else {
+			if(strpos($this->includesPath , $_SERVER['DOCUMENT_ROOT']) === 0) {
+				$this->jsIncludesPath = substr($this->includesPath , strlen($_SERVER['DOCUMENT_ROOT']));
+				$this->phpIncludesPath = $this->includesPath;
+			}
+			else {
+				$this->jsIncludesPath = $this->includesPath;
+				$this->phpIncludesPath = $_SERVER['DOCUMENT_ROOT'] . $this->includesPath;
+			}
+		}
 
 		if(empty($this->phpIncludesPath) || !is_dir($this->phpIncludesPath))
 			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesPath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.");</script>';
-
 
 		if(empty($this->noAutoFocus))
 			$focus = true;
@@ -1923,7 +1921,7 @@ class form extends base {
 						$str .= "\t\t";
 						if(!empty($this->map))
 							$str .= "\t\t\t";
-						$str .= "<li style='display:none'>&nbsp;</li></ul>\n";
+						$str .= "<li style='display: none'>&nbsp;</li></ul>\n";
 					}
 				}
 				elseif($eleType == "captcha")
@@ -2201,30 +2199,33 @@ class form extends base {
 
 			if(!empty($jqueryDateIDArr) || !empty($jqueryDateRangeIDArr) || !empty($jquerySortIDArr) || !empty($jquerySliderIDArr) || !empty($jqueryStarRatingIDArr))
 			{
-				$str .= "\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/jquery-ui.css" rel="stylesheet" type="text/css"/>';
 				if(empty($this->preventJQueryUILoad))
 					$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/jquery-ui.js"></script>';
+				$str .= "\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/jquery-ui.css" rel="stylesheet" type="text/css"/>';
 			}
 
 			if(!empty($tooltipIDArr) && empty($this->preventQTipLoad))
 				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/qtip/jquery.qtip-1.0.0-rc3.min.js"></script>';
 
 			if(!empty($jqueryDateIDArr))
-				$str .= "\n\t" . '<style type="text/css">.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 0.8em !important; }</style>';
+				$str .= "\n\n\t" . '<style type="text/css">.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 0.8em !important; }</style>';
 
 			if(!empty($jquerySliderIDArr))
-				$str .= "\n\t" . '<style type="text/css">.ui-slider-handle { cursor: pointer !important; }</style>';
+				$str .= "\n\n\t" . '<style type="text/css">.ui-slider-handle { cursor: pointer !important; }</style>';
 
 			if(!empty($jqueryDateRangeIDArr))
 			{
-				$str .= "\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/ui.daterangepicker.css" rel="stylesheet" type="text/css"/>';
+				$str .= "\n\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/ui.daterangepicker.css" rel="stylesheet" type="text/css"/>';
 				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/daterangepicker.jquery.js"></script>';
 			}	
 
 			if(!empty($jqueryStarRatingIDArr))
 			{
-				$str .= "\n\t" . '<style type="text/css">';
-				$str .= '
+			$str .= <<<STR
+
+
+	<script type="text/javascript" src="$this->jsIncludesPath/jquery/starrating/ui.stars.min.js"></script>
+	<style type="text/css">
 		.ui-stars-star,
 		.ui-stars-cancel {
 			float: left;
@@ -2239,51 +2240,51 @@ class form extends base {
 			height: 26px;
 			display: block;
 			position: relative;
-			background: transparent url("' . $this->jsIncludesPath . '/jquery/starrating/remove_inactive.png") 0 0 no-repeat;
+			background: transparent url("$this->jsIncludesPath/jquery/starrating/remove_inactive.png") 0 0 no-repeat;
 			_background: none;
 			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="' . $this->jsIncludesPath . '/jquery/starrating/remove_inactive.png", sizingMethod="scale");
+				(src="$this->jsIncludesPath/jquery/starrating/remove_inactive.png", sizingMethod="scale");
 		}
 		.ui-stars-star a {
-			background: transparent url("' . $this->jsIncludesPath . '/jquery/starrating/star_inactive.png") 0 0 no-repeat;
+			background: transparent url("$this->jsIncludesPath/jquery/starrating/star_inactive.png") 0 0 no-repeat;
 			_background: none;
 			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="' . $this->jsIncludesPath . '/jquery/starrating/star_inactive.png", sizingMethod="scale");
+				(src="$this->jsIncludesPath/jquery/starrating/star_inactive.png", sizingMethod="scale");
 		}
 		.ui-stars-star-on a {
-			background: transparent url("' . $this->jsIncludesPath . '/jquery/starrating/star_active.png") 0 0 no-repeat;
+			background: transparent url("$this->jsIncludesPath/jquery/starrating/star_active.png") 0 0 no-repeat;
 			_background: none;
 			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="' . $this->jsIncludesPath . '/jquery/starrating/star_active.png", sizingMethod="scale");
+				(src="$this->jsIncludesPath/jquery/starrating/star_active.png", sizingMethod="scale");
 		}
 		.ui-stars-star-hover a {
-			background: transparent url("' . $this->jsIncludesPath . '/jquery/starrating/star_hot.png") 0 0 no-repeat;
+			background: transparent url("$this->jsIncludesPath/jquery/starrating/star_hot.png") 0 0 no-repeat;
 			_background: none;
 			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="' . $this->jsIncludesPath . '/jquery/starrating/star_hot.png", sizingMethod="scale");
+				(src="$this->jsIncludesPath/jquery/starrating/star_hot.png", sizingMethod="scale");
 		}
 		.ui-stars-cancel-hover a {
-			background: transparent url("' . $this->jsIncludesPath . '/jquery/starrating/remove_active.png") 0 0 no-repeat;
+			background: transparent url("$this->jsIncludesPath/jquery/starrating/remove_active.png") 0 0 no-repeat;
 			_background: none;
 			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="' . $this->jsIncludesPath . '/jquery/starrating/remove_active.png", sizingMethod="scale");
+				(src="$this->jsIncludesPath/jquery/starrating/remove_active.png", sizingMethod="scale");
 		}
 		.ui-stars-star-disabled,
 		.ui-stars-star-disabled a,
 		.ui-stars-cancel-disabled a {
 			cursor: default !important;
-		}';
-				$str .= "\n\t" . '</style>';
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/starrating/ui.stars.min.js"></script>';
+		}
+	</style>
+STR;
 			}
 
 			if(!empty($jqueryColorIDArr))
 			{
-				$str .= "\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/colorpicker/colorpicker.css" rel="stylesheet" type="text/css"/>';
+				$str .= "\n\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/colorpicker/colorpicker.css" rel="stylesheet" type="text/css"/>';
 				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/colorpicker/colorpicker.js"></script>';
 			}
 
-			$str .= "\n\t" . '<script type="text/javascript" defer="defer">';
+			$str .= "\n\n\t" . '<script type="text/javascript" defer="defer">';
 			$str .= "\n\t\t" . "$(function() {";
 			if(!empty($jqueryDateIDArr))
 			{
@@ -2389,10 +2390,10 @@ class form extends base {
 
 			$str .= "\n\t\t});";
 
-			$str .= "\n\t</script>\n\n";
+			$str .= "\n\t</script>\n";
 		}	
 		elseif((!empty($this->ajax) || !empty($this->emailExists)) && empty($this->preventJQueryLoad))
-			$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/jquery.js"></script>';
+			$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/jquery.js"></script>' . "\n";
 
 		if(!empty($latlngIDArr))
 		{
@@ -2422,6 +2423,7 @@ class form extends base {
 			{
 				$latlng = $latlngIDArr[$latlngKeys[$l]];
 				$latlngID = str_replace('"', '&quot;', $latlng->attributes["id"]);
+				$latlngName = str_replace('"', '&quot;', $latlng->attributes["name"]);
 				$latlngHint = str_replace('"', '&quot;', $latlng->hint);
 				if(!empty($latlng->attributes["value"]))
 				{
@@ -2439,78 +2441,86 @@ class form extends base {
 					else
 						$latlngZoom = $latlng->latlngZoom;
 				}	
-				$str .= "\n\t\t\t" . 'geocoder_' . $latlngID . ' = new google.maps.Geocoder();';
-				$str .= "\n\t\t\t" . 'var latlng_' . $latlngID . ' = new google.maps.LatLng(' . $latlngCenter[0] . ', ' . $latlngCenter[1] . ');';
-				$str .= "\n\t\t\t" . 'var mapoptions_' . $latlngID . ' = { zoom: ' . $latlngZoom . ', center: latlng_' . $latlngID . ', mapTypeId: google.maps.MapTypeId.ROADMAP, mapTypeControl: false }';
-				$str .= "\n\t\t\t" . 'map_' . $latlngID . ' = new google.maps.Map(document.getElementById("' . $latlngID . '_canvas"), mapoptions_' . $latlngID . ');';
-				$str .= "\n\t\t\t" . 'var markeroptions_' . $latlngID . ' = { position: latlng_' . $latlngID . ', map: map_' . $latlngID . ', draggable: true }';
-				$str .= "\n\t\t\t" . 'marker_' . $latlngID . ' = new google.maps.Marker(markeroptions_' . $latlngID . ');';
-				$str .= "\n\t\t\t" . 'google.maps.event.addListener(marker_' . $latlngID . ', "dragend", function() {';
-					$str .= "\n\t\t\t\tvar latlng = marker_" . $latlngID . ".getPosition();";
-					$str .= "\n\t\t\t\tvar lat = latlng.lat();";
-					$str .= "\n\t\t\t\tvar lng = latlng.lng();";
-					$str .= "\n\t\t\t\t" . 'document.forms["' . $latlngForm . '"].elements["' . str_replace('"', '&quot;', $latlng->attributes["name"]) . '"].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);';
-					$str .= "\n\t\t\t\t" . 'document.getElementById("' . $latlngID . '_clearDiv").style.display = "block";';
-				$str .= "\n\t\t\t});";
+
+			$str .= <<<STR
+
+			geocoder_$latlngID = new google.maps.Geocoder();
+			var latlng_$latlngID = new google.maps.LatLng({$latlngCenter[0]}, {$latlngCenter[1]});
+			var mapoptions_$latlngID = { zoom: $latlngZoom, center: latlng_$latlngID, mapTypeId: google.maps.MapTypeId.ROADMAP, mapTypeControl: false }
+			map_$latlngID = new google.maps.Map(document.getElementById("{$latlngID}_canvas"), mapoptions_$latlngID);
+			var markeroptions_$latlngID = { position: latlng_$latlngID, map: map_$latlngID, draggable: true }
+			marker_$latlngID = new google.maps.Marker(markeroptions_$latlngID);
+			google.maps.event.addListener(marker_$latlngID, "dragend", function() {
+				var latlng = marker_$latlngID.getPosition();
+				var lat = latlng.lat();
+				var lng = latlng.lng();
+				document.forms["$latlngForm"].elements["$latlngName"].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
+				document.getElementById("{$latlngID}_clearDiv").style.display = "block";
+			});	
+STR;
 			}
-			$str .= "\n\t\t}";
-			$str .= "\n\t\tfunction jumpToLatLng_" . $this->attributes["name"] . "(fieldObj, latlngID, fieldName) {";
-				$str .= "\n\t\t\teval('var geocoderObj = geocoder_' + latlngID);";
-				$str .= "\n\t\t\teval('var mapObj = map_' + latlngID);";
-				$str .= "\n\t\t\teval('var markerObj = marker_' + latlngID);";
-				$str .= "\n\t\t\tif(geocoderObj) {";
-					$str .= "\n\t\t\t\tgeocoderObj.geocode({'address': fieldObj.value}, function(results, status) {";
-						$str .= "\n\t\t\t\t\tif(status == google.maps.GeocoderStatus.OK) {";
-							$str .= "\n\t\t\t\t\t\tmapObj.setCenter(results[0].geometry.location);";
-							$str .= "\n\t\t\t\t\t\tmarkerObj.setPosition(results[0].geometry.location);";
-							$str .= "\n\t\t\t\t\t\tvar lat = results[0].geometry.location.lat();";
-							$str .= "\n\t\t\t\t\t\tvar lng = results[0].geometry.location.lng();";
-							$str .= "\n\t\t\t\t\t\t" . 'document.forms["' . $latlngForm . '"].elements[fieldName].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);';
-							$str .= "\n\t\t\t\t\t\t" . 'document.getElementById(latlngID + "_clearDiv").style.display = "block";';
-						$str .= "\n\t\t\t\t\t}";
-					$str .= "\n\t\t\t\t});";
-				$str .= "\n\t\t\t}";
-			$str .= "\n\t\t}";
-			$str .= "\n\t\tfunction focusJumpToLatLng_" . $this->attributes["name"] . "(fieldObj) {";
-				$str .= "\n\t\t\tif(fieldObj.value == 'Location Jump: Enter Keyword, City/State, Address, or Zip Code')";
-					$str .= "\n\t\t\t\tfieldObj.value = '';";
-			$str .= "\n\t\t}";
-			$str .= "\n\t\tfunction blurJumpToLatLng_" . $this->attributes["name"] . "(fieldObj) {";
-				$str .= "\n\t\t\tif(fieldObj.value == '')";
-					$str .= "\n\t\t\t\tfieldObj.value = 'Location Jump: Enter Keyword, City/State, Address, or Zip Code';";
-			$str .= "\n\t\t}";
-			$str .= "\n\t\tfunction clearLatLng_" . $this->attributes["name"] . "(latlngID, latlngFieldName) {";
-					$str .= "\n\t\t\t" . 'if(document.forms["' . $latlngForm . '"].elements[latlngID + "_locationJump"])';
-						$str .= "\n\t\t\t\t" . 'document.forms["' . $latlngForm . '"].elements[latlngID + "_locationJump"].value = "Location Jump: Enter Keyword, City/State, Address, or Zip Code";';
-					$str .= "\n\t\t\t" . 'document.forms["' . $latlngForm . '"].elements[latlngFieldName].value = "' . $latlngHint . '";';
-					$str .= "\n\t\t\t" . 'document.getElementById(latlngID + "_clearDiv").style.display = "none";';
-			$str .= "\n\t\t}";
-			$str .= "\n\t\t" . 'if(window.addEventListener) { window.addEventListener("load", initializeLatLng_' . $this->attributes["name"] . ', false); }'; 
-			$str .= "\n\t\t" . 'else if(window.attachEvent) { window.attachEvent("onload", initializeLatLng_' . $this->attributes["name"] . '); }'; 
-			$str .= "\n\t</script>\n\n";
+
+			$str .= <<<STR
+
+		}
+		function jumpToLatLng_{$this->attributes["name"]}(fieldObj, latlngID, fieldName) {
+			eval('var geocoderObj = geocoder_' + latlngID);
+			eval('var mapObj = map_' + latlngID);
+			eval('var markerObj = marker_' + latlngID);
+			if(geocoderObj) {
+				geocoderObj.geocode({'address': fieldObj.value}, function(results, status) {
+					if(status == google.maps.GeocoderStatus.OK) {
+						mapObj.setCenter(results[0].geometry.location);
+						markerObj.setPosition(results[0].geometry.location);
+						var lat = results[0].geometry.location.lat();
+						var lng = results[0].geometry.location.lng();
+						document.forms["$latlngForm"].elements[fieldName].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
+						document.getElementById(latlngID + "_clearDiv").style.display = "block";
+					}
+				});
+			}
+		}
+		function focusJumpToLatLng_{$this->attributes["name"]}(fieldObj) {
+			if(fieldObj.value == 'Location Jump: Enter Keyword, City/State, Address, or Zip Code')
+				fieldObj.value = '';
+		}
+		function blurJumpToLatLng_{$this->attributes["name"]}(fieldObj) {
+			if(fieldObj.value == '')
+				fieldObj.value = 'Location Jump: Enter Keyword, City/State, Address, or Zip Code';
+		}
+		function clearLatLng_{$this->attributes["name"]}(latlngID, latlngFieldName) {
+			if(document.forms["$latlngForm"].elements[latlngID + "_locationJump"])
+				document.forms["$latlngForm"].elements[latlngID + "_locationJump"].value = "Location Jump: Enter Keyword, City/State, Address, or Zip Code";
+			document.forms["$latlngForm"].elements[latlngFieldName].value = "$latlngHint";
+			document.getElementById(latlngID + "_clearDiv").style.display = "none";
+		}
+		if(window.addEventListener) { window.addEventListener("load", initializeLatLng_{$this->attributes["name"]}, false); }
+		else if(window.attachEvent) { window.attachEvent("onload", initializeLatLng_{$this->attributes["name"]}); }
+	</script>
+
+STR;
 		}
 
 		if(!empty($jqueryCheckSort))
 		{
-                        $str .= <<<STR
-                        <script type="text/javascript" defer="defer">
-				function addOrRemoveCheckSortItem_{$this->attributes["name"]}(cs_fieldObj, cs_id, cs_name, cs_index, cs_value, cs_text) {
-					if(cs_fieldObj.checked != true)
-						document.getElementById(cs_id).removeChild(document.getElementById(cs_id + cs_index));
-					else {
-						var li = document.createElement('li');
-						li.id = cs_id + cs_index;
-						li.className = 'ui-state-default';
-						li.style.cssText = 'margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2em; line-height: 2em;'
-						li.innerHTML = '<input type=\"hidden\" name=\"' + cs_name + '\" value=\"' + cs_value + '\"/>' + cs_text;
-						document.getElementById(cs_id).appendChild(li);
-					}
-				}
-			</script>
+			$str .= <<<STR
+
+	<script type="text/javascript" defer="defer">
+		function addOrRemoveCheckSortItem_{$this->attributes["name"]}(cs_fieldObj, cs_id, cs_name, cs_index, cs_value, cs_text) {
+			if(cs_fieldObj.checked != true)
+				document.getElementById(cs_id).removeChild(document.getElementById(cs_id + cs_index));
+			else {
+				var li = document.createElement('li');
+				li.id = cs_id + cs_index;
+				li.className = 'ui-state-default';
+				li.style.cssText = 'margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2em; line-height: 2em;';
+				li.innerHTML = '<input type="hidden" name="' + cs_name + '" value="' + cs_value + '"/>' + cs_text;
+				document.getElementById(cs_id).appendChild(li);
+			}
+		}
+	</script>
+
 STR;
-
-
-
 		}
 
 		if(!empty($this->tinymceIDArr))
@@ -2520,30 +2530,33 @@ STR;
 
 			if(empty($this->preventTinyMCEInitLoad))
 			{
-				$str .= "\n\t" . '<script type="text/javascript">';
-					$str .= "\n\t\ttinyMCE.init({";
-						$str .= "\n\t\t\t" . 'mode: "textareas",';
-						$str .= "\n\t\t\t" . 'theme: "advanced",';
-						$str .= "\n\t\t\t" . 'plugins: "safari,table,paste,inlinepopups",';
-						$str .= "\n\t\t\t" . 'dialog_type: "modal",';
-						$str .= "\n\t\t\t" . 'theme_advanced_buttons1: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,|,forecolor,backcolor",';
-						$str .= "\n\t\t\t" . 'theme_advanced_buttons2: "formatselect,fontselect,fontsizeselect,|,pastetext,pasteword,|,link,image",';
-						$str .= "\n\t\t\t" . 'theme_advanced_buttons3: "tablecontrols,|,code,cleanup,|,undo,redo",';
-						$str .= "\n\t\t\t" . 'theme_advanced_toolbar_location: "top",';
-						$str .= "\n\t\t\t" . 'editor_selector: "tiny_mce",';
-						$str .= "\n\t\t\t" . 'forced_root_block: false,';
-						$str .= "\n\t\t\t" . 'force_br_newlines: true,';
-						$str .= "\n\t\t\t" . 'force_p_newlines: false';
-					$str .= "\n\t\t});";
-					$str .= "\n\t\ttinyMCE.init({";
-						$str .= "\n\t\t\t" . 'mode: "textareas",';
-						$str .= "\n\t\t\t" . 'theme: "simple",';
-						$str .= "\n\t\t\t" . 'editor_selector: "tiny_mce_simple",';
-						$str .= "\n\t\t\t" . 'forced_root_block: false,';
-						$str .= "\n\t\t\t" . 'force_br_newlines: true,';
-						$str .= "\n\t\t\t" . 'force_p_newlines: false';
-					$str .= "\n\t\t});";
-				$str .= "\n\t</script>\n\n";
+				$str .= <<<STR
+	<script type="text/javascript">
+		tinyMCE.init({
+			mode: "textareas",
+			theme: "advanced",
+			plugins: "safari,table,paste,inlinepopups",
+			dialog_type: "modal",
+			theme_advanced_buttons1: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,|,forecolor,backcolor",
+			theme_advanced_buttons2: "formatselect,fontselect,fontsizeselect,|,pastetext,pasteword,|,link,image",
+			theme_advanced_buttons3: "tablecontrols,|,code,cleanup,|,undo,redo",
+			theme_advanced_toolbar_location: "top",
+			editor_selector: "tiny_mce",
+			forced_root_block: false,
+			force_br_newlines: true,
+			force_p_newlines: false
+		});
+		tinyMCE.init({
+			mode: "textareas",
+			theme: "simple",
+			editor_selector: "tiny_mce_simple",
+			forced_root_block: false,
+			force_br_newlines: true,
+			force_p_newlines: false
+		});
+	</script>	
+
+STR;
 			}
 		}
 
@@ -2572,7 +2585,7 @@ STR;
 					$str .=  ", { " . implode(", ", $ckeditorParamArr) . " }";
 				$str .= ");";
 			}
-			$str .= "\n\t</script>\n\n";
+			$str .= "\n\t</script>\n";
 		}	
 
 		if(!empty($captchaID))
@@ -2582,21 +2595,26 @@ STR;
 			
 			$str .= "\n\t" . '<script type="text/javascript">';
 				$str .= "\n\t\t" . 'Recaptcha.create("' . $this->captchaPublicKey . '", "' . $captchaID . '", { theme: "' . $this->captchaTheme . '", lang: "' . $this->captchaLang . '" });';
-			$str .= "\n\t</script>\n\n";
+			$str .= "\n\t</script>\n";
 		}
 
 		if(!empty($this->hintExists))
 		{
-			$str .= "\n\t" . '<script type="text/javascript">';
-				$str .= "\n\t\t" . 'function hintfocus_' . $this->attributes["name"] . '(eleObj) {';
-					$str .= "\n\t\t\tif(eleObj.value == eleObj.defaultValue)";
-						$str .= "\n\t\t\t\teleObj.value = '';";
-				$str .= "\n\t\t}";
-				$str .= "\n\t\t" . 'function hintblur_' . $this->attributes["name"] . '(eleObj) {';
-					$str .= "\n\t\t\tif(eleObj.value == '')";
-						$str .= "\n\t\t\t\teleObj.value = eleObj.defaultValue;";
-				$str .= "\n\t\t}";
-			$str .= "\n\t</script>\n\n";
+				$str .= <<<STR
+
+	<script type="text/javascript">
+		function hintfocus_{$this->attributes["name"]}(eleObj) {
+			if(eleObj.value == eleObj.defaultValue)
+				eleObj.value = '';
+		}
+		function hintblur_{$this->attributes["name"]}(eleObj) {
+			if(eleObj.value == '')
+				eleObj.value = eleObj.defaultValue;
+		}
+	</script>	
+
+
+STR;
 		}
 
 		return $str;
@@ -2611,7 +2629,12 @@ STR;
 			$ele = $elements[$i];
 			$eleType = $ele->attributes["type"];
 			$eleName = str_replace('"', '&quot;', $ele->attributes["name"]);
-			$eleLabel = str_replace('"', '&quot;', strip_tags($ele->label));
+			if(!empty($ele->attributes["id"]))
+				$eleId = str_replace('"', '&quot;', $ele->attributes["id"]);
+			if(!empty($ele->label))
+				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->label));
+			else
+				$eleLabel = "";
 			$alertMsg = 'alert("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '");';
 
 			if($eleType == "html")
@@ -2710,70 +2733,85 @@ STR;
 			elseif($eleType == "select" || $eleType == "hidden" || $eleType == "file" || $eleType == "password")
 			{
 				if(!empty($this->ajax))
-					echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+				{
+					echo <<<STR
+		form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
+STR;
+				}	
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value == "") {';
-						echo "\n\t\t\t", $alertMsg;
-						echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
-						echo "\n\t\t\treturn false;";
-					echo "\n\t\t}";
+					echo <<<STR
+		if(formObj.elements["$eleName"].value == "") {
+			$alertMsg
+			formObj.elements["$eleName"].focus();
+			return false;
+		}
+STR;
 				}
 			}
 			elseif($eleType == "rating")
 			{
 				if(!empty($this->ajax))
 				{
-					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value != "") {';
-						echo "\n\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+					echo <<<STR
+		if(formObj.elements["$eleName"].value != "")
+			form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
+STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value == "") {';
-						echo "\n\t\t\t", $alertMsg;
-						echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
-						echo "\n\t\t\treturn false;";
-					echo "\n\t\t}";
+					echo <<<STR
+		if(formObj.elements["$eleName"].value == "") {
+			$alertMsg
+			formObj.elements["$eleName"].focus();
+			return false;
+		}
+STR;
 				}
 			}
 			elseif($eleType == "slider")
 			{
 				if(!empty($this->ajax))
 				{
-					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
-						echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][0].value);';
-						echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][1].value);';
-					echo "\n\t\t}";		
-					echo "\n\t\telse {";
-						echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
-					echo "\n\t\t}";		
+					echo <<<STR
+		if(formObj.elements["$eleName"].length) {
+			form_data += "&$eleName=" + escape(formObj.elements["$eleName"][0].value);
+			form_data += "&$eleName=" + escape(formObj.elements["$eleName"][1].value);
+		}
+		else
+			form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
+STR;
 				}	
 			}
 			elseif($eleType == "captcha")
 			{
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t" , 'if(formObj.elements["recaptcha_response_field"].value == "") {';
-						echo "\n\t\t\t", $alertMsg;
-						echo "\n\t\t\t", 'formObj.elements["recaptcha_response_field"].focus();';
-						echo "\n\t\t\treturn false;";
-					echo "\n\t\t}";
+					echo <<<STR
+		if(formObj.elements["recaptcha_response_field"].value == "") {		
+			$alertMsg
+			formObj.elements["recaptcha_response_field"].focus();
+			return false;
+		}	
+STR;
 				}
 				if(!empty($this->ajax))
 				{
-					echo "\n\t\t", 'form_data += "&recaptcha_challenge_field=" + escape(Recaptcha.get_challenge());';
-					echo "\n\t\t", 'form_data += "&recaptcha_response_field=" + escape(Recaptcha.get_response());';
+					echo <<<STR
+		form_data += "&recaptcha_challenge_field=" + escape(Recaptcha.get_challenge());		
+		form_data += "&recaptcha_response_field=" + escape(Recaptcha.get_response());
+STR;
 				}	
 			}
 			elseif($eleType == "webeditor")
 			{
 				if(!empty($this->ajax))
-					echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(tinyMCE.get("', $ele->attributes["id"], '").getContent());';
+					echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(tinyMCE.get("', $eleId, '").getContent());';
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t", 'if(tinyMCE.get("', $ele->attributes["id"], '").getContent() == "") {';
+					echo "\n\t\t", 'if(tinyMCE.get("', $eleId, '").getContent() == "") {';
 						echo "\n\t\t\t", $alertMsg;
-						echo "\n\t\t\t" , 'tinyMCE.get("', $ele->attributes["id"], '").focus();';
+						echo "\n\t\t\t" , 'tinyMCE.get("', $eleId, '").focus();';
 						echo "\n\t\t\treturn false;";
 					echo "\n\t\t}";
 				}
@@ -2781,12 +2819,12 @@ STR;
 			elseif($eleType == "ckeditor")
 			{
 				if(!empty($this->ajax))
-					echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(CKEDITOR.instances.' . $ele->attributes["id"] . '.getData());';
+					echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(CKEDITOR.instances.' . $eleId . '.getData());';
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t" , 'if( CKEDITOR.instances.' . $ele->attributes["id"] . '.getData() == "") {';
+					echo "\n\t\t" , 'if( CKEDITOR.instances.' . $eleId . '.getData() == "") {';
 						echo "\n\t\t\t", $alertMsg;
-						echo "\n\t\t\t" , 'CKEDITOR.instances.' . $ele->attributes["id"] . '.focus();';
+						echo "\n\t\t\t" , 'CKEDITOR.instances.' . $eleId . '.focus();';
 						echo "\n\t\t\treturn false;";
 					echo "\n\t\t}";
 				}
@@ -2795,70 +2833,81 @@ STR;
 			{
 				if(!empty($this->ajax))
 				{
-					echo "\n\t\t", 'if(formObj.elements["', $eleName, '"]) {';
-						echo "\n\t\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
-							echo "\n\t\t\t\t" , 'var ulObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '");';
-							echo "\n\t\t\t\tvar childLen = ulObj.childNodes.length;";
-							echo "\n\t\t\t\tfor(i = 0; i < childLen; i++) {";
-								echo "\n\t\t\t\t\t", 'childObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '").childNodes[i];';
-									echo "\n\t\t\t\t\t", 'if(childObj.tagName && childObj.tagName.toLowerCase() == "li")';
-										echo "\n\t\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(childObj.childNodes[0].value);';
-							echo "\n\t\t\t\t}";
-						echo "\n\t\t\t}";
-						echo "\n\t\t\telse";
-							echo "\n\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
-					echo "\n\t\t}";
+					echo <<<STR
+		if(formObj.elements["$eleName"]) {
+			if(formObj.elements["$eleName"].length) {
+				var ulObj = document.getElementById("$eleId");
+				var childLen = ulObj.childNodes.length;
+				for(i = 0; i < childLen; i++) {
+					childObj = document.getElementById("$eleId").childNodes[i];
+					if(childObj.tagName && childObj.tagName.toLowerCase() == "li")
+						form_data += "&$eleName=" + escape(childObj.childNodes[0].value);
+				}
+			}
+			else
+				form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
+		}
+STR;
 				}
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t", 'if(!formObj.elements["', $eleName, '"]) {';
-						echo "\n\t\t\t", $alertMsg;
-						echo "\n\t\t\treturn false;";
-					echo "\n\t\t}";	
+					echo <<<STR
+		if(!formObj.elements["$eleName"]) {
+			$alertMsg
+			return false;
+		}	
+STR;
 				}	
 			}
 			elseif(!empty($this->ajax) && $eleType == "sort")
 			{
-				echo "\n\t\t", 'if(formObj.elements["', $eleName, '"]) {';
-					echo "\n\t\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
-						echo "\n\t\t\t\t" , 'var ulObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '");';
-						echo "\n\t\t\t\tvar childLen = ulObj.childNodes.length;";
-						echo "\n\t\t\t\tfor(i = 0; i < childLen; i++) {";
-							echo "\n\t\t\t\t\t", 'childObj = document.getElementById("', str_replace('"', '&quot;', $ele->attributes["id"]), '").childNodes[i];';
-								echo "\n\t\t\t\t\t", 'if(childObj.tagName && childObj.tagName.toLowerCase() == "li")';
-									echo "\n\t\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(childObj.childNodes[0].value);';
-						echo "\n\t\t\t\t}";
-					echo "\n\t\t\t}";
-					echo "\n\t\t\telse";
-						echo "\n\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
-				echo "\n\t\t}";
+				echo <<<STR
+		if(formObj.elements["$eleName"]) {
+			if(formObj.elements["$eleName"].length) {
+				var ulObj = document.getElementById("$eleId");
+				var childLen = ulObj.childNodes.length;
+				for(i = 0; i < childLen; i++) {
+					childObj = document.getElementById("$eleId").childNodes[i];
+					if(childObj.tagName && childObj.tagName.toLowerCase() == "li")
+						form_data += "&$eleName=" + escape(childObj.childNodes[0].value);
+				}
+			}
+			else
+				form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
+		}		
+STR;
+				
 			}
 			
 			if($eleType == "email")
 			{
-				echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value != "', $eleHint, '") {';
-					echo "\n\t\t\t$.ajax({";
-						echo "\n\t\t\t\t", 'async: false,';
-						echo "\n\t\t\t\t", 'type: "post",';
-						echo "\n\t\t\t\t", 'url: "', $this->jsIncludesPath, '/php-email-address-validation/ajax-handler.php",';
-						echo "\n\t\t\t\t", 'dataType: "text",';
-						echo "\n\t\t\t\t", 'data: "email=" + escape(formObj.elements["', $eleName, '"].value) + "&label=" + escape("', $eleLabel, '") + "&format=" + escape("', $this->emailErrorMsgFormat, '"),';
-						echo "\n\t\t\t\tsuccess: function(responseMsg, textStatus) {";
-							echo "\n\t\t\t\t\t", 'if(responseMsg != "") {';
-								echo "\n\t\t\t\t\t\tvalidemail_", $this->attributes["name"], " = false;";
-								echo "\n\t\t\t\t\t\talert(responseMsg);";
-							echo "\n\t\t\t\t\t}";
-							echo "\n\t\t\t\t\telse";
-								echo "\n\t\t\t\t\t\tvalidemail_", $this->attributes["name"], " = true;";
-						echo "\n\t\t\t\t},";
-						echo "\n\t\t\t\terror: function(XMLHttpRequest, textStatus, errorThrown) { alert(XMLHttpRequest.responseText); }";
-					echo "\n\t\t\t});";
+				echo <<<STR
 
-					echo "\n\t\t\tif(!validemail_", $this->attributes["name"], ") {";
-						echo "\n\t\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
-						echo "\n\t\t\t\treturn false;";
-					echo "\n\t\t\t}";
-				echo "\n\t\t}";
+		if(formObj.elements["$eleName"].value != "$eleHint") {
+			$.ajax({
+				async: false,
+				type: "post",
+				url: "{$this->jsIncludesPath}/php-email-address-validation/ajax-handler.php",
+				dataType: "text",
+				data: "email=" + escape(formObj.elements["$eleName"].value) + "&label=" + escape("$eleLabel") + "&format=" + escape("{$this->emailErrorMsgFormat}"),
+				success: function(responseMsg, textStatus) {
+					if(responseMsg != "") {
+						validemail_{$this->attributes["name"]} = false;
+						alert(responseMsg);
+					}
+					else
+						validemail_{$this->attributes["name"]} = true;
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) { alert(XMLHttpRequest.responseText); }
+			});
+
+			if(!validemail_{$this->attributes["name"]}) {
+				formObj.elements["$eleName"].focus();
+				return false;
+			}
+		}
+
+STR;
 			}
 		}	
 
