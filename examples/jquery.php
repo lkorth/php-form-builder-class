@@ -28,7 +28,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				<?php
 				$form = new form("jquery");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"tableAttributes" => array("width" => "300")
 				));
 				$form->addHidden("cmd", "submit");
@@ -53,7 +53,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 echo '<pre>' . htmlentities('<?php
 $form = new form("jquery");
 $form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "300")
 ));
 $form->addHidden("cmd", "submit");

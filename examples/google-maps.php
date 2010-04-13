@@ -28,14 +28,14 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				longitude will be inserted into the textbox above the map. You can also make use of the Location Jump textbox to move to a specific 
 				location. The maps latitude/longitude will automatically update as you type.  The location will need to be parsed once submitted - I recommend using 
 				explode() on the "," and substring() on each piece.<p>
-				<p>You can customize the map's zoom, width, and height with the <i>latlngZoom</i>, </i>latlngWidth</i>, and <i>latlngHeight</i> element attributes.  Also, you can disable
+				<p>You can customize the map's zoom, width, and height with the <i>latlngZoom</i>, <i>latlngWidth</i>, and <i>latlngHeight</i> element attributes.  Also, you can disable
 				the location jump functionality with the <i>latlngHideJump</i> element attribute.</p>
 				<p>Also, you can use the <i>latlngDefaultLocation</i> form attribute to control where the marker is placed on the map initially - with no value assigned.
 
 				<?php
 				$form = new form("google_maps");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"tableAttributes" => array("width" => "500"),
 					"latlngDefaultLocation" => array(38.897, -77.040)
 				));
@@ -48,7 +48,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 echo '<pre>' . htmlentities('<?php
 $form = new form("google_maps");
 $form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "500"),
 	"latlngDefaultLocation" => array(38.897, -77.040)
 ));

@@ -27,22 +27,22 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				This directory contains essential functionality used throughout this project includeing jQuery, TinyMCE, CKEditor, and reCAPTCHA.  If the relative path of this directory is not correctly identified,
 				a javascript alert message will be displayed notifying you of this configuration problem.</p>
 
-				<p>To correct this, you will need to specify the <i>includesRelativePath</i> form attribute in the form's setAttributes() function.  By default, this attribute
+				<p>To correct this, you will need to specify the <i>includesPath</i> form attribute in the form's setAttributes() function.  By default, this attribute
 				is set to php-form-builder-class/includes.  The default setting will correctly identify the includes directory if the php-form-builder-class folder and the script where your form is built/rendered are in the
 				same directory.  Please take note that this path needs to be relative to the script where your form is built/rendered - not absolute.  This is because the attribute is used to include both javascript and php
 				files.</p>
 
-				<p>In this example script, as well as all the included examples, you will notice the <i>includesRelativePath</i> form attribute is set to ../includes.  This is because all the example files are grouped in the examples
+				<p>In this example script, as well as all the included examples, you will notice the <i>includesPath</i> form attribute is set to ../includes.  This is because all the example files are grouped in the examples
 				directory and not in the same folder as the includes directory.  To remove the javascript alert message on this example script and fix the configuration error, edit the php source and remove the comment from the line 
-				setting the <i>includesRelativePath</i> attribute in the form's setAttributes() function.</p>
+				setting the <i>includesPath</i> attribute in the form's setAttributes() function.</p>
 
-				<p>An alternate solution would be to manually edit the default value of the <i>includesRelativePath</i> form attribute in class.form.php; however, this method isn't ideal if you plan to keep your copy of this project
+				<p>An alternate solution would be to manually edit the default value of the <i>includesPath</i> form attribute in class.form.php; however, this method isn't ideal if you plan to keep your copy of this project
 				up-to-date with the latest versions that are released frequently.</p>
 
 				<?php
 				$form = new form("includes_configuration_error");
 				$form->setAttributes(array(
-					//"includesRelativePath" => "../includes",
+					//"includesPath" => "../includes",
 					"tableAttributes" => array("width" => "400"),
 				));
 				$form->addHidden("cmd", "submit");
@@ -56,7 +56,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 echo '<pre>' . htmlentities('<?php
 $form = new form("includes_configuration_error");
 $form->setAttributes(array(
-	//"includesRelativePath" => "../includes",
+	//"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "400"),
 ));
 $form->addHidden("cmd", "submit");

@@ -52,7 +52,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				<?php
 				$form = new form("signup");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"tableAttributes" => array("width" => "300"),
 					"ajax" => 1
 				));
@@ -66,7 +66,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 echo '<pre>' . htmlentities('<?php
 $form = new form("signup");
 $form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "300"),
 	"ajax" => 1
 ));
@@ -79,7 +79,7 @@ $form->render();
 ?>') . '</pre>';
 
 				?>
-				<p><b>Example 2: Login Form</b> - This sample login form uses four ajax specific paramters, each of which are described below.
+				<p><b>Example 2: Login Form</b> - This sample login form uses four ajax specific paramters, each of which are described below.</p>
 				<ul>
 					<li><i>ajaxType</i> - controls submission method - GET or POST.  By default, this parameter is set to POST; however, it is set to GET in the form below.</li>
 					<li><i>ajaxCallback</i> - triggers javascript function once the form has submitted.  Notice that the function is set as a string without "( )" on the end.  
@@ -88,13 +88,13 @@ $form->render();
 					<li><i>ajaxDataType</i> - specifies the data format for any server responses.  Options include xml, html, script, json, jsonp, and text.  By default, this parameter is set to text; however, it is set to xml in the form below.
 				</ul>
 				
-				</p><p>Use "formbuilder" as the Username and "password" as the Password to login with the form below.  Any other parameters will display an error message above the form.</p>
+				<p>Use "formbuilder" as the Username and "password" as the Password to login with the form below.  Any other parameters will display an error message above the form.</p>
 
 				<div id="messageDiv" style="color: #990000; font-weight: bold; width: 300px; text-align: center; display: none;"></div>
 				<?php
 				$form = new form("login");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"preventJQueryLoad" => "1",
 					"tableAttributes" => array("width" => "300"),
 					"ajax" => 1,
@@ -122,7 +122,7 @@ $form->render();
 echo '<pre>' . htmlentities('<?php
 $form = new form("login");
 $form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"preventJQueryLoad" => "1",
 	"tableAttributes" => array("width" => "300"),
 	"ajax" => 1,
@@ -155,7 +155,7 @@ $form->render();
 				<?php
 				$form = new form("loading");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"preventJQueryLoad" => "1",
 					"tableAttributes" => array("width" => "300"),
 					"ajax" => 1,
@@ -188,7 +188,7 @@ $form->render();
 echo '<pre>' . htmlentities('<?php
 $form = new form("loading");
 $form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"preventJQueryLoad" => "1",
 	"tableAttributes" => array("width" => "300"),
 	"ajax" => 1,
@@ -226,7 +226,7 @@ $form->render();
 				<?php
 				$form = new form("manual");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"preventJQueryLoad" => "1",
 					"tableAttributes" => array("width" => "300"),
 					"ajax" => 1,

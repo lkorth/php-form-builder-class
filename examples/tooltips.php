@@ -41,7 +41,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				<?php
 				$form = new form("tooltip");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"tableAttributes" => array("width" => "300")
 				));
 				$form->addHidden("cmd", "submit");
@@ -67,7 +67,7 @@ echo '<pre>' . htmlentities('<style type="text/css">
 <?php			
 $form = new form("tooltip");
 $form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "300")
 ));
 $form->addHidden("cmd", "submit");

@@ -30,7 +30,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				<?php
 				$form = new form("layout");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"tableAttributes" => array("width" => "500"),
 					"map" => array(2, 2, 1, 3)
 				));
@@ -49,7 +49,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 echo '<pre>' . htmlentities('<?php
 $form = new form("layout");
 $form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "500"),
 	"map" => array(2, 2, 1, 3)
 ));

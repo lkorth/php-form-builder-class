@@ -45,7 +45,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				<?php
 				$billing_form = new form("billing");
 				$billing_form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"tableAttributes" => array("width" => "500", "cellpadding" => "1"),
 					"map" => array(1, 2, 2, 1, 3, 1)
 				));
@@ -62,7 +62,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 
 				$shipping_form = new form("shipping");
 				$shipping_form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"tableAttributes" => array("width" => "100%", "cellpadding" => "1"),
 					"map" => array(1, 2, 2, 1, 3)
 				));
@@ -90,7 +90,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 echo '<pre>' . htmlentities('<?php
 $billing_form = new form("billing");
 $billing_form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "500", "cellpadding" => "1"),
 	"map" => array(1, 2, 2, 1, 3, 1)
 ));
@@ -106,7 +106,7 @@ $billing_form->addState("State:", "BillingState", "", array("required" => 1));
 $billing_form->addTextbox("Zip Code:", "BillingZip", "", array("required" => 1));
 $shipping_form = new form("shipping");
 $shipping_form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "100%", "cellpadding" => "1"),
 	"map" => array(1, 2, 2, 1, 3)
 ));
@@ -142,14 +142,14 @@ $billing_form->render();
 
 				$location_form = new form("location");
 				$location_form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"ajax" => 1,
 					"tableAttributes" => array("width" => "500")
 				));	
 
 				$map_form = new form("map");
 				$map_form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"parentFormOverride" => "location",
 					"tableAttributes" => array("width" => "100%", "cellpadding" => "1")
 				));	
@@ -157,7 +157,7 @@ $billing_form->render();
 
 				$address_form = new form("address");
 				$address_form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"tableAttributes" => array("width" => "100%", "cellpadding" => "1"),
 					"map" => array(1, 3)
 				));	
@@ -181,13 +181,13 @@ $billing_form->render();
 echo '<pre>' . htmlentities('<?php
 $location_form = new form("location");
 $location_form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "500")
 ));	
 
 $map_form = new form("map");
 $map_form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"parentFormOverride" => "location",
 	"tableAttributes" => array("width" => "100%", "cellpadding" => "1")
 ));	
@@ -195,7 +195,7 @@ $map_form->addLatLng("", "LatitudeLongitude", "", array("required" => 1));
 
 $address_form = new form("address");
 $address_form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "100%", "cellpadding" => "1"),
 	"map" => array(1, 3)
 ));	

@@ -40,7 +40,7 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				<?php
 				$form = new form("email_validation");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"enableSessionAutoFill" => 1,
 					"tableAttributes" => array("width" => "400")
 				));
@@ -52,7 +52,7 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 echo '<pre>' . htmlentities('<?php
 $form = new form("email_validation");
 $form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"enableSessionAutoFill" => 1,
 	"tableAttributes" => array("width" => "400")
 ));

@@ -60,7 +60,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 
 				$form = new form("captcha");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes",
+					"includesPath" => "../includes",
 					"tableAttributes" => array("width" => "400"),
 					"captchaTheme" => $captchaTheme
 				));
@@ -77,7 +77,7 @@ if(!empty($_GET["theme"]))
 
 $form = new form("captcha");
 $form->setAttributes(array(
-	"includesRelativePath" => "../includes",
+	"includesPath" => "../includes",
 	"tableAttributes" => array("width" => "400"),
 	"captchaTheme" => $captchaTheme
 ));

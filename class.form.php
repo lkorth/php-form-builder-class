@@ -81,24 +81,28 @@ class form extends base {
 	protected $emailErrorMsgFormat;		/*Allow you to customize was is alerted/returned during js/php email validation.*/
 	protected $latlngDefaultLocation;	/*Allow you to customize the default location of latlng form elements.*/
 	protected $parentFormOverride;		/*When using the latlng form element with the elementsToString() function, this attribute will need to be set to the parent form name.*/
-	protected $includesRelativePath;	/*Specifies where the includes directory is located.  This path must be relative b/c it is used for both js and php includes.*/
-	protected $onsubmitFunctionOverride;/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
+	protected $includesRelativePath;	/*DEPRECATED: Specifies where the includes directory is located.  This path must be relative b/c it is used for both js and php includes.*/
+	protected $includesPath;               /*Specifies where the includes directory is located. This path can be relative or absolute  */
+        protected $onsubmitFunctionOverride;/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
 
 	/*Variables that can only be set inside this class.*/
-	private $elements;					/*Contains all element objects for a form.*/
-	private $bindRules;					/*Contains information about nested forms.*/
-	private $buttons;					/*Contains all button objects for a form.*/
-	private $checkform;					/*If a field has the required attribute set, this field will be set causing javascript error checking.*/
-	private $allowedFields;				/*Controls what attributes can be attached to various html elements.*/
-	private $stateArr;					/*Associative array holding states.  Prevents generating array each time state form field is used.*/
-	private $countryArr;				/*Associative array holding countries.  Prevents generating array each time country form field is used.*/  	
-	private $referenceValues;			/*Associative array of values to pre-fill form fields.*/
-	private $captchaExists;				/*If there is a captcha element attached to the form, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
-	private $focusElement;				/*Sets focus of first form element.*/
-	private $tinymceIDArr;				/*Uniquely identifies each tinyMCE web editor.*/
-	private $ckeditorIDArr;				/*Uniquely identifies each CKEditor web editor.*/
-	private $hintExists;				/*If one or more form elements have hints, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
-	private $emailExists;				/*If one or more form elements of type email exist, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
+        private $elements;					/*Contains all element objects for a form.*/
+        private $bindRules;					/*Contains information about nested forms.*/
+        private $buttons;					/*Contains all button objects for a form.*/
+        private $checkform;					/*If a field has the required attribute set, this field will be set causing javascript error checking.*/
+        private $allowedFields;				/*Controls what attributes can be attached to various html elements.*/
+        private $stateArr;					/*Associative array holding states.  Prevents generating array each time state form field is used.*/
+        private $countryArr;				/*Associative array holding countries.  Prevents generating array each time country form field is used.*/
+        private $referenceValues;			/*Associative array of values to pre-fill form fields.*/
+        private $captchaExists;				/*If there is a captcha element attached to the form, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
+        private $focusElement;				/*Sets focus of first form element.*/
+        private $tinymceIDArr;				/*Uniquely identifies each tinyMCE web editor.*/
+        private $ckeditorIDArr;				/*Uniquely identifies each CKEditor web editor.*/
+        private $hintExists;				/*If one or more form elements have hints, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
+        private $emailExists;				/*If one or more form elements of type email exist, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
+        private $jsIncludesPath;                        /*For use on client side, holds either absolute path or document root path*/
+        private $phpIncludesPath;                       /*For use on server side, holds either absolute path or full path */
+
 
 	/*Variables that can be accessed outside this class directly.*/
 	public $errorMsg;					/*Contains human readable error message set in validate() method.*/
@@ -155,7 +159,7 @@ class form extends base {
 		$this->ajaxDataType = "text";
 		$this->errorMsgFormat = "[LABEL] is a required field.";
 		$this->emailErrorMsgFormat = "[LABEL] contains an invalid email address.";
-		$this->includesRelativePath = "php-form-builder-class/includes";
+		$this->includesPath = "php-form-builder-class/includes";
 		$this->onsubmitFunctionOverride = "formhandler_" . $this->attributes["name"];
 	}
 
@@ -1020,9 +1024,29 @@ class form extends base {
 		if(empty($this->referenceValues) && !empty($_SESSION["formclass_values"]) && array_key_exists($this->attributes["name"], $_SESSION["formclass_values"]))
 			$this->setReferenceValues($_SESSION["formclass_values"][$this->attributes["name"]]);
 
-		//if(empty($this->includesRelativePath) || (!is_dir($this->includesRelativePath) && !is_dir($_SERVER['DOCUMENT_ROOT'] . $this->includesRelativePath)))
-		if(empty($this->includesRelativePath) || !is_dir($this->includesRelativePath))
-			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesRelativePath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.");</script>';
+                //assign DEPRECATED includesRelativePath variable to new includesPath variable
+                if(!empty($this->includesRelativePath))
+                        $this->includesPath = $this->includesRelativePath;
+
+
+                //check if includesPath is absolute or not, then create variables for where you need to use it
+                if($this->includesPath[0] != '/') {
+                        $this->jsIncludesPath = $this->includesPath;
+                        $this->phpIncludesPath = $this->includesPath;
+                }
+                else {
+                        if(strpos($this->includesPath , $_SERVER['DOCUMENT_ROOT']) === 0) {
+                                $this->jsIncludesPath = substr($this->includesPath , strlen($_SERVER['DOCUMENT_ROOT']));
+                                $this->phpIncludesPath = $this->includesPath;
+                        }
+                        else {
+                                $this->jsIncludesPath = $this->includesPath;
+                                $this->phpIncludesPath = $_SERVER['DOCUMENT_ROOT'] . $this->includesPath;
+                        }
+                }
+
+		if(empty($this->phpIncludesPath) || !is_dir($this->phpIncludesPath))
+			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesPath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.");</script>';
 
 
 		if(empty($this->noAutoFocus))
@@ -1209,7 +1233,7 @@ class form extends base {
 					if(!empty($ele->tooltip))
 					{
 						if(empty($this->tooltipIcon))
-							$this->tooltipIcon = $this->includesRelativePath . "/jquery/qtip/tooltip-icon.gif";
+							$this->tooltipIcon = $this->jsIncludesPath . "/jquery/qtip/tooltip-icon.gif";
 
 						/*This section ensures that each tooltip has a unique identifier.*/
 						if(!isset($tooltipIDArr))
@@ -2173,17 +2197,17 @@ class form extends base {
 		if(!empty($jqueryDateIDArr) || !empty($jqueryDateRangeIDArr) || !empty($jquerySortIDArr) || !empty($tooltipIDArr) || !empty($jquerySliderIDArr) || !empty($jqueryStarRatingIDArr) || !empty($jqueryColorIDArr))
 		{
 			if(empty($this->preventJQueryLoad))
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->includesRelativePath . '/jquery/jquery.js"></script>';
+				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/jquery.js"></script>';
 
 			if(!empty($jqueryDateIDArr) || !empty($jqueryDateRangeIDArr) || !empty($jquerySortIDArr) || !empty($jquerySliderIDArr) || !empty($jqueryStarRatingIDArr))
 			{
-				$str .= "\n\t" . '<link href="' . $this->includesRelativePath . '/jquery/jquery-ui.css" rel="stylesheet" type="text/css"/>';
+				$str .= "\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/jquery-ui.css" rel="stylesheet" type="text/css"/>';
 				if(empty($this->preventJQueryUILoad))
-					$str .= "\n\t" . '<script type="text/javascript" src="' . $this->includesRelativePath . '/jquery/jquery-ui.js"></script>';
+					$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/jquery-ui.js"></script>';
 			}
 
 			if(!empty($tooltipIDArr) && empty($this->preventQTipLoad))
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->includesRelativePath . '/jquery/qtip/jquery.qtip-1.0.0-rc3.min.js"></script>';
+				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/qtip/jquery.qtip-1.0.0-rc3.min.js"></script>';
 
 			if(!empty($jqueryDateIDArr))
 				$str .= "\n\t" . '<style type="text/css">.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 0.8em !important; }</style>';
@@ -2193,8 +2217,8 @@ class form extends base {
 
 			if(!empty($jqueryDateRangeIDArr))
 			{
-				$str .= "\n\t" . '<link href="' . $this->includesRelativePath . '/jquery/ui.daterangepicker.css" rel="stylesheet" type="text/css"/>';
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->includesRelativePath . '/jquery/daterangepicker.jquery.js"></script>';
+				$str .= "\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/ui.daterangepicker.css" rel="stylesheet" type="text/css"/>';
+				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/daterangepicker.jquery.js"></script>';
 			}	
 
 			if(!empty($jqueryStarRatingIDArr))
@@ -2215,34 +2239,34 @@ class form extends base {
 			height: 26px;
 			display: block;
 			position: relative;
-			background: transparent url("' . $this->includesRelativePath . '/jquery/starrating/remove_inactive.png") 0 0 no-repeat;
+			background: transparent url("' . $this->jsIncludesPath . '/jquery/starrating/remove_inactive.png") 0 0 no-repeat;
 			_background: none;
 			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="' . $this->includesRelativePath . '/jquery/starrating/remove_inactive.png", sizingMethod="scale");
+				(src="' . $this->jsIncludesPath . '/jquery/starrating/remove_inactive.png", sizingMethod="scale");
 		}
 		.ui-stars-star a {
-			background: transparent url("' . $this->includesRelativePath . '/jquery/starrating/star_inactive.png") 0 0 no-repeat;
+			background: transparent url("' . $this->jsIncludesPath . '/jquery/starrating/star_inactive.png") 0 0 no-repeat;
 			_background: none;
 			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="' . $this->includesRelativePath . '/jquery/starrating/star_inactive.png", sizingMethod="scale");
+				(src="' . $this->jsIncludesPath . '/jquery/starrating/star_inactive.png", sizingMethod="scale");
 		}
 		.ui-stars-star-on a {
-			background: transparent url("' . $this->includesRelativePath . '/jquery/starrating/star_active.png") 0 0 no-repeat;
+			background: transparent url("' . $this->jsIncludesPath . '/jquery/starrating/star_active.png") 0 0 no-repeat;
 			_background: none;
 			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="' . $this->includesRelativePath . '/jquery/starrating/star_active.png", sizingMethod="scale");
+				(src="' . $this->jsIncludesPath . '/jquery/starrating/star_active.png", sizingMethod="scale");
 		}
 		.ui-stars-star-hover a {
-			background: transparent url("' . $this->includesRelativePath . '/jquery/starrating/star_hot.png") 0 0 no-repeat;
+			background: transparent url("' . $this->jsIncludesPath . '/jquery/starrating/star_hot.png") 0 0 no-repeat;
 			_background: none;
 			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="' . $this->includesRelativePath . '/jquery/starrating/star_hot.png", sizingMethod="scale");
+				(src="' . $this->jsIncludesPath . '/jquery/starrating/star_hot.png", sizingMethod="scale");
 		}
 		.ui-stars-cancel-hover a {
-			background: transparent url("' . $this->includesRelativePath . '/jquery/starrating/remove_active.png") 0 0 no-repeat;
+			background: transparent url("' . $this->jsIncludesPath . '/jquery/starrating/remove_active.png") 0 0 no-repeat;
 			_background: none;
 			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="' . $this->includesRelativePath . '/jquery/starrating/remove_active.png", sizingMethod="scale");
+				(src="' . $this->jsIncludesPath . '/jquery/starrating/remove_active.png", sizingMethod="scale");
 		}
 		.ui-stars-star-disabled,
 		.ui-stars-star-disabled a,
@@ -2250,13 +2274,13 @@ class form extends base {
 			cursor: default !important;
 		}';
 				$str .= "\n\t" . '</style>';
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->includesRelativePath . '/jquery/starrating/ui.stars.min.js"></script>';
+				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/starrating/ui.stars.min.js"></script>';
 			}
 
 			if(!empty($jqueryColorIDArr))
 			{
-				$str .= "\n\t" . '<link href="' . $this->includesRelativePath . '/jquery/colorpicker/colorpicker.css" rel="stylesheet" type="text/css"/>';
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->includesRelativePath . '/jquery/colorpicker/colorpicker.js"></script>';
+				$str .= "\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/colorpicker/colorpicker.css" rel="stylesheet" type="text/css"/>';
+				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/colorpicker/colorpicker.js"></script>';
 			}
 
 			$str .= "\n\t" . '<script type="text/javascript" defer="defer">';
@@ -2368,7 +2392,7 @@ class form extends base {
 			$str .= "\n\t</script>\n\n";
 		}	
 		elseif((!empty($this->ajax) || !empty($this->emailExists)) && empty($this->preventJQueryLoad))
-			$str .= "\n\t" . '<script type="text/javascript" src="' . $this->includesRelativePath . '/jquery/jquery.js"></script>';
+			$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/jquery.js"></script>';
 
 		if(!empty($latlngIDArr))
 		{
@@ -2487,7 +2511,7 @@ class form extends base {
 		if(!empty($this->tinymceIDArr))
 		{
 			if(empty($this->preventTinyMCELoad))
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->includesRelativePath . '/tinymce/tiny_mce.js"></script>';
+				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/tinymce/tiny_mce.js"></script>';
 
 			if(empty($this->preventTinyMCEInitLoad))
 			{
@@ -2521,7 +2545,7 @@ class form extends base {
 		if(!empty($this->ckeditorIDArr))
 		{
 			if(empty($this->preventCKEditorLoad))
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->includesRelativePath . '/ckeditor/ckeditor.js"></script>';
+				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/ckeditor/ckeditor.js"></script>';
 
 			$str .= "\n\t" . '<script type="text/javascript">';
 			$ckeditorSize = sizeof($this->ckeditorIDArr);
@@ -2811,7 +2835,7 @@ class form extends base {
 					echo "\n\t\t\t$.ajax({";
 						echo "\n\t\t\t\t", 'async: false,';
 						echo "\n\t\t\t\t", 'type: "post",';
-						echo "\n\t\t\t\t", 'url: "', $this->includesRelativePath, '/php-email-address-validation/ajax-handler.php",';
+						echo "\n\t\t\t\t", 'url: "', $this->jsIncludesPath, '/php-email-address-validation/ajax-handler.php",';
 						echo "\n\t\t\t\t", 'dataType: "text",';
 						echo "\n\t\t\t\t", 'data: "email=" + escape(formObj.elements["', $eleName, '"].value) + "&label=" + escape("', $eleLabel, '") + "&format=" + escape("', $this->emailErrorMsgFormat, '"),';
 						echo "\n\t\t\t\tsuccess: function(responseMsg, textStatus) {";
@@ -2975,7 +2999,7 @@ class form extends base {
 				continue;
 			elseif($ele->attributes["type"] == "captcha")
 			{
-				require_once($form->includesRelativePath . "/recaptchalib.php");
+				require_once($form->phpIncludesPath . "/recaptchalib.php");
 				$recaptchaResp = recaptcha_check_answer($form->captchaPrivateKey, $_SERVER["REMOTE_ADDR"], $referenceValues["recaptcha_challenge_field"], $referenceValues["recaptcha_response_field"]);
 				if(!$recaptchaResp->is_valid)
 				{
@@ -3012,7 +3036,7 @@ class form extends base {
 
 			if($ele->attributes["type"] == "email" && !empty($referenceValues[$ele->attributes["name"]]))
 			{
-				require_once($form->includesRelativePath . "/php-email-address-validation/EmailAddressValidator.php");
+				require_once($form->phpIncludesPath . "/php-email-address-validation/EmailAddressValidator.php");
 				$emailObj = new EmailAddressValidator;
 				if(!$emailObj->check_email_address($referenceValues[$ele->attributes["name"]]))
 				{

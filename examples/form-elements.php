@@ -28,7 +28,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				<?php
 				$form = new form("form_elements");
 				$form->setAttributes(array(
-					"includesRelativePath" => "../includes"
+					"includesPath" => "../includes"
 				));	
 
 				/*
@@ -91,7 +91,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 echo '<pre>' . htmlentities('<?php
 $form = new form("form_elements");
 $form->setAttributes(array(
-	"includesRelativePath" => "../includes"
+	"includesPath" => "../includes"
 ));	
 
 $form->addHidden("cmd", "submit");
