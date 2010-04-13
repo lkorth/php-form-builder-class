@@ -2481,8 +2481,8 @@ class form extends base {
 						$str .= "\n\t\t\t\tdocument.getElementById(cs_id).appendChild(li);";
 					$str .= "\n\t\t\t}";
 				$str .= "\n\t\t}";
-                       			$str .= "\n\t</script>\n\n";
-                        }
+			$str .= "\n\t</script>\n\n";
+		}
 
 		if(!empty($this->tinymceIDArr))
 		{
