@@ -1899,7 +1899,7 @@ class form extends base {
 						$str .= "\t\t";
 						if(!empty($this->map))
 							$str .= "\t\t\t";
-						$str .= "</ul>\n";
+						$str .= "<li style='display:none'>&nbsp;</li></ul>\n";
 					}
 				}
 				elseif($eleType == "captcha")
@@ -2481,8 +2481,8 @@ class form extends base {
 						$str .= "\n\t\t\t\tdocument.getElementById(cs_id).appendChild(li);";
 					$str .= "\n\t\t\t}";
 				$str .= "\n\t\t}";
-			$str .= "\n\t</script>\n\n";
-		}
+                       			$str .= "\n\t</script>\n\n";
+                        }
 
 		if(!empty($this->tinymceIDArr))
 		{
