@@ -581,14 +581,6 @@ class form extends base {
 	
 	/*-------------------------------------------START: HOW USERS CAN ADD FORM FIELDS--------------------------------------------*/
 
-	/*addElements allows users to add multiple form elements by passing a multi-dimensional array.*/
-	public function addElements($params)
-	{
-		$paramSize = sizeof($params);
-		for($i = 0; $i < $paramSize; ++$i)
-			$this->attachElement($params[$i]);
-	}
-
 	/*addElement allows users to add a single form element by passing an array.*/
 	public function addElement($label, $name, $type="", $value="", $additionalParams="")
 	{
@@ -2585,7 +2577,7 @@ class form extends base {
 		return $str;
 	}
 
-	/*This function handles javascript validation of all required form elements.  It was moved from within the render function to it's own function to be reused by nested forms.*/
+	/*This function handles javascript validation of all required form elements as well as ajax submission.  It was moved from within the render function to it's own function to be reused by nested forms.*/
 	private function jsCycleElements($elements)
 	{
 		$elementSize = sizeof($elements);
