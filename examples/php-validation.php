@@ -44,15 +44,11 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				looks like this - $form = new form("php_validation");.  After the form is submitted, you will see the exact same line before the validate() function is used.  These 
 				identifiers must match exactly for the validation to function properly.</p>
 
-				<p>An optional form attribute, <i>enableSessionAutoFill</i>, can be specified in the setAttributes() function after creating a new instance of the form class.  If this parameter 
-				is set, the form's submitted values will be stored in the session and recalled if the form is rendered again after an error.  When the form is successfully validated, these session values will be removed.  By default, this parameter is not enabled.</p>
-
 				<?php
 				$form = new form("php_validation");
 				$form->setAttributes(array(
 					"includesRelativePath" => "../includes",
-					"tableAttributes" => array("width" => "400"),
-					"enableSessionAutoFill" => 1
+					"tableAttributes" => array("width" => "400")
 				));
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("Required Textbox:", "field0", "", array("required" => 1));
@@ -66,8 +62,7 @@ echo '<pre>' . htmlentities('<?php
 $form = new form("php_validation");
 $form->setAttributes(array(
 	"includesRelativePath" => "../includes",
-	"tableAttributes" => array("width" => "400"),
-	"enableSessionAutoFill" => 1
+	"tableAttributes" => array("width" => "400")
 ));
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Required Textbox:", "field0", "", array("required" => 1));

@@ -77,7 +77,6 @@ class form extends base {
 	protected $ckeditorLang;			/*Allows CKEditor language to be customized.*/
 	protected $ckeditorCustomConfig;	/*Allows CKEditor settings to be loaded through a supplied js file.*/
 	protected $preventCKEditorLoad;		/*Prevents CKEditor js file from being loaded twice.*/
-	protected $enableSessionAutoFill;	/*If enabled, this parameter will allow a form's elements to be populated from the session.*/
 	protected $errorMsgFormat;			/*Allow you to customize was is alerted/returned during js/php validation.*/
 	protected $emailErrorMsgFormat;		/*Allow you to customize was is alerted/returned during js/php email validation.*/
 	protected $latlngDefaultLocation;	/*Allow you to customize the default location of latlng form elements.*/
@@ -776,9 +775,6 @@ class form extends base {
 			echo ' onsubmit="return ', $this->onsubmitFunctionOverride, '(this);"';
 		echo ">\n";
 
-		if(!empty($this->enableSessionAutoFill) && empty($this->referenceValues) && !empty($_SESSION["formclass_values"]) && array_key_exists($this->attributes["name"], $_SESSION["formclass_values"]))
-			$this->setReferenceValues($_SESSION["formclass_values"][$this->attributes["name"]]);
-
 		/*This section renders all the hidden form fields outside the <table> tag.*/
 		$elementSize = sizeof($this->elements);
 		for($i = 0; $i < $elementSize; ++$i)
@@ -937,7 +933,7 @@ class form extends base {
 			{
 				$bindRuleKeys = array_keys($this->bindRules);
 				$bindRuleSize = sizeof($bindRuleKeys);
-				for($b = 0; $b < $bindRuleSize; $b++)
+				for($b = 0; $b < $bindRuleSize; ++$b)
 				{
 					if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements))
 					{
@@ -1021,13 +1017,13 @@ class form extends base {
 	{
 		$str = "";
 
+		if(empty($this->referenceValues) && !empty($_SESSION["formclass_values"]) && array_key_exists($this->attributes["name"], $_SESSION["formclass_values"]))
+			$this->setReferenceValues($_SESSION["formclass_values"][$this->attributes["name"]]);
+
+		//if(empty($this->includesRelativePath) || (!is_dir($this->includesRelativePath) && !is_dir($_SERVER['DOCUMENT_ROOT'] . $this->includesRelativePath)))
 		if(empty($this->includesRelativePath) || !is_dir($this->includesRelativePath))
 			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesRelativePath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.");</script>';
 
-		/*
-		if(empty($this->includesRelativePath) || (!is_dir($this->includesRelativePath) && !is_dir($_SERVER['DOCUMENT_ROOT'] . $this->includesRelativePath)))
-			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesRelativePath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.");</script>';
-		*/
 
 		if(empty($this->noAutoFocus))
 			$focus = true;
@@ -1878,7 +1874,7 @@ class form extends base {
 							if(is_array($ele->attributes["value"]))
 							{
 								$eleValueSize = sizeof($ele->attributes["value"]);
-								for($li = 0; $li < $eleValueSize; $li++)
+								for($li = 0; $li < $eleValueSize; ++$li)
 								{
 									if(isset($sortLIArr[$ele->attributes["value"][$li]]))
 									{
@@ -2873,25 +2869,30 @@ class form extends base {
 			/*Automatically unserialize the appropriate form instance stored in the session array.*/
 			$form = unserialize($_SESSION["formclass_instances"][$this->attributes["name"]]);
 
-			/*If session autofill is enabled, store the submitted values in the session.*/
-			if(!empty($form->enableSessionAutoFill))
+			/*Store the form's submitted values in a session array for prefilling if validation fails.*/
+			$this->buildSessionValues($form, $referenceValues);
+			if(!empty($form->bindRules))
 			{
-				$_SESSION["formclass_values"][$this->attributes["name"]] = $this->stripslashes($referenceValues);
-				/*Unset reCAPTCHA field if applicable.*/
-				if(array_key_exists("recaptcha_challenge_field", $_SESSION["formclass_values"][$this->attributes["name"]]))
-					unset($_SESSION["formclass_values"][$this->attributes["name"]]["recaptcha_challenge_field"]);
-				if(array_key_exists("recaptcha_response_field", $_SESSION["formclass_values"][$this->attributes["name"]]))
-					unset($_SESSION["formclass_values"][$this->attributes["name"]]["recaptcha_response_field"]);
-					
+				$bindRuleKeys = array_keys($form->bindRules);
+				$bindRuleSize = sizeof($bindRuleKeys);
+				for($b = 0; $b < $bindRuleSize; ++$b)
+				{
+					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements))
+					{
+						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
+							$this->buildSessionValues($form->bindRules[$bindRuleKeys[$b]][0], $referenceValues);
+					}		
+				}	
 			}	
 
+			/*Cycle through the form's required elements to ensure they are valid.*/
 			if(!$this->phpCycleElements($form->elements, $referenceValues, $form))
 				return false;
 			if(!empty($form->bindRules))
 			{
 				$bindRuleKeys = array_keys($form->bindRules);
 				$bindRuleSize = sizeof($bindRuleKeys);
-				for($b = 0; $b < $bindRuleSize; $b++)
+				for($b = 0; $b < $bindRuleSize; ++$b)
 				{
 					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements))
 					{
@@ -2904,9 +2905,25 @@ class form extends base {
 				}
 			}
 
-			if(!empty($form->enableSessionAutoFill))
-				unset($_SESSION["formclass_values"][$this->attributes["name"]]);
-
+			/*Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.*/
+			if(!empty($_SESSION["formclass_values"][$form->attributes["name"]]))
+				unset($_SESSION["formclass_values"][$form->attributes["name"]]);
+			if(!empty($form->bindRules))
+			{
+				$bindRuleKeys = array_keys($form->bindRules);
+				$bindRuleSize = sizeof($bindRuleKeys);
+				for($b = 0; $b < $bindRuleSize; ++$b)
+				{
+					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements))
+					{
+						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
+						{
+							if(!empty($_SESSION["formclass_values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["name"]]))
+								unset($_SESSION["formclass_values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["name"]]);
+						}
+					}	
+				}	
+			}	
 			return true;
 		}
 		else
@@ -2916,24 +2933,33 @@ class form extends base {
 		}
 	}
 
-	/*This function is used to strip any slashes from $_SESSION array housing the form's submitted values.*/
-	private function stripslashes($array)
+	/*This function is responsible for storing the form's submitted values in a session array for prefilling if the form fails validation.*/
+	private function buildSessionValues($form, $referenceValues)
 	{
-		foreach($array as $key => $value)
+		$elementSize = sizeof($form->elements);
+		for($e = 0; $e < $elementSize; ++$e)
 		{
-			if(!is_array($array[$key]))
+			$eleName = $form->elements[$e]->attributes["name"];
+			if(substr($eleName , -2) == "[]")
+				$eleName = substr($eleName, 0, -2);
+
+			if(array_key_exists($eleName, $referenceValues))
 			{
-				if(!empty($value))
-					$array[$key] = stripslashes($value);
-			}
-			else
-			{
-				$arraySize = sizeof($array[$key]);
-				for($zz = 0; $zz < $arraySize; $zz++)
-					$array[$key][$zz] = stripslashes($array[$key][$zz]);
-			}
+				if(is_array($referenceValues[$eleName]))
+				{
+					$valSize = sizeof($referenceValues[$eleName]);
+					for($v = 0; $v < $valSize; ++$v)
+						$_SESSION["formclass_values"][$form->attributes["name"]][$eleName][$v] = stripslashes($referenceValues[$eleName][$v]);
+				}
+				else
+					$_SESSION["formclass_values"][$form->attributes["name"]][$eleName] = stripslashes($referenceValues[$eleName]);
+			}	
 		}
-		return $array;
+
+		if(array_key_exists("recaptcha_challenge_field", $_SESSION["formclass_values"][$form->attributes["name"]]))
+			unset($_SESSION["formclass_values"][$form->attributes["name"]]["recaptcha_challenge_field"]);
+		if(array_key_exists("recaptcha_response_field", $_SESSION["formclass_values"][$form->attributes["name"]]))
+			unset($_SESSION["formclass_values"][$form->attributes["name"]]["recaptcha_response_field"]);
 	}
 
 	/*This function handles php validation of all required form elements.  It was moved from within the validate function to it's own function to be reused by nested forms.*/
