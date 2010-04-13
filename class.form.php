@@ -2492,20 +2492,25 @@ class form extends base {
 
 		if(!empty($jqueryCheckSort))
 		{
-			$str .= "\n\t" . '<script type="text/javascript" defer="defer">';
-				$str .= "\n\t\tfunction addOrRemoveCheckSortItem_" . $this->attributes["name"] . "(cs_fieldObj, cs_id, cs_name, cs_index, cs_value, cs_text) {";
-					$str .= "\n\t\t\tif(cs_fieldObj.checked != true)";
-						$str .= "\n\t\t\t\t" . 'document.getElementById(cs_id).removeChild(document.getElementById(cs_id + cs_index));';
-					$str .= "\n\t\t\telse {";
-						$str .= "\n\t\t\t\tvar li = document.createElement('li');";
-						$str .= "\n\t\t\t\tli.id = cs_id + cs_index;";
-						$str .= "\n\t\t\t\tli.className = 'ui-state-default';";
-						$str .= "\n\t\t\t\tli.style.cssText = 'margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2em; line-height: 2em;'";
-						$str .= "\n\t\t\t\tli.innerHTML = '<input type=\"hidden\" name=\"' + cs_name + '\" value=\"' + cs_value + '\"/>' + cs_text;";
-						$str .= "\n\t\t\t\tdocument.getElementById(cs_id).appendChild(li);";
-					$str .= "\n\t\t\t}";
-				$str .= "\n\t\t}";
-			$str .= "\n\t</script>\n\n";
+                        $str .= <<<STR
+                        <script type="text/javascript" defer="defer">
+				function addOrRemoveCheckSortItem_{$this->attributes["name"]}(cs_fieldObj, cs_id, cs_name, cs_index, cs_value, cs_text) {
+					if(cs_fieldObj.checked != true)
+						document.getElementById(cs_id).removeChild(document.getElementById(cs_id + cs_index));
+					else {
+						var li = document.createElement('li');
+						li.id = cs_id + cs_index;
+						li.className = 'ui-state-default';
+						li.style.cssText = 'margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2em; line-height: 2em;'
+						li.innerHTML = '<input type=\"hidden\" name=\"' + cs_name + '\" value=\"' + cs_value + '\"/>' + cs_text;
+						document.getElementById(cs_id).appendChild(li);
+					}
+				}
+			</script>
+STR;
+
+
+
 		}
 
 		if(!empty($this->tinymceIDArr))
