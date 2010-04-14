@@ -923,14 +923,30 @@ class form extends base {
 		*/
 		if(!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists))
 		{
-			echo '<script type="text/javascript">';
+			echo <<<STR
+<script type="text/javascript">
+
+STR;
 			if(!empty($this->emailExists))
-				echo "\n\tvar validemail_", $this->attributes["name"], ";";
-			echo "\n\tfunction ", $this->onsubmitFunctionOverride, "(formObj) {";
+			{
+				echo <<<STR
+	var validemail_{$this->attributes["name"]};
+
+STR;
+			}	
+			echo <<<STR
+	{$this->onsubmitFunctionOverride}(formObj) {
+
+STR;
 			/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
 			key/value pair and acts as the GET or POST string.*/
 			if(!empty($this->ajax))
-				echo "\n\t\t", 'var form_data = ""';
+			{
+				echo <<<STR
+		var form_data = "";
+
+STR;
+			}	
 
 			$this->jsCycleElements($this->elements);
 			if(!empty($this->bindRules))
@@ -942,66 +958,121 @@ class form extends base {
 					if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements))
 					{
 						if(!empty($this->bindRules[$bindRuleKeys[$b]][1]))
-							echo "\n\t\tif(", $this->bindRules[$bindRuleKeys[$b]][1] , ") {";
+						{
+							echo <<<STR
+		if({$this->bindRules[$bindRuleKeys[$b]][1]}) {
+STR;
+						}	
 						$this->jsCycleElements($this->bindRules[$bindRuleKeys[$b]][0]->elements);
 						if(!empty($this->bindRules[$bindRuleKeys[$b]][1]))
-							echo "\n\t\t}";
+						{
+							echo <<<STR
+		}
+
+STR;
+						}	
 					}
 				}
 			}
 				
 			if(!empty($this->ajax))
 			{
-				echo "\n\t\tform_data = form_data.substring(1, form_data.length);";
-				echo "\n\t\t$.ajax({";
-					echo "\n\t\t\t", 'type: "', $this->ajaxType, '",';
-					echo "\n\t\t\t", 'url: "', $this->ajaxUrl, '",';
-					echo "\n\t\t\t", 'dataType: "', $this->ajaxDataType, '",';
-					echo "\n\t\t\tdata: form_data,";
-					if(!empty($this->ajaxPreCallback))
-					{
-						echo "\n\t\t\tbeforeSend: function() {";
-							echo "\n\t\t\t\t", $this->ajaxPreCallback, "();";
-						echo "\n\t\t\t},";
-					}
-					echo "\n\t\t\tsuccess: function(responseMsg) {";
-					if(!empty($this->ajaxCallback))
-						echo "\n\t\t\t\t", $this->ajaxCallback, "(responseMsg);";
-					else
-					{
-						echo "\n\t\t\t\t", 'if(responseMsg != "")';
-							echo "\n\t\t\t\t\talert(responseMsg);";
-					}		
-					echo "\n\t\t\t},";
-					echo "\n\t\t\terror: function(XMLHttpRequest, textStatus, errorThrown) { alert(XMLHttpRequest.responseText); }";
-				echo "\n\t\t});";
-				echo "\n\t\treturn false;";
+				echo <<<STR
+		form_data = form_data.substring(1, form_data.length);
+		$.ajax({
+			type: "{$this->ajaxType}",
+			url: "{$this->ajaxUrl}",
+			dataType: "{$this->ajaxDataType}",
+			data: form_data,
+
+STR;
+				if(!empty($this->ajaxPreCallback))
+				{
+					echo <<<STR
+			beforeSend: function() {
+				{$this->ajaxPreCallback}();
+			},
+
+STR;
+				}
+				echo <<<STR
+			success: function(responseMsg) {
+
+STR;
+				if(!empty($this->ajaxCallback))
+				{
+					echo <<<STR
+				{$this->ajaxCallback}(responseMsg);
+
+STR;
+				}	
+				else
+				{
+					echo <<<STR
+				if(responseMsg != "")
+					alert(responseMsg);
+
+STR;
+				}		
+				echo <<<STR
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) { alert(XMLHttpRequest.responseText); }
+		});
+		return false;
+
+STR;
 			}	
 			else	
-				echo "\n\t\treturn true;";
-			echo "\n\t}";
-			echo "\n</script>\n\n";
+			{
+				echo <<<STR
+		return true;
+
+STR;
+			}	
+			echo <<<STR
+	}
+</script>
+
+STR;
 		}
 
 		/*This javascript section sets the focus of the first field in the form.  This default behavior can be overwritten by setting the
 		noAutoFocus parameter.*/
 		if(empty($this->noAutoFocus) && !empty($this->focusElement))
 		{
-			echo '<script type="text/javascript">';
+			echo <<<STR
+<script type="text/javascript">
+
+STR;
 			/*The webeditor and ckeditor fields are a special case.*/
 			if(!empty($this->tinymceIDArr) && is_array($this->tinymceIDArr) && in_array($this->focusElement, $this->tinymceIDArr))
-				echo "\n\t\t", 'setTimeout("if(tinyMCE.get(\"', $this->focusElement, '\")) tinyMCE.get(\"', $this->focusElement, '\").focus();", 1000);';
+			{
+				echo <<<STR
+	setTimeout("if(tinyMCE.get(\"{$this->focusElement}\")) tinyMCE.get(\"{$this->focusElement}\").focus();", 1000);
+
+STR;
+			}	
 			elseif(!empty($this->ckeditorIDArr) && is_array($this->ckeditorIDArr) && array_key_exists($this->focusElement, $this->ckeditorIDArr))
-				echo "\n\t\t", 'setTimeout("CKEDITOR.instances.' . $this->focusElement . '.focus();", 1000);';
+			{
+				echo <<<STR
+	setTimeout("CKEDITOR.instances.{$this->focusElement}.focus();", 1000);
+STR;
+
+			}	
 			else
 			{
 				/*Any fields with multiple options such as radio button, checkboxes, etc. are handled accordingly.*/
-				echo "\n\t", 'if(document.forms["', $this->attributes["name"], '"].elements["', $this->focusElement, '"].type != "select-one" && document.forms["', $this->attributes["name"], '"].elements["', $this->focusElement, '"].type != "select-multiple" && document.forms["', $this->attributes["name"], '"].elements["', $this->focusElement, '"].length)';
-					echo "\n\t\t", 'document.forms["', $this->attributes["name"], '"].elements["', $this->focusElement, '"][0].focus();';
-				echo "\n\telse";
-					echo "\n\t\t", 'document.forms["', $this->attributes["name"], '"].elements["', $this->focusElement, '"].focus();';
+				echo <<<STR
+	if(document.forms["{$this->attributes["name"]}"].elements["{$this->focusElement}"].type != "select-one" && document.forms["{$this->attributes["name"]}"].elements["{$this->focusElement}"].type != "select-multiple" && document.forms["{$this->attributes["name"]}"].elements["{$this->focusElement}"].length)
+		document.forms["{$this->attributes["name"]}"].elements["{$this->focusElement}"][0].focus();
+	else
+		document.forms["{$this->attributes["name"]}"].elements["{$this->focusElement}"].focus();
+
+STR;
 			}		
-			echo "\n</script>\n\n";
+			echo <<<STR
+</script>
+STR;
 		}
 
 		$content = ob_get_contents();
@@ -1028,10 +1099,10 @@ class form extends base {
 		if(!empty($this->includesRelativePath))
 			$this->includesPath = $this->includesRelativePath;
 
-                //If windows normalize backslashes to forward slashes
-                if( PHP_OS == 'WINNT' ){
-                    $this->includesPath = str_replace( "\\" , "/" , $this->includesPath );
-                }
+		//If windows normalize backslashes to forward slashes
+		if( PHP_OS == 'WINNT' ){
+			$this->includesPath = str_replace( "\\" , "/" , $this->includesPath );
+		}
 
 		//check if includesPath is absolute or not, then create variables for where you need to use it
 		if($this->includesPath[0] != '/') {
@@ -2200,35 +2271,65 @@ class form extends base {
 		if(!empty($jqueryDateIDArr) || !empty($jqueryDateRangeIDArr) || !empty($jquerySortIDArr) || !empty($tooltipIDArr) || !empty($jquerySliderIDArr) || !empty($jqueryStarRatingIDArr) || !empty($jqueryColorIDArr))
 		{
 			if(empty($this->preventJQueryLoad))
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/jquery.js"></script>';
+			{
+				$str .= <<<STR
+
+	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
+
+STR;
+			}	
 
 			if(!empty($jqueryDateIDArr) || !empty($jqueryDateRangeIDArr) || !empty($jquerySortIDArr) || !empty($jquerySliderIDArr) || !empty($jqueryStarRatingIDArr))
 			{
 				if(empty($this->preventJQueryUILoad))
-					$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/jquery-ui.js"></script>';
-				$str .= "\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/jquery-ui.css" rel="stylesheet" type="text/css"/>';
+				{
+					$str .= <<<STR
+	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery-ui.js"></script>
+
+STR;
+				}	
+				$str .= <<<STR
+	<link href="{$this->jsIncludesPath}/jquery/jquery-ui.css" rel="stylesheet" type="text/css"/>
+
+STR;
 			}
 
 			if(!empty($tooltipIDArr) && empty($this->preventQTipLoad))
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/qtip/jquery.qtip-1.0.0-rc3.min.js"></script>';
+			{
+				$str .= <<<STR
+	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/qtip/jquery.qtip-1.0.0-rc3.min.js"></script>
+
+STR;
+			}	
 
 			if(!empty($jqueryDateIDArr))
-				$str .= "\n\n\t" . '<style type="text/css">.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 0.8em !important; }</style>';
+			{
+				$str .= <<<STR
+	<style type="text/css">.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 0.8em !important; }</style>
+
+STR;
+			}	
 
 			if(!empty($jquerySliderIDArr))
-				$str .= "\n\n\t" . '<style type="text/css">.ui-slider-handle { cursor: pointer !important; }</style>';
+			{
+				$str .= <<<STR
+	<style type="text/css">.ui-slider-handle { cursor: pointer !important; }</style>
+
+STR;
+			}	
 
 			if(!empty($jqueryDateRangeIDArr))
 			{
-				$str .= "\n\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/ui.daterangepicker.css" rel="stylesheet" type="text/css"/>';
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/daterangepicker.jquery.js"></script>';
+				$str .= <<<STR
+	<link href="{$this->jsIncludesPath}/jquery/ui.daterangepicker.css" rel="stylesheet" type="text/css"/>
+	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/daterangepicker.jquery.js"></script>
+
+STR;
 			}	
 
 			if(!empty($jqueryStarRatingIDArr))
 			{
 			$str .= <<<STR
-
-
 	<script type="text/javascript" src="$this->jsIncludesPath/jquery/starrating/ui.stars.min.js"></script>
 	<style type="text/css">
 		.ui-stars-star,
@@ -2280,29 +2381,46 @@ class form extends base {
 			cursor: default !important;
 		}
 	</style>
+
 STR;
 			}
 
 			if(!empty($jqueryColorIDArr))
 			{
-				$str .= "\n\n\t" . '<link href="' . $this->jsIncludesPath . '/jquery/colorpicker/colorpicker.css" rel="stylesheet" type="text/css"/>';
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/colorpicker/colorpicker.js"></script>';
+				$str .= <<<STR
+	<link href="{$this->jsIncludesPath}/jquery/colorpicker/colorpicker.css" rel="stylesheet" type="text/css"/>
+	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/colorpicker/colorpicker.js"></script>
+
+STR;
 			}
 
-			$str .= "\n\n\t" . '<script type="text/javascript" defer="defer">';
-			$str .= "\n\t\t" . "$(function() {";
+			$str .= <<<STR
+	<script type="text/javascript" defer="defer">
+		$(function() {
+
+STR;
 			if(!empty($jqueryDateIDArr))
 			{
 				$dateSize = sizeof($jqueryDateIDArr);
 				for($d = 0; $d < $dateSize; ++$d)
-					$str .= "\n\t\t\t" . '$("#' . $jqueryDateIDArr[$d] . '").datepicker({ dateFormat: "' . $this->jqueryDateFormat . '", showButtonPanel: true });';
+				{
+					$str .= <<<STR
+			$("#{$jqueryDateIDArr[$d]}").datepicker({ dateFormat: "{$this->jqueryDateFormat}", showButtonPanel: true });
+
+STR;
+				}	
 			}
 
 			if(!empty($jqueryDateRangeIDArr))
 			{
 				$dateRangeSize = sizeof($jqueryDateRangeIDArr);
 				for($d = 0; $d < $dateRangeSize; ++$d)
-					$str .= "\n\t\t\t" . '$("#' . $jqueryDateRangeIDArr[$d] . '").daterangepicker({ dateFormat: "' . $this->jqueryDateFormat . '" });';
+				{
+					$str .= <<<STR
+			$("#{$jqueryDateRangeIDArr[$d]}").daterangepicker({ dateFormat: "{$this->jqueryDateFormat}" });
+
+STR;
+				}	
 			}
 
 			if(!empty($jquerySortIDArr))
@@ -2310,8 +2428,11 @@ STR;
 				$sortSize = sizeof($jquerySortIDArr);
 				for($s = 0; $s < $sortSize; ++$s)
 				{
-					$str .= "\n\t\t\t" . '$("#' . $jquerySortIDArr[$s] . '").sortable({ axis: "y" });';
-					$str .= "\n\t\t\t" . '$("#' . $jquerySortIDArr[$s] . '").disableSelection();';
+					$str .= <<<STR
+			$("#{$jquerySortIDArr[$s]}").sortable({ axis: "y" });
+			$("#{$jquerySortIDArr[$s]}").disableSelection();
+
+STR;
 				}	
 			}
 
@@ -2322,14 +2443,22 @@ STR;
 				$tooltipSize = sizeof($tooltipKeys);
 				for($t = 0; $t < $tooltipSize; ++$t)
 				{
-					$str .= "\n\t\t\t" . '$("#' . $tooltipKeys[$t] . '").qtip({ content: "' . str_replace('"', '\"', $tooltipIDArr[$tooltipKeys[$t]]) . '", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3';
+					$tooltipContent = str_replace('"', '\"', $tooltipIDArr[$tooltipKeys[$t]]);
+					$str .= <<<STR
+			$("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
+STR;
 					if(!empty($this->tooltipBorderColor))
 					{
 						if($this->tooltipBorderColor[0] != "#")
 							$this->tooltipBorderColor = "#" . $this->tooltipBorderColor;
-						$str .= ', color: "' . $this->tooltipBorderColor . '"';
+						$str .= <<<STR
+, color: "{$this->tooltipBorderColor}"
+STR;
 					}	
-					$str .= ' } }, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });';
+					$str .= <<<STR
+} }, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });
+
+STR;
 				}	
 			}
 
@@ -2341,29 +2470,81 @@ STR;
 				for($s = 0; $s < $sliderSize; ++$s)
 				{
 					$slider = $jquerySliderIDArr[$sliderKeys[$s]];
-					$str .= "\n\t\t\t" . '$("#' . $sliderKeys[$s] . '").slider({';
+					$sliderName = str_replace('"', '&quot;', $slider->attributes["name"]);
+					$str .= <<<STR
+			$("#{$sliderKeys[$s]}").slider({
+
+STR;
 					if(is_array($slider->attributes["value"]))
-						$str .= 'range: true, values: [' . $slider->attributes["value"][0] . ', ' . $slider->attributes["value"][1] . ']';
+					{
+						$str .= <<<STR
+				range: true, 
+				values: [{$slider->attributes["value"][0]}, {$slider->attributes["value"][1]}],
+STR;
+					}	
 					else
-						$str .= 'range: "min", value: ' . $slider->attributes["value"];
-					$str .= ', min: ' . $slider->sliderMin . ', max: ' . $slider->sliderMax . ', orientation: "' . $slider->sliderOrientation . '"';
+					{
+						$str .= <<<STR
+				range: "min", 
+				value: {$slider->attributes["value"]},
+
+STR;
+					}	
+					$str .= <<<STR
+				min: {$slider->sliderMin}, 
+				max: {$slider->sliderMax}, 
+				orientation: "{$slider->sliderOrientation}",
+
+STR;
 					if(!empty($slider->sliderSnapIncrement))
-						$str .= ', step: ' . $slider->sliderSnapIncrement;
+					{
+						$str .= <<<STR
+				step: {$slider->sliderSnapIncrement},
+
+STR;
+					}	
 					if(is_array($slider->attributes["value"]))
 					{
-						$str .= ', slide: function(event, ui) { ';
+						$str .= <<<STR
+				slide: function(event, ui) {
+
+STR;
 						if(empty($slider->sliderHideDisplay))
-							$str .= '$("#' . $sliderKeys[$s] . '_display").text("' . $slider->sliderPrefix . '" + ui.values[0] + "' . $slider->sliderSuffix . ' - ' . $slider->sliderPrefix . '" + ui.values[1] + "' . $slider->sliderSuffix . '"); ';
-						$str .= 'document.forms["' . $this->attributes["name"] . '"].elements["' . str_replace('"', '&quot;', $slider->attributes["name"]) . '"][0].value = ui.values[0]; document.forms["' . $this->attributes["name"] . '"].elements["' . str_replace('"', '&quot;', $slider->attributes["name"]) . '"][1].value = ui.values[1];}';
+						{
+							$str .= <<<STR
+					$("#{$sliderKeys[$s]}_display").text("{$slider->sliderPrefix}" + ui.values[0] + "{$slider->sliderSuffix} - {$slider->sliderPrefix}" + ui.values[1] + "{$slider->sliderSuffix}");
+
+STR;
+						}	
+						$str .= <<<STR
+					document.forms["{$this->attributes["name"]}"].elements["$sliderName"][0].value = ui.values[0]; document.forms["{$this->attributes["name"]}"].elements["$sliderName"][1].value = ui.values[1];
+				}	
+
+STR;
 					}	
 					else
 					{
-						$str .= ', slide: function(event, ui) { ';
+						$str .= <<<STR
+				slide: function(event, ui) {
+
+STR;
 						if(empty($slider->sliderHideDisplay))
-							$str .= '$("#' . $slider->attributes["id"] . '_display").text("' . $slider->sliderPrefix . '" + ui.value + "' . $slider->sliderSuffix . '");';
-						$str .= ' document.forms["' . $this->attributes["name"] . '"].elements["' . str_replace('"', '&quot;', $slider->attributes["name"]) . '"].value = ui.value;}';
+						{
+							$str .= <<<STR
+					$("#{$slider->attributes["id"]}_display").text("{$slider->sliderPrefix}" + ui.value + "{$slider->sliderSuffix}");
+
+STR;
+						}	
+						$str .= <<<STR
+					document.forms["{$this->attributes["name"]}"].elements["$sliderName"].value = ui.value;
+				}
+
+STR;
 					}	
-					$str .= '});';
+					$str .= <<<STR
+			});
+
+STR;
 				}
 			}
 
@@ -2375,13 +2556,30 @@ STR;
 				for($r = 0; $r < $ratingSize; ++$r)
 				{
 					$rating = $jqueryStarRatingIDArr[$ratingKeys[$r]];
-					$str .= "\n\t\t\t" . '$("#' . $ratingKeys[$r] . '").stars({';
+					$str .= <<<STR
+			$("#{$ratingKeys[$r]}").stars({
+
+STR;
 					if(empty($rating->ratingHideCaption))
-						$str .= "\n\t\t\t\t" . 'captionEl: $("#' . $ratingKeys[$r] . '_caption"),'; 
+					{
+						$str .= <<<STR
+				captionEl: $("#{$ratingKeys[$r]}_caption"),
+
+STR;
+					}	
 					if(!empty($rating->ratingHideCancel))
-						$str .= "\n\t\t\t\t" . 'cancelShow: false,'; 
-					$str .= "\n\t\t\t\t" . 'inputType: "select", cancelValue: ""';
-					$str .= '});';
+					{
+					$str .= <<<STR
+				cancelShow: false,
+
+STR;
+					}	
+					$str .= <<<STR
+				inputType: "select", 
+				cancelValue: "" 
+			});
+
+STR;
 				}	
 			}
 
@@ -2390,15 +2588,38 @@ STR;
 			{
 				$colorSize = sizeof($jqueryColorIDArr);
 				for($c = 0; $c < $colorSize; ++$c)
-					$str .= "\n\t\t\t" . '$("#' . $jqueryColorIDArr[$c] . '").ColorPicker({	onSubmit: function(hsb, hex, rgb, el) { $(el).val(hex); $(el).ColorPickerHide(); }, onBeforeShow: function() { if(this.value != "Click to Select Color..." && this.value != "") $(this).ColorPickerSetColor(this.value); } }).bind("keyup", function(){ $(this).ColorPickerSetColor(this.value); });';
+				{
+					$str .= <<<STR
+			$("#{$jqueryColorIDArr[$c]}").ColorPicker({	
+				onSubmit: function(hsb, hex, rgb, el) { 
+					$(el).val(hex); 
+					$(el).ColorPickerHide(); 
+				}, 
+				onBeforeShow: function() { 
+					if(this.value != "Click to Select Color..." && this.value != "") 
+						$(this).ColorPickerSetColor(this.value); 
+				} 
+			}).bind("keyup", function(){ 
+				$(this).ColorPickerSetColor(this.value); 
+			});
+
+STR;
+				}	
 			}
 
-			$str .= "\n\t\t});";
+				$str .= <<<STR
+		});
+	</script>
 
-			$str .= "\n\t</script>\n";
+STR;
 		}	
 		elseif((!empty($this->ajax) || !empty($this->emailExists)) && empty($this->preventJQueryLoad))
-			$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/jquery/jquery.js"></script>' . "\n";
+		{
+				$str .= <<<STR
+	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
+
+STR;
+		}	
 
 		if(!empty($latlngIDArr))
 		{
@@ -2410,8 +2631,16 @@ STR;
 			if(empty($this->latlngDefaultLocation))
 				$this->latlngDefaultLocation = array(41.847, -87.661);
 			if(empty($this->preventGoogleMapsLoad))
-				$str .= "\n\t" . '<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>';
-			$str .= "\n\t" . '<script type="text/javascript">';
+			{
+				$str .= <<<STR
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+STR;
+			}	
+				$str .= <<<STR
+	<script type="text/javascript">
+
+STR;
 			$latlngSize = sizeof($latlngIDArr);
 			$latlngKeys = array_keys($latlngIDArr);
 
@@ -2419,11 +2648,17 @@ STR;
 			{
 				$latlng = $latlngIDArr[$latlngKeys[$l]];
 				$latlngID = str_replace('"', '&quot;', $latlng->attributes["id"]);
-				$str .= "\n\t\t" . 'var map_' . $latlngID . ';';
-				$str .= "\n\t\t" . 'var marker_' . $latlngID . ';';
-				$str .= "\n\t\t" . 'var geocoder_' . $latlngID . ';';
+				$str .= <<<STR
+		var map_$latlngID;
+		var marker_$latlngID;
+		var geocoder_$latlngID;
+
+STR;
 			}
-			$str .= "\n\t\tfunction initializeLatLng_" . $this->attributes["name"] . "() {";
+			$str .= <<<STR
+		function initializeLatLng_{$this->attributes["name"]}() {
+
+STR;
 			for($l = 0; $l < $latlngSize; ++$l)
 			{
 				$latlng = $latlngIDArr[$latlngKeys[$l]];
@@ -2448,7 +2683,6 @@ STR;
 				}	
 
 			$str .= <<<STR
-
 			geocoder_$latlngID = new google.maps.Geocoder();
 			var latlng_$latlngID = new google.maps.LatLng({$latlngCenter[0]}, {$latlngCenter[1]});
 			var mapoptions_$latlngID = { zoom: $latlngZoom, center: latlng_$latlngID, mapTypeId: google.maps.MapTypeId.ROADMAP, mapTypeControl: false }
@@ -2462,11 +2696,11 @@ STR;
 				document.forms["$latlngForm"].elements["$latlngName"].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
 				document.getElementById("{$latlngID}_clearDiv").style.display = "block";
 			});	
+
 STR;
 			}
 
 			$str .= <<<STR
-
 		}
 		function jumpToLatLng_{$this->attributes["name"]}(fieldObj, latlngID, fieldName) {
 			eval('var geocoderObj = geocoder_' + latlngID);
@@ -2509,7 +2743,6 @@ STR;
 		if(!empty($jqueryCheckSort))
 		{
 			$str .= <<<STR
-
 	<script type="text/javascript" defer="defer">
 		function addOrRemoveCheckSortItem_{$this->attributes["name"]}(cs_fieldObj, cs_id, cs_name, cs_index, cs_value, cs_text) {
 			if(cs_fieldObj.checked != true)
@@ -2531,7 +2764,12 @@ STR;
 		if(!empty($this->tinymceIDArr))
 		{
 			if(empty($this->preventTinyMCELoad))
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/tinymce/tiny_mce.js"></script>';
+			{
+				$str .= <<<STR
+	<script type="text/javascript" src="{$this->jsIncludesPath}/tinymce/tiny_mce.js"></script>
+
+STR;
+			}	
 
 			if(empty($this->preventTinyMCEInitLoad))
 			{
@@ -2568,9 +2806,17 @@ STR;
 		if(!empty($this->ckeditorIDArr))
 		{
 			if(empty($this->preventCKEditorLoad))
-				$str .= "\n\t" . '<script type="text/javascript" src="' . $this->jsIncludesPath . '/ckeditor/ckeditor.js"></script>';
+			{
+				$str .= <<<STR
+	<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
 
-			$str .= "\n\t" . '<script type="text/javascript">';
+STR;
+			}	
+
+			$str .= <<<STR
+	<script type="text/javascript">
+
+STR;
 			$ckeditorSize = sizeof($this->ckeditorIDArr);
 			$ckeditorKeys = array_keys($this->ckeditorIDArr);
 
@@ -2585,28 +2831,48 @@ STR;
 					$ckeditorParamArr[] = 'customConfig: "' . $this->ckeditorCustomConfig . '"';
 				if(!empty($this->ckeditorLang))
 					$ckeditorParamArr[] = 'language: "' . $this->ckeditorLang . '"';
-				$str .= "\n\t\t" . 'CKEDITOR.replace("' . $ckeditorID . '"';
+				$str .= <<<STR
+		CKEDITOR.replace("$ckeditorID"
+STR;
 				if(!empty($ckeditorParamArr))
-					$str .=  ", { " . implode(", ", $ckeditorParamArr) . " }";
-				$str .= ");";
+				{
+					$ckeditorParamStr = implode(", ", $ckeditorParamArr);
+					$str .= <<<STR
+, { $ckeditorParamStr }
+STR;
+				}	
+				$str .= <<<STR
+);
+
+STR;
 			}
-			$str .= "\n\t</script>\n";
+			$str .= <<<STR
+	</script>
+
+STR;
 		}	
 
 		if(!empty($captchaID))
 		{
 			if(empty($this->preventCaptchaLoad))
-				$str .= "\n\t" . '<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>';
+			{
+				$str .= <<<STR
+	<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
+
+STR;
+			}	
 			
-			$str .= "\n\t" . '<script type="text/javascript">';
-				$str .= "\n\t\t" . 'Recaptcha.create("' . $this->captchaPublicKey . '", "' . $captchaID . '", { theme: "' . $this->captchaTheme . '", lang: "' . $this->captchaLang . '" });';
-			$str .= "\n\t</script>\n";
+			$str .= <<<STR
+	<script type="text/javascript">
+		Recaptcha.create("{$this->captchaPublicKey}", "$captchaID", { theme: "{$this->captchaTheme}", lang: "{$this->captchaLang}" });
+	</script>
+
+STR;
 		}
 
 		if(!empty($this->hintExists))
 		{
 				$str .= <<<STR
-
 	<script type="text/javascript">
 		function hintfocus_{$this->attributes["name"]}(eleObj) {
 			if(eleObj.value == eleObj.defaultValue)
@@ -2617,7 +2883,6 @@ STR;
 				eleObj.value = eleObj.defaultValue;
 		}
 	</script>	
-
 
 STR;
 		}
@@ -2647,92 +2912,177 @@ STR;
 
 			if($eleType == "checkbox")
 			{
-				echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
-					if(!empty($ele->required))
-						echo "\n\t\t\tvar is_checked = false;";
-					echo "\n\t\t\t", 'for(i = 0; i < formObj.elements["', $eleName, '"].length; i++) {';
-						echo "\n\t\t\t\t", 'if(formObj.elements["', $eleName, '"][i].checked) {';
-						if(!empty($this->ajax))
-							echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][i].value);';
-						if(!empty($ele->required))
-							echo "\n\t\t\t\t\tis_checked = true;";
-						echo "\n\t\t\t\t}";
-					echo "\n\t\t\t}";		
+				echo <<<STR
+		if(formObj.elements["$eleName"].length) {
+
+STR;
 					if(!empty($ele->required))
 					{
-						echo "\n\t\t\tif(!is_checked) {";
-							echo "\n\t\t\t\t", $alertMsg;
-							echo "\n\t\t\t\treturn false;";
-						echo "\n\t\t\t}";
+						echo <<<STR
+			var is_checked = false;
+
+STR;
+					}	
+					echo <<<STR
+			for(i = 0; i < formObj.elements["$eleName"].length; i++) {
+				if(formObj.elements["$eleName"][i].checked) {
+
+STR;
+						if(!empty($this->ajax))
+						{
+							echo <<<STR
+					form_data += "&$eleName=" + escape(formObj.elements["$eleName"][i].value);
+
+STR;
+						}	
+						if(!empty($ele->required))
+						{
+							echo <<<STR
+					is_checked = true;
+
+STR;
+						}	
+						echo <<<STR
+				}
+			}
+STR;
+					if(!empty($ele->required))
+					{
+						echo <<<STR
+			if(!is_checked) {
+				$alertMsg
+				return false;
+			}
+
+STR;
 					}
-				echo "\n\t\t}";		
-				echo "\n\t\telse {";
+				echo <<<STR
+		}
+		else {
+
+STR;
 				if(!empty($this->ajax))
 				{
-					echo "\n\t\t\t", 'if(formObj.elements["', $eleName, '"].checked)';
-						echo "\n\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+					echo <<<STR
+			if(formObj.elements["$eleName"].checked)
+				form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
+
+STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t\t", 'if(!formObj.elements["', $eleName, '"].checked) {';
-						echo "\n\t\t\t\t", $alertMsg;
-						echo "\n\t\t\t\treturn false;";
-					echo "\n\t\t\t}";
+					echo <<<STR
+			if(!formObj.elements["$eleName"].checked) {
+				$alertMsg
+				return false;
+			}
+
+STR;
 				}
-				echo "\n\t\t}";
+				echo <<<STR
+		}
+
+STR;
 			}
 			elseif($eleType == "radio")
 			{
-				echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].length) {';
-					if(!empty($ele->required))
-						echo "\n\t\t\tvar is_checked = false;";
-					echo "\n\t\t\t", 'for(i = 0; i < formObj.elements["', $eleName, '"].length; i++) {';
-						echo "\n\t\t\t\t", 'if(formObj.elements["', $eleName, '"][i].checked) {';
-						if(!empty($this->ajax))
-							echo "\n\t\t\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"][i].value);';
-						if(!empty($ele->required))
-							echo "\n\t\t\t\t\tis_checked = true;";
-						echo "\n\t\t\t\t}";
-					echo "\n\t\t\t}";		
+				echo <<<STR
+		if(formObj.elements["$eleName"].length) {
+
+STR;
 					if(!empty($ele->required))
 					{
-						echo "\n\t\t\tif(!is_checked) {";
-							echo "\n\t\t\t\t", $alertMsg;
-							echo "\n\t\t\t\treturn false;";
-						echo "\n\t\t\t}";
+						echo <<<STR
+			var is_checked = false;
+
+STR;
+					}	
+						
+					echo <<<STR
+			for(i = 0; i < formObj.elements["$eleName"].length; i++) {
+				if(formObj.elements["$eleName"][i].checked) {
+
+STR;
+						if(!empty($this->ajax))
+						{
+							echo <<<STR
+					form_data += "&$eleName=" + escape(formObj.elements["$eleName"][i].value);
+
+STR;
+						}	
+						if(!empty($ele->required))
+						{
+							echo <<<STR
+					is_checked = true;
+
+STR;
+						}	
+					echo <<<STR
+				}
+			}		
+
+STR;
+					if(!empty($ele->required))
+					{
+						echo <<<STR
+			if(!is_checked) {
+				$alertMsg
+				return false;
+			}
+
+STR;
 					}
-				echo "\n\t\t}";		
-				echo "\n\t\telse {";
+				echo <<<STR
+		}
+		else {
+
+STR;
 				if(!empty($this->ajax))
 				{
-					echo "\n\t\t\t", 'if(formObj.elements["', $eleName, '"].checked)';
-						echo "\n\t\t\t", 'form_data += "&', $eleName, '=" + escape(formObj.elements["', $eleName, '"].value);';
+					echo <<<STR
+			if(formObj.elements["$eleName"].checked)
+				form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
+
+STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t\t", 'if(!formObj.elements["', $eleName, '"].checked) {';
-						echo "\n\t\t\t\t", $alertMsg;
-						echo "\n\t\t\t\treturn false;";
-					echo "\n\t\t\t}";
+					echo <<<STR
+			if(!formObj.elements["$eleName"].checked) {
+				$alertMsg
+				return false;
+			}
+
+STR;
 				}
-				echo "\n\t\t}";
+
+				echo <<<STR
+		}
+
+STR;
 			}
 			elseif($eleType == "text" || $eleType == "textarea" || $eleType == "date" || $eleType == "daterange" || $eleType == "latlng" || $eleType == "colorpicker" || $eleType == "email")
 			{
 				$eleHint = str_replace('"', '&quot;', $ele->hint);
 				if(!empty($this->ajax))
 				{
-					echo "\n\t\t", 'form_data += "&', $eleName, '="';
-					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value != "', $eleHint, '")';
-						echo "\n\t\t\t", 'form_data += formObj.elements["', $eleName, '"].value;';
+					echo <<<STR
+		form_data += "&$eleName=";
+		if(formObj.elements["$eleName"].value != "$eleHint")
+			form_data += formObj.elements["$eleName"].value;
+
+STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t" , 'if(formObj.elements["', $eleName, '"].value == "', $eleHint, '") {';
-						echo "\n\t\t\t", $alertMsg;
-						echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].focus();';
-						echo "\n\t\t\treturn false;";
-					echo "\n\t\t}";
+					echo <<<STR
+		if(formObj.elements["$eleName"].value == "$eleHint") {
+			$alertMsg
+			formObj.elements["$eleName"].focus();
+			return false;
+		}
+
+STR;
 				}
 			}
 			elseif($eleType == "select" || $eleType == "hidden" || $eleType == "file" || $eleType == "password")
@@ -2741,6 +3091,7 @@ STR;
 				{
 					echo <<<STR
 		form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
+
 STR;
 				}	
 				if(!empty($ele->required))
@@ -2751,6 +3102,7 @@ STR;
 			formObj.elements["$eleName"].focus();
 			return false;
 		}
+
 STR;
 				}
 			}
@@ -2761,6 +3113,7 @@ STR;
 					echo <<<STR
 		if(formObj.elements["$eleName"].value != "")
 			form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
+
 STR;
 				}	
 				if(!empty($ele->required))
@@ -2771,6 +3124,7 @@ STR;
 			formObj.elements["$eleName"].focus();
 			return false;
 		}
+
 STR;
 				}
 			}
@@ -2785,6 +3139,7 @@ STR;
 		}
 		else
 			form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
+
 STR;
 				}	
 			}
@@ -2798,6 +3153,7 @@ STR;
 			formObj.elements["recaptcha_response_field"].focus();
 			return false;
 		}	
+
 STR;
 				}
 				if(!empty($this->ajax))
@@ -2805,33 +3161,50 @@ STR;
 					echo <<<STR
 		form_data += "&recaptcha_challenge_field=" + escape(Recaptcha.get_challenge());		
 		form_data += "&recaptcha_response_field=" + escape(Recaptcha.get_response());
+
 STR;
 				}	
 			}
 			elseif($eleType == "webeditor")
 			{
 				if(!empty($this->ajax))
-					echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(tinyMCE.get("', $eleId, '").getContent());';
+				{
+					echo <<<STR
+		form_data += "&$eleName=" + escape(tinyMCE.get("$eleId").getContent());
+
+STR;
+				}	
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t", 'if(tinyMCE.get("', $eleId, '").getContent() == "") {';
-						echo "\n\t\t\t", $alertMsg;
-						echo "\n\t\t\t" , 'tinyMCE.get("', $eleId, '").focus();';
-						echo "\n\t\t\treturn false;";
-					echo "\n\t\t}";
+					echo <<<STR
+		if(tinyMCE.get("$eleId").getContent() == "") {
+			$alertMsg
+			tinyMCE.get("$eleId").focus();
+			return false;
+		}
+
+STR;
 				}
 			}
 			elseif($eleType == "ckeditor")
 			{
 				if(!empty($this->ajax))
-					echo "\n\t\t", 'form_data += "&', $eleName, '=" + escape(CKEDITOR.instances.' . $eleId . '.getData());';
+				{
+					echo <<<STR
+		form_data += "&$eleName=" + escape(CKEDITOR.instances.$eleId.getData());
+
+STR;
+				}	
 				if(!empty($ele->required))
 				{
-					echo "\n\t\t" , 'if( CKEDITOR.instances.' . $eleId . '.getData() == "") {';
-						echo "\n\t\t\t", $alertMsg;
-						echo "\n\t\t\t" , 'CKEDITOR.instances.' . $eleId . '.focus();';
-						echo "\n\t\t\treturn false;";
-					echo "\n\t\t}";
+					echo <<<STR
+		if( CKEDITOR.instances.' . $eleId . '.getData() == "") {';
+			$alertMsg
+			CKEDITOR.instances.$eleId.focus();
+			return false;
+		}
+
+STR;
 				}
 			}
 			elseif($eleType == "checksort")
@@ -2852,6 +3225,7 @@ STR;
 			else
 				form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
 		}
+
 STR;
 				}
 				if(!empty($ele->required))
@@ -2861,6 +3235,7 @@ STR;
 			$alertMsg
 			return false;
 		}	
+
 STR;
 				}	
 			}
@@ -2880,6 +3255,7 @@ STR;
 			else
 				form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
 		}		
+
 STR;
 				
 			}
@@ -2887,7 +3263,6 @@ STR;
 			if($eleType == "email")
 			{
 				echo <<<STR
-
 		if(formObj.elements["$eleName"].value != "$eleHint") {
 			$.ajax({
 				async: false,
@@ -2923,8 +3298,11 @@ STR;
 			if(!empty($ele->hint))
 			{
 				$eleName = str_replace('"', '&quot;', $ele->attributes["name"]);
-				echo "\n\t\t", 'if(formObj.elements["', $eleName, '"].value == formObj.elements["', $eleName, '"].defaultValue)';
-					echo "\n\t\t\t", 'formObj.elements["', $eleName, '"].value = "";';
+				echo <<<STR
+		if(formObj.elements["$eleName"].value == formObj.elements["$eleName"].defaultValue)
+			formObj.elements["$eleName"].value = "";
+
+STR;
 			}
 		}	
 	}
