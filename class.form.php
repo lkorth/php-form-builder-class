@@ -1028,6 +1028,11 @@ class form extends base {
 		if(!empty($this->includesRelativePath))
 			$this->includesPath = $this->includesRelativePath;
 
+                //If windows normalize backslashes to forward slashes
+                if( PHP_OS == 'WINNT' ){
+                    $this->includesPath = str_replace( "\\" , "/" , $this->includesPath );
+                }
+
 		//check if includesPath is absolute or not, then create variables for where you need to use it
 		if($this->includesPath[0] != '/') {
 			$this->jsIncludesPath = $this->includesPath;
