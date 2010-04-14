@@ -935,7 +935,7 @@ STR;
 STR;
 			}	
 			echo <<<STR
-	{$this->onsubmitFunctionOverride}(formObj) {
+	function {$this->onsubmitFunctionOverride}(formObj) {
 
 STR;
 			/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
