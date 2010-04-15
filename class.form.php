@@ -3198,7 +3198,7 @@ STR;
 				if(!empty($ele->required))
 				{
 					echo <<<STR
-		if( CKEDITOR.instances.' . $eleId . '.getData() == "") {';
+		if( CKEDITOR.instances.$eleId.getData() == "") {
 			$alertMsg
 			CKEDITOR.instances.$eleId.focus();
 			return false;
