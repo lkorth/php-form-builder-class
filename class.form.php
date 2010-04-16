@@ -82,8 +82,10 @@ class form extends base {
 	protected $latlngDefaultLocation;	/*Allow you to customize the default location of latlng form elements.*/
 	protected $parentFormOverride;		/*When using the latlng form element with the elementsToString() function, this attribute will need to be set to the parent form name.*/
 	protected $includesRelativePath;	/*DEPRECATED: Specifies where the includes directory is located.  This path must be relative b/c it is used for both js and php includes.*/
-	protected $includesPath;            /*Specifies where the includes directory is located. This path can be relative or absolute  */
+	protected $includesPath;            /*Specifies where the includes directory is located. This path can be relative or absolute.*/
 	protected $onsubmitFunctionOverride;/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
+	protected $enableDivLayout;			/*This setting replaces the table markup with div-based markup.*/
+	protected $preventAutoClear;		/*This setting can be used to prevent the pfbc-clear class from being applied in div layout mode.*/
 
 	/*Variables that can only be set inside this class.*/
 	private $elements;					/*Contains all element objects for a form.*/
@@ -777,7 +779,7 @@ class form extends base {
 			
 		if(!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists))	
 			echo ' onsubmit="return ', $this->onsubmitFunctionOverride, '(this);"';
-		echo ">\n";
+		echo ">";
 
 		/*This section renders all the hidden form fields outside the <table> tag.*/
 		$elementSize = sizeof($this->elements);
@@ -795,7 +797,7 @@ class form extends base {
 						$ele->attributes["value"] = $this->referenceValues[substr($ele->attributes["name"], 0, -2)];
 				}	
 
-				echo "<input";
+				echo "\n<input";
 				if(!empty($ele->attributes) && is_array($ele->attributes))
 				{
 					$tmpAllowFieldArr = $this->allowedFields["hidden"];
@@ -805,22 +807,27 @@ class form extends base {
 							echo ' ', $key, '="', str_replace('"', '&quot;', $value), '"';
 					}		
 				}
-				echo "/>\n";
+				echo "/>";
 			}
 		}	
 
 		/*The form fields are rendered in a basic table structure.*/
-		echo "<table";
-		if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
+		if(!empty($this->enableDivLayout))
+			echo "\n" . '<div class="pfbc-main"';
+		else
 		{
-			$tmpAllowFieldArr = $this->allowedFields["table"];
-			foreach($this->tableAttributes as $key => $value)
+			echo "\n<table";
+			if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
 			{
-				if(in_array($key, $tmpAllowFieldArr))
-					echo ' ', $key, '="', str_replace('"', '&quot;', $value), '"';
-			}		
+				$tmpAllowFieldArr = $this->allowedFields["table"];
+				foreach($this->tableAttributes as $key => $value)
+				{
+					if(in_array($key, $tmpAllowFieldArr))
+						echo ' ', $key, '="', str_replace('"', '&quot;', $value), '"';
+				}		
+			}
 		}
-		echo ">\n";
+		echo ">";
 
 		/*Render the elements by calling elementsToString function with the includeTable tags field set to false.  There is no need
 		to eender the table tag b/c we have just done that above.*/
@@ -829,25 +836,30 @@ class form extends base {
 		/*If there are buttons included, render those to the screen now.*/
 		if(!empty($this->buttons))
 		{
-			echo "\t", '<tr><td align="right"';
-			if(!empty($this->tdAttributes) && is_array($this->tdAttributes))
+			if(!empty($this->enableDivLayout))
+				echo "\n\t", '<div class="pfbc-buttons"';
+			else
 			{
-				$tmpAllowFieldArr = $this->allowedFields["td"];
-				foreach($this->tdAttributes as $key => $value)
+				echo "\n\t", '<tr><td align="right"';
+				if(!empty($this->tdAttributes) && is_array($this->tdAttributes))
 				{
-					/*This if section overwrites the align attribute of the table cell tag (<td>) forcing all buttons to be aligned right.*/
-					if($key != "align" && in_array($key, $tmpAllowFieldArr))
-						echo ' ', $key, '="', str_replace('"', '&quot;', $value), '"';
-				}		
+					$tmpAllowFieldArr = $this->allowedFields["td"];
+					foreach($this->tdAttributes as $key => $value)
+					{
+						/*This if section overwrites the align attribute of the table cell tag (<td>) forcing all buttons to be aligned right.*/
+						if($key != "align" && in_array($key, $tmpAllowFieldArr))
+							echo ' ', $key, '="', str_replace('"', '&quot;', $value), '"';
+					}		
+				}
 			}
-			echo ">\n";
+			echo ">";
 			$buttonSize = sizeof($this->buttons);
 			for($i = 0; $i < $buttonSize; ++$i)
 			{
 				/*The wraplink parameter will simply wrap an anchor tag (<a>) around the button treating it as a link.*/
 				if(!empty($this->buttons[$i]->wrapLink))
 				{
-					echo "\t\t<a";
+					echo "\n\t\t<a";
 					if(!empty($this->buttons[$i]->linkAttributes) && is_array($this->buttons[$i]->linkAttributes))
 					{
 						$tmpAllowFieldArr = $this->allowedFields["a"];
@@ -860,7 +872,7 @@ class form extends base {
 					echo ">";
 				}
 				else
-					echo "\t";
+					echo "\n\t\t";
 
 				/*The phpFunction parameter was included to give the developer the flexibility to use any custom button generation function 
 				they might currently use in their development environment.*/
@@ -891,8 +903,6 @@ class form extends base {
 				}
 				else
 				{
-					if(empty($this->buttons[$i]->wrapLink))
-						echo "\t";
 					echo "<input";
 					if(!empty($this->buttons[$i]->attributes) && is_array($this->buttons[$i]->attributes))
 					{
@@ -908,15 +918,18 @@ class form extends base {
 
 				if(!empty($this->buttons[$i]->wrapLink))
 					echo "</a>";
-				
-				echo "\n";
 			}
-			echo "\t</td></tr>\n";
+			if(!empty($this->enableDivLayout))
+				echo "\n\t</div>";
+			else
+				echo "\n\t</td></tr>";
 		}
-		echo "</table>\n";
+		if(!empty($this->enableDivLayout))
+			echo "\n</div>";
+		else
+			echo "\n</table>";
 
-		echo "</form>\n\n";
-
+		echo "\n</form>\n\n";
 		/*
 		If there are any required fields in the form or if this form is setup to utilize ajax, build a javascript 
 		function for performing form validation before submission and/or for building and submitting a data string through ajax.
@@ -1072,6 +1085,7 @@ STR;
 			}		
 			echo <<<STR
 </script>
+
 STR;
 		}
 
@@ -1133,26 +1147,34 @@ STR;
 		{
 			$mapIndex = 0;
 			$mapCount = 0;
-			if($includeTableTags)
-				$str .= "\n<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">\n";
-			if(!empty($this->tdAttributes["width"]))
-				$mapOriginalWidth = $this->tdAttributes["width"];
+			if(empty($this->enableDivLayout))
+			{
+				if($includeTableTags)
+					$str .= "\n" . '<table cellpadding="0" cellspacing="0" border="0" width="100%">';
+				if(!empty($this->tdAttributes["width"]))
+					$mapOriginalWidth = $this->tdAttributes["width"];
+			}	
 		}	
 		else
 		{
 			if($includeTableTags)
 			{
-				$str .= "\n<table";
-				$tmpAllowFieldArr = $this->allowedFields["table"];
-				if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
+				if(!empty($this->enableDivLayout))
+					$str .= "\n" . '<div class="pfbc-main"';
+				else
 				{
-					foreach($this->tableAttributes as $key => $value)
+					$str .= "\n<table";
+					$tmpAllowFieldArr = $this->allowedFields["table"];
+					if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
 					{
-						if(in_array($key, $tmpAllowFieldArr))
-							$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-					}		
+						foreach($this->tableAttributes as $key => $value)
+						{
+							if(in_array($key, $tmpAllowFieldArr))
+								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
+						}		
+					}
 				}
-				$str .= ">\n";
+				$str .= ">";
 			}
 		}
 
@@ -1163,7 +1185,7 @@ STR;
 
 			/*If the referenceValues array is filled, check for this specific element's name in the associative array key and populate the field's value if applicable.*/
 			if(!empty($this->referenceValues) && is_array($this->referenceValues))
-			{
+				{
 				if(array_key_exists($ele->attributes["name"], $this->referenceValues))
 					$ele->attributes["value"] = $this->referenceValues[$ele->attributes["name"]];
 				elseif(substr($ele->attributes["name"], -2) == "[]" && array_key_exists(substr($ele->attributes["name"], 0, -2), $this->referenceValues))
@@ -1175,7 +1197,7 @@ STR;
 			{
 				if($includeTableTags)
 				{
-					$str .= "\t<input";
+					$str .= "\n<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
 						$tmpAllowFieldArr = $this->allowedFields["hidden"];
@@ -1185,7 +1207,7 @@ STR;
 								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 						}		
 					}
-					$str .= "/>\n";
+					$str .= "/>";
 				}
 			}
 			else
@@ -1196,8 +1218,40 @@ STR;
 					{
 						if($mapCount == 0)
 						{
-							$str .= "\t" . '<tr><td style="padding: 0;">' . "\n";
-							$str .= "\t\t<table";
+							if(empty($this->enableDivLayout))
+							{
+								$str .= "\n\t" . '<tr><td style="padding: 0;">' . "\n\t\t<table";
+								if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
+								{
+									$tmpAllowFieldArr = $this->allowedFields["table"];
+									foreach($this->tableAttributes as $key => $value)
+									{
+										if(in_array($key, $tmpAllowFieldArr))
+											$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
+									}		
+								}
+								$str .= ">\n\t\t\t<tr>\n\t\t\t\t";
+							}
+							else
+								$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
+
+							/*Widths are percentage based and are calculated by dividing 100 by the number of form fields in the given row.*/
+							if(($elementSize - $i) < $this->map[$mapIndex])
+								$this->tdAttributes["width"] = number_format(100 / ($elementSize - $i), 2, ".", "") . "%";
+							else
+								$this->tdAttributes["width"] = number_format(100 / $this->map[$mapIndex], 2, ".", "") . "%";
+						}	
+						else
+						{
+							if(empty($this->enableDivLayout))
+								$str .= "\n\t\t\t\t";
+						}	
+					}
+					else
+					{
+						if(empty($this->enableDivLayout))
+						{
+							$str .= "\n\t" . '<tr><td style="padding: 0;">' . "\n\t\t<table";
 							if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
 							{
 								$tmpAllowFieldArr = $this->allowedFields["table"];
@@ -1207,82 +1261,71 @@ STR;
 										$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 								}		
 							}
-							$str .= ">\n";
-							$str .= "\t\t\t<tr>\n\t\t\t\t";
-
-
-							/*Widths are percentage based and are calculated by dividing 100 by the number of form fields in the given row.*/
-							if(($elementSize - $i) < $this->map[$mapIndex])
-								$this->tdAttributes["width"] = number_format(100 / ($elementSize - $i), 2, ".", "") . "%";
-							else
-								$this->tdAttributes["width"] = number_format(100 / $this->map[$mapIndex], 2, ".", "") . "%";
-						}	
-						else
-							$str .= "\t\t\t\t";
-					}
-					else
-					{
-						$str .= "\t" . '<tr><td style="padding: 0;">' . "\n";
-						$str .= "\t\t<table";
-						if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
-						{
-							$tmpAllowFieldArr = $this->allowedFields["table"];
-							foreach($this->tableAttributes as $key => $value)
-							{
-								if(in_array($key, $tmpAllowFieldArr))
-									$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-							}		
+							$str .= ">\n\t\t\t<tr>\n\t\t\t\t";
 						}
-						$str .= ">\n";
-						$str .= "\t\t\t<tr>\n\t\t\t\t";
+						else
+							$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
+
 						if(!empty($mapOriginalWidth))
 							$this->tdAttributes["width"] = $mapOriginalWidth;
 						else
 							unset($this->tdAttributes["width"]);
 					}	
 				}
-				else
-					$str .= "\t<tr>";
+				elseif(empty($this->enableDivLayout))
+					$str .= "\n\t<tr>";
 
-				$str .= "<td";
-				if(!empty($this->tdAttributes) && is_array($this->tdAttributes))
+				if(!empty($this->enableDivLayout))
 				{
-					$tmpAllowFieldArr = $this->allowedFields["td"];
-					foreach($this->tdAttributes as $key => $value)
+					$str .= "\n\t";
+					if(!empty($this->map))
+						$str .= "\t";
+					$str .= '<div class="pfbc-element"';
+					if(!empty($this->map))
 					{
-						if(in_array($key, $tmpAllowFieldArr))
-							$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-					}		
+						if(!empty($this->tdAttributes["width"]))
+							$str .= ' style="float: left; position: relative; display: block; width: ' . $this->tdAttributes["width"] . ';"';
+					}	
 				}
-				$str .= ">\n";
-
-				/*preHTML and postHTML allow for any special case scenarios.  One specific situation where these may be used would
-				be if you need to toggle the visibility of an item or items based on the state of another field such as a radio button.*/
-				if(!empty($ele->preHTML))
+				else
 				{
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
-					$str .= $ele->preHTML;
-					$str .= "\n";	
-				}		
-
-				if(!empty($ele->label))
-				{
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
-
-					/*Render the label inside a <div> tag.*/	
-					$str .= "<div";
-					if(!empty($this->labelAttributes) && is_array($this->labelAttributes))
+					$str .= "<td";
+					if(!empty($this->tdAttributes) && is_array($this->tdAttributes))
 					{
-						$tmpAllowFieldArr = $this->allowedFields["div"];
-						foreach($this->labelAttributes as $key => $value)
+						$tmpAllowFieldArr = $this->allowedFields["td"];
+						foreach($this->tdAttributes as $key => $value)
 						{
 							if(in_array($key, $tmpAllowFieldArr))
 								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 						}		
+					}
+				}	
+
+				$str .= ">";
+
+				/*preHTML and postHTML allow for any special case scenarios.  One specific situation where these may be used would
+				be if you need to toggle the visibility of an item or items based on the state of another field such as a radio button.*/
+				if(!empty($ele->preHTML))
+					$str .= $this->indent() . $ele->preHTML;
+
+				if(!empty($ele->label))
+				{
+					$str .= $this->indent();
+					if(!empty($this->enableDivLayout))
+                        $str .= '<label class="form-label"';
+					else
+					{
+						/*Render the label inside a <div> tag.*/	
+						$str .= "<div";
+						if(!empty($this->labelAttributes) && is_array($this->labelAttributes))
+						{
+							$tmpAllowFieldArr = $this->allowedFields["div"];
+							foreach($this->labelAttributes as $key => $value)
+							{
+								if(in_array($key, $tmpAllowFieldArr))
+									$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
+							}		
+						}
 					}
 					$str .= ">";
 
@@ -1319,7 +1362,10 @@ STR;
 
 						$str .= ' <img id="' . $tooltipID . '" src="' . $this->tooltipIcon . '"/>';
 					}
-					$str .= "</div>\n";
+					if(!empty($this->enableDivLayout))
+						$str .= "</label>";
+					else
+						$str .= "</div>";
 				}	
 
 				/*Check the element's type and render the field accordinly.*/
@@ -1353,6 +1399,7 @@ STR;
 				elseif(!empty($ele->hint))
 					unset($this->elements[$i]->hint);
 
+				$str .= $this->indent();
 				if($eleType == "text" || $eleType == "password" || $eleType == "email")
 				{
 					if($eleType == "email")
@@ -1364,9 +1411,6 @@ STR;
 					if(empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%;";
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1381,7 +1425,7 @@ STR;
 						$str .= ' disabled="disabled"';
 					if(!empty($ele->readonly))
 						$str .= ' readonly="readonly"';
-					$str .= "/>\n";
+					$str .= "/>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 					
@@ -1393,9 +1437,6 @@ STR;
 				}
 				elseif($eleType == "file")
 				{
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1410,7 +1451,7 @@ STR;
 						$str .= ' disabled="disabled"';
 					if(!empty($ele->readonly))
 						$str .= ' readonly="readonly"';
-					$str .= "/>\n";
+					$str .= "/>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 				}
@@ -1423,9 +1464,6 @@ STR;
 					if(empty($ele->attributes["cols"]))
 						$ele->attributes["cols"] = "30";
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
 					$str .= "<textarea";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1440,7 +1478,7 @@ STR;
 						$str .= ' disabled="disabled"';
 					if(!empty($ele->readonly))
 						$str .= ' readonly="readonly"';
-					$str .= ">" . $ele->attributes["value"] . "</textarea>\n";
+					$str .= ">" . $ele->attributes["value"] . "</textarea>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 				}
@@ -1474,9 +1512,6 @@ STR;
 						$ele->attributes["id"] = "webeditor_" . rand(0, 999);
 					$this->tinymceIDArr[] = $ele->attributes["id"];	
 						
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
 					$str .= "<textarea";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1491,7 +1526,7 @@ STR;
 						$str .= ' disabled="disabled"';
 					if(!empty($ele->readonly))
 						$str .= ' readonly="readonly"';
-					$str .= ">" . $ele->attributes["value"] . "</textarea>\n";
+					$str .= ">" . $ele->attributes["value"] . "</textarea>";
 					if($focus)
 						$this->focusElement = $ele->attributes["id"];
 				}
@@ -1507,9 +1542,6 @@ STR;
 						$ele->attributes["id"] = "ckeditor_" . rand(0, 999);
 					$this->ckeditorIDArr[$ele->attributes["id"]] = $ele; 
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
 					$str .= "<textarea"; 
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1524,7 +1556,7 @@ STR;
 						$str .= ' disabled="disabled"';
 					if(!empty($ele->readonly))
 						$str .= ' readonly="readonly"';
-					$str .= ">" . $ele->attributes["value"] . "</textarea>\n";
+					$str .= ">" . $ele->attributes["value"] . "</textarea>";
 					if($focus)
 						$this->focusElement = $ele->attributes["id"];
 				}
@@ -1532,9 +1564,7 @@ STR;
 				{
 					if(empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%;";
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
+
 					$str .= "<select";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1551,7 +1581,7 @@ STR;
 						$str .= ' readonly="readonly"';
 					if(!empty($ele->multiple))
 						$str .= ' multiple="multiple"';
-					$str .= ">\n";
+					$str .= ">";
 
 					$selected = false;
 					if(is_array($ele->options))
@@ -1559,23 +1589,19 @@ STR;
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o)
 						{
-							$str .= "\t\t\t";
-							if(!empty($this->map))
-								$str .= "\t\t\t";
+							$str .= $this->indent("\t");
 							$str .= '<option value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';
 							if((!is_array($ele->attributes["value"]) && !$selected && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true)))
 							{
 								$str .= ' selected="selected"';
 								$selected = true;
 							}	
-							$str .= '>' . $ele->options[$o]->text . "</option>\n"; 
+							$str .= '>' . $ele->options[$o]->text . "</option>";
 						}	
 					}
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
-					$str .= "</select>\n";
+					$str .= $this->indent();
+					$str .= "</select>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 				}
@@ -1586,12 +1612,9 @@ STR;
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o)
 						{
-							$str .= "\t\t";
-							if(!empty($this->map))
-								$str .= "\t\t\t";
-
 							if($o != 0)
 							{
+								$str .= $this->indent();
 								if(!empty($ele->nobreak))
 									$str .= "&nbsp;&nbsp;";
 								else
@@ -1618,7 +1641,7 @@ STR;
 								$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">';
 							$str .= $ele->options[$o]->text;
 							if(empty($this->noLabels))
-								 $str .= "</label>\n"; 
+								 $str .= "</label>"; 
 						}	
 						if($focus)
 							$this->focusElement = $ele->attributes["name"];
@@ -1635,12 +1658,9 @@ STR;
 
 						for($o = 0; $o < $optionSize; ++$o)
 						{
-							$str .= "\t\t";
-							if(!empty($this->map))
-								$str .= "\t\t\t";
-
 							if($o != 0)
 							{
+								$str .= $this->indent();
 								if(!empty($ele->nobreak))
 									$str .= "&nbsp;&nbsp;";
 								else
@@ -1670,7 +1690,7 @@ STR;
 								$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">';
 							$str .= $ele->options[$o]->text;
 							if(empty($this->noLabels))
-								$str .= "</label>\n"; 
+								$str .= "</label>"; 
 						}	
 						if($focus)
 							$this->focusElement = $ele->attributes["name"];
@@ -1694,9 +1714,6 @@ STR;
 						$ele->attributes["id"] = "dateinput_" . rand(0, 999);
 					$jqueryDateIDArr[] = $ele->attributes["id"];	
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1708,7 +1725,7 @@ STR;
 						}	
 					}
 					$str .= ' readonly="readonly"';
-					$str .= "/>\n";
+					$str .= "/>";
 
 					/*Now that <input> tag his been rendered, change type attribute back to "date".*/
 					$eleType = "date";
@@ -1731,9 +1748,6 @@ STR;
 						$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
 					$jqueryDateRangeIDArr[] = $ele->attributes["id"];	
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1745,7 +1759,7 @@ STR;
 						}	
 					}
 					$str .= ' readonly="readonly"';
-					$str .= "/>\n";
+					$str .= "/>";
 
 					/*Now that <input> tag his been rendered, change type attribute back to "date".*/
 					$eleType = "daterange";
@@ -1754,10 +1768,6 @@ STR;
 				{
 					if(is_array($ele->options))
 					{
-						$str .= "\t\t";
-						if(!empty($this->map))
-							$str .= "\t\t\t";
-
 						if(empty($ele->attributes["id"]))
 							$ele->attributes["id"] = "sort_" . rand(0, 999);
 						if(substr($ele->attributes["name"], -2) != "[]")
@@ -1789,19 +1799,15 @@ STR;
 							$ele->attributes["id"] = "sort_" . rand(0, 999);
 						$jquerySortIDArr[] = $ele->attributes["id"]; 
 
-						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">' . "\n";
+						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o)
 						{
-							$str .= "\t\t\t";
-							if(!empty($this->map))
-								$str .= "\t\t\t";
-							$str .= '<li class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2em; line-height: 2em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"/>' . $ele->options[$o]->text . '</li>' . "\n";
+							$str .= $this->indent("\t");
+							$str .= '<li class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2em; line-height: 2em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"/>' . $ele->options[$o]->text . '</li>';
 						}	
-						$str .= "\t\t";
-						if(!empty($this->map))
-							$str .= "\t\t\t";
-						$str .= "</ul>\n";
+						$str .= $this->indent();
+						$str .= "</ul>";
 					}
 				}
 				elseif($eleType == "latlng")
@@ -1843,9 +1849,6 @@ STR;
 					/*Temporarily set the type attribute to "text" for <input> tag.*/
 					$eleType = "text";
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1864,7 +1867,7 @@ STR;
 					$str .= '"';
 
 					$str .= ' readonly="readonly"';
-					$str .= "/>\n";
+					$str .= "/>";
 
 					/*Now that <input> tag his been rendered, change type attribute back to "latlng".*/
 					$eleType = "latlng";
@@ -1872,23 +1875,17 @@ STR;
 					if(empty($ele->latlngHeight))
 						$ele->latlngHeight = 200;
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
+					$str .= $this->indent();
 					$str .= '<div id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '_canvas" style="margin: 2px 0; height: ' . $ele->latlngHeight . 'px;';
 					if(!empty($ele->latlngWidth))
 						$str .= ' width: ' . $ele->latlngWidth . 'px;';
-					$str .= '"></div>' . "\n";
+					$str .= '"></div>';
 					if(empty($ele->latlngHideJump))
 					{
-						$str .= "\t\t";
-						if(!empty($this->map))
-							$str .= "\t\t\t";
-						$str .= '<input id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["name"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["name"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["name"] . '(this, \'' . htmlentities($ele->attributes["id"], ENT_QUOTES) . '\', \'' . htmlentities($ele->attributes["name"]) . '\');"/>' . "\n";
+						$str .= $this->indent();
+						$str .= '<input id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["name"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["name"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["name"] . '(this, \'' . htmlentities($ele->attributes["id"], ENT_QUOTES) . '\', \'' . htmlentities($ele->attributes["name"]) . '\');"/>';
 					}
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
+					$str .= $this->indent();
 					$str .= '<div id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '_clearDiv" style="margin-top: 2px;';
 					if(empty($ele->attributes["value"]) || !is_array($ele->attributes["value"]))
 						$str .= 'display: none;';
@@ -1920,12 +1917,9 @@ STR;
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o)
 						{
-							$str .= "\t\t";
-							if(!empty($this->map))
-								$str .= "\t\t\t";
-
 							if($o != 0)
 							{
+								$str .= $this->indent();
 								if(!empty($ele->nobreak))
 									$str .= "&nbsp;&nbsp;";
 								else
@@ -1959,14 +1953,12 @@ STR;
 								$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">';
 							$str .= $ele->options[$o]->text;
 							if(empty($this->noLabels))
-								 $str .= "</label>\n"; 
+								 $str .= "</label>";
 						}	
 
 						/*If there are any check options by default, render the <ul> sorting structure.*/
-						$str .= "\t\t";
-						if(!empty($this->map))
-							$str .= "\t\t\t";
-						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">' . "\n";
+						$str .= $this->indent();
+						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
 						if(!empty($sortLIArr))
 						{
 							if(is_array($ele->attributes["value"]))
@@ -1976,9 +1968,7 @@ STR;
 								{
 									if(isset($sortLIArr[$ele->attributes["value"][$li]]))
 									{
-										$str .= "\t\t\t";
-										if(!empty($this->map))
-											$str .= "\t\t\t\t";
+										$str .= $this->indent("\t");
 										$str .= $sortLIArr[$ele->attributes["value"][$li]];	
 									}
 								}
@@ -1987,17 +1977,13 @@ STR;
 							{
 								if(isset($sortLIArr[$ele->attributes["value"][$li]]))
 								{
-									$str .= "\t\t\t";
-									if(!empty($this->map))
-										$str .= "\t\t\t\t";
+									$str .= $this->indent("\t");
 									$str .= $sortLIArr[$ele->attributes["value"]];
 								}
 							}		
 						}
-						$str .= "\t\t";
-						if(!empty($this->map))
-							$str .= "\t\t\t";
-						$str .= "<li style='display: none'>&nbsp;</li></ul>\n";
+						$str .= $this->indent("\t");
+						$str .= "<li style='display: none'>&nbsp;</li>" . $this->indent() . "</ul>";
 					}
 				}
 				elseif($eleType == "captcha")
@@ -2008,11 +1994,7 @@ STR;
 					$captchaID = array();
 					$captchaID = $ele->attributes["id"]; 
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
-					$str .= '<div id="' . $ele->attributes["id"] . '"></div>' . "\n";
-						$str .= "\t\t\t";
+					$str .= '<div id="' . $ele->attributes["id"] . '"></div>';
 				}
 				elseif($eleType == "slider")
 				{
@@ -2048,9 +2030,6 @@ STR;
 					if(is_array($ele->attributes["value"]) && sizeof($ele->attributes["value"]) == 1)
 						$ele->attributes["value"] = $ele->attributes["value"][0];
 					
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
 					$str .= '<div id="' . $ele->attributes["id"] . '" style="font-size: 12px !important; margin: 2px 0;';
 					if($ele->sliderOrientation == "vertical" && !empty($ele->sliderHeight))
 					{
@@ -2058,14 +2037,11 @@ STR;
 							$ele->sliderHeight .= "px";
 						$str .= ' height: ' . $ele->sliderHeight;
 					}	
-					$str .= '"></div>' . "\n";
+					$str .= '"></div>';
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
-					
 					if(empty($ele->sliderHideDisplay))
 					{
+						$str .= $this->indent();
 						$str .= '<div id="' . $ele->attributes["id"] . '_display">';
 						if(is_array($ele->attributes["value"]))
 						{
@@ -2074,24 +2050,20 @@ STR;
 						}	
 						else
 							$str .= $ele->sliderPrefix . $ele->attributes["value"] . $ele->sliderSuffix;
-						$str .= '</div>' . "\n";	
+						$str .= '</div>';
 					}
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
+					$str .= $this->indent();
 					if(is_array($ele->attributes["value"]))
 					{
 						if(substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
-						$str .= '<input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->attributes["value"][0]) . '"/>' . "\n";
-						$str .= "\t\t";
-						if(!empty($this->map))
-							$str .= "\t\t\t";
-						$str .= '<input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->attributes["value"][1]) . '"/>' . "\n";
+						$str .= '<input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->attributes["value"][0]) . '"/>';
+						$str .= $this->indent();
+						$str .= '<input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->attributes["value"][1]) . '"/>';
 					}
 					else
-						$str .= '<input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->attributes["value"]) . '"/>' . "\n";
+						$str .= '<input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->attributes["value"]) . '"/>';
 
 					$jquerySliderIDArr[$ele->attributes["id"]] = $ele;
 				}
@@ -2108,14 +2080,9 @@ STR;
 						$starratingID = "starrating_" . rand(0, 999);
 					$jqueryStarRatingIDArr[$starratingID] = $ele;
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
-					$str .= '<table cellpadding="0" cellspacing="0" border="0"><tr><td valign="middle"><div id="' . $starratingID . '">' . "\n";
+					$str .= '<table cellpadding="0" cellspacing="0" border="0"><tr><td valign="middle"><div id="' . $starratingID . '">';
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
+					$str .= $this->indent();
 					$str .= "<select";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -2132,7 +2099,7 @@ STR;
 						$str .= ' readonly="readonly"';
 					if(!empty($ele->multiple))
 						$str .= ' multiple="multiple"';
-					$str .= ">\n";
+					$str .= ">";
 
 					$selected = false;
 					if(is_array($ele->options))
@@ -2140,33 +2107,27 @@ STR;
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o)
 						{
-							$str .= "\t\t\t";
-							if(!empty($this->map))
-								$str .= "\t\t\t";
+							$str .= $this->indent("\t");
 							$str .= '<option value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';
 							if((!is_array($ele->attributes["value"]) && !$selected && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true)))
 							{
 								$str .= ' selected="selected"';
 								$selected = true;
 							}	
-							$str .= '>' . $ele->options[$o]->text . "</option>\n"; 
+							$str .= '>' . $ele->options[$o]->text . "</option>";
 						}	
 					}
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
-					$str .= "</select>\n";
+					$str .= $this->indent();
+					$str .= "</select>";
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
+					$str .= $this->indent();
 					$str .= '</div></td>';
 
 					if(empty($ele->ratingHideCaption))
 						$str .= '<td valign="middle"><div id="' . $starratingID . '_caption" style="padding-left: 5px;"></div></td>';
 						
-					$str .= '</tr></table>' . "\n";
+					$str .= '</tr></table>';
 
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
@@ -2189,9 +2150,6 @@ STR;
 						$ele->attributes["id"] = "colorinput_" . rand(0, 999);
 					$jqueryColorIDArr[] = $ele->attributes["id"];	
 
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -2202,60 +2160,71 @@ STR;
 								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 						}	
 					}
-					$str .= "/>\n";
+					$str .= "/>";
 
 					/*Now that <input> tag his been rendered, change type attribute back to "colorpicker".*/
 					$eleType = "colorpicker";
 				}
 				elseif($eleType == "html")
-				{
-					$str .= "\t\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
-					$str .= $ele->attributes["value"] . "\n";
-				}	
+					$str .= $ele->attributes["value"];
 
 				if(!empty($ele->postHTML))
+					$str .= $this->indent() . $ele->postHTML;
+				
+				$str .= "\n";
+
+				if(!empty($this->enableDivLayout))
 				{
-					$str .= "\t\t";
+					$str .= "\t";
+					if(!empty($this->map))
+						$str .= "\t";
+				}		
+				else
+				{
+					$str .= "\t";
 					if(!empty($this->map))
 						$str .= "\t\t\t";
-					$str .= $ele->postHTML;
-					$str .= "\n";	
-				}		
-
-				$str .= "\t";
-				if(!empty($this->map))
-					$str .= "\t\t\t";
-				$str .= "</td>";
+				}	
+				if(!empty($this->enableDivLayout))
+					$str .= "</div>";
+				else
+					$str .= "</td>";
 
 				if(!empty($this->map))
 				{
 					if(($i + 1) == $elementSize)
-						$str .= "\n\t\t\t</tr>\n\t\t</table>\n\t</td></tr>\n";
+					{
+						if(!empty($this->enableDivLayout))
+							$str .= "\n\t</div>";
+						else
+							$str .= "\n\t\t\t</tr>\n\t\t</table>\n\t</td></tr>";
+					}	
 					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1)
 					{
 						if(($mapCount + 1) == $this->map[$mapIndex])
 						{
 							$mapCount = 0;
 							++$mapIndex;
-							$str .= "\n\t\t\t</tr>\n\t\t</table>\n\t</td></tr>\n";
+							if(!empty($this->enableDivLayout))
+								$str .= "\n\t</div>";
+							else	
+								$str .= "\n\t\t\t</tr>\n\t\t</table>\n\t</td></tr>";
 						}
 						else
-						{
 							++$mapCount;
-							$str .= "\n";
-						}	
 					}
 					else
 					{
 						++$mapIndex;
 						$mapCount = 0;
-						$str .= "\n\t\t\t</tr>\n\t\t</table>\n\t</td></tr>\n";
+						if(!empty($this->enableDivLayout))
+							$str .= "\n\t</div>";
+						else
+							$str .= "\n\t\t\t</tr>\n\t\t</table>\n\t</td></tr>";
 					}	
 				}
-				else
-					$str .= "</tr>\n";
+				elseif(empty($this->enableDivLayout))
+					$str .= "</tr>";
 				$focus = false;
 			}	
 		}
@@ -2266,14 +2235,20 @@ STR;
 			unset($this->tdAttributes["width"]);
 
 		if($includeTableTags)
-			$str .= "</table>\n";
+		{
+			if(!empty($this->enableDivLayout))
+				$str .= "\n</div>";
+			else
+				$str .= "\n</table>";
+		}	
+
+		$str .= "\n\n";
 
 		if(!empty($jqueryDateIDArr) || !empty($jqueryDateRangeIDArr) || !empty($jquerySortIDArr) || !empty($tooltipIDArr) || !empty($jquerySliderIDArr) || !empty($jqueryStarRatingIDArr) || !empty($jqueryColorIDArr))
 		{
 			if(empty($this->preventJQueryLoad))
 			{
 				$str .= <<<STR
-
 	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
 
 STR;
@@ -2872,7 +2847,7 @@ STR;
 
 		if(!empty($this->hintExists))
 		{
-				$str .= <<<STR
+			$str .= <<<STR
 	<script type="text/javascript">
 		function hintfocus_{$this->attributes["name"]}(eleObj) {
 			if(eleObj.value == eleObj.defaultValue)
@@ -2883,6 +2858,24 @@ STR;
 				eleObj.value = eleObj.defaultValue;
 		}
 	</script>	
+
+STR;
+		}
+
+		if(!empty($this->enableDivLayout) && empty($this->preventAutoClear))
+		{
+			$str .= <<<STR
+	<style type="text/css">
+		.pfbc-clear:after {
+			clear: both;
+			display: block;
+			margin: 0;
+			padding: 0;
+			visibility: hidden;
+			height: 0;
+			content: ":)";
+		}	
+	</style>
 
 STR;
 		}
@@ -3305,6 +3298,24 @@ STR;
 STR;
 			}
 		}	
+	}
+
+	private function indent($extra = "")
+	{
+		$str = "\n$extra";
+		if(!empty($this->enableDivLayout))
+		{
+			$str .= "\t\t";
+			if(!empty($this->map))
+				$str .= "\t";
+		}		
+		else
+		{
+			$str .= "\t\t";
+			if(!empty($this->map))
+				$str .= "\t\t\t";
+		}	
+		return $str;
 	}
 
 	/*
