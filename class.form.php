@@ -1312,7 +1312,7 @@ STR;
 				{
 					$str .= $this->indent();
 					if(!empty($this->enableDivLayout))
-                        $str .= '<label class="form-label"';
+                        $str .= '<label class="pfbc-label"';
 					else
 					{
 						/*Render the label inside a <div> tag.*/	
@@ -1408,7 +1408,7 @@ STR;
 						$eleType = "text";
 					}	
 						
-					if(empty($ele->attributes["style"]))
+					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%;";
 
 					$str .= "<input";
@@ -1457,7 +1457,7 @@ STR;
 				}
 				elseif($eleType == "textarea")
 				{
-					if(empty($ele->attributes["style"]))
+					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%; height: 100px;";
 					if(empty($ele->attributes["rows"]))
 						$ele->attributes["rows"] = "6";
@@ -1484,7 +1484,7 @@ STR;
 				}
 				elseif($eleType == "webeditor")
 				{
-					if(empty($ele->attributes["style"]))
+					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%; height: 100px;";
 					
 					if(empty($ele->attributes["class"]))
@@ -1562,7 +1562,7 @@ STR;
 				}
 				elseif($eleType == "select")
 				{
-					if(empty($ele->attributes["style"]))
+					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%;";
 
 					$str .= "<select";
@@ -1698,7 +1698,7 @@ STR;
 				}
 				elseif($eleType == "date")
 				{
-					if(empty($ele->attributes["style"]))
+					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%; cursor: pointer;";
 
 					if(empty($ele->attributes["id"]))
@@ -1732,7 +1732,7 @@ STR;
 				}
 				elseif($eleType == "daterange")
 				{
-					if(empty($ele->attributes["style"]))
+					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%; cursor: pointer;";
 
 					if(empty($ele->attributes["id"]))
@@ -1814,7 +1814,7 @@ STR;
 				{
 					if(empty($ele->attributes["class"]))
 						$ele->attributes["class"] = "";
-					if(empty($ele->attributes["style"]))
+					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%;";
 					if(empty($ele->attributes["id"]))
 						$ele->attributes["id"] = "latlnginput_" . rand(0, 999);
@@ -2069,7 +2069,7 @@ STR;
 				}
 				elseif($eleType == "rating")
 				{
-					if(empty($ele->attributes["style"]))
+					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%;";
 
 					/*This section ensures each rating field has a unique identifier.*/
@@ -2134,7 +2134,7 @@ STR;
 				}
 				elseif($eleType == "colorpicker")
 				{
-					if(empty($ele->attributes["style"]))
+					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "width: 100%; cursor: pointer;";
 
 					if(empty($ele->attributes["id"]))
