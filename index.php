@@ -68,6 +68,7 @@
 					<li><a href="examples/js-validation.php" target="blank">Javascript Validation</a></li>
 					<li><a href="examples/google-maps.php" target="blank">Google Maps</a></li>
 					<li><a href="examples/layout.php" target="blank">Layout</a></li>
+					<li><a href="examples/div-layout.php" target="blank">Replace Table Structure w/Div Layout</a></li>
 					<li><a href="examples/tooltips.php" target="blank">Tooltips</a></li>
 					<li><a href="examples/captcha.php" target="blank">Captcha</a></li>
 					<li><a href="examples/web-editors.php" target="blank">Web Editors</a></li>
