@@ -1182,6 +1182,8 @@ STR;
 		for($i = 0; $i < $elementSize; ++$i)
 		{
 			$ele = $this->elements[$i];
+			$map_element_first = false;
+			$map_element_last = false;
 
 			/*If the referenceValues array is filled, check for this specific element's name in the associative array key and populate the field's value if applicable.*/
 			if(!empty($this->referenceValues) && is_array($this->referenceValues))
@@ -1233,7 +1235,10 @@ STR;
 								$str .= ">\n\t\t\t<tr>\n\t\t\t\t";
 							}
 							else
+							{
+								$map_element_first = true;
 								$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
+							}	
 
 							/*Widths are percentage based and are calculated by dividing 100 by the number of form fields in the given row.*/
 							if(($elementSize - $i) < $this->map[$mapIndex])
@@ -1264,12 +1269,28 @@ STR;
 							$str .= ">\n\t\t\t<tr>\n\t\t\t\t";
 						}
 						else
+						{
+							$map_element_first = true;
 							$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
+						}	
 
 						if(!empty($mapOriginalWidth))
 							$this->tdAttributes["width"] = $mapOriginalWidth;
 						else
 							unset($this->tdAttributes["width"]);
+					}	
+
+					if(!empty($this->enableDivLayout))
+					{
+						if(($i + 1) == $elementSize)
+							$map_element_last = true;
+						elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1)
+						{
+							if(($mapCount + 1) == $this->map[$mapIndex])
+								$map_element_last = true;
+						}
+						else
+							$map_element_last = true;
 					}	
 				}
 				elseif(empty($this->enableDivLayout))
@@ -1280,7 +1301,15 @@ STR;
 					$str .= "\n\t";
 					if(!empty($this->map))
 						$str .= "\t";
-					$str .= '<div class="pfbc-element"';
+					$str .= '<div class="pfbc-element';
+					if($map_element_first && $map_element_last)
+						$str .= ' pfbc-map-element-single';
+					elseif($map_element_first)
+						$str .= ' pfbc-map-element-first';
+					elseif($map_element_last)
+						$str .= ' pfbc-map-element-last';
+					$str .= '"';
+
 					if(!empty($this->map))
 					{
 						if(!empty($this->tdAttributes["width"]))
