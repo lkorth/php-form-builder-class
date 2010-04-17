@@ -35,6 +35,7 @@
 					<li>Two Wysiwyg Web Editors (<a href="http://tinymce.moxiecode.com/" target="blank">TinyMCE</a>, <a href="http://ckeditor.com/" target="blank">CKEditor</a>)</li>
 					<li>Tooltips (<a href="http://craigsworks.com/projects/qtip/" target="blank">jQuery qTip Plugin</a>)</li>
 					<li>Captcha (<a href="http://recaptcha.net" target="blank">reCAPTCHA</a>)</li>
+					<li>Table and Div Layout Options</li>
 				</ul>
 			</div>
 

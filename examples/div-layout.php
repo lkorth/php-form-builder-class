@@ -28,7 +28,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 					padding-bottom: 5px;
 				}
 				#div_layout .pfbc-element input {
-					width: 200px;
+					width: 195px;
 				}
 
 				/*div_layout_map styles*/
@@ -102,7 +102,7 @@ $form->render();
 		padding-bottom: 5px;
 	}
 	#div_layout .pfbc-element input {
-		width: 200px;
+		width: 195px;
 	}
 	.pfbc-buttons {
 		text-align: right;
@@ -114,6 +114,7 @@ $form->render();
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
 					"enableDivLayout" => 1,
+					"noAutoFocus" => 1,
 					"map" => array(2, 2, 1, 3)
 				));
 				$form->addHidden("cmd", "submit");
@@ -133,6 +134,7 @@ $form = new form("div_layout_map");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
 	"enableDivLayout" => 1,
+	"noAutoFocus" => 1,
 	"map" => array(2, 2, 1, 3)
 ));
 $form->addHidden("cmd", "submit");

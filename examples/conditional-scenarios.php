@@ -144,7 +144,8 @@ $billing_form->render();
 				$location_form->setAttributes(array(
 					"includesPath" => "../includes",
 					"ajax" => 1,
-					"tableAttributes" => array("width" => "500")
+					"tableAttributes" => array("width" => "500"),
+					"noAutoFocus" => 1
 				));	
 
 				$map_form = new form("map");
@@ -182,7 +183,8 @@ echo '<pre>' . htmlentities('<?php
 $location_form = new form("location");
 $location_form->setAttributes(array(
 	"includesPath" => "../includes",
-	"tableAttributes" => array("width" => "500")
+	"tableAttributes" => array("width" => "500"),
+	"noAutoFocus" => 1
 ));	
 
 $map_form = new form("map");
