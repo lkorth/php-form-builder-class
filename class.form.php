@@ -1308,13 +1308,11 @@ STR;
 						$str .= ' pfbc-map-element-first';
 					elseif($map_element_last)
 						$str .= ' pfbc-map-element-last';
-					$str .= '"';
 
 					if(!empty($this->map))
-					{
-						if(!empty($this->tdAttributes["width"]))
-							$str .= ' style="float: left; position: relative; display: block; width: ' . $this->tdAttributes["width"] . ';"';
-					}	
+						$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
+
+					$str .= '"';
 				}
 				else
 				{
@@ -2904,6 +2902,31 @@ STR;
 			height: 0;
 			content: ":)";
 		}	
+	</style>
+
+STR;
+		}
+
+		if(!empty($this->enableDivLayout) && !empty($this->map))
+		{
+			$mapVals = array_values(array_unique($this->map));
+			$mapValSize = sizeof($mapVals);
+			$str .= <<<STR
+	<style type="text/css">
+
+STR;
+			for($m = 0; $m < $mapValSize; ++$m)
+			{
+				$width = number_format(100 / $mapVals[$m], 2, ".", "") . "%";
+				$str .= <<<STR
+		.pfbc-map-columns-{$mapVals[$m]} {
+			float: left; 
+			width: $width;
+		}
+
+STR;
+			}
+			$str .= <<<STR
 	</style>
 
 STR;
