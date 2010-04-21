@@ -32,19 +32,10 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				}
 
 				/*div_layout_map styles*/
-				#div_layout_map .pfbc-main {
-					width: 600px;
-				}
-				#div_layout_map .pfbc-map {
-					padding-bottom: 5px;
-				}
 				#div_layout_map .pfbc-label {
 					display: block;
 				}
 				#div_layout_map .pfbc-element input, #div_layout_map .pfbc-element select {
-					width: 98%;
-				}
-				#div_layout_map .pfbc-map-element-single input, #div_layout_map .pfbc-map-element-last input, #div_layout_map .pfbc-map-element-single select, #div_layout_map .pfbc-map-element-last select {
 					width: 100%;
 				}
 
@@ -115,6 +106,8 @@ $form->render();
 					"includesPath" => "../includes",
 					"enableDivLayout" => 1,
 					"noAutoFocus" => 1,
+					"width" => 600,
+					"divLayoutMapMargin" => 2,
 					"map" => array(2, 2, 1, 3)
 				));
 				$form->addHidden("cmd", "submit");
@@ -135,6 +128,8 @@ $form->setAttributes(array(
 	"includesPath" => "../includes",
 	"enableDivLayout" => 1,
 	"noAutoFocus" => 1,
+	"width" => 600,
+	"divLayoutMapMargin" => 2,
 	"map" => array(2, 2, 1, 3)
 ));
 $form->addHidden("cmd", "submit");
@@ -149,19 +144,10 @@ $form->addTextbox("Zip Code:", "Zip");
 $form->addButton();
 $form->render();
 <style type="text/css">
-	#div_layout_map .pfbc-main {
-		width: 600px;
-	}
-	#div_layout_map .pfbc-map {
-		padding-bottom: 5px;
-	}
 	#div_layout_map .pfbc-label {
 		display: block;
 	}
 	#div_layout_map .pfbc-element input, #div_layout_map .pfbc-element select {
-		width: 98%;
-	}
-	#div_layout_map .pfbc-map-element-single input, #div_layout_map .pfbc-map-element-last input, #div_layout_map .pfbc-map-element-single select, #div_layout_map .pfbc-map-element-last select {
 		width: 100%;
 	}
 	.pfbc-buttons {

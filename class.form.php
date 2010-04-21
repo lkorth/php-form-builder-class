@@ -86,6 +86,7 @@ class form extends base {
 	protected $onsubmitFunctionOverride;/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
 	protected $enableDivLayout;			/*This setting replaces the table markup with div-based markup.*/
 	protected $preventAutoClear;		/*This setting can be used to prevent the pfbc-clear class from being applied in div layout mode.*/
+	protected $divLayoutMapMargin;		/*When using both the enableDivLayout and map form attributes, this setting controls the spacing between columns.*/		
 
 	/*Variables that can only be set inside this class.*/
 	private $elements;					/*Contains all element objects for a form.*/
@@ -163,6 +164,7 @@ class form extends base {
 		$this->emailErrorMsgFormat = "[LABEL] contains an invalid email address.";
 		$this->includesPath = "php-form-builder-class/includes";
 		$this->onsubmitFunctionOverride = "formhandler_" . $this->attributes["name"];
+		$this->divLayoutMapMargin = 2;
 	}
 
 	/*Creates new element object instances and attaches them to the form object.  This function is private and can only be called inside this class.*/
@@ -2913,20 +2915,35 @@ STR;
 			$mapValSize = sizeof($mapVals);
 			$str .= <<<STR
 	<style type="text/css">
+		#{$this->attributes["id"]} .pfbc-main {
+			width: {$this->attributes["width"]}px;
+		}
 
 STR;
 			for($m = 0; $m < $mapValSize; ++$m)
 			{
-				$width = number_format(100 / $mapVals[$m], 2, ".", "") . "%";
+				$width = number_format((($this->attributes["width"] - ($this->divLayoutMapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
 				$str .= <<<STR
-		.pfbc-map-columns-{$mapVals[$m]} {
+		#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} {
 			float: left; 
-			width: $width;
+			width: {$width}px;
 		}
 
 STR;
 			}
 			$str .= <<<STR
+		#{$this->attributes["id"]} .pfbc-map-element-first {
+			margin-left: 0 !important;
+		}
+		#{$this->attributes["id"]} .pfbc-map-element-last {
+			margin-right: 0 !important;
+		}
+		#{$this->attributes["id"]} .pfbc-map-element-single {
+			margin: 0 !important;
+		}
+		#{$this->attributes["id"]} .pfbc-element {
+			margin: 0 {$this->divLayoutMapMargin}px;
+		}
 	</style>
 
 STR;
