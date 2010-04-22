@@ -796,7 +796,7 @@ class form extends base {
 		}	
 
 		if($hiddenElementExists)
-			echo "\n<div>";
+			echo "\n</div>";
 
 		/*The form fields are rendered in a basic table structure.*/
 		echo "\n" . '<div class="pfbc-main">';
