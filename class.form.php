@@ -124,7 +124,7 @@ class form extends base {
 		$this->emailErrorMsgFormat = "[LABEL] contains an invalid email address.";
 		$this->includesPath = "php-form-builder-class/includes";
 		$this->onsubmitFunction = "formhandler_" . $this->attributes["name"];
-		$this->mapMargin = 2;
+		$this->mapMargin = 1;
 
 		/*This array prevents junk from being inserted into the form's HTML.  If you find that an attributes you need to use is not included
 		in this list, feel free to customize to fit your needs.*/
@@ -2698,9 +2698,24 @@ STR;
 
 		if(!empty($this->attributes["width"]))
 		{
+			if(substr($this->attributes["width"], -1) == "%")
+			{
+				$formWidth = substr($this->attributes["width"], 0, -1);
+				$suffix = "%";
+			}	
+			elseif(substr($this->attributes["width"], -2) == "px")
+			{
+				$formWidth = substr($this->attributes["width"], 0, -2);
+				$suffix = "px";
+			}
+			else
+			{
+				$formWidth = $this->attributes["width"];
+				$suffix = "px";
+			}	
 			$str .= <<<STR
 		#{$this->attributes["id"]} .pfbc-main {
-			width: {$this->attributes["width"]}px;
+			width: {$formWidth}$suffix;
 		}
 
 STR;
@@ -2710,19 +2725,17 @@ STR;
 		{
 			$mapVals = array_values(array_unique($this->map));
 			$mapValSize = sizeof($mapVals);
-			$str .= <<<STR
-		#{$this->attributes["id"]} .pfbc-main {
-			width: {$this->attributes["width"]}px;
-		}
-
-STR;
 			for($m = 0; $m < $mapValSize; ++$m)
 			{
-				$width = number_format((($this->attributes["width"] - ($this->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+				if($suffix == "px")
+					$elementWidth = number_format((($formWidth - ($this->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+				else
+					$elementWidth = number_format(((100 - ($this->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+					
 				$str .= <<<STR
 		#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} {
 			float: left; 
-			width: {$width}px;
+			width: {$elementWidth}$suffix;
 		}
 
 STR;
@@ -2732,13 +2745,14 @@ STR;
 			margin-left: 0 !important;
 		}
 		#{$this->attributes["id"]} .pfbc-map-element-last {
+			float: right !important;
 			margin-right: 0 !important;
 		}
 		#{$this->attributes["id"]} .pfbc-map-element-single {
 			margin: 0 !important;
 		}
 		#{$this->attributes["id"]} .pfbc-element {
-			margin: 0 {$this->mapMargin}px;
+			margin: 0 {$this->mapMargin}$suffix;
 		}
 
 STR;
