@@ -759,6 +759,7 @@ class form extends base {
 		echo ">";
 
 		/*This section renders all the hidden form fields outside the <table> tag.*/
+		$hiddenElementExists = false;
 		$elementSize = sizeof($this->elements);
 		for($i = 0; $i < $elementSize; ++$i)
 		{
@@ -774,7 +775,13 @@ class form extends base {
 						$ele->attributes["value"] = $this->referenceValues[substr($ele->attributes["name"], 0, -2)];
 				}	
 
-				echo "\n<input";
+				if(!$hiddenElementExists)
+				{
+					echo "\n" . '<div class="pfbc-hidden">';
+					$hiddenElementExists = true;
+				}	
+
+				echo "\n\t<input";
 				if(!empty($ele->attributes) && is_array($ele->attributes))
 				{
 					$tmpAllowFieldArr = $this->allowedFields["hidden"];
@@ -787,6 +794,9 @@ class form extends base {
 				echo "/>";
 			}
 		}	
+
+		if($hiddenElementExists)
+			echo "\n<div>";
 
 		/*The form fields are rendered in a basic table structure.*/
 		echo "\n" . '<div class="pfbc-main">';
