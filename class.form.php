@@ -76,7 +76,7 @@ class form extends base {
 	protected $errorMsgFormat;			/*Allow you to customize was is alerted/returned during js/php validation.*/
 	protected $emailErrorMsgFormat;		/*Allow you to customize was is alerted/returned during js/php email validation.*/
 	protected $latlngDefaultLocation;	/*Allow you to customize the default location of latlng form elements.*/
-	protected $parentFormOverride;		/*When using the latlng form element with the elementsToString() function, this attribute will need to be set to the parent form name.*/
+	protected $formIDOverride;			/*When using the latlng form element with the elementsToString() function, this attribute will need to be set to the parent form's id.*/
 	protected $includesPath;            /*Specifies where the includes directory is located. This path can be relative or absolute.*/
 	protected $onsubmitFunction;		/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
 
@@ -107,7 +107,6 @@ class form extends base {
 		/*Provide default values for class variables.*/
 		$this->attributes = array(
 			"id" => $id,
-			"name" => $id,
 			"method" => "post",
 			"action" => basename($_SERVER["SCRIPT_NAME"]),
 			"style" => "padding: 0; margin: 0;"
@@ -123,13 +122,13 @@ class form extends base {
 		$this->errorMsgFormat = "[LABEL] is a required field.";
 		$this->emailErrorMsgFormat = "[LABEL] contains an invalid email address.";
 		$this->includesPath = "php-form-builder-class/includes";
-		$this->onsubmitFunction = "formhandler_" . $this->attributes["name"];
+		$this->onsubmitFunction = "formhandler_" . $this->attributes["id"];
 		$this->mapMargin = 1;
 
 		/*This array prevents junk from being inserted into the form's HTML.  If you find that an attributes you need to use is not included
 		in this list, feel free to customize to fit your needs.*/
 		$this->allowedFields = array(
-			"form" => array("method", "action", "target", "enctype", "onsubmit", "id", "class", "name", "style"),
+			"form" => array("method", "action", "target", "enctype", "onsubmit", "id", "class", "style"),
 			"hidden" => array("id", "name", "value", "type"),
 			"text" => array("id", "name", "value", "type", "class", "style", "onclick", "onkeyup", "onfocus", "onblur", "maxlength", "size"),
 			"textarea" => array("id", "name", "class", "style", "onclick", "onkeyup", "maxlength", "onfocus", "onblur", "size", "rows", "cols"),
@@ -893,7 +892,7 @@ STR;
 			if(!empty($this->emailExists))
 			{
 				echo <<<STR
-	var validemail_{$this->attributes["name"]};
+	var validemail_{$this->attributes["id"]};
 
 STR;
 			}	
@@ -1026,10 +1025,10 @@ STR;
 			{
 				/*Any fields with multiple options such as radio button, checkboxes, etc. are handled accordingly.*/
 				echo <<<STR
-	if(document.forms["{$this->attributes["name"]}"].elements["{$this->focusElement}"].type != "select-one" && document.forms["{$this->attributes["name"]}"].elements["{$this->focusElement}"].type != "select-multiple" && document.forms["{$this->attributes["name"]}"].elements["{$this->focusElement}"].length)
-		document.forms["{$this->attributes["name"]}"].elements["{$this->focusElement}"][0].focus();
+	if(document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].type != "select-one" && document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].type != "select-multiple" && document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].length)
+		document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"][0].focus();
 	else
-		document.forms["{$this->attributes["name"]}"].elements["{$this->focusElement}"].focus();
+		document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].focus();
 
 STR;
 			}		
@@ -1043,7 +1042,7 @@ STR;
 		ob_end_clean();
 
 		/*Serialize the form and store it in a session array.  This variable will be unserialized and used within the validate() method.*/
-		$_SESSION["formclass_instances"][$this->attributes["name"]] = serialize($this);
+		$_SESSION["formclass_instances"][$this->attributes["id"]] = serialize($this);
 
 		if(!$returnString)
 			echo($content);
@@ -1056,8 +1055,8 @@ STR;
 	{
 		$str = "";
 
-		if(empty($this->referenceValues) && !empty($_SESSION["formclass_values"]) && array_key_exists($this->attributes["name"], $_SESSION["formclass_values"]))
-			$this->setReferenceValues($_SESSION["formclass_values"][$this->attributes["name"]]);
+		if(empty($this->referenceValues) && !empty($_SESSION["formclass_values"]) && array_key_exists($this->attributes["id"], $_SESSION["formclass_values"]))
+			$this->setReferenceValues($_SESSION["formclass_values"][$this->attributes["id"]]);
 
 		//If windows normalize backslashes to forward slashes
 		if( PHP_OS == 'WINNT' )
@@ -1219,13 +1218,13 @@ STR;
 						if($eleType != "latlng")
 						{
 							$ele->attributes["value"] = $ele->hint;
-							$hintFocusFunction = "hintfocus_" . $this->attributes["name"] . "(this);";
+							$hintFocusFunction = "hintfocus_" . $this->attributes["id"] . "(this);";
 							if(empty($ele->attributes["onfocus"]))
 								$ele->attributes["onfocus"] = $hintFocusFunction;
 							else
 								$ele->attributes["onfocus"] .= " " . $hintFocusFunction;
 
-							$hintBlurFunction = "hintblur_" . $this->attributes["name"] . "(this);";
+							$hintBlurFunction = "hintblur_" . $this->attributes["id"] . "(this);";
 							if(empty($ele->attributes["onblur"]))
 								$ele->attributes["onblur"] = $hintBlurFunction;
 							else
@@ -1688,13 +1687,13 @@ STR;
 					/*If there is a hint included, handle accordingly.*/
 					if(!empty($ele->hint) && empty($ele->attributes["value"]))
 					{
-						$hintFocusFunction = "hintfocus_" . $this->attributes["name"] . "(this);";
+						$hintFocusFunction = "hintfocus_" . $this->attributes["id"] . "(this);";
 						if(empty($ele->attributes["onfocus"]))
 							$ele->attributes["onfocus"] = $hintFocusFunction;
 						else
 							$ele->attributes["onfocus"] .= " " . $hintFocusFunction;
 
-						$hintBlurFunction = "hintblur_" . $this->attributes["name"] . "(this);";
+						$hintBlurFunction = "hintblur_" . $this->attributes["id"] . "(this);";
 						if(empty($ele->attributes["onblur"]))
 							$ele->attributes["onblur"] = $hintBlurFunction;
 						else
@@ -1749,13 +1748,13 @@ STR;
 					if(empty($ele->latlngHideJump))
 					{
 						$str .= $this->indent();
-						$str .= '<input id="' . $latlngID . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["name"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["name"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["name"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"]) . '\');"/>';
+						$str .= '<input id="' . $latlngID . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["id"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["id"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["id"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"]) . '\');"/>';
 					}
 					$str .= $this->indent();
 					$str .= '<div id="' . $latlngID . '_clearDiv" style="margin-top: 2px;';
 					if(empty($ele->attributes["value"]) || !is_array($ele->attributes["value"]))
 						$str .= 'display: none;';
-					$str .= '"><small><a href="javascript: clearLatLng_' . $this->attributes["name"] . '(\'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');">Clear Latitude/Longitude</a></small></div>';	
+					$str .= '"><small><a href="javascript: clearLatLng_' . $this->attributes["id"] . '(\'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');">Clear Latitude/Longitude</a></small></div>';	
 				}
 				elseif($eleType == "checksort")
 				{
@@ -1803,7 +1802,7 @@ STR;
 							}
 
 							$tmpID = str_replace(array('"', '[]'), array('&quot;', '-'), $ele->attributes["name"]) . $o;
-							$str .= ' id="' . $tmpID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["name"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->options[$o]->value) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->options[$o]->text) . '\');"';
+							$str .= ' id="' . $tmpID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->options[$o]->value) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->options[$o]->text) . '\');"';
 
 							/*For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.*/
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true)))
@@ -2322,7 +2321,7 @@ STR;
 STR;
 						}	
 						$str .= <<<STR
-					document.forms["{$this->attributes["name"]}"].elements["$sliderName"][0].value = ui.values[0]; document.forms["{$this->attributes["name"]}"].elements["$sliderName"][1].value = ui.values[1];
+					document.getElementById("{$this->attributes["id"]}").elements["$sliderName"][0].value = ui.values[0]; document.getElementById("{$this->attributes["id"]}").elements["$sliderName"][1].value = ui.values[1];
 				}	
 
 STR;
@@ -2341,7 +2340,7 @@ STR;
 STR;
 						}	
 						$str .= <<<STR
-					document.forms["{$this->attributes["name"]}"].elements["$sliderName"].value = ui.value;
+					document.getElementById("{$this->attributes["id"]}").elements["$sliderName"].value = ui.value;
 				}
 
 STR;
@@ -2428,10 +2427,10 @@ STR;
 
 		if(!empty($latlngIDArr))
 		{
-			if(!empty($this->parentFormOverride))
-				$latlngForm = $this->parentFormOverride;
+			if(!empty($this->formIDOverride))
+				$latlngForm = $this->formIDOverride;
 			else
-				$latlngForm = $this->attributes["name"];
+				$latlngForm = $this->attributes["id"];
 
 			if(empty($this->latlngDefaultLocation))
 				$this->latlngDefaultLocation = array(41.847, -87.661);
@@ -2461,7 +2460,7 @@ STR;
 STR;
 			}
 			$str .= <<<STR
-		function initializeLatLng_{$this->attributes["name"]}() {
+		function initializeLatLng_{$this->attributes["id"]}() {
 
 STR;
 			for($l = 0; $l < $latlngSize; ++$l)
@@ -2498,7 +2497,7 @@ STR;
 				var latlng = marker_$latlngID.getPosition();
 				var lat = latlng.lat();
 				var lng = latlng.lng();
-				document.forms["$latlngForm"].elements["$latlngName"].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
+				document.getElementById("$latlngForm").elements["$latlngName"].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
 				document.getElementById("{$latlngID}_clearDiv").style.display = "block";
 			});	
 
@@ -2507,7 +2506,7 @@ STR;
 
 			$str .= <<<STR
 		}
-		function jumpToLatLng_{$this->attributes["name"]}(fieldObj, latlngID, fieldName) {
+		function jumpToLatLng_{$this->attributes["id"]}(fieldObj, latlngID, fieldName) {
 			eval('var geocoderObj = geocoder_' + latlngID);
 			eval('var mapObj = map_' + latlngID);
 			eval('var markerObj = marker_' + latlngID);
@@ -2518,28 +2517,28 @@ STR;
 						markerObj.setPosition(results[0].geometry.location);
 						var lat = results[0].geometry.location.lat();
 						var lng = results[0].geometry.location.lng();
-						document.forms["$latlngForm"].elements[fieldName].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
+						document.getElementById("$latlngForm").elements[fieldName].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
 						document.getElementById(latlngID + "_clearDiv").style.display = "block";
 					}
 				});
 			}
 		}
-		function focusJumpToLatLng_{$this->attributes["name"]}(fieldObj) {
+		function focusJumpToLatLng_{$this->attributes["id"]}(fieldObj) {
 			if(fieldObj.value == 'Location Jump: Enter Keyword, City/State, Address, or Zip Code')
 				fieldObj.value = '';
 		}
-		function blurJumpToLatLng_{$this->attributes["name"]}(fieldObj) {
+		function blurJumpToLatLng_{$this->attributes["id"]}(fieldObj) {
 			if(fieldObj.value == '')
 				fieldObj.value = 'Location Jump: Enter Keyword, City/State, Address, or Zip Code';
 		}
-		function clearLatLng_{$this->attributes["name"]}(latlngID, latlngFieldName) {
-			if(document.forms["$latlngForm"].elements[latlngID + "_locationJump"])
-				document.forms["$latlngForm"].elements[latlngID + "_locationJump"].value = "Location Jump: Enter Keyword, City/State, Address, or Zip Code";
-			document.forms["$latlngForm"].elements[latlngFieldName].value = "$latlngHint";
+		function clearLatLng_{$this->attributes["id"]}(latlngID, latlngFieldName) {
+			if(document.getElementById("$latlngForm").elements[latlngID + "_locationJump"])
+				document.getElementById("$latlngForm").elements[latlngID + "_locationJump"].value = "Location Jump: Enter Keyword, City/State, Address, or Zip Code";
+			document.getElementById("$latlngForm").elements[latlngFieldName].value = "$latlngHint";
 			document.getElementById(latlngID + "_clearDiv").style.display = "none";
 		}
-		if(window.addEventListener) { window.addEventListener("load", initializeLatLng_{$this->attributes["name"]}, false); }
-		else if(window.attachEvent) { window.attachEvent("onload", initializeLatLng_{$this->attributes["name"]}); }
+		if(window.addEventListener) { window.addEventListener("load", initializeLatLng_{$this->attributes["id"]}, false); }
+		else if(window.attachEvent) { window.attachEvent("onload", initializeLatLng_{$this->attributes["id"]}); }
 	</script>
 
 STR;
@@ -2549,7 +2548,7 @@ STR;
 		{
 			$str .= <<<STR
 	<script type="text/javascript" defer="defer">
-		function addOrRemoveCheckSortItem_{$this->attributes["name"]}(cs_fieldObj, cs_id, cs_name, cs_index, cs_value, cs_text) {
+		function addOrRemoveCheckSortItem_{$this->attributes["id"]}(cs_fieldObj, cs_id, cs_name, cs_index, cs_value, cs_text) {
 			if(cs_fieldObj.checked != true)
 				document.getElementById(cs_id).removeChild(document.getElementById(cs_id + cs_index));
 			else {
@@ -2679,11 +2678,11 @@ STR;
 		{
 			$str .= <<<STR
 	<script type="text/javascript">
-		function hintfocus_{$this->attributes["name"]}(eleObj) {
+		function hintfocus_{$this->attributes["id"]}(eleObj) {
 			if(eleObj.value == eleObj.defaultValue)
 				eleObj.value = '';
 		}
-		function hintblur_{$this->attributes["name"]}(eleObj) {
+		function hintblur_{$this->attributes["id"]}(eleObj) {
 			if(eleObj.value == '')
 				eleObj.value = eleObj.defaultValue;
 		}
@@ -3157,16 +3156,16 @@ STR;
 				data: "email=" + escape(formObj.elements["$eleName"].value) + "&label=" + escape("$eleLabel") + "&format=" + escape("{$this->emailErrorMsgFormat}"),
 				success: function(responseMsg, textStatus) {
 					if(responseMsg != "") {
-						validemail_{$this->attributes["name"]} = false;
+						validemail_{$this->attributes["id"]} = false;
 						alert(responseMsg);
 					}
 					else
-						validemail_{$this->attributes["name"]} = true;
+						validemail_{$this->attributes["id"]} = true;
 				},
 				error: function(XMLHttpRequest, textStatus, errorThrown) { alert(XMLHttpRequest.responseText); }
 			});
 
-			if(!validemail_{$this->attributes["name"]}) {
+			if(!validemail_{$this->attributes["id"]}) {
 				formObj.elements["$eleName"].focus();
 				return false;
 			}
@@ -3219,10 +3218,10 @@ STR;
 			return false;
 		}
 
-		if(!empty($_SESSION["formclass_instances"]) && array_key_exists($this->attributes["name"], $_SESSION["formclass_instances"]))
+		if(!empty($_SESSION["formclass_instances"]) && array_key_exists($this->attributes["id"], $_SESSION["formclass_instances"]))
 		{
 			/*Automatically unserialize the appropriate form instance stored in the session array.*/
-			$form = unserialize($_SESSION["formclass_instances"][$this->attributes["name"]]);
+			$form = unserialize($_SESSION["formclass_instances"][$this->attributes["id"]]);
 
 			/*Store the form's submitted values in a session array for prefilling if validation fails.*/
 			$this->buildSessionValues($form, $referenceValues);
