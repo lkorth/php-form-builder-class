@@ -47,11 +47,8 @@ class base {
 class form extends base { 
 	/*Variables that can be set through the setAttributes function on the base class.*/
 	protected $attributes;				/*HTML attributes attached to <form> tag.*/
-	protected $tableAttributes;			/*HTML attributes attached to <table> tag.*/
-	protected $tdAttributes;			/*HTML attributes attached to <td> tag.*/
-	protected $labelAttributes;			/*HTML attributes attached to <div> tag.*/
-	protected $requiredAttributes;		/*HTML attributes attached to <span> tag.*/
 	protected $map;						/*Unrelated to latlng/map field type.  Used to control table structure.*/
+	protected $mapMargin;				/*When using the map form attribute, this setting controls the spacing between columns.*/		
 	protected $ajax;					/*Activate ajax form submission.*/
 	protected $ajaxType;				/*Specify form submission as get/post.*/
 	protected $ajaxUrl;					/*Where to send ajax submission.*/
@@ -66,8 +63,7 @@ class form extends base {
 	protected $preventGoogleMapsLoad;	/*Prevents Google Maps js file from being loaded twice.*/
 	protected $preventTinyMCELoad;		/*Prevents TinyMCE js file from being loaded twice.*/
 	protected $preventTinyMCEInitLoad;	/*Prevents TinyMCE init functions from being loaded twice.*/
-	protected $noLabels;				/*Prevents labels from being rendered on checkboxes and radio buttons.*/
-	protected $noAutoFocus;				/*Prevents auto-focus feature..*/
+	protected $noAutoFocus;				/*Prevents auto-focus feature.*/
 	protected $captchaTheme;			/*Allows reCAPTCHA theme to be customized.*/
 	protected $captchaLang;				/*Allows reCAPTCHA language to be customized.*/
 	protected $captchaPublicKey;		/*Contains reCAPTCHA public key.*/
@@ -81,12 +77,8 @@ class form extends base {
 	protected $emailErrorMsgFormat;		/*Allow you to customize was is alerted/returned during js/php email validation.*/
 	protected $latlngDefaultLocation;	/*Allow you to customize the default location of latlng form elements.*/
 	protected $parentFormOverride;		/*When using the latlng form element with the elementsToString() function, this attribute will need to be set to the parent form name.*/
-	protected $includesRelativePath;	/*DEPRECATED: Specifies where the includes directory is located.  This path must be relative b/c it is used for both js and php includes.*/
 	protected $includesPath;            /*Specifies where the includes directory is located. This path can be relative or absolute.*/
-	protected $onsubmitFunctionOverride;/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
-	protected $enableDivLayout;			/*This setting replaces the table markup with div-based markup.*/
-	protected $preventAutoClear;		/*This setting can be used to prevent the pfbc-clear class from being applied in div layout mode.*/
-	protected $divLayoutMapMargin;		/*When using both the enableDivLayout and map form attributes, this setting controls the spacing between columns.*/		
+	protected $onsubmitFunction;		/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
 
 	/*Variables that can only be set inside this class.*/
 	private $elements;					/*Contains all element objects for a form.*/
@@ -106,7 +98,6 @@ class form extends base {
 	private $jsIncludesPath;            /*For use on client side, holds either absolute path or document root path*/
 	private $phpIncludesPath;           /*For use on server side, holds either absolute path or full path */
 
-
 	/*Variables that can be accessed outside this class directly.*/
 	public $errorMsg;					/*Contains human readable error message set in validate() method.*/
 
@@ -121,31 +112,24 @@ class form extends base {
 			"action" => basename($_SERVER["SCRIPT_NAME"]),
 			"style" => "padding: 0; margin: 0;"
 		);
-		$this->tableAttributes = array(
-			"cellpadding" => "4",
-			"cellspacing" => "0",
-			"border" => "0"
-		);
-		$this->tdAttributes = array(
-			"valign" => "top",
-			"align" => "left"
-		);
-		$this->requiredAttributes = array(
-			"style" => "color: #990000;"
-		);
 		$this->captchaTheme = "white";
 		$this->captchaLang = "en";
 		$this->captchaPublicKey = "6LcazwoAAAAAADamFkwqj5KN1Gla7l4fpMMbdZfi";
 		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
 		$this->jqueryDateFormat = "MM d, yy";
+		$this->ajaxType = "post";
+		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
+		$this->ajaxDataType = "text";
+		$this->errorMsgFormat = "[LABEL] is a required field.";
+		$this->emailErrorMsgFormat = "[LABEL] contains an invalid email address.";
+		$this->includesPath = "php-form-builder-class/includes";
+		$this->onsubmitFunction = "formhandler_" . $this->attributes["name"];
+		$this->mapMargin = 2;
 
 		/*This array prevents junk from being inserted into the form's HTML.  If you find that an attributes you need to use is not included
 		in this list, feel free to customize to fit your needs.*/
 		$this->allowedFields = array(
-			"form" => array("method", "action", "target", "enctype", "onsubmit", "id", "class", "name"),
-			"table" => array("cellpadding", "cellspacing", "border", "style", "id", "class", "name", "align", "width"),
-			"td" => array("id", "name", "valign", "align", "style", "id", "class", "width"),
-			"div" => array("id", "name", "valign", "align", "style", "id", "class"),
+			"form" => array("method", "action", "target", "enctype", "onsubmit", "id", "class", "name", "style"),
 			"hidden" => array("id", "name", "value", "type"),
 			"text" => array("id", "name", "value", "type", "class", "style", "onclick", "onkeyup", "onfocus", "onblur", "maxlength", "size"),
 			"textarea" => array("id", "name", "class", "style", "onclick", "onkeyup", "maxlength", "onfocus", "onblur", "size", "rows", "cols"),
@@ -156,15 +140,6 @@ class form extends base {
 			"a" => array("id", "name", "href", "class", "style", "target"),
 			"latlng" => array("id", "name", "type", "class", "style", "onclick", "onkeyup", "maxlength", "size")
 		);
-
-		$this->ajaxType = "post";
-		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
-		$this->ajaxDataType = "text";
-		$this->errorMsgFormat = "[LABEL] is a required field.";
-		$this->emailErrorMsgFormat = "[LABEL] contains an invalid email address.";
-		$this->includesPath = "php-form-builder-class/includes";
-		$this->onsubmitFunctionOverride = "formhandler_" . $this->attributes["name"];
-		$this->divLayoutMapMargin = 2;
 	}
 
 	/*Creates new element object instances and attaches them to the form object.  This function is private and can only be called inside this class.*/
@@ -780,7 +755,7 @@ class form extends base {
 		}
 			
 		if(!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists))	
-			echo ' onsubmit="return ', $this->onsubmitFunctionOverride, '(this);"';
+			echo ' onsubmit="return ', $this->onsubmitFunction, '(this);"';
 		echo ">";
 
 		/*This section renders all the hidden form fields outside the <table> tag.*/
@@ -814,47 +789,16 @@ class form extends base {
 		}	
 
 		/*The form fields are rendered in a basic table structure.*/
-		if(!empty($this->enableDivLayout))
-			echo "\n" . '<div class="pfbc-main"';
-		else
-		{
-			echo "\n<table";
-			if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
-			{
-				$tmpAllowFieldArr = $this->allowedFields["table"];
-				foreach($this->tableAttributes as $key => $value)
-				{
-					if(in_array($key, $tmpAllowFieldArr))
-						echo ' ', $key, '="', str_replace('"', '&quot;', $value), '"';
-				}		
-			}
-		}
-		echo ">";
+		echo "\n" . '<div class="pfbc-main">';
 
-		/*Render the elements by calling elementsToString function with the includeTable tags field set to false.  There is no need
+		/*Render the elements by calling elementsToString function with the includeMainDiv tags field set to false.  There is no need
 		to eender the table tag b/c we have just done that above.*/
 		echo $this->elementsToString(false);
 
 		/*If there are buttons included, render those to the screen now.*/
 		if(!empty($this->buttons))
 		{
-			if(!empty($this->enableDivLayout))
-				echo "\n\t", '<div class="pfbc-buttons"';
-			else
-			{
-				echo "\n\t", '<tr><td align="right"';
-				if(!empty($this->tdAttributes) && is_array($this->tdAttributes))
-				{
-					$tmpAllowFieldArr = $this->allowedFields["td"];
-					foreach($this->tdAttributes as $key => $value)
-					{
-						/*This if section overwrites the align attribute of the table cell tag (<td>) forcing all buttons to be aligned right.*/
-						if($key != "align" && in_array($key, $tmpAllowFieldArr))
-							echo ' ', $key, '="', str_replace('"', '&quot;', $value), '"';
-					}		
-				}
-			}
-			echo ">";
+			echo "\n\t", '<div class="pfbc-buttons">';
 			$buttonSize = sizeof($this->buttons);
 			for($i = 0; $i < $buttonSize; ++$i)
 			{
@@ -921,15 +865,9 @@ class form extends base {
 				if(!empty($this->buttons[$i]->wrapLink))
 					echo "</a>";
 			}
-			if(!empty($this->enableDivLayout))
-				echo "\n\t</div>";
-			else
-				echo "\n\t</td></tr>";
+			echo "\n\t</div>";
 		}
-		if(!empty($this->enableDivLayout))
-			echo "\n</div>";
-		else
-			echo "\n</table>";
+		echo "\n</div>";
 
 		echo "\n</form>\n\n";
 		/*
@@ -950,7 +888,7 @@ STR;
 STR;
 			}	
 			echo <<<STR
-	function {$this->onsubmitFunctionOverride}(formObj) {
+	function {$this->onsubmitFunction}(formObj) {
 
 STR;
 			/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
@@ -1104,21 +1042,16 @@ STR;
 	}
 
 	/*This function builds and returns a string containing the HTML for the form fields.  Typeically, this will be called from within the render() function; however, it can also be called by the user during unique situations.*/
-	public function elementsToString($includeTableTags = true)
+	public function elementsToString($includeMainDiv = true)
 	{
 		$str = "";
 
 		if(empty($this->referenceValues) && !empty($_SESSION["formclass_values"]) && array_key_exists($this->attributes["name"], $_SESSION["formclass_values"]))
 			$this->setReferenceValues($_SESSION["formclass_values"][$this->attributes["name"]]);
 
-		//assign DEPRECATED includesRelativePath variable to new includesPath variable
-		if(!empty($this->includesRelativePath))
-			$this->includesPath = $this->includesRelativePath;
-
 		//If windows normalize backslashes to forward slashes
-		if( PHP_OS == 'WINNT' ){
+		if( PHP_OS == 'WINNT' )
 			$this->includesPath = str_replace( "\\" , "/" , $this->includesPath );
-		}
 
 		//check if includesPath is absolute or not, then create variables for where you need to use it
 		if($this->includesPath[0] != '/') {
@@ -1144,41 +1077,14 @@ STR;
 		else
 			$focus = false;
 
-		/*If this map array is set, an additional table will be inserted in each row - this way colspans can be omitted.*/
+		if($includeMainDiv)
+			$str .= "\n" . '<div class="pfbc-main">';
+
 		if(!empty($this->map))
 		{
 			$mapIndex = 0;
 			$mapCount = 0;
-			if(empty($this->enableDivLayout))
-			{
-				if($includeTableTags)
-					$str .= "\n" . '<table cellpadding="0" cellspacing="0" border="0" width="100%">';
-				if(!empty($this->tdAttributes["width"]))
-					$mapOriginalWidth = $this->tdAttributes["width"];
-			}	
 		}	
-		else
-		{
-			if($includeTableTags)
-			{
-				if(!empty($this->enableDivLayout))
-					$str .= "\n" . '<div class="pfbc-main"';
-				else
-				{
-					$str .= "\n<table";
-					$tmpAllowFieldArr = $this->allowedFields["table"];
-					if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
-					{
-						foreach($this->tableAttributes as $key => $value)
-						{
-							if(in_array($key, $tmpAllowFieldArr))
-								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-						}		
-					}
-				}
-				$str .= ">";
-			}
-		}
 
 		$elementSize = sizeof($this->elements);
 		for($i = 0; $i < $elementSize; ++$i)
@@ -1199,7 +1105,7 @@ STR;
 			/*Hidden values do not need to be inside any table cell container; therefore, they are handled differently than the other fields.*/
 			if($ele->attributes["type"] == "hidden")
 			{
-				if($includeTableTags)
+				if($includeMainDiv)
 				{
 					$str .= "\n<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
@@ -1222,115 +1128,40 @@ STR;
 					{
 						if($mapCount == 0)
 						{
-							if(empty($this->enableDivLayout))
-							{
-								$str .= "\n\t" . '<tr><td style="padding: 0;">' . "\n\t\t<table";
-								if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
-								{
-									$tmpAllowFieldArr = $this->allowedFields["table"];
-									foreach($this->tableAttributes as $key => $value)
-									{
-										if(in_array($key, $tmpAllowFieldArr))
-											$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-									}		
-								}
-								$str .= ">\n\t\t\t<tr>\n\t\t\t\t";
-							}
-							else
-							{
-								$map_element_first = true;
-								$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
-							}	
-
-							/*Widths are percentage based and are calculated by dividing 100 by the number of form fields in the given row.*/
-							if(($elementSize - $i) < $this->map[$mapIndex])
-								$this->tdAttributes["width"] = number_format(100 / ($elementSize - $i), 2, ".", "") . "%";
-							else
-								$this->tdAttributes["width"] = number_format(100 / $this->map[$mapIndex], 2, ".", "") . "%";
-						}	
-						else
-						{
-							if(empty($this->enableDivLayout))
-								$str .= "\n\t\t\t\t";
+							$map_element_first = true;
+							$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
 						}	
 					}
 					else
 					{
-						if(empty($this->enableDivLayout))
-						{
-							$str .= "\n\t" . '<tr><td style="padding: 0;">' . "\n\t\t<table";
-							if(!empty($this->tableAttributes) && is_array($this->tableAttributes))
-							{
-								$tmpAllowFieldArr = $this->allowedFields["table"];
-								foreach($this->tableAttributes as $key => $value)
-								{
-									if(in_array($key, $tmpAllowFieldArr))
-										$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-								}		
-							}
-							$str .= ">\n\t\t\t<tr>\n\t\t\t\t";
-						}
-						else
-						{
-							$map_element_first = true;
-							$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
-						}	
-
-						if(!empty($mapOriginalWidth))
-							$this->tdAttributes["width"] = $mapOriginalWidth;
-						else
-							unset($this->tdAttributes["width"]);
+						$map_element_first = true;
+						$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
 					}	
 
-					if(!empty($this->enableDivLayout))
+					if(($i + 1) == $elementSize)
+						$map_element_last = true;
+					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1)
 					{
-						if(($i + 1) == $elementSize)
+						if(($mapCount + 1) == $this->map[$mapIndex])
 							$map_element_last = true;
-						elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1)
-						{
-							if(($mapCount + 1) == $this->map[$mapIndex])
-								$map_element_last = true;
-						}
-						else
-							$map_element_last = true;
-					}	
-				}
-				elseif(empty($this->enableDivLayout))
-					$str .= "\n\t<tr>";
-
-				if(!empty($this->enableDivLayout))
-				{
-					$str .= "\n\t";
-					if(!empty($this->map))
-						$str .= "\t";
-					$str .= '<div class="pfbc-element';
-					if($map_element_first && $map_element_last)
-						$str .= ' pfbc-map-element-single';
-					elseif($map_element_first)
-						$str .= ' pfbc-map-element-first';
-					elseif($map_element_last)
-						$str .= ' pfbc-map-element-last';
-
-					if(!empty($this->map))
-						$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
-
-					$str .= '"';
-				}
-				else
-				{
-					$str .= "<td";
-					if(!empty($this->tdAttributes) && is_array($this->tdAttributes))
-					{
-						$tmpAllowFieldArr = $this->allowedFields["td"];
-						foreach($this->tdAttributes as $key => $value)
-						{
-							if(in_array($key, $tmpAllowFieldArr))
-								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-						}		
 					}
-				}	
+					else
+						$map_element_last = true;
+				}
 
-				$str .= ">";
+				$str .= "\n\t";
+				if(!empty($this->map))
+					$str .= "\t";
+				$str .= '<div class="pfbc-element';
+				if($map_element_first && $map_element_last)
+					$str .= ' pfbc-map-element-single';
+				elseif($map_element_first)
+					$str .= ' pfbc-map-element-first';
+				elseif($map_element_last)
+					$str .= ' pfbc-map-element-last';
+				if(!empty($this->map))
+					$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
+				$str .= '">';
 
 				/*preHTML and postHTML allow for any special case scenarios.  One specific situation where these may be used would
 				be if you need to toggle the visibility of an item or items based on the state of another field such as a radio button.*/
@@ -1340,39 +1171,11 @@ STR;
 				if(!empty($ele->label))
 				{
 					$str .= $this->indent();
-					if(!empty($this->enableDivLayout))
-                        $str .= '<label class="pfbc-label"';
-					else
-					{
-						/*Render the label inside a <div> tag.*/	
-						$str .= "<div";
-						if(!empty($this->labelAttributes) && is_array($this->labelAttributes))
-						{
-							$tmpAllowFieldArr = $this->allowedFields["div"];
-							foreach($this->labelAttributes as $key => $value)
-							{
-								if(in_array($key, $tmpAllowFieldArr))
-									$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-							}		
-						}
-					}
-					$str .= ">";
+					$str .= '<label class="pfbc-label">';
 
 					/*If this field is set as required, render an "*" inside a <span> tag.*/
 					if(!empty($ele->required))
-					{
-						$str .= " <span";
-						if(!empty($this->requiredAttributes) && is_array($this->requiredAttributes))
-						{
-							$tmpAllowFieldArr = $this->allowedFields["div"];
-							foreach($this->requiredAttributes as $key => $value)
-							{
-								if(in_array($key, $tmpAllowFieldArr))
-									$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-							}		
-						}
-						$str .= ">*</span> ";
-					}	
+						$str .= '<span class="pfbc-required">*</span> ';
 					$str .= $ele->label;
 
 					/*jQuery Tooltip Functionality*/
@@ -1391,10 +1194,7 @@ STR;
 
 						$str .= ' <img id="' . $tooltipID . '" src="' . $this->tooltipIcon . '"/>';
 					}
-					if(!empty($this->enableDivLayout))
-						$str .= "</label>";
-					else
-						$str .= "</div>";
+					$str .= "</label>";
 				}	
 
 				/*Check the element's type and render the field accordinly.*/
@@ -1431,15 +1231,18 @@ STR;
 				$str .= $this->indent();
 				if($eleType == "text" || $eleType == "password" || $eleType == "email")
 				{
+					/*Temporarily set the type attribute to "text" for <input> tag.*/
 					if($eleType == "email")
 					{
 						$resetTypeToEmail = true;
 						$eleType = "text";
 					}	
-						
-					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
-						$ele->attributes["style"] = "width: 100%;";
 
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-textbox";
+					else	
+						$ele->attributes["class"] = "pfbc-textbox";
+						
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1458,6 +1261,7 @@ STR;
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 					
+					/*Now that <input> tag his been rendered, change type attribute back to "email".*/
 					if(isset($resetTypeToEmail))
 					{
 						unset($resetTypeToEmail);
@@ -1466,6 +1270,11 @@ STR;
 				}
 				elseif($eleType == "file")
 				{
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-file";
+					else	
+						$ele->attributes["class"] = "pfbc-file";
+
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
 					{
@@ -1486,12 +1295,15 @@ STR;
 				}
 				elseif($eleType == "textarea")
 				{
-					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
-						$ele->attributes["style"] = "width: 100%; height: 100px;";
 					if(empty($ele->attributes["rows"]))
 						$ele->attributes["rows"] = "6";
 					if(empty($ele->attributes["cols"]))
 						$ele->attributes["cols"] = "30";
+
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-textarea";
+					else	
+						$ele->attributes["class"] = "pfbc-textarea";
 
 					$str .= "<textarea";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
@@ -1513,9 +1325,11 @@ STR;
 				}
 				elseif($eleType == "webeditor")
 				{
-					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
-						$ele->attributes["style"] = "width: 100%; height: 100px;";
-					
+					if(empty($ele->attributes["rows"]))
+						$ele->attributes["rows"] = "6";
+					if(empty($ele->attributes["cols"]))
+						$ele->attributes["cols"] = "30";
+
 					if(empty($ele->attributes["class"]))
 						$ele->attributes["class"] = "";
 					else	
@@ -1526,13 +1340,10 @@ STR;
 					else
 						$ele->attributes["class"] .= "tiny_mce";
 
+					$ele->attributes["class"] .= " pfbc-textarea";
+
 					if(empty($ele->attributes["id"]))
 						$ele->attributes["id"] = "webeditor_" . rand(0, 999);
-
-					if(empty($ele->attributes["rows"]))
-						$ele->attributes["rows"] = "6";
-					if(empty($ele->attributes["cols"]))
-						$ele->attributes["cols"] = "30";
 
 					/*This section ensures that each webeditor field has a unique identifier.*/
 					if(empty($this->tinymceIDArr))
@@ -1561,10 +1372,19 @@ STR;
 				}
 				elseif($eleType == "ckeditor")
 				{
-					if(empty($ele->attributes["id"]))
-						$ele->attributes["id"] = "ckeditor_" . rand(0, 999);
+					if(empty($ele->attributes["rows"]))
+						$ele->attributes["rows"] = "6";
+					if(empty($ele->attributes["cols"]))
+						$ele->attributes["cols"] = "30";
+
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-textarea";
+					else	
+						$ele->attributes["class"] = "pfbc-textarea";
 
 					/*This section ensures that each ckeditor field has a unique identifier.*/
+					if(empty($ele->attributes["id"]))
+						$ele->attributes["id"] = "ckeditor_" . rand(0, 999);
 					if(empty($this->ckeditorIDArr))
 						$this->ckeditorIDArr = array();
 					while(array_key_exists($ele->attributes["id"], $this->ckeditorIDArr))
@@ -1591,8 +1411,10 @@ STR;
 				}
 				elseif($eleType == "select")
 				{
-					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
-						$ele->attributes["style"] = "width: 100%;";
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-select";
+					else	
+						$ele->attributes["class"] = "pfbc-select";
 
 					$str .= "<select";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
@@ -1642,15 +1464,14 @@ STR;
 						for($o = 0; $o < $optionSize; ++$o)
 						{
 							if($o != 0)
-							{
 								$str .= $this->indent();
-								if(!empty($ele->nobreak))
-									$str .= "&nbsp;&nbsp;";
-								else
-									$str .= "<br/>";
-							}	
 
-							$str .= "<input";
+							$str .= '<div class="pfbc-radio';
+							if($o == 0)
+								$str .= ' pfbc-radio-first';
+							elseif($o + 1 == $optionSize)	
+								$str .= ' pfbc-radio-last';
+							$str .= '"><input';
 							$tmpAllowFieldArr = $this->allowedFields["radio"];
 							if(!empty($ele->attributes) && is_array($ele->attributes))
 							{
@@ -1666,12 +1487,12 @@ STR;
 							if(!empty($ele->disabled))
 								$str .= ' disabled="disabled"';
 							$str .= '/>';
-							if(empty($this->noLabels))
-								$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">';
-							$str .= $ele->options[$o]->text;
-							if(empty($this->noLabels))
-								 $str .= "</label>"; 
+							$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->options[$o]->text . "</label></div>";
 						}	
+
+						if(!empty($ele->clear))
+							$str .= '<div style="clear: both;"></div>';
+
 						if($focus)
 							$this->focusElement = $ele->attributes["name"];
 					}
@@ -1688,15 +1509,14 @@ STR;
 						for($o = 0; $o < $optionSize; ++$o)
 						{
 							if($o != 0)
-							{
 								$str .= $this->indent();
-								if(!empty($ele->nobreak))
-									$str .= "&nbsp;&nbsp;";
-								else
-									$str .= "<br/>";
-							}	
 
-							$str .= "<input";
+							$str .= '<div class="pfbc-checkbox';
+							if($o == 0)
+								$str .= ' pfbc-checkbox-first';
+							elseif($o + 1 == $optionSize)	
+								$str .= ' pfbc-checkbox-last';
+							$str .= '"><input';
 							if(!empty($ele->attributes) && is_array($ele->attributes))
 							{
 								$tmpAllowFieldArr = $this->allowedFields["radio"];
@@ -1715,28 +1535,29 @@ STR;
 							if(!empty($ele->disabled))
 								$str .= ' disabled="disabled"';
 							$str .= '/>';
-							if(empty($this->noLabels))
-								$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">';
-							$str .= $ele->options[$o]->text;
-							if(empty($this->noLabels))
-								$str .= "</label>"; 
+							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
 						}	
+
+						if(!empty($ele->clear))
+							$str .= '<div style="clear: both;"></div>';
+
 						if($focus)
 							$this->focusElement = $ele->attributes["name"];
 					}
 				}
 				elseif($eleType == "date")
 				{
-					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
-						$ele->attributes["style"] = "width: 100%; cursor: pointer;";
-
-					if(empty($ele->attributes["id"]))
-						$ele->attributes["id"] = "dateinput_" . rand(0, 999);
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-textbox";
+					else	
+						$ele->attributes["class"] = "pfbc-textbox";
 
 					/*Temporarily set the type attribute to "text" for <input> tag.*/
 					$eleType = "text";
 					
 					/*This section ensures that each date field has a unique identifier.*/
+					if(empty($ele->attributes["id"]))
+						$ele->attributes["id"] = "dateinput_" . rand(0, 999);
 					if(!isset($jqueryDateIDArr))
 						$jqueryDateIDArr = array();
 					while(in_array($ele->attributes["id"], $jqueryDateIDArr))
@@ -1761,16 +1582,17 @@ STR;
 				}
 				elseif($eleType == "daterange")
 				{
-					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
-						$ele->attributes["style"] = "width: 100%; cursor: pointer;";
-
-					if(empty($ele->attributes["id"]))
-						$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-textbox";
+					else	
+						$ele->attributes["class"] = "pfbc-textbox";
 
 					/*Temporarily set the type attribute to "text" for <input> tag.*/
 					$eleType = "text";
 
 					/*This section ensure that each daterange field has a unique identifier.*/
+					if(empty($ele->attributes["id"]))
+						$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
 					if(!isset($jqueryDateRangeIDArr))
 						$jqueryDateRangeIDArr = array();
 					while(in_array($ele->attributes["id"], $jqueryDateRangeIDArr))
@@ -1790,15 +1612,13 @@ STR;
 					$str .= ' readonly="readonly"';
 					$str .= "/>";
 
-					/*Now that <input> tag his been rendered, change type attribute back to "date".*/
+					/*Now that <input> tag his been rendered, change type attribute back to "dateranger".*/
 					$eleType = "daterange";
 				}
 				elseif($eleType == "sort")
 				{
 					if(is_array($ele->options))
 					{
-						if(empty($ele->attributes["id"]))
-							$ele->attributes["id"] = "sort_" . rand(0, 999);
 						if(substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
 
@@ -1822,6 +1642,8 @@ STR;
 						}
 
 						/*This section ensures that each sort field has a unique identifier.*/
+						if(empty($ele->attributes["id"]))
+							$ele->attributes["id"] = "sort_" . rand(0, 999);
 						if(!isset($jquerySortIDArr))
 							$jquerySortIDArr = array();
 						while(in_array($ele->attributes["id"], $jquerySortIDArr))
@@ -1841,13 +1663,14 @@ STR;
 				}
 				elseif($eleType == "latlng")
 				{
-					if(empty($ele->attributes["class"]))
-						$ele->attributes["class"] = "";
-					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
-						$ele->attributes["style"] = "width: 100%;";
-					if(empty($ele->attributes["id"]))
-						$ele->attributes["id"] = "latlnginput_" . rand(0, 999);
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-textbox";
+					else	
+						$ele->attributes["class"] = "pfbc-textbox";
 					
+					if(empty($ele->attributes["style"]))
+						$ele->attributes["style"] = "";
+
 					/*If the value is formatted "Latitude: 123.45, Longitude: -67.89" parse and convert to array.*/
 					if(!empty($ele->attributes["value"]) && !is_array($ele->attributes["value"]) && strpos($ele->attributes["value"], "Latitude:", 0) === 0)
 						$ele->attributes["value"] = array(substr($ele->attributes["value"], strpos($ele->attributes["value"], ":") + 2, strpos($ele->attributes["value"], ",") - strpos($ele->attributes["value"], ":") - 2), substr($ele->attributes["value"], strrpos($ele->attributes["value"], ":") + 1));
@@ -1869,11 +1692,15 @@ STR;
 					}	
 					
 					/*This section ensures that each latlng (Google Map) field has a unique identifier.*/
+					if(empty($ele->attributes["id"]))
+						$ele->attributes["id"] = "latlnginput_" . rand(0, 999);
 					if(!isset($latlngIDArr))
 						$latlngIDArr = array();
 					while(array_key_exists($ele->attributes["id"], $latlngIDArr))
 						$ele->attributes["id"] = "latlnginput_" . rand(0, 999);
 					$latlngIDArr[$ele->attributes["id"]] = $ele; 
+
+					$latlngID = htmlentities($ele->attributes["id"], ENT_QUOTES);
 
 					/*Temporarily set the type attribute to "text" for <input> tag.*/
 					$eleType = "text";
@@ -1905,32 +1732,32 @@ STR;
 						$ele->latlngHeight = 200;
 
 					$str .= $this->indent();
-					$str .= '<div id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '_canvas" style="margin: 2px 0; height: ' . $ele->latlngHeight . 'px;';
+					$str .= '<div id="' . $latlngID . '_canvas" style="margin: 2px 0; height: ' . $ele->latlngHeight . 'px;';
 					if(!empty($ele->latlngWidth))
 						$str .= ' width: ' . $ele->latlngWidth . 'px;';
 					$str .= '"></div>';
 					if(empty($ele->latlngHideJump))
 					{
 						$str .= $this->indent();
-						$str .= '<input id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["name"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["name"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["name"] . '(this, \'' . htmlentities($ele->attributes["id"], ENT_QUOTES) . '\', \'' . htmlentities($ele->attributes["name"]) . '\');"/>';
+						$str .= '<input id="' . $latlngID . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["name"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["name"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["name"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"]) . '\');"/>';
 					}
 					$str .= $this->indent();
-					$str .= '<div id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '_clearDiv" style="margin-top: 2px;';
+					$str .= '<div id="' . $latlngID . '_clearDiv" style="margin-top: 2px;';
 					if(empty($ele->attributes["value"]) || !is_array($ele->attributes["value"]))
 						$str .= 'display: none;';
-					$str .= '"><small><a href="javascript: clearLatLng_' . $this->attributes["name"] . '(\'' . htmlentities($ele->attributes["id"], ENT_QUOTES) . '\', \'' . htmlentities($ele->attributes["name"]) . '\');">Clear Latitude/Longitude</a></small></div>';	
+					$str .= '"><small><a href="javascript: clearLatLng_' . $this->attributes["name"] . '(\'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');">Clear Latitude/Longitude</a></small></div>';	
 				}
 				elseif($eleType == "checksort")
 				{
 					if(is_array($ele->options))
 					{
-						if(empty($ele->attributes["id"]))
-							$ele->attributes["id"] = "checksort_" . rand(0, 999);
 						if(substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
 
 						/*This section ensure that each checksort field has a unique identifier.  You will notice that sort and checksort are stores in the same
 						array (jquerySortIDArr).  This is done because they both use the same jquery ui sortable functionality.*/
+						if(empty($ele->attributes["id"]))
+							$ele->attributes["id"] = "checksort_" . rand(0, 999);
 						if(!isset($jquerySortIDArr))
 							$jquerySortIDArr = array();
 						while(in_array($ele->attributes["id"], $jquerySortIDArr))
@@ -1947,15 +1774,14 @@ STR;
 						for($o = 0; $o < $optionSize; ++$o)
 						{
 							if($o != 0)
-							{
 								$str .= $this->indent();
-								if(!empty($ele->nobreak))
-									$str .= "&nbsp;&nbsp;";
-								else
-									$str .= "<br/>";
-							}	
 
-							$str .= "<input";
+							$str .= '<div class="pfbc-checkbox';
+							if($o == 0)
+								$str .= ' pfbc-checkbox-first';
+							elseif($o + 1 == $optionSize)	
+								$str .= ' pfbc-checkbox-last';
+							$str .= '"><input';
 							if(!empty($ele->attributes) && is_array($ele->attributes))
 							{
 								$tmpAllowFieldArr = $this->allowedFields["checksort"];
@@ -1978,12 +1804,11 @@ STR;
 							if(!empty($ele->disabled))
 								$str .= ' disabled="disabled"';
 							$str .= '/>';
-							if(empty($this->noLabels))
-								$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">';
-							$str .= $ele->options[$o]->text;
-							if(empty($this->noLabels))
-								 $str .= "</label>";
+							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
 						}	
+
+						if(!empty($ele->clear))
+							$str .= '<div style="clear: both;"></div>';
 
 						/*If there are any check options by default, render the <ul> sorting structure.*/
 						$str .= $this->indent();
@@ -2027,14 +1852,14 @@ STR;
 				}
 				elseif($eleType == "slider")
 				{
+					/*This section ensures that each slider field has a unique identifier.*/
 					if(empty($ele->attributes["id"]))
 						$ele->attributes["id"] = "sliderinput_" . rand(0, 999);
-
-					/*This section ensures that each slider field has a unique identifier.*/
 					if(!isset($jquerySliderIDArr))
 						$jquerySliderIDArr = array();
 					while(array_key_exists($ele->attributes["id"], $jquerySliderIDArr))
 						$ele->attributes["id"] = "sliderinput_" . rand(0, 999);
+
 					/*The bottom line of this section sets this specific variable to $ele.*/	
 					$jquerySliderIDArr[$ele->attributes["id"]] = "";
 
@@ -2098,8 +1923,10 @@ STR;
 				}
 				elseif($eleType == "rating")
 				{
-					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
-						$ele->attributes["style"] = "width: 100%;";
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-select";
+					else	
+						$ele->attributes["class"] = "pfbc-select";
 
 					/*This section ensures each rating field has a unique identifier.*/
 					$starratingID = "starrating_" . rand(0, 999);
@@ -2163,16 +1990,17 @@ STR;
 				}
 				elseif($eleType == "colorpicker")
 				{
-					if(empty($this->enableDivLayout) && empty($ele->attributes["style"]))
-						$ele->attributes["style"] = "width: 100%; cursor: pointer;";
-
-					if(empty($ele->attributes["id"]))
-						$ele->attributes["id"] = "colorinput_" . rand(0, 999);
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-textbox";
+					else	
+						$ele->attributes["class"] = "pfbc-textbox";
 
 					/*Temporarily set the type attribute to "text" for <input> tag.*/
 					$eleType = "text";
 					
 					/*This section ensures that each colorpicker field has a unique identifier.*/
+					if(empty($ele->attributes["id"]))
+						$ele->attributes["id"] = "colorinput_" . rand(0, 999);
 					if(!isset($jqueryColorIDArr))
 						$jqueryColorIDArr = array();
 					while(in_array($ele->attributes["id"], $jqueryColorIDArr))
@@ -2200,44 +2028,22 @@ STR;
 				if(!empty($ele->postHTML))
 					$str .= $this->indent() . $ele->postHTML;
 				
-				$str .= "\n";
-
-				if(!empty($this->enableDivLayout))
-				{
+				$str .= "\n\t";
+				if(!empty($this->map))
 					$str .= "\t";
-					if(!empty($this->map))
-						$str .= "\t";
-				}		
-				else
-				{
-					$str .= "\t";
-					if(!empty($this->map))
-						$str .= "\t\t\t";
-				}	
-				if(!empty($this->enableDivLayout))
-					$str .= "</div>";
-				else
-					$str .= "</td>";
+				$str .= "</div>";
 
 				if(!empty($this->map))
 				{
 					if(($i + 1) == $elementSize)
-					{
-						if(!empty($this->enableDivLayout))
-							$str .= "\n\t</div>";
-						else
-							$str .= "\n\t\t\t</tr>\n\t\t</table>\n\t</td></tr>";
-					}	
+						$str .= "\n\t</div>";
 					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1)
 					{
 						if(($mapCount + 1) == $this->map[$mapIndex])
 						{
 							$mapCount = 0;
 							++$mapIndex;
-							if(!empty($this->enableDivLayout))
-								$str .= "\n\t</div>";
-							else	
-								$str .= "\n\t\t\t</tr>\n\t\t</table>\n\t</td></tr>";
+							$str .= "\n\t</div>";
 						}
 						else
 							++$mapCount;
@@ -2246,30 +2052,15 @@ STR;
 					{
 						++$mapIndex;
 						$mapCount = 0;
-						if(!empty($this->enableDivLayout))
-							$str .= "\n\t</div>";
-						else
-							$str .= "\n\t\t\t</tr>\n\t\t</table>\n\t</td></tr>";
+						$str .= "\n\t</div>";
 					}	
 				}
-				elseif(empty($this->enableDivLayout))
-					$str .= "</tr>";
 				$focus = false;
 			}	
 		}
 
-		if(!empty($this->map) && !empty($mapOriginalWidth))
-			$this->tdAttributes["width"] = $mapOriginalWidth;
-		else
-			unset($this->tdAttributes["width"]);
-
-		if($includeTableTags)
-		{
-			if(!empty($this->enableDivLayout))
-				$str .= "\n</div>";
-			else
-				$str .= "\n</table>";
-		}	
+		if($includeMainDiv)
+			$str .= "\n</div>";
 
 		$str .= "\n\n";
 
@@ -2891,9 +2682,7 @@ STR;
 STR;
 		}
 
-		if(!empty($this->enableDivLayout) && empty($this->preventAutoClear))
-		{
-			$str .= <<<STR
+		$str .= <<<STR
 	<style type="text/css">
 		.pfbc-clear:after {
 			clear: both;
@@ -2904,17 +2693,24 @@ STR;
 			height: 0;
 			content: ":)";
 		}	
-	</style>
+
+STR;
+
+		if(!empty($this->attributes["width"]))
+		{
+			$str .= <<<STR
+		#{$this->attributes["id"]} .pfbc-main {
+			width: {$this->attributes["width"]}px;
+		}
 
 STR;
 		}
 
-		if(!empty($this->enableDivLayout) && !empty($this->map))
+		if(!empty($this->map))
 		{
 			$mapVals = array_values(array_unique($this->map));
 			$mapValSize = sizeof($mapVals);
 			$str .= <<<STR
-	<style type="text/css">
 		#{$this->attributes["id"]} .pfbc-main {
 			width: {$this->attributes["width"]}px;
 		}
@@ -2922,7 +2718,7 @@ STR;
 STR;
 			for($m = 0; $m < $mapValSize; ++$m)
 			{
-				$width = number_format((($this->attributes["width"] - ($this->divLayoutMapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+				$width = number_format((($this->attributes["width"] - ($this->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
 				$str .= <<<STR
 		#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} {
 			float: left; 
@@ -2942,12 +2738,15 @@ STR;
 			margin: 0 !important;
 		}
 		#{$this->attributes["id"]} .pfbc-element {
-			margin: 0 {$this->divLayoutMapMargin}px;
+			margin: 0 {$this->mapMargin}px;
 		}
-	</style>
 
 STR;
 		}
+
+			$str .= <<<STR
+	</style>	
+STR;
 
 		return $str;
 	}
@@ -3372,18 +3171,9 @@ STR;
 	private function indent($extra = "")
 	{
 		$str = "\n$extra";
-		if(!empty($this->enableDivLayout))
-		{
-			$str .= "\t\t";
-			if(!empty($this->map))
-				$str .= "\t";
-		}		
-		else
-		{
-			$str .= "\t\t";
-			if(!empty($this->map))
-				$str .= "\t\t\t";
-		}	
+		$str .= "\t\t";
+		if(!empty($this->map))
+			$str .= "\t";
 		return $str;
 	}
 
@@ -3595,6 +3385,7 @@ class element extends base {
 	public $postHTML;					/*HTML content that is rendered just before the closing </td> of the element.*/
 	public $tooltip;					/*If provided, this content (text or HTML) will generate a tooltip activated onkeyup.*/
 	public $hint;						/*If provided, this content will be displayed as the field's value until focus event.*/
+	public $clear;						/*Only applicable for checkbox, radio, and checksort elements.  Inserts float-clearing div tag after last option.*/
 
 	/*webeditor specific fields*/
 	public $webeditorSimple;			/*Overrides default webeditor settings and renders a simplified version.*/

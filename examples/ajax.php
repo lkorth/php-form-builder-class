@@ -34,6 +34,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 		<head>
 			<title>PHP Form Builder Class | Examples | Ajax</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
+			<link href="pfbc.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" target="_blank">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" target="_blank">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download Version <?php echo(file_get_contents('../version'));?></a></div>
@@ -53,7 +54,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form = new form("signup");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
-					"tableAttributes" => array("width" => "300"),
+					"width" => "300",
 					"ajax" => 1
 				));
 				$form->addHidden("cmd", "signup");
@@ -67,7 +68,7 @@ echo '<pre>' . htmlentities('<?php
 $form = new form("signup");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
-	"tableAttributes" => array("width" => "300"),
+	"width" => 300,
 	"ajax" => 1
 ));
 $form->addHidden("cmd", "signup");
@@ -95,8 +96,8 @@ $form->render();
 				$form = new form("login");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
-					"preventJQueryLoad" => "1",
-					"tableAttributes" => array("width" => "300"),
+					"preventJQueryLoad" => 1,
+					"width" => 300,
 					"noAutoFocus" => 1,
 					"ajax" => 1,
 					"ajaxType" => "GET",
@@ -124,8 +125,8 @@ echo '<pre>' . htmlentities('<?php
 $form = new form("login");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
-	"preventJQueryLoad" => "1",
-	"tableAttributes" => array("width" => "300"),
+	"preventJQueryLoad" => 1,
+	"width" => 300,
 	"noAutoFocus" => 1,
 	"ajax" => 1,
 	"ajaxType" => "GET",
@@ -158,8 +159,8 @@ $form->render();
 				$form = new form("loading");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
-					"preventJQueryLoad" => "1",
-					"tableAttributes" => array("width" => "300"),
+					"preventJQueryLoad" => 1,
+					"width" => 300,
 					"noAutoFocus" => 1,
 					"ajax" => 1,
 					"ajaxPreCallback" => "beginAjaxLoading",
@@ -192,8 +193,8 @@ echo '<pre>' . htmlentities('<?php
 $form = new form("loading");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
-	"preventJQueryLoad" => "1",
-	"tableAttributes" => array("width" => "300"),
+	"preventJQueryLoad" => 1,
+	"width" => 300,
 	"noAutoFocus" => 1,
 	"ajax" => 1,
 	"ajaxPreCallback" => "beginAjaxLoading",
@@ -224,21 +225,38 @@ $form->render();
 
 				?>
 				<p><b>Example 4: Manual Ajax Submission</b> - This sample demonstrates how you can manually call the form's existing function responsible for ajax submission and javascript validation. 
-				By default, this onsubmit function will be named "formhandler_" + form's name; however, you can make use of the <i>onsubmitFunctionOverride</i> form attribute if you would like rename 
+				By default, this onsubmit function will be named "formhandler_" + form's name; however, you can make use of the <i>onsubmitFunction</i> form attribute if you would like rename 
 				it.  You will need to pass the form's object reference when this function is invoked.</p>  
 
 				<?php
 				$form = new form("manual");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
-					"preventJQueryLoad" => "1",
-					"tableAttributes" => array("width" => "300"),
+					"preventJQueryLoad" => 1,
+					"width" => 300,
+					"noAutoFocus" => 1,
 					"ajax" => 1,
-					"onsubmitFunctionOverride" => "processAjaxPost"
+					"onsubmitFunction" => "processAjaxPost"
 				));
 				$form->addHidden("cmd", "manual");
-				$form->addCheckbox("Available Options:", "Option", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);"));
+				$form->addCheckbox("Available Options:", "Option", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);", "clear" => 1));
 				$form->render();
+
+echo '<pre>' . htmlentities('<?php
+$form = new form("manual");
+$form->setAttributes(array(
+	"includesPath" => "../includes",
+	"preventJQueryLoad" => 1,
+	"width" => 300,
+	"noAutoFocus" => 1,
+	"ajax" => 1,
+	"onsubmitFunction" => "processAjaxPost"
+));
+$form->addHidden("cmd", "manual");
+$form->addCheckbox("Available Options:", "Option", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);", "clear" => 1));
+$form->render();
+') . '</pre>';
+
 				?>
 			</div>
 		</body>

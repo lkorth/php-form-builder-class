@@ -14,6 +14,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 		<head>
 			<title>PHP Form Builder Class | Examples | All Supported Form Elements</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
+			<link href="pfbc.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" target="_blank">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" target="_blank">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download Version <?php echo(file_get_contents('../version'));?></a></div>
@@ -28,7 +29,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				<?php
 				$form = new form("form_elements");
 				$form->setAttributes(array(
-					"includesPath" => "../includes"
+					"includesPath" => "../includes",
+					"width" => "400"
 				));	
 
 				/*
@@ -71,14 +73,14 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addDateRange("Date Range:", "field7");
 				$form->addState("State:", "field8");
 				$form->addCountry("Country:", "field9");
-				$form->addYesNo("Yes/No:", "field10");
-				$form->addTrueFalse("True/False:", "field11");
+				$form->addYesNo("Yes/No:", "field10", "", array("clear" => 1));
+				$form->addTrueFalse("True/False:", "field11", "", array("clear" => 1));
 				$form->addSelect("Select Box:", "field12", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
-				$form->addRadio("Radio Buttons:", "field13", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
-				$form->addCheckbox("Checkboxes:", "field14", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
+				$form->addRadio("Radio Buttons:", "field13", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
+				$form->addCheckbox("Checkboxes:", "field14", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
 				$form->addLatLng("Latitude/Longitude:", "field15");
 				$form->addSort("Sort:", "field16", array("Option #1", "Option #2", "Option #3"));
-				$form->addCheckSort("Checksort:", "field17", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
+				$form->addCheckSort("Checksort:", "field17", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
 				$form->addCaptcha("Captcha:");
 				$form->addSlider("Slider:", "field18");
 				$form->addRating("Rating:", "field19", "", range(1, 10));
@@ -89,11 +91,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->render();
 
 echo '<pre>' . htmlentities('<?php
-$form = new form("form_elements");
-$form->setAttributes(array(
-	"includesPath" => "../includes"
-));	
-
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Textbox:", "field0");
 $form->addTextarea("Textarea:", "field1");
@@ -105,14 +102,14 @@ $form->addDate("Date:", "field6");
 $form->addDateRange("Date Range:", "field7");
 $form->addState("State:", "field8");
 $form->addCountry("Country:", "field9");
-$form->addYesNo("Yes/No:", "field10");
-$form->addTrueFalse("True/False:", "field11");
+$form->addYesNo("Yes/No:", "field10", "", array("clear" => 1));
+$form->addTrueFalse("True/False:", "field11", "", array("clear" => 1));
 $form->addSelect("Select Box:", "field12", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
-$form->addRadio("Radio Buttons:", "field13", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
-$form->addCheckbox("Checkboxes:", "field14", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
+$form->addRadio("Radio Buttons:", "field13", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
+$form->addCheckbox("Checkboxes:", "field14", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
 $form->addLatLng("Latitude/Longitude:", "field15");
 $form->addSort("Sort:", "field16", array("Option #1", "Option #2", "Option #3"));
-$form->addCheckSort("Checksort:", "field17", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
+$form->addCheckSort("Checksort:", "field17", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
 $form->addCaptcha("Captcha:");
 $form->addSlider("Slider:", "field18");
 $form->addRating("Rating:", "field19", "", range(1, 10));

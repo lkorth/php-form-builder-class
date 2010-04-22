@@ -14,6 +14,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 		<head>
 			<title>PHP Form Builder Class | Examples | Invalid includes Directory Path Error</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
+			<link href="pfbc.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" target="_blank">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" target="_blank">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download Version <?php echo(file_get_contents('../version'));?></a></div>
@@ -43,13 +44,13 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form = new form("includes_configuration_error");
 				$form->setAttributes(array(
 					//"includesPath" => "../includes",
-					"tableAttributes" => array("width" => "400"),
+					"width" => 400
 				));
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("Textbox:", "field0");
 				$form->addSelectbox("Selectbox:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
-				$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"));
-				$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"));
+				$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
+				$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 				$form->addButton();
 				$form->render();
 
@@ -57,7 +58,7 @@ echo '<pre>' . htmlentities('<?php
 $form = new form("includes_configuration_error");
 $form->setAttributes(array(
 	//"includesPath" => "../includes",
-	"tableAttributes" => array("width" => "400"),
+	"width" => 400
 ));
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Textbox:", "field0");

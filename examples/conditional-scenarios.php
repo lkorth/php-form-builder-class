@@ -14,6 +14,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 		<head>
 			<title>PHP Form Builder Class | Examples | Conditional Scenarios</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
+			<link href="pfbc.css" rel="stylesheet" type="text/css"/>
 			<script type="text/javascript"> 
 				function toggleShipping(val)
 				{
@@ -46,7 +47,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$billing_form = new form("billing");
 				$billing_form->setAttributes(array(
 					"includesPath" => "../includes",
-					"tableAttributes" => array("width" => "500", "cellpadding" => "1"),
+					"width" => 500,
 					"map" => array(1, 2, 2, 1, 3, 1)
 				));
 				$billing_form->addHidden("cmd", "submit");
@@ -63,7 +64,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$shipping_form = new form("shipping");
 				$shipping_form->setAttributes(array(
 					"includesPath" => "../includes",
-					"tableAttributes" => array("width" => "100%", "cellpadding" => "1"),
+					"width" => 500,
 					"map" => array(1, 2, 2, 1, 3)
 				));
 				$shipping_form->addHTML('<div style="font-weight: bold; padding-top: 15px; padding-bottom: 5px;">Shipping Address</div>');
@@ -76,7 +77,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$shipping_form->addState("State:", "ShippingState", "", array("required" => 1));
 				$shipping_form->addTextbox("Zip Code:", "ShippingZip", "", array("required" => 1));
 
-				$billing_form->addYesNo("Use my billing address for shipping?", "UseBilling", 1, array("nobreak" => 1, "onclick" => "toggleShipping(this.value);", "postHTML" => '<div id="shipping_section" style="display: none;">' . $shipping_form->elementsToString() . '</div>'));
+				$billing_form->addYesNo("Use my billing address for shipping?", "UseBilling", 1, array("clear" => 1, "onclick" => "toggleShipping(this.value);", "postHTML" => '<div id="shipping_section" style="display: none;">' . $shipping_form->elementsToString() . '</div>'));
 				$billing_form->addButton();
 				$billing_form->bind($shipping_form, 'document.forms["billing"].UseBilling[1].checked', '$_POST["UseBilling"] == 0');
 				$billing_form->render();
@@ -91,7 +92,7 @@ echo '<pre>' . htmlentities('<?php
 $billing_form = new form("billing");
 $billing_form->setAttributes(array(
 	"includesPath" => "../includes",
-	"tableAttributes" => array("width" => "500", "cellpadding" => "1"),
+	"width" => 500,
 	"map" => array(1, 2, 2, 1, 3, 1)
 ));
 $billing_form->addHidden("cmd", "submit");
@@ -104,10 +105,11 @@ $billing_form->addTextbox("Address:", "BillingAddress", "", array("required" => 
 $billing_form->addTextbox("City:", "BillingCity", "", array("required" => 1));
 $billing_form->addState("State:", "BillingState", "", array("required" => 1));
 $billing_form->addTextbox("Zip Code:", "BillingZip", "", array("required" => 1));
+
 $shipping_form = new form("shipping");
 $shipping_form->setAttributes(array(
 	"includesPath" => "../includes",
-	"tableAttributes" => array("width" => "100%", "cellpadding" => "1"),
+	"width" => 500,
 	"map" => array(1, 2, 2, 1, 3)
 ));
 $shipping_form->addHTML(\'<div style="font-weight: bold; padding-top: 15px; padding-bottom: 5px;">Shipping Address</div>\');
@@ -120,7 +122,7 @@ $shipping_form->addTextbox("City:", "ShippingCity", "", array("required" => 1));
 $shipping_form->addState("State:", "ShippingState", "", array("required" => 1));
 $shipping_form->addTextbox("Zip Code:", "ShippingZip", "", array("required" => 1));
 
-$billing_form->addYesNo("Use my billing address for shipping?", "UseBilling", 1, array("nobreak" => 1, "onclick" => "toggleShipping(this.value);", "postHTML" => \'<div id="shipping_section" style="display: none;">\' . $shipping_form->elementsToString() . \'</div>\'));
+$billing_form->addYesNo("Use my billing address for shipping?", "UseBilling", 1, array("clear" => 1, "onclick" => "toggleShipping(this.value);", "postHTML" => \'<div id="shipping_section" style="display: none;">\' . $shipping_form->elementsToString() . \'</div>\'));
 $billing_form->addButton();
 $billing_form->bind($shipping_form, \'document.forms["billing"].UseBilling[1].checked\', \'$_POST["UseBilling"] == 0\');
 $billing_form->render();
@@ -144,7 +146,7 @@ $billing_form->render();
 				$location_form->setAttributes(array(
 					"includesPath" => "../includes",
 					"ajax" => 1,
-					"tableAttributes" => array("width" => "500"),
+					"width" => 500,
 					"noAutoFocus" => 1
 				));	
 
@@ -152,14 +154,14 @@ $billing_form->render();
 				$map_form->setAttributes(array(
 					"includesPath" => "../includes",
 					"parentFormOverride" => "location",
-					"tableAttributes" => array("width" => "100%", "cellpadding" => "1")
+					"width" => 500
 				));	
 				$map_form->addLatLng("", "LatitudeLongitude", "", array("required" => 1));
 
 				$address_form = new form("address");
 				$address_form->setAttributes(array(
 					"includesPath" => "../includes",
-					"tableAttributes" => array("width" => "100%", "cellpadding" => "1"),
+					"width" => 500,
 					"map" => array(1, 3)
 				));	
 				$address_form->addTextbox("Address:", "BillingAddress", "", array("required" => 1));
@@ -183,7 +185,8 @@ echo '<pre>' . htmlentities('<?php
 $location_form = new form("location");
 $location_form->setAttributes(array(
 	"includesPath" => "../includes",
-	"tableAttributes" => array("width" => "500"),
+	"ajax" => 1,
+	"width" => 500,
 	"noAutoFocus" => 1
 ));	
 
@@ -191,14 +194,14 @@ $map_form = new form("map");
 $map_form->setAttributes(array(
 	"includesPath" => "../includes",
 	"parentFormOverride" => "location",
-	"tableAttributes" => array("width" => "100%", "cellpadding" => "1")
+	"width" => 500
 ));	
 $map_form->addLatLng("", "LatitudeLongitude", "", array("required" => 1));
 
 $address_form = new form("address");
 $address_form->setAttributes(array(
 	"includesPath" => "../includes",
-	"tableAttributes" => array("width" => "100%", "cellpadding" => "1"),
+	"width" => 500,
 	"map" => array(1, 3)
 ));	
 $address_form->addTextbox("Address:", "BillingAddress", "", array("required" => 1));
@@ -207,7 +210,7 @@ $address_form->addState("State:", "BillingState", "", array("required" => 1));
 $address_form->addTextbox("Zip Code:", "BillingZip", "", array("required" => 1));
 
 $location_form->addHidden("cmd", "submit");
-$location_form->addSelect("How would you like to specify your location?", "LocationOption", "Map", array("Map" => "Select My Location Using Google Maps", "Address" => "Enter My Address Manually"), array("onchange" => "toggleLocationOptions(this.value);", "postHTML" => \'<div id="MapDiv" style="display: none; padding-top: 10px;">\' . $map_form->elementsToString() . \'</div><div id="AddressDiv" style="display: none; padding-top: 10px;">\' . $address_form->elementsToString() . \'</div>\'));
+$location_form->addSelect("How would you like to specify your location?", "LocationOption", "Map", array("Map" => "Select My Location Using Google Maps", "Address" => "Enter My Address Manually"), array("onchange" => "toggleLocationOptions(this.value);", "postHTML" => \'<div id="MapDiv" style="display: none; padding-top: 10px;">\' . $map_form->elementsToString() . \'</div><div id="AddressDiv" style="display: none; padding-top: 10px;">\' . $address_form->elementsToString() . \'</div>\', "required" => 1));
 $location_form->addButton();
 $location_form->bind($map_form, \'document.forms["location"].LocationOption.value == "Map"\', \'$_POST["LocationOption"] == "Map"\');
 $location_form->bind($address_form, \'document.forms["location"].LocationOption.value == "Address"\', \'$_POST["LocationOption"] == "Address"\');

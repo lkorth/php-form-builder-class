@@ -14,6 +14,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 		<head>
 			<title>PHP Form Builder Class | Examples | Layout</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
+			<link href="pfbc.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" target="_blank">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" target="_blank">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download Version <?php echo(file_get_contents('../version'));?></a></div>
@@ -31,7 +32,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form = new form("layout");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
-					"tableAttributes" => array("width" => "500"),
+					"width" => 500,
 					"map" => array(2, 2, 1, 3)
 				));
 				$form->addHidden("cmd", "submit");
@@ -50,7 +51,7 @@ echo '<pre>' . htmlentities('<?php
 $form = new form("layout");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
-	"tableAttributes" => array("width" => "500"),
+	"width" => 500,
 	"map" => array(2, 2, 1, 3)
 ));
 $form->addHidden("cmd", "submit");

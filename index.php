@@ -35,7 +35,7 @@
 					<li>Two Wysiwyg Web Editors (<a href="http://tinymce.moxiecode.com/" target="blank">TinyMCE</a>, <a href="http://ckeditor.com/" target="blank">CKEditor</a>)</li>
 					<li>Tooltips (<a href="http://craigsworks.com/projects/qtip/" target="blank">jQuery qTip Plugin</a>)</li>
 					<li>Captcha (<a href="http://recaptcha.net" target="blank">reCAPTCHA</a>)</li>
-					<li>Table and Div Layout Options</li>
+					<li>Flexible Div Layout</li>
 				</ul>
 			</div>
 
@@ -69,7 +69,6 @@
 					<li><a href="examples/js-validation.php" target="blank">Javascript Validation</a></li>
 					<li><a href="examples/google-maps.php" target="blank">Google Maps</a></li>
 					<li><a href="examples/layout.php" target="blank">Layout</a></li>
-					<li><a href="examples/div-layout.php" target="blank">Replace Table Structure w/Div Layout</a></li>
 					<li><a href="examples/tooltips.php" target="blank">Tooltips</a></li>
 					<li><a href="examples/captcha.php" target="blank">Captcha</a></li>
 					<li><a href="examples/web-editors.php" target="blank">Web Editors</a></li>

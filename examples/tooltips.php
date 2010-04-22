@@ -14,6 +14,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 		<head>
 			<title>PHP Form Builder Class | Examples | Tooltips</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
+			<link href="pfbc.css" rel="stylesheet" type="text/css"/>
 			<style type="text/css">
 				.tooltipTitle {
 					font-weight: bold;
@@ -42,7 +43,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form = new form("tooltip");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
-					"tableAttributes" => array("width" => "300")
+					"width" => 300
 				));
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("Basic/Plain Text Tooltip:", "field0", "", array("tooltip" => "This is a basic/plain text tooltip."));
@@ -68,7 +69,7 @@ echo '<pre>' . htmlentities('<style type="text/css">
 $form = new form("tooltip");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
-	"tableAttributes" => array("width" => "300")
+	"width" => 300
 ));
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Basic/Plain Text Tooltip:", "field0", "", array("tooltip" => "This is a basic/plain text tooltip."));
