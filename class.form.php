@@ -1087,7 +1087,10 @@ STR;
 			$focus = false;
 
 		if($includeMainDiv)
+		{
+			$str .= "\n" . '<div id="' . $this->attributes["id"] . '">';
 			$str .= "\n" . '<div class="pfbc-main">';
+		}	
 
 		if(!empty($this->map))
 		{
@@ -2069,7 +2072,10 @@ STR;
 		}
 
 		if($includeMainDiv)
+		{
 			$str .= "\n</div>";
+			$str .= "\n</div>";
+		}	
 
 		$str .= "\n\n";
 
