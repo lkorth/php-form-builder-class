@@ -2735,6 +2735,8 @@ STR;
 
 STR;
 		}
+		else
+			$suffix = "%";
 
 		if(!empty($this->map))
 		{
