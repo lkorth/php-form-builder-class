@@ -3260,8 +3260,8 @@ STR;
 			}
 
 			/*Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.*/
-			if(!empty($_SESSION["formclass_values"][$form->attributes["name"]]))
-				unset($_SESSION["formclass_values"][$form->attributes["name"]]);
+			if(!empty($_SESSION["formclass_values"][$form->attributes["id"]]))
+				unset($_SESSION["formclass_values"][$form->attributes["id"]]);
 			if(!empty($form->bindRules))
 			{
 				$bindRuleKeys = array_keys($form->bindRules);
@@ -3272,8 +3272,8 @@ STR;
 					{
 						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
 						{
-							if(!empty($_SESSION["formclass_values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["name"]]))
-								unset($_SESSION["formclass_values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["name"]]);
+							if(!empty($_SESSION["formclass_values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]))
+								unset($_SESSION["formclass_values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]);
 						}
 					}	
 				}	
@@ -3303,17 +3303,17 @@ STR;
 				{
 					$valSize = sizeof($referenceValues[$eleName]);
 					for($v = 0; $v < $valSize; ++$v)
-						$_SESSION["formclass_values"][$form->attributes["name"]][$eleName][$v] = stripslashes($referenceValues[$eleName][$v]);
+						$_SESSION["formclass_values"][$form->attributes["id"]][$eleName][$v] = stripslashes($referenceValues[$eleName][$v]);
 				}
 				else
-					$_SESSION["formclass_values"][$form->attributes["name"]][$eleName] = stripslashes($referenceValues[$eleName]);
+					$_SESSION["formclass_values"][$form->attributes["id"]][$eleName] = stripslashes($referenceValues[$eleName]);
 			}	
 		}
 
-		if(array_key_exists("recaptcha_challenge_field", $_SESSION["formclass_values"][$form->attributes["name"]]))
-			unset($_SESSION["formclass_values"][$form->attributes["name"]]["recaptcha_challenge_field"]);
-		if(array_key_exists("recaptcha_response_field", $_SESSION["formclass_values"][$form->attributes["name"]]))
-			unset($_SESSION["formclass_values"][$form->attributes["name"]]["recaptcha_response_field"]);
+		if(array_key_exists("recaptcha_challenge_field", $_SESSION["formclass_values"][$form->attributes["id"]]))
+			unset($_SESSION["formclass_values"][$form->attributes["id"]]["recaptcha_challenge_field"]);
+		if(array_key_exists("recaptcha_response_field", $_SESSION["formclass_values"][$form->attributes["id"]]))
+			unset($_SESSION["formclass_values"][$form->attributes["id"]]["recaptcha_response_field"]);
 	}
 
 	/*This function handles php validation of all required form elements.  It was moved from within the validate function to it's own function to be reused by nested forms.*/
@@ -3387,7 +3387,7 @@ STR;
 	/*This function can be used to bind nested form elements rendered through elementsToString to the parent form object.*/
 	public function bind($ref, $jsIfCondition = "", $phpIfCondition = "")
 	{
-		$this->bindRules[$ref->attributes["name"]] = array($ref, $jsIfCondition, $phpIfCondition);
+		$this->bindRules[$ref->attributes["id"]] = array($ref, $jsIfCondition, $phpIfCondition);
 		if(!empty($ref->emailExists))
 			$this->emailExists = 1;
 	}
