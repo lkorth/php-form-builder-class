@@ -79,6 +79,7 @@ class form extends base {
 	protected $formIDOverride;			/*When using the latlng form element with the elementsToString() function, this attribute will need to be set to the parent form's id.*/
 	protected $includesPath;            /*Specifies where the includes directory is located. This path can be relative or absolute.*/
 	protected $onsubmitFunction;		/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
+	protected $preventDefaultCSS;		/*Prevents default css from being applied.  Allows for custom styling.*/
 
 	/*Variables that can only be set inside this class.*/
 	private $elements;					/*Contains all element objects for a form.*/
@@ -2697,7 +2698,9 @@ STR;
 STR;
 		}
 
-		$str .= <<<STR
+		if(empty($this->preventDefaultCSS))
+		{
+			$str .= <<<STR
 	<style type="text/css">
 		.pfbc-clear:after {
 			clear: both;
@@ -2708,76 +2711,135 @@ STR;
 			height: 0;
 			content: ":)";
 		}	
+		#{$this->attributes["id"]} .pfbc-label {
+			display: block;
+		}
+		#{$this->attributes["id"]} .pfbc-buttons {
+			text-align: right;
+		}
+		#{$this->attributes["id"]} .pfbc-required {
+			color: #990000; 
+		}
+		#{$this->attributes["id"]} .pfbc-element {
+			padding-bottom: 5px;
+		}
 
 STR;
 
-		if(!empty($this->attributes["width"]))
-		{
-			if(substr($this->attributes["width"], -1) == "%")
+			if(!empty($this->attributes["width"]))
 			{
-				$formWidth = substr($this->attributes["width"], 0, -1);
+				if(substr($this->attributes["width"], -1) == "%")
+				{
+					$formWidth = substr($this->attributes["width"], 0, -1);
+					$suffix = "%";
+				}	
+				elseif(substr($this->attributes["width"], -2) == "px")
+				{
+					$formWidth = substr($this->attributes["width"], 0, -2);
+					$suffix = "px";
+				}
+				else
+				{
+					$formWidth = $this->attributes["width"];
+					$suffix = "px";
+				}	
+				$str .= <<<STR
+			#{$this->attributes["id"]} .pfbc-main {
+				width: {$formWidth}$suffix;
+			}
+
+STR;
+			}
+			else
 				$suffix = "%";
-			}	
-			elseif(substr($this->attributes["width"], -2) == "px")
+
+			if(!empty($this->map))
 			{
-				$formWidth = substr($this->attributes["width"], 0, -2);
-				$suffix = "px";
+				$mapVals = array_values(array_unique($this->map));
+				$mapValSize = sizeof($mapVals);
+				for($m = 0; $m < $mapValSize; ++$m)
+				{
+					if($suffix == "px")
+					{
+						$elementWidth = number_format((($formWidth - ($this->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+						$textboxWidth = $elementWidth - 6;
+						$textareaWidth = $elementWidth - 2;
+						$selectWidth = $elementWidth;
+					}	
+					else
+					{
+						$elementWidth = number_format(((100 - ($this->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+						$textboxWidth = 98;
+						$textareaWidth = 98;
+						$selectWidth = 98;
+					}	
+						
+					$str .= <<<STR
+			#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} {
+				float: left; 
+				width: {$elementWidth}$suffix;
+			}
+			#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} .pfbc-textbox {
+				width: {$textboxWidth}$suffix;
+			}
+			#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} .pfbc-textarea {
+				width: {$textboxWidth}$suffix;
+			}
+			#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
+				width: {$selectWidth}$suffix;
+			}
+
+STR;
+				}
+				$str .= <<<STR
+			#{$this->attributes["id"]} .pfbc-map-element-first {
+				margin-left: 0 !important;
+			}
+			#{$this->attributes["id"]} .pfbc-map-element-last {
+				float: right !important;
+				margin-right: 0 !important;
+			}
+			#{$this->attributes["id"]} .pfbc-map-element-single {
+				margin: 0 !important;
+			}
+			#{$this->attributes["id"]} .pfbc-element {
+				margin: 0 {$this->mapMargin}$suffix;
+			}
+
+STR;
 			}
 			else
 			{
-				$formWidth = $this->attributes["width"];
-				$suffix = "px";
-			}	
-			$str .= <<<STR
-		#{$this->attributes["id"]} .pfbc-main {
-			width: {$formWidth}$suffix;
-		}
-
-STR;
-		}
-		else
-			$suffix = "%";
-
-		if(!empty($this->map))
-		{
-			$mapVals = array_values(array_unique($this->map));
-			$mapValSize = sizeof($mapVals);
-			for($m = 0; $m < $mapValSize; ++$m)
-			{
 				if($suffix == "px")
-					$elementWidth = number_format((($formWidth - ($this->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+				{
+					$textboxWidth = $formWidth - 6;
+					$textareaWidth = $formWidth - 2;
+					$selectWidth = $formWidth;
+				}
 				else
-					$elementWidth = number_format(((100 - ($this->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
-					
+				{
+					$textboxWidth = 98;
+					$textareaWidth = 98;
+					$selectWidth = 98;
+				}
 				$str .= <<<STR
-		#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} {
-			float: left; 
-			width: {$elementWidth}$suffix;
-		}
+			#{$this->attributes["id"]} .pfbc-textbox {
+				width: {$textboxWidth}$suffix;
+			}
+			#{$this->attributes["id"]} .pfbc-textarea {
+				width: {$textareaWidth}$suffix;
+			}
+			#{$this->attributes["id"]} .pfbc-select {
+				width: {$selectWidth}$suffix;
+			}
 
 STR;
 			}
-			$str .= <<<STR
-		#{$this->attributes["id"]} .pfbc-map-element-first {
-			margin-left: 0 !important;
-		}
-		#{$this->attributes["id"]} .pfbc-map-element-last {
-			float: right !important;
-			margin-right: 0 !important;
-		}
-		#{$this->attributes["id"]} .pfbc-map-element-single {
-			margin: 0 !important;
-		}
-		#{$this->attributes["id"]} .pfbc-element {
-			margin: 0 {$this->mapMargin}$suffix;
-		}
 
+				$str .= <<<STR
+		</style>	
 STR;
 		}
-
-			$str .= <<<STR
-	</style>	
-STR;
 
 		return $str;
 	}
