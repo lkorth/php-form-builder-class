@@ -74,6 +74,7 @@
 					<li><a href="examples/web-editors.php" target="blank">Web Editors</a></li>
 					<li><a href="examples/buttons.php" target="blank">Buttons</a></li>
 					<li><a href="examples/conditional-scenarios.php" target="blank">Conditional Scenarios</a></li>
+					<li><a href="examples/custom-css.php" target="blank">Custom CSS Styling</a></li>
 					<li><a href="examples/includes-directory-path-error.php" target="blank">Invalid includes Directory Path Error</a></li>
 				</ul>
 			</div>

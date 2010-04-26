@@ -38,7 +38,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("First Name:", "FName");
 				$form->addTextbox("Last Name:", "LName");
-				$form->addTextbox("Email Address:", "Email");
+				$form->addEmail("Email Address:", "Email");
 				$form->addTextbox("Phone Number:", "Phone");
 				$form->addTextbox("Address:", "Address");
 				$form->addTextbox("City:", "City");
