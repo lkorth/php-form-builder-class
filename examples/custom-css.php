@@ -68,7 +68,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				{
 					$elementWidth = number_format((($width - ($margin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
 					$textboxWidth = $elementWidth - 100 - 6;
-					$textareaWidth = $elementWidth - 100 - 2;
 					$selectWidth = $elementWidth - 100;
 						
 				echo <<<STR
@@ -77,9 +76,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 					width: {$elementWidth}px;
 				}
 				#signup .pfbc-map-columns-{$mapVals[$m]} .pfbc-textbox {
-					width: {$textboxWidth}px;
-				}
-				#signup .pfbc-map-columns-{$mapVals[$m]} .pfbc-textarea {
 					width: {$textboxWidth}px;
 				}
 				#signup .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
@@ -236,9 +232,6 @@ $form->render();
 #signup .pfbc-map-columns-2 .pfbc-textbox {
 	width: 290px;
 }
-#signup .pfbc-map-columns-2 .pfbc-textarea {
-	width: 290px;
-}
 #signup .pfbc-map-columns-2 .pfbc-select {
 	width: 296px;
 }
@@ -249,9 +242,6 @@ $form->render();
 #signup .pfbc-map-columns-1 .pfbc-textbox {
 	width: 694px;
 }
-#signup .pfbc-map-columns-1 .pfbc-textarea {
-	width: 694px;
-}
 #signup .pfbc-map-columns-1 .pfbc-select {
 	width: 700px;
 }
@@ -260,9 +250,6 @@ $form->render();
 	width: 261.33px;
 }
 #signup .pfbc-map-columns-3 .pfbc-textbox {
-	width: 155.33px;
-}
-#signup .pfbc-map-columns-3 .pfbc-textarea {
 	width: 155.33px;
 }
 #signup .pfbc-map-columns-3 .pfbc-select {
