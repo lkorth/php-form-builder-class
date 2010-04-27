@@ -1755,10 +1755,10 @@ STR;
 						$str .= '<input id="' . $latlngID . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["id"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["id"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["id"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"]) . '\');"/>';
 					}
 					$str .= $this->indent();
-					$str .= '<div id="' . $latlngID . '_clearDiv" style="margin-top: 2px;';
+					$str .= '<div id="' . $latlngID . '_clearDiv" style="';
 					if(empty($ele->attributes["value"]) || !is_array($ele->attributes["value"]))
 						$str .= 'display: none;';
-					$str .= '"><small><a href="javascript: clearLatLng_' . $this->attributes["id"] . '(\'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');">Clear Latitude/Longitude</a></small></div>';	
+					$str .= '"><a href="javascript: clearLatLng_' . $this->attributes["id"] . '(\'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');" class="pfbc-link">Clear Latitude/Longitude</a></div>';	
 				}
 				elseif($eleType == "checksort")
 				{
