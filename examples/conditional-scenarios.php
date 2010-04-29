@@ -86,7 +86,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 					if(document.getElementByID("billing").UseBilling[1].checked)
 						toggleShipping(0);
 				</script>
-				<?
+				<?php
 
 echo '<pre>' . htmlentities('<?php
 $billing_form = new form("billing");
@@ -179,7 +179,7 @@ $billing_form->render();
 				<script type="text/javascript">
 					toggleLocationOptions(document.getElementById("location").LocationOption.value);
 				</script>
-				<?
+				<?php
 
 echo '<pre>' . htmlentities('<?php
 $location_form = new form("location");
