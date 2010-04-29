@@ -105,7 +105,7 @@ STR;
 			</style>
 		</head>
 		<body>
-			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onMouseDown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onMouseDown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onMouseDown="this.target='<>';">Download Version <?php echo(file_get_contents('../version'));?></a></div>
+			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onmousedown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onmousedown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onmousedown="this.target='<>';">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 			<div id="pfbc_banner">
 				<h2>PHP Form Builder Class / Examples / Custom CSS Styling</h2>
 				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
@@ -114,7 +114,7 @@ STR;
 			<div id="pfbc_content">
 				<p><b>Custom CSS Styling</b> - By default, css will be applied to the forms you build providing a easy way to get up-and-running quickly; however, these default styles can be turned off with the <i>preventDefaultCSS</i> form attribute,
 				which then allows you to layout your forms however you'd like.  Below are a few examples of how this can be done.  Notice that hardcoded classes are applied throughout the markup for styling purposes.  The second example demonstrates how to style forms that use the mapping functionality.  It is recommended that you review the php source of this example and/or the php source of the elementsToString() function within class.form.php when styling forms that make use of the <i>map</i> form attribute as the process is somewhat complex.
-				Please submit any questions/issues you have about this topic to the project's issue tracker found at - <a href="http://code.google.com/p/php-form-builder-class/issues/list" onMouseDown="this.target='<>';">http://code.google.com/p/php-form-builder-class/issues/list</a>.</p>
+				Please submit any questions/issues you have about this topic to the project's issue tracker found at - <a href="http://code.google.com/p/php-form-builder-class/issues/list" onmousedown="this.target='<>';">http://code.google.com/p/php-form-builder-class/issues/list</a>.</p>
 
 				<?php
 				$form = new form("login");
