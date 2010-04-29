@@ -83,7 +83,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$billing_form->render();
 				?>
 				<script type="text/javascript">
-					if(document.getElementByID("billing").UseBilling[1].checked)
+					if(document.getElementById("billing").UseBilling[1].checked)
 						toggleShipping(0);
 				</script>
 				<?php
