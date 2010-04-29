@@ -37,7 +37,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
-			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" target="_blank">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" target="_blank">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download Version <?php echo(file_get_contents('../version'));?></a></div>
+			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onMouseDown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onMouseDown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onMouseDown="this.target='<>';">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 			<div id="pfbc_banner">
 				<h2>PHP Form Builder Class / Examples / Ajax</h2>
 				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
@@ -86,7 +86,7 @@ $form->render();
 					<li><i>ajaxCallback</i> - triggers javascript function once the form has submitted.  Notice that the function is set as a string without "( )" on the end.  
 					Also, a parameter, msg in this case, is automatically passed to this callback function which includes any response sent back from the web server.</li>  
 					<li><i>ajaxUrl</i> - controls where form submits.  By default, this parameter is set to the current script; however, it is set to ajaxSubmission.php in the form below.</li>
-					<li><i>ajaxDataType</i> - specifies the data format for any server responses.  Options include xml, html, script, json, jsonp, and text.  By default, this parameter is set to text; however, it is set to xml in the form below.
+					<li><i>ajaxDataType</i> - specifies the data format for any server responses.  Options include xml, html, script, json, jsonp, and text.  By default, this parameter is set to text; however, it is set to xml in the form below.</li>
 				</ul>
 				
 				<p>Use "formbuilder" as the Username and "password" as the Password to login with the form below.  Any other parameters will display an error message above the form.</p>
@@ -153,7 +153,7 @@ $form->render();
 				?>
 				<p><b>Example 3: Ajax w/Loading Image & Disabled Submit Button</b> - This sample demonstrates how the <i>ajaxCallback</i> and <i>ajaxPreCallback</i> form attributes can be used to display an animated loading image to give
 				users instant feedback that their data is being submitted.  The submit button will also be disabled while the form's data is being submitted.  Please note that this is just an example and your email is not being stored in 
-				an actual mailing list.
+				an actual mailing list.</p>
 
 				<?php
 				$form = new form("loading");

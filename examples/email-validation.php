@@ -28,7 +28,7 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
-			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" target="_blank">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" target="_blank">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download Version <?php echo(file_get_contents('../version'));?></a></div>
+			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onMouseDown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onMouseDown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onMouseDown="this.target='<>';">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 			<div id="pfbc_banner">
 				<h2>PHP Form Builder Class / Examples / Email Validation</h2>
 				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>

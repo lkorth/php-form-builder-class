@@ -33,7 +33,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			</script>
 		</head>
 		<body>
-			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" target="_blank">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" target="_blank">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download Version <?php echo(file_get_contents('../version'));?></a></div>
+			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onMouseDown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onMouseDown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onMouseDown="this.target='<>';">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 			<div id="pfbc_banner">
 				<h2>PHP Form Builder Class / Examples / Conditional Scenarios</h2>
 				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
@@ -41,7 +41,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 
 			<div id="pfbc_content">
 				<p><b>Conditional Scenarios</b> - The example provided below demonstrates how the combination of multiple form instances, an onclick javascript event, and the elementsToString() function can be used to create sections that can be displayed or hidden based on a yes/no condition.</p>
-				<p>An additional example is provided below demonstrating a similar conditional scenario - the difference is that a select box with an onchange event is used to trigger the condition as apposed to radio buttons with onclick events.
+				<p>An additional example is provided below demonstrating a similar conditional scenario - the difference is that a select box with an onchange event is used to trigger the condition as apposed to radio buttons with onclick events.</p>
 
 				<?php
 				$billing_form = new form("billing");

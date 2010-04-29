@@ -4,7 +4,7 @@
 		<link href="style.css" rel="stylesheet" type="text/css"/>
 	</head>
 	<body>
-		<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" target="_blank">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" target="_blank">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download Version <?php echo(file_get_contents('version'));?></a></div>
+		<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onMouseDown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onMouseDown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onMouseDown="this.target='<>';">Download Version <?php echo(file_get_contents('version'));?></a></div>
 		<div id="pfbc_banner">
 			<h2>PHP Form Builder Class</h2>
 			<h5><span>Version: <?php echo(file_get_contents('version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('release'));?></span></h5>
@@ -42,7 +42,7 @@
 			<b>Installation Instructions:</b>
 			<div>
 				<ol style="margin-top: 0; padding-top: 0;">
-					<li><a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" target="_blank">Download</a> and unzip formbuilder.zip</li>
+					<li><a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onMouseDown="this.target='<>';">Download</a> and unzip formbuilder.zip</li>
 					<li>Upload the php-form-builder-class directory to your web server.</li>
 					<li>index.php, style.css, and the examples directory are included only for instruction and can be omitted once in production.</li>
 					<li>It is recommended that the scripts building/rendering your forms be located in the same folder as the php-form-builder-class directory.  Doing so will eliminate the need for specifying the <i>includesPath</i> attribute while building your forms.  An alternative is to make use of symbolic links within your file structure.  See the example - Invalid includes Directory Path Error - provided below for more details on the <i>includesPath</i> form attribute.
