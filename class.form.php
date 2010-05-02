@@ -2515,6 +2515,7 @@ STR;
 		return $str;
 	}
 
+	/*This function renders the form's javascript.  This function is invoked within includes/js.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.*/
 	public function renderJS($returnString=false)
 	{
 		$str = "";
@@ -3115,6 +3116,7 @@ STR;
 			return $str;
 	}
 
+	/*This function renders the form's css.  This function is invoked within includes/css.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.*/
 	public function renderCSS($returnString=false)
 	{
 		$str = "";
