@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+session_start();
 include("../class.form.php");
 
 if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
@@ -13,11 +14,12 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 			<title>PHP Form Builder Class | Examples | Web Editors</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
 		</head>	
 		<body>
-			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onmousedown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onmousedown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onmousedown="this.target='<>';">Download Version <?php echo(file_get_contents('../version'));?></a></div>
+			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 			<div id="pfbc_banner">
 				<h2>PHP Form Builder Class / Examples / Web Editors</h2>
 				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
@@ -36,10 +38,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addHidden("cmd", "submit");
 				$form->addWebEditor("Default Web Editor:", "field0");
 				$form->addWebEditor("Simple Web Editor:", "field1", "", array("webeditorSimple" => 1));
-				$form->addWebEditor("Required/Prefilled Web Editor:", "field2", '<b>Rich</b> <span style="color: #009900;">Text</span>', array("required" => 1));
 				$form->addCKEditor("Default CKEditor Editor:", "field3");
 				$form->addCKEditor("Basic CKEditor Editor:", "field4", "", array("ckeditorBasic" => 1));
-				$form->addCKEditor("Prefilled CKEditor Editor w/Basic Toolbar:", "field5", '<b>Rich</b> <span style="color: #009900;">Text</span>', array("required" => "1"));
 				$form->addButton();
 				$form->render();
 
@@ -52,10 +52,8 @@ $form->setAttributes(array(
 $form->addHidden("cmd", "submit");
 $form->addWebEditor("Default Web Editor:", "field0");
 $form->addWebEditor("Simple Web Editor:", "field1", "", array("webeditorSimple" => 1));
-$form->addWebEditor("Required/Prefilled Web Editor:", "field2", \'<b>Rich</b> <span style="color: #009900;">Text</span>\', array("required" => 1));
 $form->addCKEditor("Default CKEditor Editor:", "field3");
 $form->addCKEditor("Basic CKEditor Editor:", "field4", "", array("ckeditorBasic" => 1));
-$form->addCKEditor("Prefilled CKEditor Editor w/Basic Toolbar:", "field5", \'<b>Rich</b> <span style="color: #009900;">Text</span>\', array("required" => "1"));
 $form->addButton();
 $form->render();
 ?>') . '</pre>';

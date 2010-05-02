@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+session_start();
 include("../class.form.php");
 
 if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
@@ -13,6 +14,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 			<title>PHP Form Builder Class | Examples | Custom CSS Styling</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
 			<style type="text/css">
@@ -105,7 +107,7 @@ STR;
 			</style>
 		</head>
 		<body>
-			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onmousedown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onmousedown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onmousedown="this.target='<>';">Download Version <?php echo(file_get_contents('../version'));?></a></div>
+			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 			<div id="pfbc_banner">
 				<h2>PHP Form Builder Class / Examples / Custom CSS Styling</h2>
 				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
@@ -114,7 +116,7 @@ STR;
 			<div id="pfbc_content">
 				<p><b>Custom CSS Styling</b> - By default, css will be applied to the forms you build providing a easy way to get up-and-running quickly; however, these default styles can be turned off with the <i>preventDefaultCSS</i> form attribute,
 				which then allows you to layout your forms however you'd like.  Below are a few examples of how this can be done.  Notice that hardcoded classes are applied throughout the markup for styling purposes.  The second example demonstrates how to style forms that use the mapping functionality.  It is recommended that you review the php source of this example and/or the php source of the elementsToString() function within class.form.php when styling forms that make use of the <i>map</i> form attribute as the process is somewhat complex.
-				Please submit any questions/issues you have about this topic to the project's issue tracker found at - <a href="http://code.google.com/p/php-form-builder-class/issues/list" onmousedown="this.target='<>';">http://code.google.com/p/php-form-builder-class/issues/list</a>.</p>
+				Please submit any questions/issues you have about this topic to the project's issue tracker found at - <a href="http://code.google.com/p/php-form-builder-class/issues/list">http://code.google.com/p/php-form-builder-class/issues/list</a>.</p>
 
 				<?php
 				$form = new form("login");

@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL);
+session_start();
 include("../class.form.php");
 
 if(isset($_POST["cmd"]) && $_POST["cmd"] == "signup")
@@ -33,11 +34,12 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 			<title>PHP Form Builder Class | Examples | Ajax</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
-			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onmousedown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onmousedown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onmousedown="this.target='<>';">Download Version <?php echo(file_get_contents('../version'));?></a></div>
+			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 			<div id="pfbc_banner">
 				<h2>PHP Form Builder Class / Examples / Ajax</h2>
 				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
@@ -151,7 +153,7 @@ $form->render();
 ') . '</pre>';
 
 				?>
-				<p><b>Example 3: Ajax w/Loading Image & Disabled Submit Button</b> - This sample demonstrates how the <i>ajaxCallback</i> and <i>ajaxPreCallback</i> form attributes can be used to display an animated loading image to give
+				<p><b>Example 3: Ajax w/Loading Image &amp; Disabled Submit Button</b> - This sample demonstrates how the <i>ajaxCallback</i> and <i>ajaxPreCallback</i> form attributes can be used to display an animated loading image to give
 				users instant feedback that their data is being submitted.  The submit button will also be disabled while the form's data is being submitted.  Please note that this is just an example and your email is not being stored in 
 				an actual mailing list.</p>
 
@@ -169,7 +171,7 @@ $form->render();
 				));
 				$form->addHidden("cmd", "loading");
 				$form->addEmail("Email Address:", "Email");
-				$form->addHTML('<div id="ajaxLoadingDiv" style="display: none; text-align: center;"><small>Your information is being submitted...</small><br/><img src="images/ajax-loader.gif" border="0"/></div>');
+				$form->addHTML('<div id="ajaxLoadingDiv" style="display: none; text-align: center;"><small>Your information is being submitted...</small><br/><img src="images/ajax-loader.gif" alt=""/></div>');
 				$form->addButton("Submit", "submit", array("id" => "ajaxLoadingButton"));
 				$form->render();
 				?>
@@ -203,7 +205,7 @@ $form->setAttributes(array(
 ));
 $form->addHidden("cmd", "loading");
 $form->addEmail("Email Address:", "Email");
-$form->addHTML(\'<div id="ajaxLoadingDiv" style="display: none; text-align: center;"><small>Your information is being submitted...</small><br/><img src="images/ajax-loader.gif" border="0"/></div>\');
+$form->addHTML(\'<div id="ajaxLoadingDiv" style="display: none; text-align: center;"><small>Your information is being submitted...</small><br/><img src="images/ajax-loader.gif" border="0" alt=""/></div>\');
 $form->addButton("Submit", "submit", array("id" => "ajaxLoadingButton"));
 $form->render();
 ?>

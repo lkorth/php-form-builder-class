@@ -1,6 +1,6 @@
 <?php
-session_start();
 error_reporting(E_ALL);
+session_start();
 include("../class.form.php");
 
 if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
@@ -20,11 +20,12 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 			<title>PHP Form Builder Class | Examples | Captcha</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
-			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onmousedown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onmousedown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onmousedown="this.target='<>';">Download Version <?php echo(file_get_contents('../version'));?></a></div>
+			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 			<div id="pfbc_banner">
 				<h2>PHP Form Builder Class / Examples / Captcha</h2>
 				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
@@ -44,12 +45,12 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				looks like this - $form = new form("captcha");.  After the form is submitted, you will see the exact same line before the validate() function is used.  These 
 				identifiers must match exactly for the validation to function properly.</p>
 
-				<p>reCAPTCHA and Ajax - If you are placing the captcha form element in a form submitting via ajax, check out the <a href="captcha-ajax.php" onmousedown="this.target='<>';">reCAPTCHA ajax example</a> for further instructions.</p>
+				<p>reCAPTCHA and Ajax - If you are placing the captcha form element in a form submitting via ajax, check out the <a href="captcha-ajax.php">reCAPTCHA ajax example</a> for further instructions.</p>
 
 				<p>The <i>captchaTheme</i> form attribute allows the look and feel of reCAPTCHA to be cumstomized.  By default, the white theme will be applied.  Click the links below to view different reCAPTCHA themes.<br />
 				<a href="captcha.php?theme=white">white</a>, <a href="captcha.php?theme=red">red</a>, <a href="captcha.php?theme=blackglass">blackglass</a>, or <a href="captcha.php?theme=clean">clean</a></p>
 
-				<p>The <i>captchaLang</i> attribute allows the language of reCAPTCHA to be cumstomized.  By default, English will be used - <a href="http://recaptcha.net/apidocs/captcha/client.html" onmousedown="this.target='<>';">View reCAPTCHA's Supported Languages</a>.</p>
+				<p>The <i>captchaLang</i> attribute allows the language of reCAPTCHA to be cumstomized.  By default, English will be used - <a href="http://recaptcha.net/apidocs/captcha/client.html">View reCAPTCHA's Supported Languages</a>.</p>
 
 				<?php
 				if(!empty($_GET["error_message"]))

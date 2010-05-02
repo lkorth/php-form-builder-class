@@ -92,12 +92,21 @@ class form extends base {
 	private $referenceValues;			/*Associative array of values to pre-fill form fields.*/
 	private $captchaExists;				/*If there is a captcha element attached to the form, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
 	private $focusElement;				/*Sets focus of first form element.*/
-	private $tinymceIDArr;				/*Uniquely identifies each tinyMCE web editor.*/
-	private $ckeditorIDArr;				/*Uniquely identifies each CKEditor web editor.*/
 	private $hintExists;				/*If one or more form elements have hints, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
 	private $emailExists;				/*If one or more form elements of type email exist, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
 	private $jsIncludesPath;            /*For use on client side, holds either absolute path or document root path*/
 	private $phpIncludesPath;           /*For use on server side, holds either absolute path or full path */
+	private $tinymceIDArr;				/*Uniquely identifies each tinyMCE web editor.*/
+	private $ckeditorIDArr;				/*Uniquely identifies each CKEditor web editor.*/
+	private $jqueryDateIDArr;			/*Uniquely identifies each date element.*/
+	private $jqueryDateRangeIDArr;		/*Uniquely identifies each daterange element.*/
+	private $tooltipIDArr;				/*Uniquely identifies each tooltip.*/
+	private $jquerySliderIDArr;			/*Uniquely identifies each slider element.*/
+	private $jqueryStarRatingIDArr;		/*Uniquely identifies each rating element.*/
+	private $jqueryColorIDArr;			/*Uniquely identifies each colorpicker element.*/
+	private $latlngIDArr;				/*Uniquely identifies each latlng element.*/
+	private $jqueryCheckSort;			/*Indicates there is a checksort field.*/
+	private $hasFormTag;				/*Indicates that the form was generated via the render() function as apposed to the elementsToString() function.*/
 
 	/*Variables that can be accessed outside this class directly.*/
 	public $errorMsg;					/*Contains human readable error message set in validate() method.*/
@@ -733,6 +742,7 @@ class form extends base {
 	/*This function renders the form's HTML.*/
 	public function render($returnString=false)
 	{
+		$this->hasFormTag = 1;
 		ob_start();
 
 		/*Render the form tag with all appropriate attributes.*/
@@ -830,6 +840,7 @@ class form extends base {
 				else
 					echo "\n\t\t";
 
+
 				/*The phpFunction parameter was included to give the developer the flexibility to use any custom button generation function 
 				they might currently use in their development environment.*/
 				if(!empty($this->buttons[$i]->phpFunction))
@@ -880,170 +891,10 @@ class form extends base {
 		echo "\n</div>";
 
 		echo "\n</form>\n\n";
-		/*
-		If there are any required fields in the form or if this form is setup to utilize ajax, build a javascript 
-		function for performing form validation before submission and/or for building and submitting a data string through ajax.
-		*/
-		if(!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists))
-		{
-			echo <<<STR
-<script type="text/javascript">
 
-STR;
-			if(!empty($this->emailExists))
-			{
-				echo <<<STR
-	var validemail_{$this->attributes["id"]};
-
-STR;
-			}	
-			echo <<<STR
-	function {$this->onsubmitFunction}(formObj) {
-
-STR;
-			/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
-			key/value pair and acts as the GET or POST string.*/
-			if(!empty($this->ajax))
-			{
-				echo <<<STR
-		var form_data = "";
-
-STR;
-			}	
-
-			$this->jsCycleElements($this->elements);
-			if(!empty($this->bindRules))
-			{
-				$bindRuleKeys = array_keys($this->bindRules);
-				$bindRuleSize = sizeof($bindRuleKeys);
-				for($b = 0; $b < $bindRuleSize; ++$b)
-				{
-					if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements))
-					{
-						if(!empty($this->bindRules[$bindRuleKeys[$b]][1]))
-						{
-							echo <<<STR
-		if({$this->bindRules[$bindRuleKeys[$b]][1]}) {
-STR;
-						}	
-						$this->jsCycleElements($this->bindRules[$bindRuleKeys[$b]][0]->elements);
-						if(!empty($this->bindRules[$bindRuleKeys[$b]][1]))
-						{
-							echo <<<STR
-		}
-
-STR;
-						}	
-					}
-				}
-			}
-				
-			if(!empty($this->ajax))
-			{
-				echo <<<STR
-		form_data = form_data.substring(1, form_data.length);
-		$.ajax({
-			type: "{$this->ajaxType}",
-			url: "{$this->ajaxUrl}",
-			dataType: "{$this->ajaxDataType}",
-			data: form_data,
-
-STR;
-				if(!empty($this->ajaxPreCallback))
-				{
-					echo <<<STR
-			beforeSend: function() {
-				{$this->ajaxPreCallback}();
-			},
-
-STR;
-				}
-				echo <<<STR
-			success: function(responseMsg) {
-
-STR;
-				if(!empty($this->ajaxCallback))
-				{
-					echo <<<STR
-				{$this->ajaxCallback}(responseMsg);
-
-STR;
-				}	
-				else
-				{
-					echo <<<STR
-				if(responseMsg != "")
-					alert(responseMsg);
-
-STR;
-				}		
-				echo <<<STR
-			},
-			error: function(XMLHttpRequest, textStatus, errorThrown) { alert(XMLHttpRequest.responseText); }
-		});
-		return false;
-
-STR;
-			}	
-			else	
-			{
-				echo <<<STR
-		return true;
-
-STR;
-			}	
-			echo <<<STR
-	}
-</script>
-
-STR;
-		}
-
-		/*This javascript section sets the focus of the first field in the form.  This default behavior can be overwritten by setting the
-		noAutoFocus parameter.*/
-		if(empty($this->noAutoFocus) && !empty($this->focusElement))
-		{
-			echo <<<STR
-<script type="text/javascript">
-
-STR;
-			/*The webeditor and ckeditor fields are a special case.*/
-			if(!empty($this->tinymceIDArr) && is_array($this->tinymceIDArr) && in_array($this->focusElement, $this->tinymceIDArr))
-			{
-				echo <<<STR
-	setTimeout("if(tinyMCE.get(\"{$this->focusElement}\")) tinyMCE.get(\"{$this->focusElement}\").focus();", 1000);
-
-STR;
-			}	
-			elseif(!empty($this->ckeditorIDArr) && is_array($this->ckeditorIDArr) && array_key_exists($this->focusElement, $this->ckeditorIDArr))
-			{
-				echo <<<STR
-	setTimeout("CKEDITOR.instances.{$this->focusElement}.focus();", 1000);
-STR;
-
-			}	
-			else
-			{
-				/*Any fields with multiple options such as radio button, checkboxes, etc. are handled accordingly.*/
-				echo <<<STR
-	if(document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].type != "select-one" && document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].type != "select-multiple" && document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].length)
-		document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"][0].focus();
-	else
-		document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].focus();
-
-STR;
-			}		
-			echo <<<STR
-</script>
-
-STR;
-		}
 
 		$content = ob_get_contents();
 		ob_end_clean();
-
-		/*Serialize the form and store it in a session array.  This variable will be unserialized and used within the validate() method.*/
-		$_SESSION["formclass_instances"][$this->attributes["id"]] = serialize($this);
 
 		if(!$returnString)
 			echo($content);
@@ -1056,8 +907,8 @@ STR;
 	{
 		$str = "";
 
-		if(empty($this->referenceValues) && !empty($_SESSION["formclass_values"]) && array_key_exists($this->attributes["id"], $_SESSION["formclass_values"]))
-			$this->setReferenceValues($_SESSION["formclass_values"][$this->attributes["id"]]);
+		if(empty($this->referenceValues) && !empty($_SESSION["pfbc-values"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-values"]))
+			$this->setReferenceValues($_SESSION["pfbc-values"][$this->attributes["id"]]);
 
 		//If windows normalize backslashes to forward slashes
 		if( PHP_OS == 'WINNT' )
@@ -1108,7 +959,7 @@ STR;
 
 			/*If the referenceValues array is filled, check for this specific element's name in the associative array key and populate the field's value if applicable.*/
 			if(!empty($this->referenceValues) && is_array($this->referenceValues))
-				{
+			{
 				if(array_key_exists($ele->attributes["name"], $this->referenceValues))
 					$ele->attributes["value"] = $this->referenceValues[$ele->attributes["name"]];
 				elseif(substr($ele->attributes["name"], -2) == "[]" && array_key_exists(substr($ele->attributes["name"], 0, -2), $this->referenceValues))
@@ -1198,14 +1049,14 @@ STR;
 							$this->tooltipIcon = $this->jsIncludesPath . "/jquery/qtip/tooltip-icon.gif";
 
 						/*This section ensures that each tooltip has a unique identifier.*/
-						if(!isset($tooltipIDArr))
-							$tooltipIDArr = array(); 
+						if(!isset($this->tooltipIDArr))
+							$this->tooltipIDArr = array(); 
 						$tooltipID = "tooltip_" . rand(0, 999);
-						while(array_key_exists($tooltipID, $tooltipIDArr))
+						while(array_key_exists($tooltipID, $this->tooltipIDArr))
 							$tooltipID = "tooltip_" . rand(0, 999);
-						$tooltipIDArr[$tooltipID] = $ele->tooltip;	
+						$this->tooltipIDArr[$tooltipID] = $ele->tooltip;	
 
-						$str .= ' <img id="' . $tooltipID . '" src="' . $this->tooltipIcon . '"/>';
+						$str .= ' <img id="' . $tooltipID . '" src="' . $this->tooltipIcon . '" alt=""/>';
 					}
 					$str .= "</label>";
 				}	
@@ -1571,11 +1422,11 @@ STR;
 					/*This section ensures that each date field has a unique identifier.*/
 					if(empty($ele->attributes["id"]))
 						$ele->attributes["id"] = "dateinput_" . rand(0, 999);
-					if(!isset($jqueryDateIDArr))
-						$jqueryDateIDArr = array();
-					while(in_array($ele->attributes["id"], $jqueryDateIDArr))
+					if(!isset($this->jqueryDateIDArr))
+						$this->jqueryDateIDArr = array();
+					while(in_array($ele->attributes["id"], $this->jqueryDateIDArr))
 						$ele->attributes["id"] = "dateinput_" . rand(0, 999);
-					$jqueryDateIDArr[] = $ele->attributes["id"];	
+					$this->jqueryDateIDArr[] = $ele->attributes["id"];	
 
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
@@ -1606,11 +1457,11 @@ STR;
 					/*This section ensure that each daterange field has a unique identifier.*/
 					if(empty($ele->attributes["id"]))
 						$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
-					if(!isset($jqueryDateRangeIDArr))
-						$jqueryDateRangeIDArr = array();
-					while(in_array($ele->attributes["id"], $jqueryDateRangeIDArr))
+					if(!isset($this->jqueryDateRangeIDArr))
+						$this->jqueryDateRangeIDArr = array();
+					while(in_array($ele->attributes["id"], $this->jqueryDateRangeIDArr))
 						$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
-					$jqueryDateRangeIDArr[] = $ele->attributes["id"];	
+					$this->jqueryDateRangeIDArr[] = $ele->attributes["id"];	
 
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
@@ -1657,11 +1508,11 @@ STR;
 						/*This section ensures that each sort field has a unique identifier.*/
 						if(empty($ele->attributes["id"]))
 							$ele->attributes["id"] = "sort_" . rand(0, 999);
-						if(!isset($jquerySortIDArr))
-							$jquerySortIDArr = array();
-						while(in_array($ele->attributes["id"], $jquerySortIDArr))
+						if(!isset($this->jquerySortIDArr))
+							$this->jquerySortIDArr = array();
+						while(in_array($ele->attributes["id"], $this->jquerySortIDArr))
 							$ele->attributes["id"] = "sort_" . rand(0, 999);
-						$jquerySortIDArr[] = $ele->attributes["id"]; 
+						$this->jquerySortIDArr[] = $ele->attributes["id"]; 
 
 						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
 						$optionSize = sizeof($ele->options);
@@ -1707,11 +1558,11 @@ STR;
 					/*This section ensures that each latlng (Google Map) field has a unique identifier.*/
 					if(empty($ele->attributes["id"]))
 						$ele->attributes["id"] = "latlnginput_" . rand(0, 999);
-					if(!isset($latlngIDArr))
-						$latlngIDArr = array();
-					while(array_key_exists($ele->attributes["id"], $latlngIDArr))
+					if(!isset($this->latlngIDArr))
+						$this->latlngIDArr = array();
+					while(array_key_exists($ele->attributes["id"], $this->latlngIDArr))
 						$ele->attributes["id"] = "latlnginput_" . rand(0, 999);
-					$latlngIDArr[$ele->attributes["id"]] = $ele; 
+					$this->latlngIDArr[$ele->attributes["id"]] = $ele; 
 
 					$latlngID = htmlentities($ele->attributes["id"], ENT_QUOTES);
 
@@ -1768,17 +1619,17 @@ STR;
 							$ele->attributes["name"] .= "[]";
 
 						/*This section ensure that each checksort field has a unique identifier.  You will notice that sort and checksort are stores in the same
-						array (jquerySortIDArr).  This is done because they both use the same jquery ui sortable functionality.*/
+						array (this->jquerySortIDArr).  This is done because they both use the same jquery ui sortable functionality.*/
 						if(empty($ele->attributes["id"]))
 							$ele->attributes["id"] = "checksort_" . rand(0, 999);
-						if(!isset($jquerySortIDArr))
-							$jquerySortIDArr = array();
-						while(in_array($ele->attributes["id"], $jquerySortIDArr))
+						if(!isset($this->jquerySortIDArr))
+							$this->jquerySortIDArr = array();
+						while(in_array($ele->attributes["id"], $this->jquerySortIDArr))
 							$ele->attributes["id"] = "checksort_" . rand(0, 999);
-						$jquerySortIDArr[] = $ele->attributes["id"]; 
+						$this->jquerySortIDArr[] = $ele->attributes["id"]; 
 
 						/*This variable triggers a javascript section for handling the dynamic adding/removing of sortable option when a user clicks the checkbox.*/
-						$jqueryCheckSort = 1;
+						$this->jqueryCheckSort = 1;
 
 						/*Temporary variable for building <ul> sorting structure for checked options.*/
 						$sortLIArr = array();
@@ -1858,8 +1709,8 @@ STR;
 					if(empty($ele->attributes["id"]))
 						$ele->attributes["id"] = "captchainput_" . rand(0, 999);
 					
-					$captchaID = array();
-					$captchaID = $ele->attributes["id"]; 
+					$this->captchaID = array();
+					$this->captchaID = $ele->attributes["id"]; 
 
 					$str .= '<div id="' . $ele->attributes["id"] . '"></div>';
 				}
@@ -1868,13 +1719,13 @@ STR;
 					/*This section ensures that each slider field has a unique identifier.*/
 					if(empty($ele->attributes["id"]))
 						$ele->attributes["id"] = "sliderinput_" . rand(0, 999);
-					if(!isset($jquerySliderIDArr))
-						$jquerySliderIDArr = array();
-					while(array_key_exists($ele->attributes["id"], $jquerySliderIDArr))
+					if(!isset($this->jquerySliderIDArr))
+						$this->jquerySliderIDArr = array();
+					while(array_key_exists($ele->attributes["id"], $this->jquerySliderIDArr))
 						$ele->attributes["id"] = "sliderinput_" . rand(0, 999);
 
 					/*The bottom line of this section sets this specific variable to $ele.*/	
-					$jquerySliderIDArr[$ele->attributes["id"]] = "";
+					$this->jquerySliderIDArr[$ele->attributes["id"]] = "";
 
 					if(empty($ele->attributes["value"]))
 						$ele->attributes["value"] = "0";
@@ -1932,7 +1783,7 @@ STR;
 					else
 						$str .= '<input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->attributes["value"]) . '"/>';
 
-					$jquerySliderIDArr[$ele->attributes["id"]] = $ele;
+					$this->jquerySliderIDArr[$ele->attributes["id"]] = $ele;
 				}
 				elseif($eleType == "rating")
 				{
@@ -1943,11 +1794,11 @@ STR;
 
 					/*This section ensures each rating field has a unique identifier.*/
 					$starratingID = "starrating_" . rand(0, 999);
-					if(!isset($jqueryStarRatingIDArr))
-						$jqueryStarRatingIDArr = array();
-					while(array_key_exists($starratingID, $jqueryStarRatingIDArr))
+					if(!isset($this->jqueryStarRatingIDArr))
+						$this->jqueryStarRatingIDArr = array();
+					while(array_key_exists($starratingID, $this->jqueryStarRatingIDArr))
 						$starratingID = "starrating_" . rand(0, 999);
-					$jqueryStarRatingIDArr[$starratingID] = $ele;
+					$this->jqueryStarRatingIDArr[$starratingID] = $ele;
 
 					$str .= '<table cellpadding="0" cellspacing="0" border="0"><tr><td valign="middle"><div id="' . $starratingID . '">';
 
@@ -2014,11 +1865,11 @@ STR;
 					/*This section ensures that each colorpicker field has a unique identifier.*/
 					if(empty($ele->attributes["id"]))
 						$ele->attributes["id"] = "colorinput_" . rand(0, 999);
-					if(!isset($jqueryColorIDArr))
-						$jqueryColorIDArr = array();
-					while(in_array($ele->attributes["id"], $jqueryColorIDArr))
+					if(!isset($this->jqueryColorIDArr))
+						$this->jqueryColorIDArr = array();
+					while(in_array($ele->attributes["id"], $this->jqueryColorIDArr))
 						$ele->attributes["id"] = "colorinput_" . rand(0, 999);
-					$jqueryColorIDArr[] = $ele->attributes["id"];	
+					$this->jqueryColorIDArr[] = $ele->attributes["id"];	
 
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes))
@@ -2078,361 +1929,99 @@ STR;
 			$str .= "\n</div>";
 		}	
 
-		$str .= "\n\n";
+		$str .= <<<STR
+	
+	<div class="pfbc-script">
+		<script type="text/javascript">var head = document.getElementsByTagName("head")[0];</script>
 
-		if(!empty($jqueryDateIDArr) || !empty($jqueryDateRangeIDArr) || !empty($jquerySortIDArr) || !empty($tooltipIDArr) || !empty($jquerySliderIDArr) || !empty($jqueryStarRatingIDArr) || !empty($jqueryColorIDArr))
+STR;
+
+		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->tooltipIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr) || !empty($this->jqueryColorIDArr))
 		{
 			if(empty($this->preventJQueryLoad))
 			{
 				$str .= <<<STR
-	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
 
 STR;
 			}	
 
-			if(!empty($jqueryDateIDArr) || !empty($jqueryDateRangeIDArr) || !empty($jquerySortIDArr) || !empty($jquerySliderIDArr) || !empty($jqueryStarRatingIDArr))
+			if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr))
 			{
 				if(empty($this->preventJQueryUILoad))
 				{
 					$str .= <<<STR
-	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery-ui.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery-ui.js"></script>
 
 STR;
 				}	
 				$str .= <<<STR
-	<link href="{$this->jsIncludesPath}/jquery/jquery-ui.css" rel="stylesheet" type="text/css"/>
+		<script type="text/javascript">
+			var css = document.createElement('link');
+			css.rel = 'stylesheet';
+			css.type = 'text/css';
+			css.href = '{$this->jsIncludesPath}/jquery/jquery-ui.css';
+			head.appendChild(css);
+		</script>
 
 STR;
 			}
 
-			if(!empty($tooltipIDArr) && empty($this->preventQTipLoad))
+			if(!empty($this->tooltipIDArr) && empty($this->preventQTipLoad))
 			{
 				$str .= <<<STR
-	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/qtip/jquery.qtip-1.0.0-rc3.min.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/qtip/jquery.qtip-1.0.0-rc3.min.js"></script>
 
 STR;
 			}	
 
-			if(!empty($jqueryDateIDArr))
+			if(!empty($this->jqueryStarRatingIDArr))
 			{
 				$str .= <<<STR
-	<style type="text/css">.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 0.8em !important; }</style>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/starrating/ui.stars.min.js"></script>
+STR;
+			}
+
+			if(!empty($this->jqueryDateRangeIDArr))
+			{
+				$str .= <<<STR
+		<script type="text/javascript">
+			var css = document.createElement('link');
+			css.rel = 'stylesheet';
+			css.type = 'text/css';
+			css.href = '{$this->jsIncludesPath}/jquery/ui.daterangepicker.css';
+			head.appendChild(css);
+		</script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/daterangepicker.jquery.js"></script>
 
 STR;
 			}	
 
-			if(!empty($jquerySliderIDArr))
+			if(!empty($this->jqueryColorIDArr))
 			{
 				$str .= <<<STR
-	<style type="text/css">.ui-slider-handle { cursor: pointer !important; }</style>
-
-STR;
-			}	
-
-			if(!empty($jqueryDateRangeIDArr))
-			{
-				$str .= <<<STR
-	<link href="{$this->jsIncludesPath}/jquery/ui.daterangepicker.css" rel="stylesheet" type="text/css"/>
-	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/daterangepicker.jquery.js"></script>
-
-STR;
-			}	
-
-			if(!empty($jqueryStarRatingIDArr))
-			{
-			$str .= <<<STR
-	<script type="text/javascript" src="$this->jsIncludesPath/jquery/starrating/ui.stars.min.js"></script>
-	<style type="text/css">
-		.ui-stars-star,
-		.ui-stars-cancel {
-			float: left;
-			display: block;
-			overflow: hidden;
-			text-indent: -999em;
-			cursor: pointer;
-		}
-		.ui-stars-star a,
-		.ui-stars-cancel a {
-			width: 28px;
-			height: 26px;
-			display: block;
-			position: relative;
-			background: transparent url("$this->jsIncludesPath/jquery/starrating/remove_inactive.png") 0 0 no-repeat;
-			_background: none;
-			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="$this->jsIncludesPath/jquery/starrating/remove_inactive.png", sizingMethod="scale");
-		}
-		.ui-stars-star a {
-			background: transparent url("$this->jsIncludesPath/jquery/starrating/star_inactive.png") 0 0 no-repeat;
-			_background: none;
-			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="$this->jsIncludesPath/jquery/starrating/star_inactive.png", sizingMethod="scale");
-		}
-		.ui-stars-star-on a {
-			background: transparent url("$this->jsIncludesPath/jquery/starrating/star_active.png") 0 0 no-repeat;
-			_background: none;
-			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="$this->jsIncludesPath/jquery/starrating/star_active.png", sizingMethod="scale");
-		}
-		.ui-stars-star-hover a {
-			background: transparent url("$this->jsIncludesPath/jquery/starrating/star_hot.png") 0 0 no-repeat;
-			_background: none;
-			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="$this->jsIncludesPath/jquery/starrating/star_hot.png", sizingMethod="scale");
-		}
-		.ui-stars-cancel-hover a {
-			background: transparent url("$this->jsIncludesPath/jquery/starrating/remove_active.png") 0 0 no-repeat;
-			_background: none;
-			filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-				(src="$this->jsIncludesPath/jquery/starrating/remove_active.png", sizingMethod="scale");
-		}
-		.ui-stars-star-disabled,
-		.ui-stars-star-disabled a,
-		.ui-stars-cancel-disabled a {
-			cursor: default !important;
-		}
-	</style>
+		<script type="text/javascript">
+			var css = document.createElement('link');
+			css.rel = 'stylesheet';
+			css.type = 'text/css';
+			css.href = '{$this->jsIncludesPath}/jquery/colorpicker/colorpicker.css';
+			head.appendChild(css);
+		</script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/colorpicker/colorpicker.js"></script>
 
 STR;
 			}
 
-			if(!empty($jqueryColorIDArr))
-			{
-				$str .= <<<STR
-	<link href="{$this->jsIncludesPath}/jquery/colorpicker/colorpicker.css" rel="stylesheet" type="text/css"/>
-	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/colorpicker/colorpicker.js"></script>
-
-STR;
-			}
-
-			$str .= <<<STR
-	<script type="text/javascript" defer="defer">
-		$(function() {
-
-STR;
-			if(!empty($jqueryDateIDArr))
-			{
-				$dateSize = sizeof($jqueryDateIDArr);
-				for($d = 0; $d < $dateSize; ++$d)
-				{
-					$str .= <<<STR
-			$("#{$jqueryDateIDArr[$d]}").datepicker({ dateFormat: "{$this->jqueryDateFormat}", showButtonPanel: true });
-
-STR;
-				}	
-			}
-
-			if(!empty($jqueryDateRangeIDArr))
-			{
-				$dateRangeSize = sizeof($jqueryDateRangeIDArr);
-				for($d = 0; $d < $dateRangeSize; ++$d)
-				{
-					$str .= <<<STR
-			$("#{$jqueryDateRangeIDArr[$d]}").daterangepicker({ dateFormat: "{$this->jqueryDateFormat}" });
-
-STR;
-				}	
-			}
-
-			if(!empty($jquerySortIDArr))
-			{
-				$sortSize = sizeof($jquerySortIDArr);
-				for($s = 0; $s < $sortSize; ++$s)
-				{
-					$str .= <<<STR
-			$("#{$jquerySortIDArr[$s]}").sortable({ axis: "y" });
-			$("#{$jquerySortIDArr[$s]}").disableSelection();
-
-STR;
-				}	
-			}
-
-			/*For more information on qtip, visit http://craigsworks.com/projects/qtip/.*/
-			if(!empty($tooltipIDArr))
-			{
-				$tooltipKeys = array_keys($tooltipIDArr);
-				$tooltipSize = sizeof($tooltipKeys);
-				for($t = 0; $t < $tooltipSize; ++$t)
-				{
-					$tooltipContent = str_replace('"', '\"', $tooltipIDArr[$tooltipKeys[$t]]);
-					$str .= <<<STR
-			$("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
-STR;
-					if(!empty($this->tooltipBorderColor))
-					{
-						if($this->tooltipBorderColor[0] != "#")
-							$this->tooltipBorderColor = "#" . $this->tooltipBorderColor;
-						$str .= <<<STR
-, color: "{$this->tooltipBorderColor}"
-STR;
-					}	
-					$str .= <<<STR
-} }, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });
-
-STR;
-				}	
-			}
-
-			/*For more information on the jQuery UI slider, visit http://jqueryui.com/demos/slider/.*/
-			if(!empty($jquerySliderIDArr))
-			{
-				$sliderKeys = array_keys($jquerySliderIDArr);
-				$sliderSize = sizeof($jquerySliderIDArr);
-				for($s = 0; $s < $sliderSize; ++$s)
-				{
-					$slider = $jquerySliderIDArr[$sliderKeys[$s]];
-					$sliderName = str_replace('"', '&quot;', $slider->attributes["name"]);
-					$str .= <<<STR
-			$("#{$sliderKeys[$s]}").slider({
-
-STR;
-					if(is_array($slider->attributes["value"]))
-					{
-						$str .= <<<STR
-				range: true, 
-				values: [{$slider->attributes["value"][0]}, {$slider->attributes["value"][1]}],
-STR;
-					}	
-					else
-					{
-						$str .= <<<STR
-				range: "min", 
-				value: {$slider->attributes["value"]},
-
-STR;
-					}	
-					$str .= <<<STR
-				min: {$slider->sliderMin}, 
-				max: {$slider->sliderMax}, 
-				orientation: "{$slider->sliderOrientation}",
-
-STR;
-					if(!empty($slider->sliderSnapIncrement))
-					{
-						$str .= <<<STR
-				step: {$slider->sliderSnapIncrement},
-
-STR;
-					}	
-					if(is_array($slider->attributes["value"]))
-					{
-						$str .= <<<STR
-				slide: function(event, ui) {
-
-STR;
-						if(empty($slider->sliderHideDisplay))
-						{
-							$str .= <<<STR
-					$("#{$sliderKeys[$s]}_display").text("{$slider->sliderPrefix}" + ui.values[0] + "{$slider->sliderSuffix} - {$slider->sliderPrefix}" + ui.values[1] + "{$slider->sliderSuffix}");
-
-STR;
-						}	
-						$str .= <<<STR
-					document.getElementById("{$this->attributes["id"]}").elements["$sliderName"][0].value = ui.values[0]; document.getElementById("{$this->attributes["id"]}").elements["$sliderName"][1].value = ui.values[1];
-				}	
-
-STR;
-					}	
-					else
-					{
-						$str .= <<<STR
-				slide: function(event, ui) {
-
-STR;
-						if(empty($slider->sliderHideDisplay))
-						{
-							$str .= <<<STR
-					$("#{$slider->attributes["id"]}_display").text("{$slider->sliderPrefix}" + ui.value + "{$slider->sliderSuffix}");
-
-STR;
-						}	
-						$str .= <<<STR
-					document.getElementById("{$this->attributes["id"]}").elements["$sliderName"].value = ui.value;
-				}
-
-STR;
-					}	
-					$str .= <<<STR
-			});
-
-STR;
-				}
-			}
-
-			/*For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.*/
-			if(!empty($jqueryStarRatingIDArr))
-			{
-				$ratingKeys = array_keys($jqueryStarRatingIDArr);
-				$ratingSize = sizeof($jqueryStarRatingIDArr);
-				for($r = 0; $r < $ratingSize; ++$r)
-				{
-					$rating = $jqueryStarRatingIDArr[$ratingKeys[$r]];
-					$str .= <<<STR
-			$("#{$ratingKeys[$r]}").stars({
-
-STR;
-					if(empty($rating->ratingHideCaption))
-					{
-						$str .= <<<STR
-				captionEl: $("#{$ratingKeys[$r]}_caption"),
-
-STR;
-					}	
-					if(!empty($rating->ratingHideCancel))
-					{
-					$str .= <<<STR
-				cancelShow: false,
-
-STR;
-					}	
-					$str .= <<<STR
-				inputType: "select", 
-				cancelValue: "" 
-			});
-
-STR;
-				}	
-			}
-
-			/*For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.*/
-			if(!empty($jqueryColorIDArr))
-			{
-				$colorSize = sizeof($jqueryColorIDArr);
-				for($c = 0; $c < $colorSize; ++$c)
-				{
-					$str .= <<<STR
-			$("#{$jqueryColorIDArr[$c]}").ColorPicker({	
-				onSubmit: function(hsb, hex, rgb, el) { 
-					$(el).val(hex); 
-					$(el).ColorPickerHide(); 
-				}, 
-				onBeforeShow: function() { 
-					if(this.value != "Click to Select Color..." && this.value != "") 
-						$(this).ColorPickerSetColor(this.value); 
-				} 
-			}).bind("keyup", function(){ 
-				$(this).ColorPickerSetColor(this.value); 
-			});
-
-STR;
-				}	
-			}
-
-				$str .= <<<STR
-		});
-	</script>
-
-STR;
 		}	
 		elseif((!empty($this->ajax) || !empty($this->emailExists)) && empty($this->preventJQueryLoad))
 		{
 				$str .= <<<STR
-	<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
 
 STR;
 		}	
 
-		if(!empty($latlngIDArr))
+		if(!empty($this->latlngIDArr))
 		{
 			if(!empty($this->formIDOverride))
 				$latlngForm = $this->formIDOverride;
@@ -2444,132 +2033,10 @@ STR;
 			if(empty($this->preventGoogleMapsLoad))
 			{
 				$str .= <<<STR
-	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
 STR;
 			}	
-				$str .= <<<STR
-	<script type="text/javascript">
-
-STR;
-			$latlngSize = sizeof($latlngIDArr);
-			$latlngKeys = array_keys($latlngIDArr);
-
-			for($l = 0; $l < $latlngSize; ++$l)
-			{
-				$latlng = $latlngIDArr[$latlngKeys[$l]];
-				$latlngID = str_replace('"', '&quot;', $latlng->attributes["id"]);
-				$str .= <<<STR
-		var map_$latlngID;
-		var marker_$latlngID;
-		var geocoder_$latlngID;
-
-STR;
-			}
-			$str .= <<<STR
-		function initializeLatLng_{$this->attributes["id"]}() {
-
-STR;
-			for($l = 0; $l < $latlngSize; ++$l)
-			{
-				$latlng = $latlngIDArr[$latlngKeys[$l]];
-				$latlngID = str_replace('"', '&quot;', $latlng->attributes["id"]);
-				$latlngName = str_replace('"', '&quot;', $latlng->attributes["name"]);
-				$latlngHint = str_replace('"', '&quot;', $latlng->hint);
-				if(!empty($latlng->attributes["value"]))
-				{
-					$latlngCenter = $latlng->attributes["value"];
-					if(empty($latlng->latlngZoom))
-						$latlngZoom = 9;
-					else
-						$latlngZoom = $latlng->latlngZoom;
-				}		
-				else	
-				{
-					$latlngCenter = $this->latlngDefaultLocation;
-					if(empty($latlng->latlngZoom))
-						$latlngZoom = 5;
-					else
-						$latlngZoom = $latlng->latlngZoom;
-				}	
-
-			$str .= <<<STR
-			geocoder_$latlngID = new google.maps.Geocoder();
-			var latlng_$latlngID = new google.maps.LatLng({$latlngCenter[0]}, {$latlngCenter[1]});
-			var mapoptions_$latlngID = { zoom: $latlngZoom, center: latlng_$latlngID, mapTypeId: google.maps.MapTypeId.ROADMAP, mapTypeControl: false }
-			map_$latlngID = new google.maps.Map(document.getElementById("{$latlngID}_canvas"), mapoptions_$latlngID);
-			var markeroptions_$latlngID = { position: latlng_$latlngID, map: map_$latlngID, draggable: true }
-			marker_$latlngID = new google.maps.Marker(markeroptions_$latlngID);
-			google.maps.event.addListener(marker_$latlngID, "dragend", function() {
-				var latlng = marker_$latlngID.getPosition();
-				var lat = latlng.lat();
-				var lng = latlng.lng();
-				document.getElementById("$latlngForm").elements["$latlngName"].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
-				document.getElementById("{$latlngID}_clearDiv").style.display = "block";
-			});	
-
-STR;
-			}
-
-			$str .= <<<STR
-		}
-		function jumpToLatLng_{$this->attributes["id"]}(fieldObj, latlngID, fieldName) {
-			eval('var geocoderObj = geocoder_' + latlngID);
-			eval('var mapObj = map_' + latlngID);
-			eval('var markerObj = marker_' + latlngID);
-			if(geocoderObj) {
-				geocoderObj.geocode({'address': fieldObj.value}, function(results, status) {
-					if(status == google.maps.GeocoderStatus.OK) {
-						mapObj.setCenter(results[0].geometry.location);
-						markerObj.setPosition(results[0].geometry.location);
-						var lat = results[0].geometry.location.lat();
-						var lng = results[0].geometry.location.lng();
-						document.getElementById("$latlngForm").elements[fieldName].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
-						document.getElementById(latlngID + "_clearDiv").style.display = "block";
-					}
-				});
-			}
-		}
-		function focusJumpToLatLng_{$this->attributes["id"]}(fieldObj) {
-			if(fieldObj.value == 'Location Jump: Enter Keyword, City/State, Address, or Zip Code')
-				fieldObj.value = '';
-		}
-		function blurJumpToLatLng_{$this->attributes["id"]}(fieldObj) {
-			if(fieldObj.value == '')
-				fieldObj.value = 'Location Jump: Enter Keyword, City/State, Address, or Zip Code';
-		}
-		function clearLatLng_{$this->attributes["id"]}(latlngID, latlngFieldName) {
-			if(document.getElementById("$latlngForm").elements[latlngID + "_locationJump"])
-				document.getElementById("$latlngForm").elements[latlngID + "_locationJump"].value = "Location Jump: Enter Keyword, City/State, Address, or Zip Code";
-			document.getElementById("$latlngForm").elements[latlngFieldName].value = "$latlngHint";
-			document.getElementById(latlngID + "_clearDiv").style.display = "none";
-		}
-		if(window.addEventListener) { window.addEventListener("load", initializeLatLng_{$this->attributes["id"]}, false); }
-		else if(window.attachEvent) { window.attachEvent("onload", initializeLatLng_{$this->attributes["id"]}); }
-	</script>
-
-STR;
-		}
-
-		if(!empty($jqueryCheckSort))
-		{
-			$str .= <<<STR
-	<script type="text/javascript" defer="defer">
-		function addOrRemoveCheckSortItem_{$this->attributes["id"]}(cs_fieldObj, cs_id, cs_name, cs_index, cs_value, cs_text) {
-			if(cs_fieldObj.checked != true)
-				document.getElementById(cs_id).removeChild(document.getElementById(cs_id + cs_index));
-			else {
-				var li = document.createElement('li');
-				li.id = cs_id + cs_index;
-				li.className = 'ui-state-default';
-				li.style.cssText = 'margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2em; line-height: 2em;';
-				li.innerHTML = '<input type="hidden" name="' + cs_name + '" value="' + cs_value + '"/>' + cs_text;
-				document.getElementById(cs_id).appendChild(li);
-			}
-		}
-	</script>
-
-STR;
 		}
 
 		if(!empty($this->tinymceIDArr))
@@ -2577,41 +2044,11 @@ STR;
 			if(empty($this->preventTinyMCELoad))
 			{
 				$str .= <<<STR
-	<script type="text/javascript" src="{$this->jsIncludesPath}/tinymce/tiny_mce.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/tinymce/tiny_mce.js"></script>
 
 STR;
 			}	
 
-			if(empty($this->preventTinyMCEInitLoad))
-			{
-				$str .= <<<STR
-	<script type="text/javascript">
-		tinyMCE.init({
-			mode: "textareas",
-			theme: "advanced",
-			plugins: "safari,table,paste,inlinepopups",
-			dialog_type: "modal",
-			theme_advanced_buttons1: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,|,forecolor,backcolor",
-			theme_advanced_buttons2: "formatselect,fontselect,fontsizeselect,|,pastetext,pasteword,|,link,image",
-			theme_advanced_buttons3: "tablecontrols,|,code,cleanup,|,undo,redo",
-			theme_advanced_toolbar_location: "top",
-			editor_selector: "tiny_mce",
-			forced_root_block: false,
-			force_br_newlines: true,
-			force_p_newlines: false
-		});
-		tinyMCE.init({
-			mode: "textareas",
-			theme: "simple",
-			editor_selector: "tiny_mce_simple",
-			forced_root_block: false,
-			force_br_newlines: true,
-			force_p_newlines: false
-		});
-	</script>	
-
-STR;
-			}
 		}
 
 		if(!empty($this->ckeditorIDArr))
@@ -2619,227 +2056,42 @@ STR;
 			if(empty($this->preventCKEditorLoad))
 			{
 				$str .= <<<STR
-	<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
 
 STR;
 			}	
-
-			$str .= <<<STR
-	<script type="text/javascript">
-
-STR;
-			$ckeditorSize = sizeof($this->ckeditorIDArr);
-			$ckeditorKeys = array_keys($this->ckeditorIDArr);
-
-			for($c = 0; $c < $ckeditorSize; ++$c)
-			{
-				$ckeditor = $this->ckeditorIDArr[$ckeditorKeys[$c]];
-				$ckeditorID = str_replace('"', '&quot;', $ckeditor->attributes["id"]);
-				$ckeditorParamArr = array();
-				if(!empty($ckeditor->ckeditorBasic))
-					$ckeditorParamArr[] = 'toolbar: "Basic"';
-				if(!empty($this->ckeditorCustomConfig))	
-					$ckeditorParamArr[] = 'customConfig: "' . $this->ckeditorCustomConfig . '"';
-				if(!empty($this->ckeditorLang))
-					$ckeditorParamArr[] = 'language: "' . $this->ckeditorLang . '"';
-				$str .= <<<STR
-		CKEDITOR.replace("$ckeditorID"
-STR;
-				if(!empty($ckeditorParamArr))
-				{
-					$ckeditorParamStr = implode(", ", $ckeditorParamArr);
-					$str .= <<<STR
-, { $ckeditorParamStr }
-STR;
-				}	
-				$str .= <<<STR
-);
-
-STR;
-			}
-			$str .= <<<STR
-	</script>
-
-STR;
 		}	
 
-		if(!empty($captchaID))
+		if(!empty($this->captchaID))
 		{
 			if(empty($this->preventCaptchaLoad))
 			{
 				$str .= <<<STR
-	<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
+		<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
 
 STR;
 			}	
-			
-			$str .= <<<STR
-	<script type="text/javascript">
-		Recaptcha.create("{$this->captchaPublicKey}", "$captchaID", { theme: "{$this->captchaTheme}", lang: "{$this->captchaLang}" });
-	</script>
+		}
+
+		/*Serialize the form and store it in a session array.  This variable will be unserialized and used within the validate() method.*/
+		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
+
+		$str .= <<<STR
+		<script type="text/javascript">
+			var css = document.createElement('link');
+			css.rel = 'stylesheet';
+			css.type = 'text/css';
+			css.href = '{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}';
+			head.appendChild(css);
+
+			var script = document.createElement('script');
+			script.type = 'text/javascript';
+			script.src = '{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}';
+			head.appendChild(script);
+		</script>
+	</div>	
 
 STR;
-		}
-
-		if(!empty($this->hintExists))
-		{
-			$str .= <<<STR
-	<script type="text/javascript">
-		function hintfocus_{$this->attributes["id"]}(eleObj) {
-			if(eleObj.value == eleObj.defaultValue)
-				eleObj.value = '';
-		}
-		function hintblur_{$this->attributes["id"]}(eleObj) {
-			if(eleObj.value == '')
-				eleObj.value = eleObj.defaultValue;
-		}
-	</script>	
-
-STR;
-		}
-
-		if(empty($this->preventDefaultCSS))
-		{
-			$str .= <<<STR
-	<style type="text/css">
-		.pfbc-clear:after {
-			clear: both;
-			display: block;
-			margin: 0;
-			padding: 0;
-			visibility: hidden;
-			height: 0;
-			content: ":)";
-		}	
-		#{$this->attributes["id"]} .pfbc-label {
-			display: block;
-		}
-		#{$this->attributes["id"]} .pfbc-buttons {
-			text-align: right;
-		}
-		#{$this->attributes["id"]} .pfbc-required {
-			color: #990000; 
-		}
-		#{$this->attributes["id"]} .pfbc-element {
-			padding-bottom: 5px;
-		}
-
-STR;
-
-			if(!empty($this->attributes["width"]))
-			{
-				if(substr($this->attributes["width"], -1) == "%")
-				{
-					$formWidth = substr($this->attributes["width"], 0, -1);
-					$suffix = "%";
-				}	
-				elseif(substr($this->attributes["width"], -2) == "px")
-				{
-					$formWidth = substr($this->attributes["width"], 0, -2);
-					$suffix = "px";
-				}
-				else
-				{
-					$formWidth = $this->attributes["width"];
-					$suffix = "px";
-				}	
-				$str .= <<<STR
-			#{$this->attributes["id"]} .pfbc-main {
-				width: {$formWidth}$suffix;
-			}
-
-STR;
-			}
-			else
-				$suffix = "%";
-
-			if(!empty($this->map))
-			{
-				$mapVals = array_values(array_unique($this->map));
-				$mapValSize = sizeof($mapVals);
-				for($m = 0; $m < $mapValSize; ++$m)
-				{
-					if($suffix == "px")
-					{
-						$elementWidth = number_format((($formWidth - ($this->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
-						$textboxWidth = $elementWidth - 6;
-						$textareaWidth = $elementWidth - 2;
-						$selectWidth = $elementWidth;
-					}	
-					else
-					{
-						$elementWidth = number_format(((100 - ($this->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
-						$textboxWidth = 98;
-						$textareaWidth = 98;
-						$selectWidth = 98;
-					}	
-						
-					$str .= <<<STR
-			#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} {
-				float: left; 
-				width: {$elementWidth}$suffix;
-			}
-			#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} .pfbc-textbox {
-				width: {$textboxWidth}$suffix;
-			}
-			#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} .pfbc-textarea {
-				width: {$textboxWidth}$suffix;
-			}
-			#{$this->attributes["id"]} .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
-				width: {$selectWidth}$suffix;
-			}
-
-STR;
-				}
-				$str .= <<<STR
-			#{$this->attributes["id"]} .pfbc-map-element-first {
-				margin-left: 0 !important;
-			}
-			#{$this->attributes["id"]} .pfbc-map-element-last {
-				float: right !important;
-				margin-right: 0 !important;
-			}
-			#{$this->attributes["id"]} .pfbc-map-element-single {
-				margin: 0 !important;
-			}
-			#{$this->attributes["id"]} .pfbc-element {
-				margin: 0 {$this->mapMargin}$suffix;
-			}
-
-STR;
-			}
-			else
-			{
-				if($suffix == "px")
-				{
-					$textboxWidth = $formWidth - 6;
-					$textareaWidth = $formWidth - 2;
-					$selectWidth = $formWidth;
-				}
-				else
-				{
-					$textboxWidth = 98;
-					$textareaWidth = 98;
-					$selectWidth = 98;
-				}
-				$str .= <<<STR
-			#{$this->attributes["id"]} .pfbc-textbox {
-				width: {$textboxWidth}$suffix;
-			}
-			#{$this->attributes["id"]} .pfbc-textarea {
-				width: {$textareaWidth}$suffix;
-			}
-			#{$this->attributes["id"]} .pfbc-select {
-				width: {$selectWidth}$suffix;
-			}
-
-STR;
-			}
-
-				$str .= <<<STR
-		</style>	
-STR;
-		}
 
 		return $str;
 	}
@@ -2847,6 +2099,7 @@ STR;
 	/*This function handles javascript validation of all required form elements as well as ajax submission.  It was moved from within the render function to it's own function to be reused by nested forms.*/
 	private function jsCycleElements($elements)
 	{
+		$str = "";
 		$elementSize = sizeof($elements);
 		for($i = 0; $i < $elementSize; ++$i)
 		{
@@ -2866,43 +2119,43 @@ STR;
 
 			if($eleType == "checkbox")
 			{
-				echo <<<STR
+				$str .= <<<STR
 		if(formObj.elements["$eleName"].length) {
 
 STR;
 					if(!empty($ele->required))
 					{
-						echo <<<STR
+						$str .= <<<STR
 			var is_checked = false;
 
 STR;
 					}	
-					echo <<<STR
+					$str .= <<<STR
 			for(i = 0; i < formObj.elements["$eleName"].length; i++) {
 				if(formObj.elements["$eleName"][i].checked) {
 
 STR;
 						if(!empty($this->ajax))
 						{
-							echo <<<STR
+							$str .= <<<STR
 					form_data += "&$eleName=" + escape(formObj.elements["$eleName"][i].value);
 
 STR;
 						}	
 						if(!empty($ele->required))
 						{
-							echo <<<STR
+							$str .= <<<STR
 					is_checked = true;
 
 STR;
 						}	
-						echo <<<STR
+						$str .= <<<STR
 				}
 			}
 STR;
 					if(!empty($ele->required))
 					{
-						echo <<<STR
+						$str .= <<<STR
 			if(!is_checked) {
 				$alertMsg
 				return false;
@@ -2910,14 +2163,14 @@ STR;
 
 STR;
 					}
-				echo <<<STR
+				$str .= <<<STR
 		}
 		else {
 
 STR;
 				if(!empty($this->ajax))
 				{
-					echo <<<STR
+					$str .= <<<STR
 			if(formObj.elements["$eleName"].checked)
 				form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
 
@@ -2925,7 +2178,7 @@ STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo <<<STR
+					$str .= <<<STR
 			if(!formObj.elements["$eleName"].checked) {
 				$alertMsg
 				return false;
@@ -2933,52 +2186,52 @@ STR;
 
 STR;
 				}
-				echo <<<STR
+				$str .= <<<STR
 		}
 
 STR;
 			}
 			elseif($eleType == "radio")
 			{
-				echo <<<STR
+				$str .= <<<STR
 		if(formObj.elements["$eleName"].length) {
 
 STR;
 					if(!empty($ele->required))
 					{
-						echo <<<STR
+						$str .= <<<STR
 			var is_checked = false;
 
 STR;
 					}	
 						
-					echo <<<STR
+					$str .= <<<STR
 			for(i = 0; i < formObj.elements["$eleName"].length; i++) {
 				if(formObj.elements["$eleName"][i].checked) {
 
 STR;
 						if(!empty($this->ajax))
 						{
-							echo <<<STR
+							$str .= <<<STR
 					form_data += "&$eleName=" + escape(formObj.elements["$eleName"][i].value);
 
 STR;
 						}	
 						if(!empty($ele->required))
 						{
-							echo <<<STR
+							$str .= <<<STR
 					is_checked = true;
 
 STR;
 						}	
-					echo <<<STR
+					$str .= <<<STR
 				}
 			}		
 
 STR;
 					if(!empty($ele->required))
 					{
-						echo <<<STR
+						$str .= <<<STR
 			if(!is_checked) {
 				$alertMsg
 				return false;
@@ -2986,14 +2239,14 @@ STR;
 
 STR;
 					}
-				echo <<<STR
+				$str .= <<<STR
 		}
 		else {
 
 STR;
 				if(!empty($this->ajax))
 				{
-					echo <<<STR
+					$str .= <<<STR
 			if(formObj.elements["$eleName"].checked)
 				form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
 
@@ -3001,7 +2254,7 @@ STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo <<<STR
+					$str .= <<<STR
 			if(!formObj.elements["$eleName"].checked) {
 				$alertMsg
 				return false;
@@ -3010,7 +2263,7 @@ STR;
 STR;
 				}
 
-				echo <<<STR
+				$str .= <<<STR
 		}
 
 STR;
@@ -3020,7 +2273,7 @@ STR;
 				$eleHint = str_replace('"', '&quot;', $ele->hint);
 				if(!empty($this->ajax))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		form_data += "&$eleName=";
 		if(formObj.elements["$eleName"].value != "$eleHint")
 			form_data += formObj.elements["$eleName"].value;
@@ -3029,7 +2282,7 @@ STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		if(formObj.elements["$eleName"].value == "$eleHint") {
 			$alertMsg
 			formObj.elements["$eleName"].focus();
@@ -3043,14 +2296,14 @@ STR;
 			{
 				if(!empty($this->ajax))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
 
 STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		if(formObj.elements["$eleName"].value == "") {
 			$alertMsg
 			formObj.elements["$eleName"].focus();
@@ -3064,7 +2317,7 @@ STR;
 			{
 				if(!empty($this->ajax))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		if(formObj.elements["$eleName"].value != "")
 			form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
 
@@ -3072,7 +2325,7 @@ STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		if(formObj.elements["$eleName"].value == "") {
 			$alertMsg
 			formObj.elements["$eleName"].focus();
@@ -3086,7 +2339,7 @@ STR;
 			{
 				if(!empty($this->ajax))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		if(formObj.elements["$eleName"].length) {
 			form_data += "&$eleName=" + escape(formObj.elements["$eleName"][0].value);
 			form_data += "&$eleName=" + escape(formObj.elements["$eleName"][1].value);
@@ -3101,7 +2354,7 @@ STR;
 			{
 				if(!empty($ele->required))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		if(formObj.elements["recaptcha_response_field"].value == "") {		
 			$alertMsg
 			formObj.elements["recaptcha_response_field"].focus();
@@ -3112,7 +2365,7 @@ STR;
 				}
 				if(!empty($this->ajax))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		form_data += "&recaptcha_challenge_field=" + escape(Recaptcha.get_challenge());		
 		form_data += "&recaptcha_response_field=" + escape(Recaptcha.get_response());
 
@@ -3123,14 +2376,14 @@ STR;
 			{
 				if(!empty($this->ajax))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		form_data += "&$eleName=" + escape(tinyMCE.get("$eleId").getContent());
 
 STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		if(tinyMCE.get("$eleId").getContent() == "") {
 			$alertMsg
 			tinyMCE.get("$eleId").focus();
@@ -3144,14 +2397,14 @@ STR;
 			{
 				if(!empty($this->ajax))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		form_data += "&$eleName=" + escape(CKEDITOR.instances.$eleId.getData());
 
 STR;
 				}	
 				if(!empty($ele->required))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		if( CKEDITOR.instances.$eleId.getData() == "") {
 			$alertMsg
 			CKEDITOR.instances.$eleId.focus();
@@ -3165,7 +2418,7 @@ STR;
 			{
 				if(!empty($this->ajax))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		if(formObj.elements["$eleName"]) {
 			if(formObj.elements["$eleName"].length) {
 				var ulObj = document.getElementById("$eleId");
@@ -3184,7 +2437,7 @@ STR;
 				}
 				if(!empty($ele->required))
 				{
-					echo <<<STR
+					$str .= <<<STR
 		if(!formObj.elements["$eleName"]) {
 			$alertMsg
 			return false;
@@ -3195,7 +2448,7 @@ STR;
 			}
 			elseif(!empty($this->ajax) && $eleType == "sort")
 			{
-				echo <<<STR
+				$str .= <<<STR
 		if(formObj.elements["$eleName"]) {
 			if(formObj.elements["$eleName"].length) {
 				var ulObj = document.getElementById("$eleId");
@@ -3216,7 +2469,7 @@ STR;
 			
 			if($eleType == "email")
 			{
-				echo <<<STR
+				$str .= <<<STR
 		if(formObj.elements["$eleName"].value != "$eleHint") {
 			$.ajax({
 				async: false,
@@ -3252,13 +2505,842 @@ STR;
 			if(!empty($ele->hint))
 			{
 				$eleName = str_replace('"', '&quot;', $ele->attributes["name"]);
-				echo <<<STR
+				$str .= <<<STR
 		if(formObj.elements["$eleName"].value == formObj.elements["$eleName"].defaultValue)
 			formObj.elements["$eleName"].value = "";
 
 STR;
 			}
 		}	
+		return $str;
+	}
+
+	public function renderJS($returnString=false)
+	{
+		$str = "";
+		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"]))
+		{
+			/*Automatically unserialize the appropriate form instance stored in the session array.*/
+			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+
+			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr))
+			{
+				$str .= <<<STR
+$(function() {
+
+STR;
+				if(!empty($form->jqueryDateIDArr))
+				{
+					$dateSize = sizeof($form->jqueryDateIDArr);
+					for($d = 0; $d < $dateSize; ++$d)
+					{
+						$str .= <<<STR
+	$("#{$form->jqueryDateIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", showButtonPanel: true });
+
+STR;
+					}	
+				}
+
+				if(!empty($form->jqueryDateRangeIDArr))
+				{
+					$dateRangeSize = sizeof($form->jqueryDateRangeIDArr);
+					for($d = 0; $d < $dateRangeSize; ++$d)
+					{
+						$str .= <<<STR
+	$("#{$form->jqueryDateRangeIDArr[$d]}").daterangepicker({ dateFormat: "{$form->jqueryDateFormat}" });
+
+STR;
+					}	
+				}
+
+				if(!empty($form->jquerySortIDArr))
+				{
+					$sortSize = sizeof($form->jquerySortIDArr);
+					for($s = 0; $s < $sortSize; ++$s)
+					{
+						$str .= <<<STR
+	$("#{$form->jquerySortIDArr[$s]}").sortable({ axis: "y" });
+	$("#{$form->jquerySortIDArr[$s]}").disableSelection();
+
+STR;
+					}	
+				}
+
+				/*For more information on qtip, visit http://craigsworks.com/projects/qtip/.*/
+				if(!empty($form->tooltipIDArr))
+				{
+					$tooltipKeys = array_keys($form->tooltipIDArr);
+					$tooltipSize = sizeof($tooltipKeys);
+					for($t = 0; $t < $tooltipSize; ++$t)
+					{
+						$tooltipContent = str_replace('"', '\"', $form->tooltipIDArr[$tooltipKeys[$t]]);
+						$str .= <<<STR
+	$("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
+STR;
+						if(!empty($form->tooltipBorderColor))
+						{
+							if($form->tooltipBorderColor[0] != "#")
+								$form->tooltipBorderColor = "#" . $form->tooltipBorderColor;
+							$str .= <<<STR
+, color: "{$form->tooltipBorderColor}"
+STR;
+						}	
+						$str .= <<<STR
+} }, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });
+
+STR;
+					}	
+				}
+
+				/*For more information on the jQuery UI slider, visit http://jqueryui.com/demos/slider/.*/
+				if(!empty($form->jquerySliderIDArr))
+				{
+					$sliderKeys = array_keys($form->jquerySliderIDArr);
+					$sliderSize = sizeof($form->jquerySliderIDArr);
+					for($s = 0; $s < $sliderSize; ++$s)
+					{
+						$slider = $form->jquerySliderIDArr[$sliderKeys[$s]];
+						$sliderName = str_replace('"', '&quot;', $slider->attributes["name"]);
+						$str .= <<<STR
+	$("#{$sliderKeys[$s]}").slider({
+
+STR;
+						if(is_array($slider->attributes["value"]))
+						{
+							$str .= <<<STR
+		range: true, 
+		values: [{$slider->attributes["value"][0]}, {$slider->attributes["value"][1]}],
+
+STR;
+						}	
+						else
+						{
+							$str .= <<<STR
+		range: "min", 
+		value: {$slider->attributes["value"]},
+
+STR;
+						}	
+						$str .= <<<STR
+		min: {$slider->sliderMin}, 
+		max: {$slider->sliderMax}, 
+		orientation: "{$slider->sliderOrientation}",
+
+STR;
+						if(!empty($slider->sliderSnapIncrement))
+						{
+							$str .= <<<STR
+		step: {$slider->sliderSnapIncrement},
+
+STR;
+						}	
+						if(is_array($slider->attributes["value"]))
+						{
+							$str .= <<<STR
+		slide: function(event, ui) {
+
+STR;
+							if(empty($slider->sliderHideDisplay))
+							{
+								$str .= <<<STR
+			$("#{$sliderKeys[$s]}_display").text("{$slider->sliderPrefix}" + ui.values[0] + "{$slider->sliderSuffix} - {$slider->sliderPrefix}" + ui.values[1] + "{$slider->sliderSuffix}");
+
+STR;
+							}	
+							$str .= <<<STR
+			document.getElementById("{$this->attributes["id"]}").elements["$sliderName"][0].value = ui.values[0]; document.getElementById("{$this->attributes["id"]}").elements["$sliderName"][1].value = ui.values[1];
+		}	
+
+STR;
+						}	
+						else
+						{
+							$str .= <<<STR
+		slide: function(event, ui) {
+
+STR;
+							if(empty($slider->sliderHideDisplay))
+							{
+								$str .= <<<STR
+			$("#{$slider->attributes["id"]}_display").text("{$slider->sliderPrefix}" + ui.value + "{$slider->sliderSuffix}");
+
+STR;
+							}	
+							$str .= <<<STR
+			document.getElementById("{$this->attributes["id"]}").elements["$sliderName"].value = ui.value;
+		}
+
+STR;
+						}	
+						$str .= <<<STR
+	});
+
+STR;
+					}
+				}
+
+				/*For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.*/
+				if(!empty($form->jqueryStarRatingIDArr))
+				{
+					$ratingKeys = array_keys($form->jqueryStarRatingIDArr);
+					$ratingSize = sizeof($form->jqueryStarRatingIDArr);
+					for($r = 0; $r < $ratingSize; ++$r)
+					{
+						$rating = $form->jqueryStarRatingIDArr[$ratingKeys[$r]];
+						$str .= <<<STR
+	$("#{$ratingKeys[$r]}").stars({
+
+STR;
+						if(empty($rating->ratingHideCaption))
+						{
+							$str .= <<<STR
+		captionEl: $("#{$ratingKeys[$r]}_caption"),
+
+STR;
+						}	
+						if(!empty($rating->ratingHideCancel))
+						{
+							$str .= <<<STR
+		cancelShow: false,
+
+STR;
+						}	
+						$str .= <<<STR
+		inputType: "select", 
+		cancelValue: "" 
+	});
+
+STR;
+					}	
+				}
+
+				/*For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.*/
+				if(!empty($form->jqueryColorIDArr))
+				{
+					$colorSize = sizeof($form->jqueryColorIDArr);
+					for($c = 0; $c < $colorSize; ++$c)
+					{
+						$str .= <<<STR
+	$("#{$form->jqueryColorIDArr[$c]}").ColorPicker({	
+		onSubmit: function(hsb, hex, rgb, el) { 
+			$(el).val(hex); 
+			$(el).ColorPickerHide(); 
+		}, 
+		onBeforeShow: function() { 
+			if(this.value != "Click to Select Color..." && this.value != "") 
+				$(this).ColorPickerSetColor(this.value); 
+		} 
+	}).bind("keyup", function(){ 
+		$(this).ColorPickerSetColor(this.value); 
+	});
+
+STR;
+					}	
+				}
+
+					$str .= <<<STR
+});
+
+STR;
+			}	
+
+			if(!empty($form->latlngIDArr))
+			{
+				if(!empty($form->formIDOverride))
+					$latlngForm = $form->formIDOverride;
+				else
+					$latlngForm = $this->attributes["id"];
+
+				if(empty($form->latlngDefaultLocation))
+					$form->latlngDefaultLocation = array(41.847, -87.661);
+
+				$latlngSize = sizeof($form->latlngIDArr);
+				$latlngKeys = array_keys($form->latlngIDArr);
+
+				for($l = 0; $l < $latlngSize; ++$l)
+				{
+					$latlng = $form->latlngIDArr[$latlngKeys[$l]];
+					$latlngID = str_replace('"', '&quot;', $latlng->attributes["id"]);
+					$str .= <<<STR
+var map_$latlngID;
+var marker_$latlngID;
+var geocoder_$latlngID;
+
+STR;
+				}
+				$str .= <<<STR
+function initializeLatLng_{$this->attributes["id"]}() {
+
+STR;
+				for($l = 0; $l < $latlngSize; ++$l)
+				{
+					$latlng = $form->latlngIDArr[$latlngKeys[$l]];
+					$latlngID = str_replace('"', '&quot;', $latlng->attributes["id"]);
+					$latlngName = str_replace('"', '&quot;', $latlng->attributes["name"]);
+					$latlngHint = str_replace('"', '&quot;', $latlng->hint);
+					if(!empty($latlng->attributes["value"]))
+					{
+						$latlngCenter = $latlng->attributes["value"];
+						if(empty($latlng->latlngZoom))
+							$latlngZoom = 9;
+						else
+							$latlngZoom = $latlng->latlngZoom;
+					}		
+					else	
+					{
+						$latlngCenter = $form->latlngDefaultLocation;
+						if(empty($latlng->latlngZoom))
+							$latlngZoom = 5;
+						else
+							$latlngZoom = $latlng->latlngZoom;
+					}	
+
+				$str .= <<<STR
+	geocoder_$latlngID = new google.maps.Geocoder();
+	var latlng_$latlngID = new google.maps.LatLng({$latlngCenter[0]}, {$latlngCenter[1]});
+	var mapoptions_$latlngID = { zoom: $latlngZoom, center: latlng_$latlngID, mapTypeId: google.maps.MapTypeId.ROADMAP, mapTypeControl: false }
+	map_$latlngID = new google.maps.Map(document.getElementById("{$latlngID}_canvas"), mapoptions_$latlngID);
+	var markeroptions_$latlngID = { position: latlng_$latlngID, map: map_$latlngID, draggable: true }
+	marker_$latlngID = new google.maps.Marker(markeroptions_$latlngID);
+	google.maps.event.addListener(marker_$latlngID, "dragend", function() {
+		var latlng = marker_$latlngID.getPosition();
+		var lat = latlng.lat();
+		var lng = latlng.lng();
+		document.getElementById("$latlngForm").elements["$latlngName"].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
+		document.getElementById("{$latlngID}_clearDiv").style.display = "block";
+	});	
+
+STR;
+				}
+
+				$str .= <<<STR
+}
+function jumpToLatLng_{$this->attributes["id"]}(fieldObj, latlngID, fieldName) {
+	eval('var geocoderObj = geocoder_' + latlngID);
+	eval('var mapObj = map_' + latlngID);
+	eval('var markerObj = marker_' + latlngID);
+	if(geocoderObj) {
+		geocoderObj.geocode({'address': fieldObj.value}, function(results, status) {
+			if(status == google.maps.GeocoderStatus.OK) {
+				mapObj.setCenter(results[0].geometry.location);
+				markerObj.setPosition(results[0].geometry.location);
+				var lat = results[0].geometry.location.lat();
+				var lng = results[0].geometry.location.lng();
+				document.getElementById("$latlngForm").elements[fieldName].value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
+				document.getElementById(latlngID + "_clearDiv").style.display = "block";
+			}
+		});
+	}
+}
+function focusJumpToLatLng_{$this->attributes["id"]}(fieldObj) {
+	if(fieldObj.value == 'Location Jump: Enter Keyword, City/State, Address, or Zip Code')
+		fieldObj.value = '';
+}
+function blurJumpToLatLng_{$this->attributes["id"]}(fieldObj) {
+	if(fieldObj.value == '')
+		fieldObj.value = 'Location Jump: Enter Keyword, City/State, Address, or Zip Code';
+}
+function clearLatLng_{$this->attributes["id"]}(latlngID, latlngFieldName) {
+	if(document.getElementById("$latlngForm").elements[latlngID + "_locationJump"])
+		document.getElementById("$latlngForm").elements[latlngID + "_locationJump"].value = "Location Jump: Enter Keyword, City/State, Address, or Zip Code";
+	document.getElementById("$latlngForm").elements[latlngFieldName].value = "$latlngHint";
+	document.getElementById(latlngID + "_clearDiv").style.display = "none";
+}
+if(window.addEventListener) { window.addEventListener("load", initializeLatLng_{$this->attributes["id"]}, false); }
+else if(window.attachEvent) { window.attachEvent("onload", initializeLatLng_{$this->attributes["id"]}); }
+
+STR;
+			}
+
+			if(!empty($form->jqueryCheckSort))
+			{
+				$str .= <<<STR
+function addOrRemoveCheckSortItem_{$this->attributes["id"]}(cs_fieldObj, cs_id, cs_name, cs_index, cs_value, cs_text) {
+	if(cs_fieldObj.checked != true)
+		document.getElementById(cs_id).removeChild(document.getElementById(cs_id + cs_index));
+	else {
+		var li = document.createElement('li');
+		li.id = cs_id + cs_index;
+		li.className = 'ui-state-default';
+		li.style.cssText = 'margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2em; line-height: 2em;';
+		li.innerHTML = '<input type="hidden" name="' + cs_name + '" value="' + cs_value + '"/>' + cs_text;
+		document.getElementById(cs_id).appendChild(li);
+	}
+}
+
+STR;
+			}
+
+			if(!empty($form->tinymceIDArr))
+			{
+				if(empty($form->preventTinyMCEInitLoad))
+				{
+					$str .= <<<STR
+tinyMCE.init({
+	mode: "textareas",
+	theme: "advanced",
+	plugins: "safari,table,paste,inlinepopups",
+	dialog_type: "modal",
+	theme_advanced_buttons1: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,|,forecolor,backcolor",
+	theme_advanced_buttons2: "formatselect,fontselect,fontsizeselect,|,pastetext,pasteword,|,link,image",
+	theme_advanced_buttons3: "tablecontrols,|,code,cleanup,|,undo,redo",
+	theme_advanced_toolbar_location: "top",
+	editor_selector: "tiny_mce",
+	forced_root_block: false,
+	force_br_newlines: true,
+	force_p_newlines: false
+});
+tinyMCE.init({
+	mode: "textareas",
+	theme: "simple",
+	editor_selector: "tiny_mce_simple",
+	forced_root_block: false,
+	force_br_newlines: true,
+	force_p_newlines: false
+});
+
+STR;
+				}
+			}
+
+			if(!empty($form->ckeditorIDArr))
+			{
+				$ckeditorSize = sizeof($form->ckeditorIDArr);
+				$ckeditorKeys = array_keys($form->ckeditorIDArr);
+
+				for($c = 0; $c < $ckeditorSize; ++$c)
+				{
+					$ckeditor = $form->ckeditorIDArr[$ckeditorKeys[$c]];
+					$ckeditorID = str_replace('"', '&quot;', $ckeditor->attributes["id"]);
+					$ckeditorParamArr = array();
+					if(!empty($ckeditor->ckeditorBasic))
+						$ckeditorParamArr[] = 'toolbar: "Basic"';
+					if(!empty($form->ckeditorCustomConfig))	
+						$ckeditorParamArr[] = 'customConfig: "' . $form->ckeditorCustomConfig . '"';
+					if(!empty($form->ckeditorLang))
+						$ckeditorParamArr[] = 'language: "' . $form->ckeditorLang . '"';
+					$str .= <<<STR
+CKEDITOR.replace("$ckeditorID"
+STR;
+					if(!empty($ckeditorParamArr))
+					{
+						$ckeditorParamStr = implode(", ", $ckeditorParamArr);
+						$str .= <<<STR
+, { $ckeditorParamStr }
+STR;
+					}	
+					$str .= <<<STR
+);
+
+STR;
+				}
+			}	
+
+			if(!empty($form->captchaID))
+			{
+				$str .= <<<STR
+Recaptcha.create("{$form->captchaPublicKey}", "{$form->captchaID}", { theme: "{$form->captchaTheme}", lang: "{$form->captchaLang}" });
+
+STR;
+			}
+
+			if(!empty($form->hintExists))
+			{
+				$str .= <<<STR
+function hintfocus_{$this->attributes["id"]}(eleObj) {
+	if(eleObj.value == eleObj.defaultValue)
+		eleObj.value = '';
+}
+function hintblur_{$this->attributes["id"]}(eleObj) {
+	if(eleObj.value == '')
+		eleObj.value = eleObj.defaultValue;
+}
+
+STR;
+			}
+
+			if(!empty($form->hasFormTag))
+			{
+				/*
+				If there are any required fields in the form or if this form is setup to utilize ajax, build a javascript 
+				function for performing form validation before submission and/or for building and submitting a data string through ajax.
+				*/
+				if(!empty($form->checkform) || !empty($form->ajax) || !empty($form->captchaExists) || !empty($form->hintExists) || !empty($form->emailExists))
+				{
+					if(!empty($form->emailExists))
+					{
+						$str .= <<<STR
+var validemail_{$this->attributes["id"]};
+
+STR;
+					}	
+					$str .= <<<STR
+function {$form->onsubmitFunction}(formObj) {
+
+STR;
+					/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
+					key/value pair and acts as the GET or POST string.*/
+					if(!empty($form->ajax))
+					{
+						$str .= <<<STR
+	var form_data = "";
+
+STR;
+					}	
+
+					$str .= $form->jsCycleElements($form->elements);
+					if(!empty($form->bindRules))
+					{
+						$bindRuleKeys = array_keys($form->bindRules);
+						$bindRuleSize = sizeof($bindRuleKeys);
+						for($b = 0; $b < $bindRuleSize; ++$b)
+						{
+							if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements))
+							{
+								if(!empty($form->bindRules[$bindRuleKeys[$b]][1]))
+								{
+									$str .= <<<STR
+	if({$form->bindRules[$bindRuleKeys[$b]][1]}) {
+STR;
+								}	
+								$str .= $form->jsCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements);
+								if(!empty($form->bindRules[$bindRuleKeys[$b]][1]))
+								{
+									$str .= <<<STR
+	}
+
+STR;
+								}	
+							}
+						}
+					}
+						
+					if(!empty($form->ajax))
+					{
+						$str .= <<<STR
+	form_data = form_data.substring(1, form_data.length);
+	$.ajax({
+		type: "{$form->ajaxType}",
+		url: "{$form->ajaxUrl}",
+		dataType: "{$form->ajaxDataType}",
+		data: form_data,
+
+STR;
+						if(!empty($form->ajaxPreCallback))
+						{
+							$str .= <<<STR
+		beforeSend: function() {
+			{$form->ajaxPreCallback}();
+		},
+
+STR;
+						}
+						$str .= <<<STR
+		success: function(responseMsg) {
+
+STR;
+						if(!empty($form->ajaxCallback))
+						{
+							$str .= <<<STR
+						{$form->ajaxCallback}(responseMsg);
+
+STR;
+						}	
+						else
+						{
+							$str .= <<<STR
+			if(responseMsg != "")
+				alert(responseMsg);
+
+STR;
+						}		
+						$str .= <<<STR
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) { alert(XMLHttpRequest.responseText); }
+	});
+	return false;
+
+STR;
+					}	
+					else	
+					{
+						$str .= <<<STR
+	return true;
+
+STR;
+					}	
+					$str .= <<<STR
+}
+
+STR;
+				}
+
+				/*This javascript section sets the focus of the first field in the form.  This default behavior can be overwritten by setting the
+				noAutoFocus parameter.*/
+				if(empty($form->noAutoFocus) && !empty($form->focusElement))
+				{
+					/*The webeditor and ckeditor fields are a special case.*/
+					if(!empty($form->tinymceIDArr) && is_array($form->tinymceIDArr) && in_array($form->focusElement, $form->tinymceIDArr))
+					{
+						$str .= <<<STR
+setTimeout("if(tinyMCE.get(\"{$form->focusElement}\")) tinyMCE.get(\"{$form->focusElement}\").focus();", 1000);
+
+STR;
+					}	
+					elseif(!empty($form->ckeditorIDArr) && is_array($form->ckeditorIDArr) && array_key_exists($form->focusElement, $form->ckeditorIDArr))
+					{
+						$str .= <<<STR
+setTimeout("CKEDITOR.instances.{$form->focusElement}.focus();", 1000);
+STR;
+
+					}	
+					else
+					{
+						/*Any fields with multiple options such as radio button, checkboxes, etc. are handled accordingly.*/
+						$str .= <<<STR
+if(document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-one" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-multiple" && document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].length)
+	document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"][0].focus();
+else
+	document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].focus();
+
+STR;
+					}		
+				}
+			}	
+		}	
+
+		if(!$returnString)
+			echo($str);
+		else
+			return $str;
+	}
+
+	public function renderCSS($returnString=false)
+	{
+		$str = "";
+		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"]))
+		{
+			/*Automatically unserialize the appropriate form instance stored in the session array.*/
+			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+
+			if(empty($form->preventDefaultCSS))
+			{
+				$id = "#" . $this->attributes["id"];
+				$str .= <<<STR
+$id .pfbc-clear:after {
+	clear: both;
+	display: block;
+	margin: 0;
+	padding: 0;
+	visibility: hidden;
+	height: 0;
+	content: ":)";
+}	
+$id .pfbc-label {
+	display: block;
+}
+$id .pfbc-buttons {
+	text-align: right;
+}
+$id .pfbc-required {
+	color: #990000; 
+}
+$id .pfbc-element {
+	padding-bottom: 5px;
+}
+
+STR;
+
+				if(!empty($form->attributes["width"]))
+				{
+					if(substr($form->attributes["width"], -1) == "%")
+					{
+						$formWidth = substr($form->attributes["width"], 0, -1);
+						$suffix = "%";
+					}	
+					elseif(substr($form->attributes["width"], -2) == "px")
+					{
+						$formWidth = substr($form->attributes["width"], 0, -2);
+						$suffix = "px";
+					}
+					else
+					{
+						$formWidth = $form->attributes["width"];
+						$suffix = "px";
+					}	
+					$str .= <<<STR
+$id .pfbc-main {
+	width: {$formWidth}$suffix;
+}
+
+STR;
+				}
+				else
+					$suffix = "%";
+
+				if(!empty($form->map))
+				{
+					$mapVals = array_values(array_unique($form->map));
+					$mapValSize = sizeof($mapVals);
+					for($m = 0; $m < $mapValSize; ++$m)
+					{
+						if($suffix == "px")
+						{
+							$elementWidth = number_format((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+							$textboxWidth = $elementWidth - 6;
+							$textareaWidth = $elementWidth - 2;
+							$selectWidth = $elementWidth;
+						}	
+						else
+						{
+							$elementWidth = number_format(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+							$textboxWidth = 98;
+							$textareaWidth = 98;
+							$selectWidth = 98;
+						}	
+							
+						$str .= <<<STR
+$id .pfbc-map-columns-{$mapVals[$m]} {
+	float: left; 
+	width: {$elementWidth}$suffix;
+}
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textbox {
+	width: {$textboxWidth}$suffix;
+}
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textarea {
+	width: {$textboxWidth}$suffix;
+}
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
+	width: {$selectWidth}$suffix;
+}
+
+STR;
+					}
+					$str .= <<<STR
+$id .pfbc-map-element-first {
+	margin-left: 0 !important;
+}
+$id .pfbc-map-element-last {
+	float: right !important;
+	margin-right: 0 !important;
+}
+$id .pfbc-map-element-single {
+	margin: 0 !important;
+}
+$id .pfbc-element {
+	margin: 0 {$form->mapMargin}$suffix;
+}
+
+STR;
+				}
+				else
+				{
+					if($suffix == "px")
+					{
+						$textboxWidth = $formWidth - 6;
+						$textareaWidth = $formWidth - 2;
+						$selectWidth = $formWidth;
+					}
+					else
+					{
+						$textboxWidth = 98;
+						$textareaWidth = 98;
+						$selectWidth = 98;
+					}
+					$str .= <<<STR
+$id .pfbc-textbox {
+	width: {$textboxWidth}$suffix;
+}
+$id .pfbc-textarea {
+	width: {$textareaWidth}$suffix;
+}
+$id .pfbc-select {
+	width: {$selectWidth}$suffix;
+}
+
+STR;
+				}
+			}
+
+			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr))
+			{
+				if(!empty($form->jqueryDateIDArr))
+				{
+					$str .= <<<STR
+	.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 1em !important; }
+
+STR;
+				}	
+
+				if(!empty($form->jquerySliderIDArr))
+				{
+					$str .= <<<STR
+	.ui-slider-handle { cursor: pointer !important; }
+
+STR;
+				}	
+
+				if(!empty($form->jqueryStarRatingIDArr))
+				{
+					$str .= <<<STR
+.ui-stars-star,
+.ui-stars-cancel {
+	float: left;
+	display: block;
+	overflow: hidden;
+	text-indent: -999em;
+	cursor: pointer;
+}
+.ui-stars-star a,
+.ui-stars-cancel a {
+	width: 28px;
+	height: 26px;
+	display: block;
+	position: relative;
+	background: transparent url("$form->jsIncludesPath/jquery/starrating/remove_inactive.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/starrating/remove_inactive.png", sizingMethod="scale");
+}
+.ui-stars-star a {
+	background: transparent url("$form->jsIncludesPath/jquery/starrating/star_inactive.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/starrating/star_inactive.png", sizingMethod="scale");
+}
+.ui-stars-star-on a {
+	background: transparent url("$form->jsIncludesPath/jquery/starrating/star_active.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/starrating/star_active.png", sizingMethod="scale");
+}
+.ui-stars-star-hover a {
+	background: transparent url("$form->jsIncludesPath/jquery/starrating/star_hot.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/starrating/star_hot.png", sizingMethod="scale");
+}
+.ui-stars-cancel-hover a {
+	background: transparent url("$form->jsIncludesPath/jquery/starrating/remove_active.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/starrating/remove_active.png", sizingMethod="scale");
+}
+.ui-stars-star-disabled,
+.ui-stars-star-disabled a,
+.ui-stars-cancel-disabled a {
+	cursor: default !important;
+}
+
+STR;
+				}
+			}	
+		}	
+
+		if(!$returnString)
+			echo($str);
+		else
+			return $str;
 	}
 
 	private function indent($extra = "")
@@ -3288,10 +3370,10 @@ STR;
 			return false;
 		}
 
-		if(!empty($_SESSION["formclass_instances"]) && array_key_exists($this->attributes["id"], $_SESSION["formclass_instances"]))
+		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"]))
 		{
 			/*Automatically unserialize the appropriate form instance stored in the session array.*/
-			$form = unserialize($_SESSION["formclass_instances"][$this->attributes["id"]]);
+			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
 			/*Store the form's submitted values in a session array for prefilling if validation fails.*/
 			$this->buildSessionValues($form, $referenceValues);
@@ -3330,8 +3412,8 @@ STR;
 			}
 
 			/*Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.*/
-			if(!empty($_SESSION["formclass_values"][$form->attributes["id"]]))
-				unset($_SESSION["formclass_values"][$form->attributes["id"]]);
+			if(!empty($_SESSION["pfbc-values"][$form->attributes["id"]]))
+				unset($_SESSION["pfbc-values"][$form->attributes["id"]]);
 			if(!empty($form->bindRules))
 			{
 				$bindRuleKeys = array_keys($form->bindRules);
@@ -3342,8 +3424,8 @@ STR;
 					{
 						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
 						{
-							if(!empty($_SESSION["formclass_values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]))
-								unset($_SESSION["formclass_values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]);
+							if(!empty($_SESSION["pfbc-values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]))
+								unset($_SESSION["pfbc-values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]);
 						}
 					}	
 				}	
@@ -3373,17 +3455,17 @@ STR;
 				{
 					$valSize = sizeof($referenceValues[$eleName]);
 					for($v = 0; $v < $valSize; ++$v)
-						$_SESSION["formclass_values"][$form->attributes["id"]][$eleName][$v] = stripslashes($referenceValues[$eleName][$v]);
+						$_SESSION["pfbc-values"][$form->attributes["id"]][$eleName][$v] = stripslashes($referenceValues[$eleName][$v]);
 				}
 				else
-					$_SESSION["formclass_values"][$form->attributes["id"]][$eleName] = stripslashes($referenceValues[$eleName]);
+					$_SESSION["pfbc-values"][$form->attributes["id"]][$eleName] = stripslashes($referenceValues[$eleName]);
 			}	
 		}
 
-		if(array_key_exists("recaptcha_challenge_field", $_SESSION["formclass_values"][$form->attributes["id"]]))
-			unset($_SESSION["formclass_values"][$form->attributes["id"]]["recaptcha_challenge_field"]);
-		if(array_key_exists("recaptcha_response_field", $_SESSION["formclass_values"][$form->attributes["id"]]))
-			unset($_SESSION["formclass_values"][$form->attributes["id"]]["recaptcha_response_field"]);
+		if(array_key_exists("recaptcha_challenge_field", $_SESSION["pfbc-values"][$form->attributes["id"]]))
+			unset($_SESSION["pfbc-values"][$form->attributes["id"]]["recaptcha_challenge_field"]);
+		if(array_key_exists("recaptcha_response_field", $_SESSION["pfbc-values"][$form->attributes["id"]]))
+			unset($_SESSION["pfbc-values"][$form->attributes["id"]]["recaptcha_response_field"]);
 	}
 
 	/*This function handles php validation of all required form elements.  It was moved from within the validate function to it's own function to be reused by nested forms.*/
