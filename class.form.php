@@ -3098,7 +3098,7 @@ STR;
 					{
 						/*Any fields with multiple options such as radio button, checkboxes, etc. are handled accordingly.*/
 						$str .= <<<STR
-if(document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-one" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-multiple" && document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].length)
+if(document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-one" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-multiple" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].length)
 	document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"][0].focus();
 else
 	document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].focus();
