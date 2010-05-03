@@ -38,6 +38,7 @@
 					<li>Tooltips (<a href="http://craigsworks.com/projects/qtip/">jQuery qTip Plugin</a>)</li>
 					<li>Captcha (<a href="http://recaptcha.net">reCAPTCHA</a>)</li>
 					<li>Flexible Div Layout</li>
+					<li>XHTML 1.0 Strict Compliant</li>
 				</ul>
 			</div>
 

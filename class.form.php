@@ -2847,8 +2847,7 @@ function clearLatLng_{$this->attributes["id"]}(latlngID, latlngFieldName) {
 	document.getElementById("$latlngForm").elements[latlngFieldName].value = "$latlngHint";
 	document.getElementById(latlngID + "_clearDiv").style.display = "none";
 }
-if(window.addEventListener) { window.addEventListener("load", initializeLatLng_{$this->attributes["id"]}, false); }
-else if(window.attachEvent) { window.attachEvent("onload", initializeLatLng_{$this->attributes["id"]}); }
+setTimeout("initializeLatLng_{$this->attributes["id"]}();", 250);
 
 STR;
 			}
