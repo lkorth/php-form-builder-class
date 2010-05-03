@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 $path = "../class.form.php";
 
