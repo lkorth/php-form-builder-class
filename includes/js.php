@@ -2,7 +2,9 @@
 session_start();
 header("Content-Type: text/javascript");
 
-if(empty($_SESSION["pfbc-instances"][$_GET["id"]]))
+$id = (string) $_GET["id"];
+
+if(empty($_SESSION["pfbc-instances"][$id]))
 {
 	echo 'alert("php-form-builder-class Configuration Error: Session Not Started\n\nA session is required to generate this form\'s necessary javascript and stylesheet information.  To correct, simply add session_start(); before any output in your script.");';
 	exit();
@@ -13,7 +15,7 @@ $path = "../class.form.php";
 if(is_file($path))
 {
 	include($path);
-	$form = new form($_GET["id"]);
+	$form = new form($id);
 	$form->renderJS();
 }
 else
