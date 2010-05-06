@@ -1221,6 +1221,7 @@ class form extends base {
 						$ele->attributes["onblur"] = $hintBlurFunction;
 					else
 						$ele->attributes["onblur"] .= " " . $hintBlurFunction;
+					$this->hintExists = 1;	
 				}
 				elseif(!empty($ele->hint))
 					unset($ele->hint);
