@@ -715,7 +715,7 @@ class form extends base {
 			$ele->tooltipID = "tooltip_" . rand(0, 999);
 			while(array_key_exists($ele->tooltipID, $this->tooltipIDArr))
 				$ele->tooltipID = "tooltip_" . rand(0, 999);
-			$this->tooltipIDArr[$ele->tooltipID] = $ele->tooltip;	
+			$this->tooltipIDArr[$ele->tooltipID] = $ele;
 		}
 
 		$this->elements[] = $ele;
@@ -2391,7 +2391,8 @@ STR;
 					$tooltipSize = sizeof($tooltipKeys);
 					for($t = 0; $t < $tooltipSize; ++$t)
 					{
-						$tooltipContent = str_replace('"', '\"', $form->tooltipIDArr[$tooltipKeys[$t]]);
+						$tooltipEle = $form->tooltipIDArr[$tooltipKeys[$t]];
+						$tooltipContent = str_replace('"', '\"', $tooltipEle->tooltip);
 						$str .= <<<STR
 	$("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
 STR;
@@ -2404,7 +2405,19 @@ STR;
 STR;
 						}	
 						$str .= <<<STR
-} }, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });
+} 
+STR;
+						if(!empty($tooltipEle->tooltipWidth))
+						{
+							if(substr($tooltipEle->tooltipWidth, -2) == "px")
+								$tooltipEle->tooltipWidth = substr($tooltipEle->tooltipWidth, 0, -2);
+							$str .= <<<STR
+, width: {$tooltipEle->tooltipWidth}
+STR;
+						}
+
+						$str .= <<<STR
+}, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });
 
 STR;
 					}	
@@ -3377,6 +3390,7 @@ class element extends base {
 	public $preHTML;					/*HTML content that is rendered before <div> containing the element's label.*/
 	public $postHTML;					/*HTML content that is rendered just before the closing </td> of the element.*/
 	public $tooltip;					/*If provided, this content (text or HTML) will generate a tooltip activated onkeyup.*/
+	public $tooltipWidth;				/*Allows tooltip widths to be customized.*/
 	public $tooltipID;					/*Uniquely identifies each tooltip.*/
 	public $hint;						/*If provided, this content will be displayed as the field's value until focus event.*/
 	public $clear;						/*Only applicable for checkbox, radio, and checksort elements.  Inserts float-clearing div tag after last option.*/
