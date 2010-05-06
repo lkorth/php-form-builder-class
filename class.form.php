@@ -1894,17 +1894,22 @@ STR;
 		/*Serialize the form and store it in a session array.  This variable will be unserialized and used within the validate() method.*/
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
+		$session_param = "";
+		$session_name = session_name();
+		if($session_name != "PHPSESSID")
+			$session_param = "&session_name=$session_name";
+
 		$str .= <<<STR
 		<script type="text/javascript">
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
-			css.href = '{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}';
+			css.href = '{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param';
 			head.appendChild(css);
 
 			var script = document.createElement('script');
 			script.type = 'text/javascript';
-			script.src = '{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}';
+			script.src = '{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param';
 			head.appendChild(script);
 		</script>
 	</div>	

@@ -1,4 +1,6 @@
 <?php
+if(!empty($_GET["session_name"]))
+	session_name($_GET["session_name"]);
 session_start();
 $path = "../class.form.php";
 
