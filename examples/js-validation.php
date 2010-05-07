@@ -35,7 +35,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
 					"width" => 400,
-					"errorMsgFormat" => "[LABEL] is a require.  Please provide this information and re-submit."
+					"errorMsgFormat" => "[LABEL] is require.  Please provide this information and re-submit."
 				));
 
 				$form->addHidden("cmd", "submit");

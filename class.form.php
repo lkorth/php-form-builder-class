@@ -80,6 +80,7 @@ class form extends base {
 	protected $includesPath;            /*Specifies where the includes directory is located. This path can be relative or absolute.*/
 	protected $onsubmitFunction;		/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
 	protected $preventDefaultCSS;		/*Prevents default css from being applied.  Allows for custom styling.*/
+	protected $jsErrorFunction;			/*Allows js function for handling rendering error error messages to be defined.*/
 
 	/*Variables that can only be set inside this class.*/
 	private $elements;					/*Contains all element objects for a form.*/
@@ -132,7 +133,8 @@ class form extends base {
 		$this->errorMsgFormat = "[LABEL] is a required field.";
 		$this->emailErrorMsgFormat = "[LABEL] contains an invalid email address.";
 		$this->includesPath = "php-form-builder-class/includes";
-		$this->onsubmitFunction = "formhandler_" . $this->attributes["id"];
+		$this->onsubmitFunction = "pfbc_onsubmit_" . $this->attributes["id"];
+		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
 		$this->mapMargin = 1;
 
 		/*This array prevents junk from being inserted into the form's HTML.  If you find that an attributes you need to use is not included
@@ -962,6 +964,8 @@ class form extends base {
 		/*The form fields are rendered in a basic table structure.*/
 		echo "\n" . '<div class="pfbc-main">';
 
+		echo "\n\t" . '<div id="pfbc-error-' . $this->attributes["id"] . '"></div>';
+
 		/*Render the elements by calling elementsToString function with the includeMainDiv tags field set to false.  There is no need
 		to eender the table tag b/c we have just done that above.*/
 		echo $this->elementsToString(false);
@@ -1085,7 +1089,7 @@ class form extends base {
 			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesPath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.\n\nPath specified:\n' . $this->includesPath . '\n\nEXTRA INFORMATION:\nPHP Path Used:\n' . $this->phpIncludesPath . '\n\nJavascript Path Used:\n' . $this->jsIncludesPath . '");</script>';
 
 		if(empty($this->tooltipIcon))
-			$this->tooltipIcon = $this->jsIncludesPath . "/jquery/qtip/tooltip-icon.gif";
+			$this->tooltipIcon = $this->jsIncludesPath . "/jquery/plugins/qtip/tooltip-icon.gif";
 
 		if(empty($this->noAutoFocus))
 			$focus = true;
@@ -1095,6 +1099,7 @@ class form extends base {
 		if($includeMainDiv)
 		{
 			$str .= "\n" . '<div id="' . $this->attributes["id"] . '">';
+			$str .= "\n" . '<div id="pfbc-error-' . $this->attributes["id"] . '"></div>';
 			$str .= "\n" . '<div class="pfbc-main">';
 		}	
 
@@ -1752,12 +1757,17 @@ class form extends base {
 		$str .= <<<STR
 	
 	<div class="pfbc-script">
-		<script type="text/javascript">var head = document.getElementsByTagName("head")[0];</script>
+		<script type="text/javascript">
+			var head = document.getElementsByTagName("head")[0];
+
+			var css = document.createElement('link');
+			css.rel = 'stylesheet';
+			css.type = 'text/css';
+			css.href = '{$this->jsIncludesPath}/jquery/ui/jquery-ui.css';
+			head.appendChild(css);
+		</script>
 
 STR;
-
-		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->tooltipIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr) || !empty($this->jqueryColorIDArr))
-		{
 			if(empty($this->preventJQueryLoad))
 			{
 				$str .= <<<STR
@@ -1766,31 +1776,23 @@ STR;
 STR;
 			}	
 
+		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->tooltipIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr) || !empty($this->jqueryColorIDArr))
+		{
 			if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr))
 			{
 				if(empty($this->preventJQueryUILoad))
 				{
 					$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery-ui.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/jquery-ui.js"></script>
 
 STR;
 				}	
-				$str .= <<<STR
-		<script type="text/javascript">
-			var css = document.createElement('link');
-			css.rel = 'stylesheet';
-			css.type = 'text/css';
-			css.href = '{$this->jsIncludesPath}/jquery/jquery-ui.css';
-			head.appendChild(css);
-		</script>
-
-STR;
 			}
 
 			if(!empty($this->tooltipIDArr) && empty($this->preventQTipLoad))
 			{
 				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/qtip/jquery.qtip-1.0.0-rc3.min.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/qtip/jquery.qtip.js"></script>
 
 STR;
 			}	
@@ -1798,7 +1800,7 @@ STR;
 			if(!empty($this->jqueryStarRatingIDArr))
 			{
 				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/starrating/ui.stars.min.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js"></script>
 STR;
 			}
 
@@ -1809,10 +1811,10 @@ STR;
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
-			css.href = '{$this->jsIncludesPath}/jquery/ui.daterangepicker.css';
+			css.href = '{$this->jsIncludesPath}/jquery/ui/ui.daterangepicker.css';
 			head.appendChild(css);
 		</script>
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/daterangepicker.jquery.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"></script>
 
 STR;
 			}	
@@ -1824,21 +1826,14 @@ STR;
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
-			css.href = '{$this->jsIncludesPath}/jquery/colorpicker/colorpicker.css';
+			css.href = '{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css';
 			head.appendChild(css);
 		</script>
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/colorpicker/colorpicker.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js"></script>
 
 STR;
 			}
 
-		}	
-		elseif((!empty($this->ajax) || !empty($this->emailExists)) && empty($this->preventJQueryLoad))
-		{
-				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
-
-STR;
 		}	
 
 		if(!empty($this->latlngIDArr))
@@ -1935,7 +1930,7 @@ STR;
 				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->label));
 			else
 				$eleLabel = "";
-			$alertMsg = 'alert("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '");';
+			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '");';
 
 			if($eleType == "html")
 				continue;
@@ -2811,6 +2806,15 @@ var validemail_{$this->attributes["id"]};
 STR;
 					}	
 					$str .= <<<STR
+function pfbc_error_{$form->attributes["id"]}(errorMsg) {
+	document.getElementById('pfbc-error-{$form->attributes["id"]}').innerHTML = '';
+	var error = document.createElement('div');
+	error.className = 'ui-widget';
+	error.style.cssText = 'margin: 5px 0;';
+	error.innerHTML = '<div style="padding: 5px;" class="ui-state-error ui-corner-all"><span style="float: left; margin-right: 0.5em;" class="ui-icon ui-icon-alert"></span> ' + errorMsg + '</div>';
+	document.getElementById('pfbc-error-{$form->attributes["id"]}').appendChild(error);
+	$('html, body').animate({ scrollTop: $("#{$form->attributes["id"]}").offset().top }, 500);
+}
 function {$form->onsubmitFunction}(formObj) {
 
 STR;
@@ -3134,34 +3138,34 @@ STR;
 	height: 26px;
 	display: block;
 	position: relative;
-	background: transparent url("$form->jsIncludesPath/jquery/starrating/remove_inactive.png") 0 0 no-repeat;
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png") 0 0 no-repeat;
 	_background: none;
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/starrating/remove_inactive.png", sizingMethod="scale");
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png", sizingMethod="scale");
 }
 .ui-stars-star a {
-	background: transparent url("$form->jsIncludesPath/jquery/starrating/star_inactive.png") 0 0 no-repeat;
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png") 0 0 no-repeat;
 	_background: none;
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/starrating/star_inactive.png", sizingMethod="scale");
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png", sizingMethod="scale");
 }
 .ui-stars-star-on a {
-	background: transparent url("$form->jsIncludesPath/jquery/starrating/star_active.png") 0 0 no-repeat;
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png") 0 0 no-repeat;
 	_background: none;
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/starrating/star_active.png", sizingMethod="scale");
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png", sizingMethod="scale");
 }
 .ui-stars-star-hover a {
-	background: transparent url("$form->jsIncludesPath/jquery/starrating/star_hot.png") 0 0 no-repeat;
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png") 0 0 no-repeat;
 	_background: none;
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/starrating/star_hot.png", sizingMethod="scale");
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png", sizingMethod="scale");
 }
 .ui-stars-cancel-hover a {
-	background: transparent url("$form->jsIncludesPath/jquery/starrating/remove_active.png") 0 0 no-repeat;
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png") 0 0 no-repeat;
 	_background: none;
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/starrating/remove_active.png", sizingMethod="scale");
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png", sizingMethod="scale");
 }
 .ui-stars-star-disabled,
 .ui-stars-star-disabled a,

@@ -27,20 +27,21 @@ jQuery.fn.daterangepicker = function(settings){
 			{text: 'Last 7 days', dateStart: 'today-7days', dateEnd: 'today' },
 			{text: 'Month to date', dateStart: function(){ return Date.parse('today').moveToFirstDayOfMonth();  }, dateEnd: 'today' },
 			{text: 'Year to date', dateStart: function(){ var x= Date.parse('today'); x.setMonth(0); x.setDate(1); return x; }, dateEnd: 'today' },
-			{text: 'The previous Month', dateStart: function(){ return Date.parse('1 month ago').moveToFirstDayOfMonth();  }, dateEnd: function(){ return Date.parse('1 month ago').moveToLastDayOfMonth();  } },
-			{text: 'Last 30 Days', dateStart: 'Today-30', dateEnd: 'Today' },
-			{text: 'Last 60 Days', dateStart: 'Today-60', dateEnd: 'Today' },
-			{text: 'Last 90 Days', dateStart: 'Today-90', dateEnd: 'Today' }
+			//extras:
+			{text: 'The previous Month', dateStart: function(){ return Date.parse('1 month ago').moveToFirstDayOfMonth();  }, dateEnd: function(){ return Date.parse('1 month ago').moveToLastDayOfMonth();  } }
+			//{text: 'Tomorrow', dateStart: 'Tomorrow', dateEnd: 'Tomorrow' },
+			//{text: 'Ad Campaign', dateStart: '03/07/08', dateEnd: 'Today' },
+			//{text: 'Last 30 Days', dateStart: 'Today-30', dateEnd: 'Today' },
+			//{text: 'Next 30 Days', dateStart: 'Today', dateEnd: 'Today+30' },
+			//{text: 'Our Ad Campaign', dateStart: '03/07/08', dateEnd: '07/08/08' }
 		], 
 		//presetRanges: array of objects for each menu preset. 
 		//Each obj must have text, dateStart, dateEnd. dateStart, dateEnd accept date.js string or a function which returns a date object
 		presets: {
-			/*
 			specificDate: 'Specific Date', 
 			allDatesBefore: 'All Dates Before', 
 			allDatesAfter: 'All Dates After', 
-			*/
-			dateRange: 'Select Custom Date Range'
+			dateRange: 'Date Range'
 		},
 		rangeStartTitle: 'Start date',
 		rangeEndTitle: 'End date',
@@ -50,7 +51,7 @@ jQuery.fn.daterangepicker = function(settings){
 		earliestDate: Date.parse('-15years'), //earliest date allowed 
 		latestDate: Date.parse('+15years'), //latest date allowed 
 		rangeSplitter: '-', //string to use between dates in single input
-		dateFormat: 'MM d, yy', // date formatting. Available formats: http://docs.jquery.com/UI/Datepicker/%24.datepicker.formatDate
+		dateFormat: 'm/d/yy', // date formatting. Available formats: http://docs.jquery.com/UI/Datepicker/%24.datepicker.formatDate
 		closeOnSelect: true, //if a complete selection is made, close the menu
 		arrows: false,
 		posX: rangeInput.offset().left, // x position
