@@ -1927,9 +1927,13 @@ STR;
 			if(!empty($ele->attributes["id"]))
 				$eleId = str_replace('"', '&quot;', $ele->attributes["id"]);
 			if(!empty($ele->label))
+			{
 				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->label));
+				if(substr($eleLabel, -1) == ":")
+					$eleLabel = substr($eleLabel, 0, -1);
+			}	
 			else
-				$eleLabel = "";
+				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->attributes["name"]));
 			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '");';
 
 			if($eleType == "html")
@@ -2810,8 +2814,8 @@ function pfbc_error_{$form->attributes["id"]}(errorMsg) {
 	document.getElementById('pfbc-error-{$form->attributes["id"]}').innerHTML = '';
 	var error = document.createElement('div');
 	error.className = 'ui-widget';
-	error.style.cssText = 'margin: 5px 0;';
-	error.innerHTML = '<div style="padding: 5px;" class="ui-state-error ui-corner-all"><span style="float: left; margin-right: 0.5em;" class="ui-icon ui-icon-alert"></span> ' + errorMsg + '</div>';
+	error.style.cssText = 'margin: 7px 0;';
+	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;"><b>Error:</b> ' + errorMsg + '</div>';
 	document.getElementById('pfbc-error-{$form->attributes["id"]}').appendChild(error);
 	$('html, body').animate({ scrollTop: $("#{$form->attributes["id"]}").offset().top }, 500);
 }
