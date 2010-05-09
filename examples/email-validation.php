@@ -15,9 +15,6 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
 	exit();
 }
 
-if(!empty($_GET["error_message"]))
-	echo("<div style='text-align: center; font-weight: bold; color: #990000;'>" . htmlentities(stripslashes($_GET["error_message"])) . "</div>");
-
 if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 {
 	?>
@@ -36,6 +33,12 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			</div>
 
 			<div id="pfbc_content">
+
+			<?php
+			if(!empty($_GET["error_message"]))
+				echo("<div style='text-align: center; font-weight: bold; color: #990000;'>" . htmlentities(stripslashes($_GET["error_message"])) . "</div>");
+			?>
+
 				<p><b>Email Validation</b> - When an email form element type is added, javascript will automatically validate the email address via an ajax call within the form's onsubmit function.  You can also validate the email address through the validate() function after the form has been submitted.
 				If you do not apply the <i>required</i> element attribute, a blank value will not be checked.</p>
 

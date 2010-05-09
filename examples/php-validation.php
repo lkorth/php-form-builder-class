@@ -15,9 +15,6 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
 	exit();
 }
 
-if(!empty($_GET["error_message"]))
-	echo("<div style='text-align: center; font-weight: bold; color: #990000;'>" . htmlentities(stripslashes($_GET["error_message"])) . "</div>");
-
 if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 {
 	?>
@@ -36,6 +33,12 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			</div>
 
 			<div id="pfbc_content">
+
+			<?php
+			if(!empty($_GET["error_message"]))
+				echo("<div style='text-align: center; font-weight: bold; color: #990000;'>" . htmlentities(stripslashes($_GET["error_message"])) . "</div>");
+			?>
+
 				<p><b>PHP Validation</b> - After the form has been submitted, the validate() function can be used to verify that all required fields have been properly filled in and that
 				the captcha solution is correct, if applicable.</p>
 
