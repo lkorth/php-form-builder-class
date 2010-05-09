@@ -1857,7 +1857,7 @@ STR;
 			if(empty($this->preventTinyMCELoad))
 			{
 				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/tinymce/tiny_mce.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
 
 STR;
 			}	
@@ -2714,11 +2714,11 @@ STR;
 tinyMCE.init({
 	mode: "textareas",
 	theme: "advanced",
-	plugins: "safari,table,paste,inlinepopups",
+	plugins: "safari,table,paste,inlinepopups,preview",
 	dialog_type: "modal",
 	theme_advanced_buttons1: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,|,forecolor,backcolor",
 	theme_advanced_buttons2: "formatselect,fontselect,fontsizeselect,|,pastetext,pasteword,|,link,image",
-	theme_advanced_buttons3: "tablecontrols,|,code,cleanup,|,undo,redo",
+	theme_advanced_buttons3: "tablecontrols,|,code,preview,|,undo,redo",
 	theme_advanced_toolbar_location: "top",
 	editor_selector: "tiny_mce",
 	forced_root_block: false,
