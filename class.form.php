@@ -575,6 +575,7 @@ private function attachElement($params)
 			$ele->attributes["id"] = "dateinput_" . rand(0, 999);
 		$this->jqueryDateIDArr[] = $ele->attributes["id"];
 
+		$ele->readonly = 1;
 		if(empty($ele->hint))
 			$ele->hint = "Click to Select Date...";
 	}
@@ -589,6 +590,7 @@ private function attachElement($params)
 			$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
 		$this->jqueryDateRangeIDArr[] = $ele->attributes["id"];
 
+		$ele->readonly = 1;
 		if(empty($ele->hint))
 			$ele->hint = "Click to Select Date Range...";
 	}
