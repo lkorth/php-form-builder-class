@@ -1766,6 +1766,7 @@ public function elementsToString($includeMainDiv = true)
 		</script>
 
 STR;
+		/*Unless prevented, jQuery will be loaded with each form that is built using this class.*/
 		if(empty($this->preventJQueryLoad))
 		{
 			$str .= <<<STR
