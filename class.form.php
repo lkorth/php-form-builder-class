@@ -1752,6 +1752,7 @@ public function elementsToString($includeMainDiv = true)
 		$str .= "\n</div>";
 	}	
 
+	/*This javascript section loads all required js and css files needed for a specific form.  CSS files are loaded into the <head> tag with javascript.*/
 	$str .= <<<STR
 
 	<div class="pfbc-script">
