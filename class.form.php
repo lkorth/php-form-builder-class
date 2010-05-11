@@ -70,6 +70,7 @@ class form extends base {
 	protected $captchaPrivateKey;		/*Contains reCAPTCHA private key.*/
 	protected $preventCaptchaLoad;		/*Prevents reCAPTCHA js file from being loaded twice.*/
 	protected $jqueryDateFormat;		/*Allows date field to be formatted. See http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate for formatting options.*/
+	protected $jqueryTimeFormat;		/*Allows datetime field to be formatted.*/
 	protected $ckeditorLang;			/*Allows CKEditor language to be customized.*/
 	protected $ckeditorCustomConfig;	/*Allows CKEditor settings to be loaded through a supplied js file.*/
 	protected $preventCKEditorLoad;		/*Prevents CKEditor js file from being loaded twice.*/
@@ -100,6 +101,7 @@ class form extends base {
 	private $tinymceIDArr;				/*Uniquely identifies each tinyMCE web editor.*/
 	private $ckeditorIDArr;				/*Uniquely identifies each CKEditor web editor.*/
 	private $jqueryDateIDArr;			/*Uniquely identifies each date element.*/
+	private $jqueryDateTimeIDArr;		/*Uniquely identifies each datetime element.*/
 	private $jqueryDateRangeIDArr;		/*Uniquely identifies each daterange element.*/
 	private $tooltipIDArr;				/*Uniquely identifies each tooltip.*/
 	private $jquerySliderIDArr;			/*Uniquely identifies each slider element.*/
@@ -127,6 +129,7 @@ class form extends base {
 		$this->captchaPublicKey = "6LcazwoAAAAAADamFkwqj5KN1Gla7l4fpMMbdZfi";
 		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
 		$this->jqueryDateFormat = "MM d, yy";
+		$this->jqueryTimeFormat = "h:ia";
 		$this->ajaxType = "post";
 		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
 		$this->ajaxDataType = "text";
@@ -579,6 +582,21 @@ class form extends base {
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date...";
 		}
+		elseif($eleType == "datetime")
+		{
+			/*This section ensure that each daterange field has a unique identifier.*/
+			if(empty($ele->attributes["id"]))
+				$ele->attributes["id"] = "datetimeinput_" . rand(0, 999);
+			if(!isset($this->jqueryDateTimeIDArr))
+				$this->jqueryDateTimeIDArr = array();
+			while(in_array($ele->attributes["id"], $this->jqueryDateTimeIDArr))
+				$ele->attributes["id"] = "datetimeinput_" . rand(0, 999);
+			$this->jqueryDateTimeIDArr[] = $ele->attributes["id"];
+
+			$ele->readonly = 1;
+			if(empty($ele->hint))
+				$ele->hint = "Click to Select Date/Time...";
+		}
 		elseif($eleType == "daterange")
 		{
 			/*This section ensure that each daterange field has a unique identifier.*/
@@ -771,6 +789,9 @@ class form extends base {
 	}
 	public function addDate($label, $name, $value="", $additionalParams="") {
 		$this->addElement($label, $name, "date", $value, $additionalParams);
+	}
+	public function addDateTime($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "datetime", $value, $additionalParams);
 	}
 	public function addDateRange($label, $name, $value="", $additionalParams="") {
 		$this->addElement($label, $name, "daterange", $value, $additionalParams);
@@ -1109,7 +1130,7 @@ class form extends base {
 				$eleType = &$ele->attributes["type"];
 				
 				/*Add appropriate javascript event functions if hint is present.*/
-				if(in_array($eleType, array("text", "textarea", "date", "daterange", "colorpicker", "latlng", "email")) && !empty($ele->hint) && empty($ele->attributes["value"]))
+				if(in_array($eleType, array("text", "textarea", "date", "datetime", "daterange", "colorpicker", "latlng", "email")) && !empty($ele->hint) && empty($ele->attributes["value"]))
 				{
 					$ele->attributes["value"] = $ele->hint;
 					$hintFocusFunction = "hintfocus_" . $this->attributes["id"] . "(this);";
@@ -1129,10 +1150,10 @@ class form extends base {
 					unset($ele->hint);
 
 				$str .= $this->indent();
-				if(in_array($eleType, array("text", "password", "email", "date", "daterange", "colorpicker")))
+				if(in_array($eleType, array("text", "password", "email", "date", "datetime", "daterange", "colorpicker")))
 				{
 					/*Temporarily set the type attribute to "text" for <input> tag.*/
-					if(in_array($eleType, array("email", "date", "daterange", "colorpicker")))
+					if(in_array($eleType, array("email", "date", "datetime", "daterange", "colorpicker")))
 					{
 						$resetTypeTo = $eleType;
 						$eleType = "text";
@@ -1667,39 +1688,45 @@ STR;
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
 
 STR;
-		}	
+		}
 
-		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->tooltipIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr) || !empty($this->jqueryColorIDArr))
+		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateTimeIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr))
 		{
-			if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr))
+			if(empty($this->preventJQueryUILoad))
 			{
-				if(empty($this->preventJQueryUILoad))
-				{
-					$str .= <<<STR
+				$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/jquery-ui.js"></script>
 
 STR;
-				}	
-			}
+			}	
+		}
 
-			if(!empty($this->tooltipIDArr) && empty($this->preventQTipLoad))
-			{
-				$str .= <<<STR
+		if(!empty($this->tooltipIDArr) && empty($this->preventQTipLoad))
+		{
+			$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/qtip/jquery.qtip.js"></script>
 
 STR;
-			}	
+		}	
 
-			if(!empty($this->jqueryStarRatingIDArr))
-			{
-				$str .= <<<STR
+		if(!empty($this->jqueryStarRatingIDArr))
+		{
+			$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js"></script>
 STR;
-			}
+		}
 
-			if(!empty($this->jqueryDateRangeIDArr))
-			{
-				$str .= <<<STR
+		if(!empty($this->jqueryDateTimeIDArr))
+		{
+			$str .= <<<STR
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/timepicker.js"></script>
+
+STR;
+		}	
+
+		if(!empty($this->jqueryDateRangeIDArr))
+		{
+			$str .= <<<STR
 		<script type="text/javascript">
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
@@ -1710,11 +1737,11 @@ STR;
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"></script>
 
 STR;
-			}	
+		}	
 
-			if(!empty($this->jqueryColorIDArr))
-			{
-				$str .= <<<STR
+		if(!empty($this->jqueryColorIDArr))
+		{
+			$str .= <<<STR
 		<script type="text/javascript">
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
@@ -1725,9 +1752,7 @@ STR;
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js"></script>
 
 STR;
-			}
-
-		}	
+		}
 
 		if(!empty($this->latlngIDArr))
 		{
@@ -2321,7 +2346,7 @@ STR;
 			/*Automatically unserialize the appropriate form instance stored in the session array.*/
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr))
+			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateTimeIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr))
 			{
 				$str .= <<<STR
 $(function() {
@@ -2334,6 +2359,18 @@ STR;
 					{
 						$str .= <<<STR
 	$("#{$form->jqueryDateIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", showButtonPanel: true });
+
+STR;
+					}	
+				}
+
+				if(!empty($form->jqueryDateTimeIDArr))
+				{
+					$dateTimeSize = sizeof($form->jqueryDateTimeIDArr);
+					for($d = 0; $d < $dateTimeSize; ++$d)
+					{
+						$str .= <<<STR
+	$("#{$form->jqueryDateTimeIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", duration: "", showTime: true, constrainInput: false });
 
 STR;
 					}	
@@ -3083,79 +3120,76 @@ STR;
 				}
 			}
 
-			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr))
+			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateTimeIDArr))
 			{
-				if(!empty($form->jqueryDateIDArr))
-				{
-					$str .= <<<STR
-	.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 1em !important; }
+				$str .= <<<STR
+.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 1em !important; }
 
 STR;
-				}	
+			}	
 
-				if(!empty($form->jquerySliderIDArr))
-				{
-					$str .= <<<STR
-	.ui-slider-handle { cursor: pointer !important; }
+			if(!empty($form->jquerySliderIDArr))
+			{
+				$str .= <<<STR
+.ui-slider-handle { cursor: pointer !important; }
 
 STR;
-				}	
+			}	
 
-				if(!empty($form->jqueryStarRatingIDArr))
-				{
-					$str .= <<<STR
+			if(!empty($form->jqueryStarRatingIDArr))
+			{
+				$str .= <<<STR
 .ui-stars-star,
 .ui-stars-cancel {
-	float: left;
-	display: block;
-	overflow: hidden;
-	text-indent: -999em;
-	cursor: pointer;
+float: left;
+display: block;
+overflow: hidden;
+text-indent: -999em;
+cursor: pointer;
 }
 .ui-stars-star a,
 .ui-stars-cancel a {
-	width: 28px;
-	height: 26px;
-	display: block;
-	position: relative;
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png", sizingMethod="scale");
+width: 28px;
+height: 26px;
+display: block;
+position: relative;
+background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png") 0 0 no-repeat;
+_background: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+	(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png", sizingMethod="scale");
 }
 .ui-stars-star a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png", sizingMethod="scale");
+background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png") 0 0 no-repeat;
+_background: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+	(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png", sizingMethod="scale");
 }
 .ui-stars-star-on a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png", sizingMethod="scale");
+background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png") 0 0 no-repeat;
+_background: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+	(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png", sizingMethod="scale");
 }
 .ui-stars-star-hover a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png", sizingMethod="scale");
+background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png") 0 0 no-repeat;
+_background: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+	(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png", sizingMethod="scale");
 }
 .ui-stars-cancel-hover a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png", sizingMethod="scale");
+background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png") 0 0 no-repeat;
+_background: none;
+filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+	(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png", sizingMethod="scale");
 }
 .ui-stars-star-disabled,
 .ui-stars-star-disabled a,
 .ui-stars-cancel-disabled a {
-	cursor: default !important;
+cursor: default !important;
 }
 
 STR;
-				}
-			}	
+			}
 		}	
 
 		if(!$returnString)

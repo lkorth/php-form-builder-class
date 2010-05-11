@@ -45,6 +45,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				function addPassword($label, $name, $value="", $additionalParams="")
 				function addFile($label, $name, $additionalParams="")
 				function addDate($label, $name, $value="", $additionalParams="")
+				function addDateTime($label, $name, $value="", $additionalParams="")
 				function addDateRange($label, $name, $value="", $additionalParams="")
 				function addState($label, $name, $value="", $additionalParams="")
 				function addCountry($label, $name, $value="", $additionalParams="")
@@ -72,27 +73,33 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addPassword("Password:", "field4");
 				$form->addFile("File:", "field5");
 				$form->addDate("Date:", "field6");
+				$form->addDateTime("Date/Time:", "field7");
 				$form->addDateRange("Date Range:", "field7");
-				$form->addState("State:", "field8");
-				$form->addCountry("Country:", "field9");
-				$form->addYesNo("Yes/No:", "field10", "", array("clear" => 1));
-				$form->addTrueFalse("True/False:", "field11", "", array("clear" => 1));
-				$form->addSelect("Select Box:", "field12", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
-				$form->addRadio("Radio Buttons:", "field13", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
-				$form->addCheckbox("Checkboxes:", "field14", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
-				$form->addLatLng("Latitude/Longitude:", "field15");
-				$form->addSort("Sort:", "field16", array("Option #1", "Option #2", "Option #3"));
-				$form->addCheckSort("Checksort:", "field17", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
+				$form->addState("State:", "field9");
+				$form->addCountry("Country:", "field10");
+				$form->addYesNo("Yes/No:", "field11", "", array("clear" => 1));
+				$form->addTrueFalse("True/False:", "field12", "", array("clear" => 1));
+				$form->addSelect("Select Box:", "field13", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
+				$form->addRadio("Radio Buttons:", "field14", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
+				$form->addCheckbox("Checkboxes:", "field15", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
+				$form->addLatLng("Latitude/Longitude:", "field16");
+				$form->addSort("Sort:", "field17", array("Option #1", "Option #2", "Option #3"));
+				$form->addCheckSort("Checksort:", "field18", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
 				$form->addCaptcha("Captcha:");
-				$form->addSlider("Slider:", "field18");
-				$form->addRating("Rating:", "field19", "", range(1, 10));
+				$form->addSlider("Slider:", "field19");
+				$form->addRating("Rating:", "field20", "", range(1, 10));
 				$form->addHTML("HTML:");
-				$form->addColorPicker("Color Picker", "field20");
-				$form->addEmail("Email:", "field21");
+				$form->addColorPicker("Color Picker", "field21");
+				$form->addEmail("Email:", "field22");
 				$form->addButton();
 				$form->render();
 
 echo '<pre>' . htmlentities('<?php
+$form = new form("form_elements");
+$form->setAttributes(array(
+	"includesPath" => "../includes",
+	"width" => "400"
+));	
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Textbox:", "field0");
 $form->addTextarea("Textarea:", "field1");
@@ -101,23 +108,24 @@ $form->addCKEditor("Web Editor - CKEditor:", "field3");
 $form->addPassword("Password:", "field4");
 $form->addFile("File:", "field5");
 $form->addDate("Date:", "field6");
+$form->addDateTime("Date/Time:", "field7");
 $form->addDateRange("Date Range:", "field7");
-$form->addState("State:", "field8");
-$form->addCountry("Country:", "field9");
-$form->addYesNo("Yes/No:", "field10", "", array("clear" => 1));
-$form->addTrueFalse("True/False:", "field11", "", array("clear" => 1));
-$form->addSelect("Select Box:", "field12", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
-$form->addRadio("Radio Buttons:", "field13", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
-$form->addCheckbox("Checkboxes:", "field14", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
-$form->addLatLng("Latitude/Longitude:", "field15");
-$form->addSort("Sort:", "field16", array("Option #1", "Option #2", "Option #3"));
-$form->addCheckSort("Checksort:", "field17", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
+$form->addState("State:", "field9");
+$form->addCountry("Country:", "field10");
+$form->addYesNo("Yes/No:", "field11", "", array("clear" => 1));
+$form->addTrueFalse("True/False:", "field12", "", array("clear" => 1));
+$form->addSelect("Select Box:", "field13", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"));
+$form->addRadio("Radio Buttons:", "field14", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
+$form->addCheckbox("Checkboxes:", "field15", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
+$form->addLatLng("Latitude/Longitude:", "field16");
+$form->addSort("Sort:", "field17", array("Option #1", "Option #2", "Option #3"));
+$form->addCheckSort("Checksort:", "field18", "", array("option0" => "Option 0", "option1" => "Option 1", "option2" => "Option 2"), array("clear" => 1));
 $form->addCaptcha("Captcha:");
-$form->addSlider("Slider:", "field18");
-$form->addRating("Rating:", "field19", "", range(1, 10));
+$form->addSlider("Slider:", "field19");
+$form->addRating("Rating:", "field20", "", range(1, 10));
 $form->addHTML("HTML:");
-$form->addColorPicker("Color Picker", "field20");
-$form->addEmail("Email:", "field21");
+$form->addColorPicker("Color Picker", "field21");
+$form->addEmail("Email:", "field22");
 $form->addButton();
 $form->render();
 ?>') . '</pre>';
