@@ -74,7 +74,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addFile("File:", "field5");
 				$form->addDate("Date:", "field6");
 				$form->addDateTime("Date/Time:", "field7");
-				$form->addDateRange("Date Range:", "field7");
+				$form->addTime("Time:", "field23", "", array("minuteSnapIncrement" => 5, "hourSnapIncrement" => 2, "24Hour" => 1));
+				$form->addDateRange("Date Range:", "field8");
 				$form->addState("State:", "field9");
 				$form->addCountry("Country:", "field10");
 				$form->addYesNo("Yes/No:", "field11", "", array("clear" => 1));

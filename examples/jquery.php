@@ -40,42 +40,47 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addDate("Your Birthday:", "field2");
 				$form->addDate("Today's Date Pre-filled:", "field3", date("F j, Y"));
 				$form->addDateTime("Select Date/Time:", "field4");
-				$form->addDateRange("Select a Date Range:", "field5");
-				$form->addDateRange("Select a Date Range:<br/>(prefilled)", "field6", date("F j, Y", strtotime("-1 month")) . " - " . date("F j, Y"));
-				$form->addSlider("Select Rating:<br/>(1 = lowest; 5 = highest)", "field7", 3, array("sliderMin" => 1, "sliderMax" => 5));
-				$form->addSlider("Select Percentage:", "field8", "", array("sliderSuffix" => "%"));
-				$form->addSlider("Select Dollar Amount Range:<br/>($5 increments)", "field9", array(25, 75), array("sliderPrefix" => "$", "sliderSnapIncrement" => 5));
-				$form->addSlider("Select Rating Vertical:<br/>(1 = lowest; 5 = highest)", "field10", 3, array("sliderMin" => 1, "sliderMax" => 5, "sliderOrientation" => "vertical", "sliderHeight" => 200));
-				$form->addSlider("Select Rating w/Custom Scale:", "field11", 3, array("sliderMin" => 1, "sliderMax" => 5, "sliderHideDisplay" => 1, "postHTML" => '<table cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td align="left" style="width: 73px;">1</td><td align="left" style="width: 74px;">2</td><td align="left" style="width: 74px;">3</td><td align="left">4</td><td align="right">5</td></tr></table>'));
-				$form->addRating("Default Rating:", "field12", "", array("1" => "Bad", "2" => "Below Average", "3" => "Average", "4" => "Above Average", "5" => "Good"));
-				$form->addRating("Customized Rating:", "field13", "1", range(1, 10), array("ratingHideCaption" => 1, "ratingHideCancel" => 1));
-				$form->addColorPicker("Select Color:", "field14");
-				$form->addColorPicker("Select Color Pre-filled:", "field15", "009900");
+				$form->addTime("Select Time:", "field5");
+				$form->addTime("Select Time w/Minute Increment:", "field6", date("g:i a"), array("minuteSnapIncrement" => 5));
+				$form->addDateRange("Select a Date Range:", "field7");
+				$form->addDateRange("Select a Date Range:<br/>(prefilled)", "field8", date("F j, Y", strtotime("-1 month")) . " - " . date("F j, Y"));
+				$form->addSlider("Select Rating:<br/>(1 = lowest; 5 = highest)", "field9", 3, array("min" => 1, "max" => 5));
+				$form->addSlider("Select Percentage:", "field10", "", array("suffix" => "%"));
+				$form->addSlider("Select Dollar Amount Range:<br/>($5 increments)", "field11", array(25, 75), array("prefix" => "$", "snapIncrement" => 5));
+				$form->addSlider("Select Rating Vertical:<br/>(1 = lowest; 5 = highest)", "field12", 3, array("min" => 1, "max" => 5, "orientation" => "vertical", "height" => 200));
+				$form->addSlider("Select Rating w/Custom Scale:", "field13", 3, array("min" => 1, "max" => 5, "hideDisplay" => 1, "postHTML" => '<table cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td align="left" style="width: 73px;">1</td><td align="left" style="width: 74px;">2</td><td align="left" style="width: 74px;">3</td><td align="left">4</td><td align="right">5</td></tr></table>'));
+				$form->addRating("Default Rating:", "field14", "", array("1" => "Bad", "2" => "Below Average", "3" => "Average", "4" => "Above Average", "5" => "Good"));
+				$form->addRating("Customized Rating:", "field15", "1", range(1, 10), array("hideCaption" => 1, "hideCancel" => 1));
+				$form->addColorPicker("Select Color:", "field16");
+				$form->addColorPicker("Select Color Pre-filled:", "field17", "009900");
 				$form->addButton();
 				$form->render();
 
 echo '<pre>' . htmlentities('<?php
 $form = new form("jquery");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
-	"width" => 300
+"includesPath" => "../includes",
+"width" => 300
 ));
 $form->addHidden("cmd", "submit");
 $form->addCheckSort("Select And Rank Your Favorite Sports:", "field0", "", array("Baseball", "Basketball", "Golf", "Soccer"), array("clear" => 1));
 $form->addSort("Sort These MLB Baseball Teams Alphabetically:", "field1", array("Dodgers", "Cubs", "Cardinals"));
 $form->addDate("Your Birthday:", "field2");
 $form->addDate("Today\'s Date Pre-filled:", "field3", date("F j, Y"));
-$form->addDateRange("Select a Date Range:", "field4");
-$form->addDateRange("Select a Date Range:<br/>(prefilled)", "field5", date("F j, Y", strtotime("-1 month")) . " - " . date("F j, Y"));
-$form->addSlider("Select Rating:<br/>(1 = lowest; 5 = highest)", "field6", 3, array("sliderMin" => 1, "sliderMax" => 5));
-$form->addSlider("Select Percentage:", "field7", "", array("sliderSuffix" => "%"));
-$form->addSlider("Select Dollar Amount Range:<br/>($5 increments)", "field8", array(25, 75), array("sliderPrefix" => "$", "sliderSnapIncrement" => 5));
-$form->addSlider("Select Rating Vertical:<br/>(1 = lowest; 5 = highest)", "field9", 3, array("sliderMin" => 1, "sliderMax" => 5, "sliderOrientation" => "vertical", "sliderHeight" => 200));
-$form->addSlider("Select Rating w/Custom Scale:", "field10", 3, array("sliderMin" => 1, "sliderMax" => 5, "sliderHideDisplay" => 1, "postHTML" => \'<table cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td align="left" style="width: 73px;">1</td><td align="left" style="width: 74px;">2</td><td align="left" style="width: 74px;">3</td><td align="left">4</td><td align="right">5</td></tr></table>\'));
-$form->addRating("Default Rating:", "field11", "", array("1" => "Bad", "2" => "Below Average", "3" => "Average", "4" => "Above Average", "5" => "Good"));
-$form->addRating("Customized Rating:", "field12", "1", range(1, 10), array("ratingHideCaption" => 1, "ratingHideCancel" => 1));
-$form->addColorPicker("Select Color:", "field13");
-$form->addColorPicker("Select Color Pre-filled:", "field14", "009900");
+$form->addDateTime("Select Date/Time:", "field4");
+$form->addTime("Select Time:", "field5");
+$form->addTime("Select Time w/Minute Increment:", "field6", date("g:i a"), array("minuteSnapIncrement" => 5));
+$form->addDateRange("Select a Date Range:", "field7");
+$form->addDateRange("Select a Date Range:<br/>(prefilled)", "field8", date("F j, Y", strtotime("-1 month")) . " - " . date("F j, Y"));
+$form->addSlider("Select Rating:<br/>(1 = lowest; 5 = highest)", "field9", 3, array("min" => 1, "max" => 5));
+$form->addSlider("Select Percentage:", "field10", "", array("suffix" => "%"));
+$form->addSlider("Select Dollar Amount Range:<br/>($5 increments)", "field11", array(25, 75), array("prefix" => "$", "snapIncrement" => 5));
+$form->addSlider("Select Rating Vertical:<br/>(1 = lowest; 5 = highest)", "field12", 3, array("min" => 1, "max" => 5, "orientation" => "vertical", "height" => 200));
+$form->addSlider("Select Rating w/Custom Scale:", "field13", 3, array("min" => 1, "max" => 5, "hideDisplay" => 1, "postHTML" => \'<table cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td align="left" style="width: 73px;">1</td><td align="left" style="width: 74px;">2</td><td align="left" style="width: 74px;">3</td><td align="left">4</td><td align="right">5</td></tr></table>\'));
+$form->addRating("Default Rating:", "field14", "", array("1" => "Bad", "2" => "Below Average", "3" => "Average", "4" => "Above Average", "5" => "Good"));
+$form->addRating("Customized Rating:", "field15", "1", range(1, 10), array("hideCaption" => 1, "hideCancel" => 1));
+$form->addColorPicker("Select Color:", "field16");
+$form->addColorPicker("Select Color Pre-filled:", "field17", "009900");
 $form->addButton();
 $form->render();
 ?>') . '</pre>';

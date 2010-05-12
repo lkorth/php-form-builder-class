@@ -102,6 +102,7 @@ class form extends base {
 	private $ckeditorIDArr;				/*Uniquely identifies each CKEditor web editor.*/
 	private $jqueryDateIDArr;			/*Uniquely identifies each date element.*/
 	private $jqueryDateTimeIDArr;		/*Uniquely identifies each datetime element.*/
+	private $jqueryTimeIDArr;			/*Uniquely identifies each time element.*/
 	private $jqueryDateRangeIDArr;		/*Uniquely identifies each daterange element.*/
 	private $tooltipIDArr;				/*Uniquely identifies each tooltip.*/
 	private $jquerySliderIDArr;			/*Uniquely identifies each slider element.*/
@@ -129,7 +130,7 @@ class form extends base {
 		$this->captchaPublicKey = "6LcazwoAAAAAADamFkwqj5KN1Gla7l4fpMMbdZfi";
 		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
 		$this->jqueryDateFormat = "MM d, yy";
-		$this->jqueryTimeFormat = "h:ia";
+		$this->jqueryTimeFormat = "h:ii a";
 		$this->ajaxType = "post";
 		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
 		$this->ajaxDataType = "text";
@@ -597,6 +598,22 @@ class form extends base {
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date/Time...";
 		}
+		elseif($eleType == "time")
+		{
+			/*This section ensure that each daterange field has a unique identifier.*/
+			if(empty($ele->attributes["id"]))
+				$ele->attributes["id"] = "timeinput_" . rand(0, 999);
+			if(!isset($this->jqueryTimeIDArr))
+				$this->jqueryTimeIDArr = array();
+			while(in_array($ele->attributes["id"], $this->jqueryTimeIDArr))
+				$ele->attributes["id"] = "timeinput_" . rand(0, 999);
+
+			$ele->readonly = 1;
+			if(empty($ele->hint))
+				$ele->hint = "Click to Select Time...";
+
+			$this->jqueryTimeIDArr[$ele->attributes["id"]] = $ele;
+		}
 		elseif($eleType == "daterange")
 		{
 			/*This section ensure that each daterange field has a unique identifier.*/
@@ -633,8 +650,8 @@ class form extends base {
 			while(array_key_exists($ele->attributes["id"], $this->latlngIDArr))
 				$ele->attributes["id"] = "latlnginput_" . rand(0, 999);
 
-			if(empty($ele->latlngHeight))
-				$ele->latlngHeight = 200;
+			if(empty($ele->height))
+				$ele->height = 200;
 
 			if(empty($ele->hint))
 				$ele->hint = "Drag Map Marker to Select Location...";
@@ -678,25 +695,25 @@ class form extends base {
 			while(array_key_exists($ele->attributes["id"], $this->jquerySliderIDArr))
 				$ele->attributes["id"] = "sliderinput_" . rand(0, 999);
 
-			if(empty($ele->sliderMin))
-				$ele->sliderMin = "0";
+			if(empty($ele->min))
+				$ele->min = "0";
 
-			if(empty($ele->sliderMax))
-				$ele->sliderMax = "100";
+			if(empty($ele->max))
+				$ele->max = "100";
 
-			if(empty($ele->sliderOrientation) || !in_array($ele->sliderOrientation, array("horizontal", "vertical")))
-				$ele->sliderOrientation = "horizontal";
+			if(empty($ele->orientation) || !in_array($ele->orientation, array("horizontal", "vertical")))
+				$ele->orientation = "horizontal";
 
-			if(empty($ele->sliderPrefix))
-				$ele->sliderPrefix = "";
+			if(empty($ele->prefix))
+				$ele->prefix = "";
 
-			if(empty($ele->sliderSuffix))
-				$ele->sliderSuffix = "";
+			if(empty($ele->suffix))
+				$ele->suffix = "";
 
-			if($ele->sliderOrientation == "vertical" && !empty($ele->sliderHeight))
+			if($ele->orientation == "vertical" && !empty($ele->height))
 			{
-				if(substr($ele->sliderHeight, -2) != "px")
-					$ele->sliderHeight .= "px";
+				if(substr($ele->height, -2) != "px")
+					$ele->height .= "px";
 			}		
 
 			$this->jquerySliderIDArr[$ele->attributes["id"]] = $ele;
@@ -792,6 +809,9 @@ class form extends base {
 	}
 	public function addDateTime($label, $name, $value="", $additionalParams="") {
 		$this->addElement($label, $name, "datetime", $value, $additionalParams);
+	}
+	public function addTime($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "time", $value, $additionalParams);
 	}
 	public function addDateRange($label, $name, $value="", $additionalParams="") {
 		$this->addElement($label, $name, "daterange", $value, $additionalParams);
@@ -1130,7 +1150,7 @@ class form extends base {
 				$eleType = &$ele->attributes["type"];
 				
 				/*Add appropriate javascript event functions if hint is present.*/
-				if(in_array($eleType, array("text", "textarea", "date", "datetime", "daterange", "colorpicker", "latlng", "email")) && !empty($ele->hint) && empty($ele->attributes["value"]))
+				if(in_array($eleType, array("text", "textarea", "date", "datetime", "time", "daterange", "colorpicker", "latlng", "email")) && !empty($ele->hint) && empty($ele->attributes["value"]))
 				{
 					$ele->attributes["value"] = $ele->hint;
 					$hintFocusFunction = "hintfocus_" . $this->attributes["id"] . "(this);";
@@ -1150,10 +1170,10 @@ class form extends base {
 					unset($ele->hint);
 
 				$str .= $this->indent();
-				if(in_array($eleType, array("text", "password", "email", "date", "datetime", "daterange", "colorpicker")))
+				if(in_array($eleType, array("text", "password", "email", "date", "datetime", "time", "daterange", "colorpicker")))
 				{
 					/*Temporarily set the type attribute to "text" for <input> tag.*/
-					if(in_array($eleType, array("email", "date", "datetime", "daterange", "colorpicker")))
+					if(in_array($eleType, array("email", "date", "datetime", "time", "daterange", "colorpicker")))
 					{
 						$resetTypeTo = $eleType;
 						$eleType = "text";
@@ -1228,7 +1248,7 @@ class form extends base {
 
 					if($eleType == "webeditor")
 					{
-						if(!empty($ele->webeditorSimple))
+						if(!empty($ele->basic))
 							$ele->attributes["class"] .= " tiny_mce_simple";
 						else
 							$ele->attributes["class"] .= " tiny_mce";
@@ -1308,7 +1328,7 @@ class form extends base {
 						$str .= $this->indent();
 						$str .= '</div></td>';
 
-						if(empty($ele->ratingHideCaption))
+						if(empty($ele->hideCaption))
 							$str .= '<td valign="middle"><div id="' . $ele->ratingID . '_caption" style="padding-left: 5px;"></div></td>';
 
 						$str .= '</tr></table>';
@@ -1487,11 +1507,11 @@ class form extends base {
 					$eleType = "latlng";
 
 					$str .= $this->indent();
-					$str .= '<div id="' . $latlngID . '_canvas" style="margin: 2px 0; height: ' . $ele->latlngHeight . 'px;';
-					if(!empty($ele->latlngWidth))
-						$str .= ' width: ' . $ele->latlngWidth . 'px;';
+					$str .= '<div id="' . $latlngID . '_canvas" style="margin: 2px 0; height: ' . $ele->height . 'px;';
+					if(!empty($ele->width))
+						$str .= ' width: ' . $ele->width . 'px;';
 					$str .= '"></div>';
-					if(empty($ele->latlngHideJump))
+					if(empty($ele->hideJump))
 					{
 						$str .= $this->indent();
 						$str .= '<input id="' . $latlngID . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["id"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["id"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["id"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"]) . '\');"/>';
@@ -1597,21 +1617,21 @@ class form extends base {
 						$ele->attributes["value"] = $ele->attributes["value"][0];
 					
 					$str .= '<div id="' . $ele->attributes["id"] . '" style="font-size: 12px !important; margin: 2px 0;';
-					if($ele->sliderOrientation == "vertical" && !empty($ele->sliderHeight))
-						$str .= ' height: ' . $ele->sliderHeight;
+					if($ele->orientation == "vertical" && !empty($ele->height))
+						$str .= ' height: ' . $ele->height;
 					$str .= '"></div>';
 
-					if(empty($ele->sliderHideDisplay))
+					if(empty($ele->hideDisplay))
 					{
 						$str .= $this->indent();
 						$str .= '<div id="' . $ele->attributes["id"] . '_display">';
 						if(is_array($ele->attributes["value"]))
 						{
 							sort($ele->attributes["value"]);
-							$str .= $ele->sliderPrefix . $ele->attributes["value"][0] . $ele->sliderSuffix . " - " . $ele->sliderPrefix . $ele->attributes["value"][1] . $ele->sliderSuffix;
+							$str .= $ele->prefix . $ele->attributes["value"][0] . $ele->suffix . " - " . $ele->prefix . $ele->attributes["value"][1] . $ele->suffix;
 						}	
 						else
-							$str .= $ele->sliderPrefix . $ele->attributes["value"] . $ele->sliderSuffix;
+							$str .= $ele->prefix . $ele->attributes["value"] . $ele->suffix;
 						$str .= '</div>';
 					}
 
@@ -1690,7 +1710,7 @@ STR;
 STR;
 		}
 
-		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateTimeIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr))
+		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateTimeIDArr) || !empty($this->jqueryTimeIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr))
 		{
 			if(empty($this->preventJQueryUILoad))
 			{
@@ -1720,6 +1740,21 @@ STR;
 		{
 			$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/timepicker.js"></script>
+
+STR;
+		}	
+
+		if(!empty($this->jqueryTimeIDArr))
+		{
+			$str .= <<<STR
+		<script type="text/javascript">
+			var css = document.createElement('link');
+			css.rel = 'stylesheet';
+			css.type = 'text/css';
+			css.href = '{$this->jsIncludesPath}/jquery/plugins/timepicker/km.timepicker.css';
+			head.appendChild(css);
+		</script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/timepicker/km.timepicker.js"></script>
 
 STR;
 		}	
@@ -2091,7 +2126,7 @@ STR;
 
 STR;
 			}
-			elseif($eleType == "text" || $eleType == "textarea" || $eleType == "date" || $eleType == "daterange" || $eleType == "latlng" || $eleType == "colorpicker" || $eleType == "email")
+			elseif($eleType == "text" || $eleType == "textarea" || $eleType == "date" || $eleType == "datetime" || $eleType == "time" || $eleType == "daterange" || $eleType == "latlng" || $eleType == "colorpicker" || $eleType == "email")
 			{
 				$eleHint = str_replace('"', '&quot;', $ele->hint);
 				if(!empty($this->ajax))
@@ -2346,7 +2381,7 @@ STR;
 			/*Automatically unserialize the appropriate form instance stored in the session array.*/
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateTimeIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr))
+			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateTimeIDArr) || !empty($form->jqueryTimeIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr))
 			{
 				$str .= <<<STR
 $(function() {
@@ -2371,6 +2406,45 @@ STR;
 					{
 						$str .= <<<STR
 	$("#{$form->jqueryDateTimeIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", duration: "", showTime: true, constrainInput: false });
+
+STR;
+					}	
+				}
+
+				if(!empty($form->jqueryTimeIDArr))
+				{
+					$timeKeys = array_keys($form->jqueryTimeIDArr);
+					$timeSize = sizeof($form->jqueryTimeIDArr);
+					for($t = 0; $t < $timeSize; ++$t)
+					{
+						$time = $form->jqueryTimeIDArr[$timeKeys[$t]];
+						$str .= <<<STR
+	$("#{$timeKeys[$t]}").kmTimepicker({ timeFormat: "{$form->jqueryTimeFormat}", duration: ""
+
+STR;
+						if(!empty($time->minuteSnapIncrement))
+						{
+							$str .= <<<STR
+, stepMinutes: {$time->minuteSnapIncrement}
+
+STR;
+						}
+						if(!empty($time->hourSnapIncrement))
+						{
+							$str .= <<<STR
+, stepHours: {$time->hourSnapIncrement}
+
+STR;
+						}
+						if(!empty($time->is24Hour))
+						{
+							$str .= <<<STR
+, time24h: true
+
+STR;
+						}
+						$str .= <<<STR
+ });
 
 STR;
 					}	
@@ -2470,15 +2544,15 @@ STR;
 STR;
 						}	
 						$str .= <<<STR
-		min: {$slider->sliderMin}, 
-		max: {$slider->sliderMax}, 
-		orientation: "{$slider->sliderOrientation}",
+		min: {$slider->min}, 
+		max: {$slider->max}, 
+		orientation: "{$slider->orientation}",
 
 STR;
-						if(!empty($slider->sliderSnapIncrement))
+						if(!empty($slider->snapIncrement))
 						{
 							$str .= <<<STR
-		step: {$slider->sliderSnapIncrement},
+		step: {$slider->snapIncrement},
 
 STR;
 						}	
@@ -2488,10 +2562,10 @@ STR;
 		slide: function(event, ui) {
 
 STR;
-							if(empty($slider->sliderHideDisplay))
+							if(empty($slider->hideDisplay))
 							{
 								$str .= <<<STR
-			$("#{$sliderKeys[$s]}_display").text("{$slider->sliderPrefix}" + ui.values[0] + "{$slider->sliderSuffix} - {$slider->sliderPrefix}" + ui.values[1] + "{$slider->sliderSuffix}");
+			$("#{$sliderKeys[$s]}_display").text("{$slider->prefix}" + ui.values[0] + "{$slider->suffix} - {$slider->prefix}" + ui.values[1] + "{$slider->suffix}");
 
 STR;
 							}	
@@ -2507,10 +2581,10 @@ STR;
 		slide: function(event, ui) {
 
 STR;
-							if(empty($slider->sliderHideDisplay))
+							if(empty($slider->hideDisplay))
 							{
 								$str .= <<<STR
-			$("#{$slider->attributes["id"]}_display").text("{$slider->sliderPrefix}" + ui.value + "{$slider->sliderSuffix}");
+			$("#{$slider->attributes["id"]}_display").text("{$slider->prefix}" + ui.value + "{$slider->suffix}");
 
 STR;
 							}	
@@ -2539,14 +2613,14 @@ STR;
 	$("#{$ratingKeys[$r]}").stars({
 
 STR;
-						if(empty($rating->ratingHideCaption))
+						if(empty($rating->hideCaption))
 						{
 							$str .= <<<STR
 		captionEl: $("#{$ratingKeys[$r]}_caption"),
 
 STR;
 						}	
-						if(!empty($rating->ratingHideCancel))
+						if(!empty($rating->hideCancel))
 						{
 							$str .= <<<STR
 		cancelShow: false,
@@ -2629,18 +2703,18 @@ STR;
 					if(!empty($latlng->attributes["value"]) && $latlng->attributes["value"] != $latlng->hint)
 					{
 						$latlngCenter = $latlng->attributes["value"];
-						if(empty($latlng->latlngZoom))
+						if(empty($latlng->zoom))
 							$latlngZoom = 9;
 						else
-							$latlngZoom = $latlng->latlngZoom;
+							$latlngZoom = $latlng->zoom;
 					}		
 					else	
 					{
 						$latlngCenter = $form->latlngDefaultLocation;
-						if(empty($latlng->latlngZoom))
+						if(empty($latlng->zoom))
 							$latlngZoom = 5;
 						else
-							$latlngZoom = $latlng->latlngZoom;
+							$latlngZoom = $latlng->zoom;
 					}	
 
 				$str .= <<<STR
@@ -2760,7 +2834,7 @@ STR;
 					$ckeditor = $form->ckeditorIDArr[$ckeditorKeys[$c]];
 					$ckeditorID = str_replace('"', '&quot;', $ckeditor->attributes["id"]);
 					$ckeditorParamArr = array();
-					if(!empty($ckeditor->ckeditorBasic))
+					if(!empty($ckeditor->basic))
 						$ckeditorParamArr[] = 'toolbar: "Basic"';
 					if(!empty($form->ckeditorCustomConfig))	
 						$ckeditorParamArr[] = 'customConfig: "' . $form->ckeditorCustomConfig . '"';
@@ -3418,32 +3492,31 @@ class element extends base {
 	public $tooltipID;					/*Uniquely identifies each tooltip.*/
 	public $hint;						/*If provided, this content will be displayed as the field's value until focus event.*/
 	public $clear;						/*Only applicable for checkbox, radio, and checksort elements.  Inserts float-clearing div tag after last option.*/
-
-	/*webeditor specific fields*/
-	public $webeditorSimple;			/*Overrides default webeditor settings and renders a simplified version.*/
-
-	/*ckeditor specific fields*/
-	public $ckeditorBasic;				/*Overrides default ckeditor settings and renders a simplified toolbar.*/
+	public $width;						/*Generic width used for multiple elements.*/
+	public $height;						/*Generic height used for multiple elements.*/
+	public $basic;						/*Used for both web editors to render minified version.*/
 
 	/*latlng specific fields*/
-	public $latlngHeight;				/*Controls height of Google Map.*/
-	public $latlngWidth;				/*Controls width of Google Map.*/
-	public $latlngZoom;					/*Controls zoom level when Google Map is initially loaded.*/
-	public $latlngHideJump;				/*Will hide the textbox for location jump functionality.*/
+	public $zoom;						/*Controls zoom level when Google Map is initially loaded.*/
+	public $hideJump;					/*Will hide the textbox for location jump functionality.*/
 
 	/*slider specific fields*/
-	public $sliderMin;					/*Controls lowest value of slider.*/ 
-	public $sliderMax;					/*Controls highest value of slider.*/
-	public $sliderSnapIncrement;		/*Controls incremental step of slider.*/
-	public $sliderOrientation;			/*Defaults to horizontal but can be set to vertical.*/
-	public $sliderPrefix;				/*Will prepend dynamic slider label with specified string.*/
-	public $sliderSuffix;				/*Will append end of dynamic slider label with specified string.*/
-	public $sliderHeight;				/*If the sliderOrientation is set to vertical, this parameter controls the slider height.*/
-	public $sliderHideDisplay;			/*Hides dynamic slider label.*/
+	public $min;						/*Controls lowest value of slider.*/ 
+	public $max;						/*Controls highest value of slider.*/
+	public $snapIncrement;				/*Controls incremental step of slider.*/
+	public $orientation;				/*Defaults to horizontal but can be set to vertical.*/
+	public $prefix;						/*Will prepend dynamic slider label with specified string.*/
+	public $suffix;						/*Will append end of dynamic slider label with specified string.*/
+	public $hideDisplay;				/*Hides dynamic slider label.*/
 
 	/*rating specific fields*/
-	public $ratingHideCaption;			/*Hides dynamic rating label.*/
-	public $ratingHideCancel;			/*Hides rating cancel image.*/
+	public $hideCaption;				/*Hides dynamic rating label.*/
+	public $hideCancel;					/*Hides rating cancel image.*/
+
+	/*time specific fields*/
+	public $minuteSnapIncrement;		/*Controls incremental step of minute slider.*/
+	public $hourSnapIncrement;			/*Controls incremental step of hour slider.*/
+	public $is24Hour;					/*Controls if time returned is in 24 hour format.*/
 
 	public function __construct() {
 		/*Set default values where appropriate.*/

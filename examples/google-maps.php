@@ -31,8 +31,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				longitude will be inserted into the textbox above the map. You can also make use of the Location Jump textbox to move to a specific 
 				location. The maps latitude/longitude will automatically update as you type.  The location will need to be parsed once submitted - I recommend using 
 				explode() on the "," and substring() on each piece.</p>
-				<p>You can customize the map's zoom, width, and height with the <i>latlngZoom</i>, <i>latlngWidth</i>, and <i>latlngHeight</i> element attributes.  Also, you can disable
-				the location jump functionality with the <i>latlngHideJump</i> element attribute.</p>
+				<p>You can customize the map's zoom, width, and height with the <i>zoom</i>, <i>width</i>, and <i>height</i> element attributes.  Also, you can disable
+				the location jump functionality with the <i>hideJump</i> element attribute.</p>
 				<p>Also, you can use the <i>latlngDefaultLocation</i> form attribute to control where the marker is placed on the map initially - with no value assigned.</p>
 
 				<?php
@@ -44,7 +44,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				));
 				$form->addHidden("cmd", "submit");
 				$form->addLatLng("Detault LatLng Functionality:", "field0");
-				$form->addLatLng("Pre-Filled LatLng Functionality:", "field1", array(40.737, -73.994), array("latlngZoom" => 12, "latlngHeight" => 400));
+				$form->addLatLng("Pre-Filled LatLng Functionality:", "field1", array(40.737, -73.994), array("zoom" => 12, "height" => 400));
 				$form->addButton();
 				$form->render();
 
@@ -57,7 +57,7 @@ $form->setAttributes(array(
 ));
 $form->addHidden("cmd", "submit");
 $form->addLatLng("Detault LatLng Functionality:", "field0");
-$form->addLatLng("Pre-Filled LatLng Functionality:", "field1", array(40.737, -73.994), array("latlngZoom" => 12, "latlngHeight" => 400));
+$form->addLatLng("Pre-Filled LatLng Functionality:", "field1", array(40.737, -73.994), array("zoom" => 12, "height" => 400));
 $form->addButton();
 $form->render();
 ?>') . '</pre>';
