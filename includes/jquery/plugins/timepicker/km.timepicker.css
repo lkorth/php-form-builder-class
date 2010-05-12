@@ -1,0 +1,27 @@
+/* timepicker */
+.km-timepicker { padding: .2em .2em 0; }
+.km-timepicker .km-timepicker-header { position:relative; padding:.2em 0; }
+.km-timepicker .km-timepicker-title { margin: 0 2.3em; line-height: 1.8em; text-align: center; }
+.km-timepicker table {width: 100%; font-size: .9em; border-collapse: collapse; margin: 0 0 .7em 0; }
+.km-timepicker th { padding: .7em; text-align: center; font-weight: bold; border: 0;  }
+.km-timepicker td { border: 0; padding: 1px; }
+.km-timepicker .km-timepicker-buttonpane { background-image: none; margin: .7em 0 0 0; padding:0 .2em; border-left: 0; border-right: 0; border-bottom: 0; text-align: center }
+.km-timepicker .km-timepicker-buttonpane button { margin: .5em .2em .4em; cursor: pointer; padding: .2em .6em .3em .6em; width:auto; overflow:visible; }
+
+/* RTL support */
+.km-timepicker-rtl { direction: rtl; }
+.km-timepicker-rtl .km-timepicker-buttonpane { clear:right; }
+.km-timepicker-rtl .km-timepicker-buttonpane button { float: left; }
+
+/* IE6 IFRAME FIX (taken from datepicker 1.5.3 */
+.km-timepicker-cover {
+    display: none; /*sorry for IE5*/
+    display/**/: block; /*sorry for IE5*/
+    position: absolute; /*must have*/
+    z-index: -1; /*must have*/
+    filter: mask(); /*must have*/
+    top: -4px; /*must have*/
+    left: -4px; /*must have*/
+    width: 200px; /*must have*/
+    height: 200px; /*must have*/
+}
