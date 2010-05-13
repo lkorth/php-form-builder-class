@@ -82,6 +82,7 @@ class form extends base {
 	protected $onsubmitFunction;		/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
 	protected $preventDefaultCSS;		/*Prevents default css from being applied.  Allows for custom styling.*/
 	protected $jsErrorFunction;			/*Allows js function for handling rendering error error messages to be defined.*/
+	protected $preventXHTMLStrict;		/*Renders javascript and css directly in the elementsToString() function and not in js.php/css.php.*/
 
 	/*Variables that can only be set inside this class.*/
 	private $elements;					/*Contains all element objects for a form.*/
@@ -1842,12 +1843,14 @@ STR;
 		/*Serialize the form and store it in a session array.  This variable will be unserialized and used within the validate() method.*/
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
-		$session_param = "";
-		$session_name = session_name();
-		if($session_name != "PHPSESSID")
-			$session_param = "&session_name=$session_name";
+		if(empty($this->preventXHTMLStrict))
+		{
+			$session_param = "";
+			$session_name = session_name();
+			if($session_name != "PHPSESSID")
+				$session_param = "&session_name=$session_name";
 
-		$str .= <<<STR
+			$str .= <<<STR
 		<script type="text/javascript">
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
@@ -1860,6 +1863,29 @@ STR;
 			script.src = '{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param';
 			head.appendChild(script);
 		</script>
+
+STR;
+		}
+		else
+		{
+			$str .= <<<STR
+		<style type="text/css">
+
+STR;
+			$str .= $this->renderCSS(true);
+			$str .= <<<STR
+		</style>	
+		<script type="text/javascript">
+
+STR;
+			$str .= $this->renderJS(true);
+			$str .= <<<STR
+		</script>
+
+STR;
+		}
+
+		$str .= <<<STR
 	</div>	
 
 STR;
