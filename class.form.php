@@ -144,16 +144,15 @@ class form extends base {
 		/*This array prevents junk from being inserted into the form's HTML.  If you find that an attributes you need to use is not included
 		in this list, feel free to customize to fit your needs.*/
 		$this->allowedFields = array(
-			"form" => array("method", "action", "target", "enctype", "onsubmit", "id", "class", "style"),
-			"hidden" => array("id", "name", "value", "type"),
-			"text" => array("id", "name", "value", "type", "class", "style", "onclick", "onkeyup", "onfocus", "onblur", "maxlength", "size"),
-			"textarea" => array("id", "name", "class", "style", "onclick", "onkeyup", "maxlength", "onfocus", "onblur", "size", "rows", "cols"),
-			"select" => array("id", "name", "class", "style", "onclick", "onchange", "onfocus", "onblur", "size"),
-			"radio" => array("name", "style", "class", "onclick", "type"),
-			"checksort" => array("style", "class"),
-			"button" => array("name", "value", "type", "id", "onclick", "class", "style"),
-			"a" => array("id", "name", "href", "class", "style", "target"),
-			"latlng" => array("id", "name", "type", "class", "style", "onclick", "onkeyup", "maxlength", "size")
+			"form" => array("action", "accept", "accept-charset", "enctype", "method", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onreset", "onsubmit"),
+			"text" => array("accept", "disabled", "maxlength", "name", "readonly", "size", "type", "value", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
+			"textarea" => array("cols", "rows", "disabled", "name", "readonly", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
+			"select" => array("disabled", "multiple", "name", "size", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup"),
+			"radio" => array("checked", "disabled", "name", "size", "type", "accesskey", "class", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
+			"checksort" => array("checked", "disabled", "name", "size", "accesskey", "class", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
+			"button" => array("alt", "disabled", "name", "size", "src", "type", "value", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
+			"a" => array("charset", "coords", "href", "hreflang", "name", "rel", "rev", "sharp", "accesskey", "clas", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup"),
+			"latlng" => array("disabled", "maxlength", "name", "readonly", "size", "type", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
 		);
 	}
 
@@ -579,7 +578,7 @@ class form extends base {
 				$ele->attributes["id"] = "dateinput_" . rand(0, 999);
 			$this->jqueryDateIDArr[] = $ele->attributes["id"];
 
-			$ele->readonly = 1;
+			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date...";
 		}
@@ -594,7 +593,7 @@ class form extends base {
 				$ele->attributes["id"] = "datetimeinput_" . rand(0, 999);
 			$this->jqueryDateTimeIDArr[] = $ele->attributes["id"];
 
-			$ele->readonly = 1;
+			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date/Time...";
 		}
@@ -608,7 +607,7 @@ class form extends base {
 			while(in_array($ele->attributes["id"], $this->jqueryTimeIDArr))
 				$ele->attributes["id"] = "timeinput_" . rand(0, 999);
 
-			$ele->readonly = 1;
+			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Time...";
 
@@ -625,7 +624,7 @@ class form extends base {
 				$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
 			$this->jqueryDateRangeIDArr[] = $ele->attributes["id"];
 
-			$ele->readonly = 1;
+			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date Range...";
 		}
@@ -653,6 +652,7 @@ class form extends base {
 			if(empty($ele->height))
 				$ele->height = 200;
 
+			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Drag Map Marker to Select Location...";
 		}
@@ -1052,7 +1052,7 @@ class form extends base {
 				$str .= "\n\t\t<input";
 				if(!empty($ele->attributes) && is_array($ele->attributes))
 				{
-					$tmpAllowFieldArr = $this->allowedFields["hidden"];
+					$tmpAllowFieldArr = $this->allowedFields["text"];
 					foreach($ele->attributes as $key => $value)
 					{
 						if(in_array($key, $tmpAllowFieldArr))
@@ -1194,10 +1194,6 @@ class form extends base {
 								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 						}		
 					}
-					if(!empty($ele->disabled))
-						$str .= ' disabled="disabled"';
-					if(!empty($ele->readonly))
-						$str .= ' readonly="readonly"';
 					$str .= "/>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
@@ -1226,10 +1222,6 @@ class form extends base {
 								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 						}		
 					}
-					if(!empty($ele->disabled))
-						$str .= ' disabled="disabled"';
-					if(!empty($ele->readonly))
-						$str .= ' readonly="readonly"';
 					$str .= "/>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
@@ -1264,10 +1256,6 @@ class form extends base {
 								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 						}
 					}
-					if(!empty($ele->disabled))
-						$str .= ' disabled="disabled"';
-					if(!empty($ele->readonly))
-						$str .= ' readonly="readonly"';
 					$str .= ">" . $ele->attributes["value"] . "</textarea>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
@@ -1295,12 +1283,6 @@ class form extends base {
 								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 						}
 					}
-					if(!empty($ele->disabled))
-						$str .= ' disabled="disabled"';
-					if(!empty($ele->readonly))
-						$str .= ' readonly="readonly"';
-					if(!empty($ele->multiple))
-						$str .= ' multiple="multiple"';
 					$str .= ">";
 
 					$selected = false;
@@ -1366,8 +1348,6 @@ class form extends base {
 							$str .= ' id="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';		
 							if($ele->attributes["value"] == $ele->options[$o]->value)
 								$str .= ' checked="checked"';
-							if(!empty($ele->disabled))
-								$str .= ' disabled="disabled"';
 							$str .= '/>';
 							$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->options[$o]->text . "</label></div>";
 						}	
@@ -1414,8 +1394,6 @@ class form extends base {
 							/*For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.*/
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true)))
 								$str .= ' checked="checked"';
-							if(!empty($ele->disabled))
-								$str .= ' disabled="disabled"';
 							$str .= '/>';
 							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
 						}	
@@ -1498,10 +1476,7 @@ class form extends base {
 						$str .= $ele->hint;
 					elseif(!empty($ele->attributes["value"]) && is_array($ele->attributes["value"]))	
 						$str .=  "Latitude: " . $ele->attributes["value"][0] . ", Longitude: " . $ele->attributes["value"][1];
-					$str .= '"';
-
-					$str .= ' readonly="readonly"';
-					$str .= "/>";
+					$str .= '"/>';
 
 					/*Now that <input> tag his been rendered, change type attribute back to "latlng".*/
 					$eleType = "latlng";
@@ -1568,8 +1543,6 @@ class form extends base {
 								$str .= ' checked="checked"';
 								$sortLIArr[$ele->options[$o]->value] = '<li id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . $o . '" class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2em; line-height: 2em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"/></span>' . $ele->options[$o]->text . '</li>' . "\n";
 							}	
-							if(!empty($ele->disabled))
-								$str .= ' disabled="disabled"';
 							$str .= '/>';
 							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
 						}	
@@ -3499,9 +3472,6 @@ class element extends base {
 	public $label;						/*Text/HTML that is placed in <div> about form input type.*/
 	public $options;					/*Contains multiple options such as select, radio, checkbox, etc.  Can exist as associative or one-dimensional array.*/
 	public $required;					/*Will trigger javascript error checking.*/
-	public $disabled;					/*Adds "disabled" keyword to input element.*/
-	public $multiple;					/*Adds "multiple" keyword to input element.*/
-	public $readonly;					/*Adds "readonly" keyword to input element.*/
 	public $nobreak;					/*Applicable for radio, yesno, truefalse, and checkbox elements.  If this parameter is set, there will not be <br> tags separating each option.*/
 	public $preHTML;					/*HTML content that is rendered before <div> containing the element's label.*/
 	public $postHTML;					/*HTML content that is rendered just before the closing </td> of the element.*/
