@@ -134,8 +134,8 @@ class form extends base {
 		$this->ajaxCallback = "alert";
 		$this->ajaxType = "post";
 		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
-		$this->errorMsgFormat = "[LABEL] is a required field.";
-		$this->emailErrorMsgFormat = "[LABEL] contains an invalid email address.";
+		$this->errorMsgFormat = "<b>Error:</b> [LABEL] is a required field.";
+		$this->emailErrorMsgFormat = "<b>Error:</b> [LABEL] contains an invalid email address.";
 		$this->includesPath = "php-form-builder-class/includes";
 		$this->onsubmitFunction = "pfbc_onsubmit_" . $this->attributes["id"];
 		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
@@ -2926,7 +2926,7 @@ function pfbc_error_{$form->attributes["id"]}(errorMsg) {
 	error.className = 'ui-widget';
 	error.id = 'pfbc-{$form->attributes["id"]}-error';
 	error.style.cssText = 'margin: 7px 0;';
-	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;"><b>Error:</b> ' + errorMsg + '</div>';
+	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
 	$("#{$form->attributes["id"]} .pfbc-main:first").prepend(error);
 	$('html, body').animate({ scrollTop: $("#{$form->attributes["id"]}").offset().top }, 500);
 }
