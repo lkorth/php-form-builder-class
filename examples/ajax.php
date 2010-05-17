@@ -25,7 +25,11 @@ elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "loading")
 }
 elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "manual")
 {
-	echo "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
+	echo "Selected Option(s): ";
+	if(!empty($_POST["Options"]))
+		echo implode(", ", $_POST["Options"]);
+	else
+		echo "None";
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
@@ -48,7 +52,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			<div id="pfbc_content">
 				<p><b>Ajax</b> - Included in this class is the ability to submit a form using ajax.  Simply set the <i>ajax</i> form attribute to 1 and you are ready to get started.  Optional parameters include 
 				<i>ajaxType</i> which allows you to specify if you want to submit the form using POST or GET (defaults to POST), <i>ajaxUrl</i> which controls where the form submits data (defaults to current script), 
-				<i>ajaxDataType</i> which specifies the server response format (defaults to text), and <i>ajaxCallback</i> which gives you control over what events happen once the form have successfully submitted.</p>
+				<i>ajaxDataType</i> which specifies the server response format (defaults to an intelligent guess based on MIME type), and <i>ajaxCallback</i> which gives you control over what events happen once the form have successfully submitted.</p>
 
 				<p><b>Example 1: Sign Up Form</b> - Below you will find a typical signup form with a field for a entering a username, password, and confirmation password.  In the processing section, which is viewable in this php source code, you will see that if
 				the user enters "formbuilder" in the Username field, an error message will be displayed explaining that username "formbuilder" already exists in the system.  Also, if the Password field is not greater than 5 characters or the two password fields do not match, an appropriate error message will be displayed via javascript alerts.</p>
@@ -85,10 +89,11 @@ $form->render();
 				<p><b>Example 2: Login Form</b> - This sample login form uses four ajax specific paramters, each of which are described below.</p>
 				<ul>
 					<li><i>ajaxType</i> - controls submission method - GET or POST.  By default, this parameter is set to POST; however, it is set to GET in the form below.</li>
-					<li><i>ajaxCallback</i> - triggers javascript function once the form has submitted.  Notice that the function is set as a string without "( )" on the end.  
+					<li><i>ajaxCallback</i> - triggers javascript function after the form has submitted.  Notice that the function is set as a string without parenthesis.  
 					Also, a parameter, msg in this case, is automatically passed to this callback function which includes any response sent back from the web server.</li>  
+					<li><i>ajaxPreCallback</i> - triggers javascript function before the form has submitted.</li>
 					<li><i>ajaxUrl</i> - controls where form submits.  By default, this parameter is set to the current script; however, it is set to ajaxSubmission.php in the form below.</li>
-					<li><i>ajaxDataType</i> - specifies the data format for any server responses.  Options include xml, html, script, json, jsonp, and text.  By default, this parameter is set to text; however, it is set to xml in the form below.</li>
+					<li><i>ajaxDataType</i> - specifies the data format for any server responses.  Options include xml, html, script, json, jsonp, and text.  By default, this parameter is set based on MIME type.</li>
 				</ul>
 				
 				<p>Use "formbuilder" as the Username and "password" as the Password to login with the form below.  Any other parameters will display an error message above the form.</p>
@@ -104,8 +109,7 @@ $form->render();
 					"ajax" => 1,
 					"ajaxType" => "GET",
 					"ajaxCallback" => "loginHandler",
-					"ajaxUrl" => "ajax-submission.php",
-					"ajaxDataType" => "xml"
+					"ajaxUrl" => "ajax-submission.php"
 				));
 				$form->addHidden("cmd", "login");
 				$form->addTextbox("Username:", "Username", "", array("required" => 1));
@@ -133,8 +137,7 @@ $form->setAttributes(array(
 	"ajax" => 1,
 	"ajaxType" => "GET",
 	"ajaxCallback" => "loginHandler",
-	"ajaxUrl" => "ajax-submission.php",
-	"ajaxDataType" => "xml"
+	"ajaxUrl" => "ajax-submission.php"
 ));
 $form->addHidden("cmd", "login");
 $form->addTextbox("Username:", "Username", "", array("required" => 1));
@@ -241,7 +244,7 @@ $form->render();
 					"onsubmitFunction" => "processAjaxPost"
 				));
 				$form->addHidden("cmd", "manual");
-				$form->addCheckbox("Available Options:", "Option", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);", "clear" => 1));
+				$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);", "clear" => 1));
 				$form->render();
 
 echo '<pre>' . htmlentities('<?php
@@ -255,7 +258,7 @@ $form->setAttributes(array(
 	"onsubmitFunction" => "processAjaxPost"
 ));
 $form->addHidden("cmd", "manual");
-$form->addCheckbox("Available Options:", "Option", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);", "clear" => 1));
+$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);", "clear" => 1));
 $form->render();
 ') . '</pre>';
 

@@ -5,8 +5,7 @@ Google Groups - http://groups.google.com/group/php-form-builder-class/
 */
 
 class base {
-	/*This class provides two methods - setAttributes and debug - that can be used for all classes that extend this class 
-	which are form, option, element, and button.*/
+	/*This class provides two methods - setAttributes and debug - that can be used for all classes that extend this class.*/
 	function setAttributes($params) {
 		if(!empty($params) && is_array($params))
 		{
@@ -47,8 +46,8 @@ class base {
 class form extends base { 
 	/*Variables that can be set through the setAttributes function on the base class.*/
 	protected $attributes;				/*HTML attributes attached to <form> tag.*/
-	protected $map;						/*Unrelated to latlng/map field type.  Used to control table structure.*/
-	protected $mapMargin;				/*When using the map form attribute, this setting controls the spacing between columns.*/		
+	protected $map;						/*Unrelated to latlng/map field type.  Used to control structure.*/
+	protected $mapMargin;				/*When using the map form attribute, this setting controls the spacing between columns.*/
 	protected $ajax;					/*Activate ajax form submission.*/
 	protected $ajaxType;				/*Specify form submission as get/post.*/
 	protected $ajaxUrl;					/*Where to send ajax submission.*/
@@ -132,9 +131,9 @@ class form extends base {
 		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
 		$this->jqueryDateFormat = "MM d, yy";
 		$this->jqueryTimeFormat = "h:ii a";
+		$this->ajaxCallback = "alert";
 		$this->ajaxType = "post";
 		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
-		$this->ajaxDataType = "text";
 		$this->errorMsgFormat = "[LABEL] is a required field.";
 		$this->emailErrorMsgFormat = "[LABEL] contains an invalid email address.";
 		$this->includesPath = "php-form-builder-class/includes";
@@ -2979,7 +2978,16 @@ STR;
 	$.ajax({
 		type: "{$form->ajaxType}",
 		url: "{$form->ajaxUrl}",
+
+STR;
+						if(!empty($form->ajaxDataType))
+						{
+							$str .= <<<STR
 		dataType: "{$form->ajaxDataType}",
+
+STR;
+						}
+						$str .= <<<STR
 		data: form_data,
 
 STR;
@@ -2994,25 +3002,9 @@ STR;
 						}
 						$str .= <<<STR
 		success: function(responseMsg) {
-
-STR;
-						if(!empty($form->ajaxCallback))
-						{
-							$str .= <<<STR
-						{$form->ajaxCallback}(responseMsg);
-
-STR;
-						}	
-						else
-						{
-							$str .= <<<STR
-			if(responseMsg != "")
-				{$form->jsErrorFunction}(responseMsg);
-
-STR;
-						}		
-						$str .= <<<STR
-		},
+			if("{$form->ajaxCallback}" != "alert" || (typeof responseMsg == "string" && responseMsg != ""))
+				{$form->ajaxCallback}(responseMsg);
+		},	
 		error: function(XMLHttpRequest, textStatus, errorThrown) { {$form->jsErrorFunction}(XMLHttpRequest.responseText); }
 	});
 	return false;
