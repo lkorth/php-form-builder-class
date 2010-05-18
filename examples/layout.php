@@ -49,7 +49,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("layout");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -67,7 +67,7 @@ $form->addState("State:", "State");
 $form->addTextbox("Zip Code:", "Zip");
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>

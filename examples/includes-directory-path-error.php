@@ -57,7 +57,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("includes_configuration_error");
 $form->setAttributes(array(
 	//"includesPath" => "../includes",
@@ -70,7 +70,7 @@ $form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", 
 $form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"));
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>	

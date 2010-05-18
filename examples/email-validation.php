@@ -54,7 +54,7 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("email_validation");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -65,7 +65,7 @@ $form->addHidden("cmd", "submit");
 $form->addEmail("Email Address:", "Email", "", array("required" => 1));
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>	

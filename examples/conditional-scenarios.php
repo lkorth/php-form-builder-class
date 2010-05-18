@@ -90,7 +90,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				</script>
 				<?php
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $billing_form = new form("billing");
 $billing_form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -142,7 +142,7 @@ $billing_form->render();
 	if(document.getElementById("billing").UseBilling[1].checked)
 		toggleShipping(0);
 </script>
-') . '</pre>';
+', true), '</pre>';
 
 				$location_form = new form("location");
 				$location_form->setAttributes(array(
@@ -183,7 +183,7 @@ $billing_form->render();
 				</script>
 				<?php
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $location_form = new form("location");
 $location_form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -228,7 +228,7 @@ $location_form->render();
 	}	
 	toggleLocationOptions(document.getElementById("location").LocationOption.value);
 </script>
-') . '</pre>';
+', true), '</pre>';
 
 				?>
 			</div>

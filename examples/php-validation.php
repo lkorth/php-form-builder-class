@@ -63,7 +63,7 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("php_validation");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -76,7 +76,7 @@ $form->addWebEditor("Required Web Editor:", "field2", "", array("required" => 1)
 $form->addCaptcha("Captcha:");
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>

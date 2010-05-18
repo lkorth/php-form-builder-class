@@ -95,7 +95,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("form_elements");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -129,7 +129,7 @@ $form->addColorPicker("Color Picker", "field21");
 $form->addEmail("Email:", "field22");
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>	

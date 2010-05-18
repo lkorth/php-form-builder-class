@@ -46,7 +46,7 @@ include("../class.form.php");
 				<p>Consider the code snippet below...</p>	
 
 				<?php
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 include("php-form-builder-class/class.form.php");
 
 $form = new form("HelloWorld");
@@ -57,15 +57,15 @@ $form->setAttributes(array(
 $form->addTextbox("My Textbox:", "MyTextbox", "Hello World");
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>The first thing you'll notice is that class.form.php is included with...</p>
 
 				<?php
-echo '<pre>' . htmlentities('
+echo '<pre>', highlight_string('<?php
 include("php-form-builder-class/class.form.php");
-') . '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>This file is where most of the magic happens within the project. It can be found within the php-form-builder-class 
@@ -74,9 +74,9 @@ include("php-form-builder-class/class.form.php");
 				<p>Next, a new form object is created with...</p>	
 
 				<?php
-echo '<pre>' . htmlentities('
+echo '<pre>', highlight_string('<?php
 $form = new form("HelloWorld");
-') . '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>An identifier, "HelloWorld" in this case, is included.  If this identifier is not provided, "myform" will be used; however,
@@ -86,11 +86,11 @@ $form = new form("HelloWorld");
 				<p>Once the form object is created, the setAttributes() function is invoked...</p>
 
 				<?php
-echo '<pre>' . htmlentities('
+echo '<pre>', highlight_string('<?php
 $form->setAttributes(array(
 	"width" => 400
 ));
-') . '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>The setAttributes() function accepts an associative array of key/value pairs, and is used to assign various attributes to 
@@ -101,9 +101,9 @@ $form->setAttributes(array(
 				<p>Now, we're ready to add our form elements.  In our "Hello World" example, there's only one element - a textbox.</p>
 
 				<?php
-echo '<pre>' . htmlentities('
+echo '<pre>', highlight_string('<?php
 $form->addTextbox("My Textbox:", "MyTextbox", "Hello World");
-') . '</pre>';
+?>', true), '</pre>';
 				?>
 				
 				<p>More information on the addTextbox() function, and all the other functions for rendering form elements,  can be found 
@@ -113,9 +113,9 @@ $form->addTextbox("My Textbox:", "MyTextbox", "Hello World");
 				<p>A button is attached to the form with...</p>
 
 				<?php
-echo '<pre>' . htmlentities('
+echo '<pre>', highlight_string('<?php
 $form->addButton();
-') . '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>The addButton() function has optional parameters for customizing the appearance and behavior of your buttons.  With no paramaters 
@@ -124,9 +124,9 @@ $form->addButton();
 				<p>The final function called is render()...</p>
 
 				<?php
-echo '<pre>' . htmlentities('
+echo '<pre>', highlight_string('<?php
 $form->render();
-') . '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>The render() function is responsible for a variety of task including building the form's html markup, including the appropriate

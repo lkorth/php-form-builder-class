@@ -46,7 +46,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("js_validation");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -61,7 +61,7 @@ $form->addCheckSort("Required Check Sort:", "field2", "", array("Option #1", "Op
 $form->addRating("Required Rating:", "field3", "", range(1, 10), array("ratingHideCaption" => 1, "required" => 1));
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>

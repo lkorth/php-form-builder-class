@@ -48,7 +48,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("google_maps");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -60,7 +60,7 @@ $form->addLatLng("Detault LatLng Functionality:", "field0");
 $form->addLatLng("Pre-Filled LatLng Functionality:", "field1", array(40.737, -73.994), array("zoom" => 12, "height" => 400));
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>	

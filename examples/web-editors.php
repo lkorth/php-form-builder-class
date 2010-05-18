@@ -43,7 +43,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("web_editors");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -56,7 +56,7 @@ $form->addCKEditor("Default CKEditor Editor:", "field3");
 $form->addCKEditor("Basic CKEditor Editor:", "field4", "", array("ckeditorBasic" => 1));
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>	

@@ -72,7 +72,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $captchaTheme = "white";
 if(!empty($_GET["theme"]))
 	$captchaTheme = $_GET["theme"];
@@ -88,7 +88,7 @@ $form->addTextarea("Comments:", "field0");
 $form->addCaptcha();
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>	

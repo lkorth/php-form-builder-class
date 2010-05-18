@@ -78,7 +78,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				</script>	
 				<?php
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("ajax_captcha");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -106,7 +106,7 @@ $form->render();
 		if(response.getElementsByTagName("status")[0].firstChild.data == "Success")
 			document.ajax_captcha.reset();
 	}
-</script>') . '</pre>';	
+</script>', true), '</pre>';	
 
 				?>
 			</div>	

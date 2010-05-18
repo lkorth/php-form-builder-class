@@ -53,7 +53,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("buttons");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -75,7 +75,7 @@ $form->addButton("", "", array("phpFunction" => "RenderDynamicButton", "phpParam
 */
 
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>	

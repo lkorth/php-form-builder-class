@@ -56,7 +56,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("jquery");
 $form->setAttributes(array(
 "includesPath" => "../includes",
@@ -83,7 +83,7 @@ $form->addColorPicker("Select Color:", "field16");
 $form->addColorPicker("Select Color Pre-filled:", "field17", "009900");
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>

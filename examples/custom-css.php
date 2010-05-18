@@ -131,7 +131,7 @@ STR;
 				$form->addButton("Login");
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("login");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -175,7 +175,7 @@ $form->render();
 		width: 194px;
 	}
 </style>
-?>') . '</pre>';
+', true), '</pre>';
 
 				$form = new form("signup");
 				$form->setAttributes(array(
@@ -196,7 +196,7 @@ $form->render();
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("signup");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -271,7 +271,7 @@ $form->render();
 	margin: 0 4px;
 }
 </style>
-?>') . '</pre>';
+', true), '</pre>';
 
 				?>
 			</div>

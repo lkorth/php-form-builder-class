@@ -70,7 +70,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("signup");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -83,7 +83,7 @@ $form->addPassword("Password:", "Password", "", array("required" => 1, "postHTML
 $form->addPassword("Re-Enter Password:", "Password2", "", array("required" => 1));
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 				<p><b>Example 2: Login Form</b> - This sample login form uses four ajax specific paramters, each of which are described below.</p>
@@ -127,7 +127,7 @@ $form->render();
 				</script>
 				<?php
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("login");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -153,7 +153,7 @@ $form->render();
 		document.getElementById("messageDiv").style.display = "block";
 	}
 </script>
-') . '</pre>';
+', true), '</pre>';
 
 				?>
 				<p><b>Example 3: Ajax w/Loading Image &amp; Disabled Submit Button</b> - This sample demonstrates how the <i>ajaxCallback</i> and <i>ajaxPreCallback</i> form attributes can be used to display an animated loading image to give
@@ -194,7 +194,7 @@ $form->render();
 				</script>
 				<?php
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("loading");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -226,7 +226,7 @@ $form->render();
 		document.getElementById("ajaxLoadingButton").disabled = false;
 	}
 </script>
-') . '</pre>';
+', true), '</pre>';
 
 				?>
 				<p><b>Example 4: Manual Ajax Submission</b> - This sample demonstrates how you can manually call the form's existing function responsible for ajax submission and javascript validation. 
@@ -247,7 +247,7 @@ $form->render();
 				$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);", "clear" => 1));
 				$form->render();
 
-echo '<pre>' . htmlentities('<?php
+echo '<pre>', highlight_string('<?php
 $form = new form("manual");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -260,7 +260,7 @@ $form->setAttributes(array(
 $form->addHidden("cmd", "manual");
 $form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);", "clear" => 1));
 $form->render();
-') . '</pre>';
+', true), '</pre>';
 
 				?>
 			</div>
