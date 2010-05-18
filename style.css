@@ -20,6 +20,32 @@ body, #pfbc_banner h2, #pfbc_banner h5 {
 	background-color: #efefef;
 }
 
+.pfbc_doc_section {
+	margin: 20px 0;
+}
+
+.pfbc_doc_section h3 {
+	border: 1px solid #cccccc; 
+	padding: 5px;
+	margin: 0;
+	background-color: #efefef;
+}
+
+#pfbc_content pre {
+	border: 1px solid #3366CC;
+	background-color: #E5ECF9;
+	padding: 5px;
+}
+
+#pfbc_content .pfbc_doc_section pre {
+	margin: 0 10px;
+}
+
+.pfbc_doc_section p {
+	padding: 10px;
+	margin: 0;
+}
+
 #pfbc_banner h5 {
 	font-style: italic;
 }
