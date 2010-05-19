@@ -31,10 +31,16 @@ body, #pfbc_banner h2, #pfbc_banner h5 {
 	background-color: #efefef;
 }
 
+.pfbc_doc_section h4 {
+	padding: 0 10px;
+	margin: 0;
+}
+
 #pfbc_content pre {
 	border: 1px solid #3366CC;
 	background-color: #E5ECF9;
 	padding: 5px;
+	font-family: Courier New, monospace;
 }
 
 #pfbc_content .pfbc_doc_section pre {

@@ -45,72 +45,72 @@ class base {
 
 class form extends base { 
 	/*Variables that can be set through the setAttributes function on the base class.*/
-	protected $attributes;				/*HTML attributes attached to <form> tag.*/
-	protected $map;						/*Unrelated to latlng/map field type.  Used to control structure.*/
-	protected $mapMargin;				/*When using the map form attribute, this setting controls the spacing between columns.*/
 	protected $ajax;					/*Activate ajax form submission.*/
-	protected $ajaxType;				/*Specify form submission as get/post.*/
-	protected $ajaxUrl;					/*Where to send ajax submission.*/
-	protected $ajaxPreCallback;			/*Optional function to call before ajax form submission.*/
 	protected $ajaxCallback;			/*Optional function to call after successful ajax form submission.*/
 	protected $ajaxDataType;			/*Defaults to text.  Options include xml, html, script, json, jsonp, and text.  View details at http://docs.jquery.com/Ajax/jQuery.ajax#options*/
-	protected $tooltipIcon;				/*Overrides default tooltip icon.*/
-	protected $tooltipBorderColor;		/*Overrides default tooltip border color.*/
+	protected $ajaxPreCallback;			/*Optional function to call before ajax form submission.*/
+	protected $ajaxType;				/*Specify form submission as get/post.*/
+	protected $ajaxUrl;					/*Where to send ajax submission.*/
+	protected $attributes;				/*HTML attributes attached to <form> tag.*/
+	protected $captchaLang;				/*Allows reCAPTCHA language to be customized.*/
+	protected $captchaPublicKey;		/*Contains reCAPTCHA public key.*/
+	protected $captchaPrivateKey;		/*Contains reCAPTCHA private key.*/
+	protected $captchaTheme;			/*Allows reCAPTCHA theme to be customized.*/
+	protected $ckeditorCustomConfig;	/*Allows CKEditor settings to be loaded through a supplied js file.*/
+	protected $ckeditorLang;			/*Allows CKEditor language to be customized.*/
+	protected $emailErrorMsgFormat;		/*Allow you to customize was is alerted/returned during js/php email validation.*/
+	protected $errorMsgFormat;			/*Allow you to customize was is alerted/returned during js/php validation.*/
+	protected $formIDOverride;			/*When using the latlng form element with the elementsToString() function, this attribute will need to be set to the parent form's id.*/
+	protected $includesPath;            /*Specifies where the includes directory is located. This path can be relative or absolute.*/
+	protected $jqueryDateFormat;		/*Allows date field to be formatted. See http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate for formatting options.*/
+	protected $jqueryTimeFormat;		/*Allows datetime field to be formatted.*/
+	protected $jsErrorFunction;			/*Allows js function for handling rendering error error messages to be defined.*/
+	protected $latlngDefaultLocation;	/*Allow you to customize the default location of latlng form elements.*/
+	protected $map;						/*Unrelated to latlng/map field type.  Used to control structure.*/
+	protected $mapMargin;				/*When using the map form attribute, this setting controls the spacing between columns.*/
+	protected $noAutoFocus;				/*Prevents auto-focus feature.*/
+	protected $onsubmitFunction;		/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
 	protected $preventJQueryLoad;		/*Prevents jQuery js file from being loaded twice.*/
 	protected $preventJQueryUILoad;		/*Prevents jQuery UI js file from being loaded twice.*/
 	protected $preventQTipLoad;			/*Prevents qTip js file from being loaded twice.*/
 	protected $preventGoogleMapsLoad;	/*Prevents Google Maps js file from being loaded twice.*/
 	protected $preventTinyMCELoad;		/*Prevents TinyMCE js file from being loaded twice.*/
 	protected $preventTinyMCEInitLoad;	/*Prevents TinyMCE init functions from being loaded twice.*/
-	protected $noAutoFocus;				/*Prevents auto-focus feature.*/
-	protected $captchaTheme;			/*Allows reCAPTCHA theme to be customized.*/
-	protected $captchaLang;				/*Allows reCAPTCHA language to be customized.*/
-	protected $captchaPublicKey;		/*Contains reCAPTCHA public key.*/
-	protected $captchaPrivateKey;		/*Contains reCAPTCHA private key.*/
 	protected $preventCaptchaLoad;		/*Prevents reCAPTCHA js file from being loaded twice.*/
-	protected $jqueryDateFormat;		/*Allows date field to be formatted. See http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate for formatting options.*/
-	protected $jqueryTimeFormat;		/*Allows datetime field to be formatted.*/
-	protected $ckeditorLang;			/*Allows CKEditor language to be customized.*/
-	protected $ckeditorCustomConfig;	/*Allows CKEditor settings to be loaded through a supplied js file.*/
 	protected $preventCKEditorLoad;		/*Prevents CKEditor js file from being loaded twice.*/
-	protected $errorMsgFormat;			/*Allow you to customize was is alerted/returned during js/php validation.*/
-	protected $emailErrorMsgFormat;		/*Allow you to customize was is alerted/returned during js/php email validation.*/
-	protected $latlngDefaultLocation;	/*Allow you to customize the default location of latlng form elements.*/
-	protected $formIDOverride;			/*When using the latlng form element with the elementsToString() function, this attribute will need to be set to the parent form's id.*/
-	protected $includesPath;            /*Specifies where the includes directory is located. This path can be relative or absolute.*/
-	protected $onsubmitFunction;		/*Allows onsubmit function for handling js error checking and ajax submission to be renamed.*/
 	protected $preventDefaultCSS;		/*Prevents default css from being applied.  Allows for custom styling.*/
-	protected $jsErrorFunction;			/*Allows js function for handling rendering error error messages to be defined.*/
 	protected $preventXHTMLStrict;		/*Renders javascript and css directly in the elementsToString() function and not in js.php/css.php.*/
+	protected $tooltipIcon;				/*Overrides default tooltip icon.*/
+	protected $tooltipBorderColor;		/*Overrides default tooltip border color.*/
 
 	/*Variables that can only be set inside this class.*/
-	private $elements;					/*Contains all element objects for a form.*/
+	private $allowedFields;				/*Controls what attributes can be attached to various html elements.*/
 	private $bindRules;					/*Contains information about nested forms.*/
 	private $buttons;					/*Contains all button objects for a form.*/
-	private $checkform;					/*If a field has the required attribute set, this field will be set causing javascript error checking.*/
-	private $allowedFields;				/*Controls what attributes can be attached to various html elements.*/
-	private $stateArr;					/*Associative array holding states.  Prevents generating array each time state form field is used.*/
-	private $countryArr;				/*Associative array holding countries.  Prevents generating array each time country form field is used.*/
-	private $referenceValues;			/*Associative array of values to pre-fill form fields.*/
 	private $captchaExists;				/*If there is a captcha element attached to the form, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
-	private $focusElement;				/*Sets focus of first form element.*/
-	private $hintExists;				/*If one or more form elements have hints, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
-	private $emailExists;				/*If one or more form elements of type email exist, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
-	private $jsIncludesPath;            /*For use on client side, holds either absolute path or document root path*/
-	private $phpIncludesPath;           /*For use on server side, holds either absolute path or full path */
-	private $tinymceIDArr;				/*Uniquely identifies each tinyMCE web editor.*/
+	private $checkform;					/*If a field has the required attribute set, this field will be set causing javascript error checking.*/
 	private $ckeditorIDArr;				/*Uniquely identifies each CKEditor web editor.*/
+	private $countryArr;				/*Associative array holding countries.  Prevents generating array each time country form field is used.*/
+	private $elements;					/*Contains all element objects for a form.*/
+	private $emailExists;				/*If one or more form elements of type email exist, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
+	private $focusElement;				/*Sets focus of first form element.*/
+	private $hasFormTag;				/*Indicates that the form was generated via the render() function as apposed to the elementsToString() function.*/
+	private $hintExists;				/*If one or more form elements have hints, this flag will be set and force the formhandler js function to be called when the form is submitted.*/
+	private $jqueryCheckSort;			/*Indicates there is a checksort field.*/
+	private $jqueryColorIDArr;			/*Uniquely identifies each colorpicker element.*/
 	private $jqueryDateIDArr;			/*Uniquely identifies each date element.*/
-	private $jqueryDateTimeIDArr;		/*Uniquely identifies each datetime element.*/
-	private $jqueryTimeIDArr;			/*Uniquely identifies each time element.*/
 	private $jqueryDateRangeIDArr;		/*Uniquely identifies each daterange element.*/
-	private $tooltipIDArr;				/*Uniquely identifies each tooltip.*/
+	private $jqueryDateTimeIDArr;		/*Uniquely identifies each datetime element.*/
 	private $jquerySliderIDArr;			/*Uniquely identifies each slider element.*/
 	private $jqueryStarRatingIDArr;		/*Uniquely identifies each rating element.*/
-	private $jqueryColorIDArr;			/*Uniquely identifies each colorpicker element.*/
+	private $jqueryTimeIDArr;			/*Uniquely identifies each time element.*/
+	private $jsIncludesPath;            /*For use on client side, holds either absolute path or document root path*/
 	private $latlngIDArr;				/*Uniquely identifies each latlng element.*/
-	private $jqueryCheckSort;			/*Indicates there is a checksort field.*/
-	private $hasFormTag;				/*Indicates that the form was generated via the render() function as apposed to the elementsToString() function.*/
+	private $phpIncludesPath;           /*For use on server side, holds either absolute path or full path */
+	private $referenceValues;			/*Associative array of values to pre-fill form fields.*/
+	private $stateArr;					/*Associative array holding states.  Prevents generating array each time state form field is used.*/
+	private $tinymceIDArr;				/*Uniquely identifies each tinyMCE web editor.*/
+	private $tooltipIDArr;				/*Uniquely identifies each tooltip.*/
 
 	/*Variables that can be accessed outside this class directly.*/
 	public $errorMsg;					/*Contains human readable error message set in validate() method.*/
