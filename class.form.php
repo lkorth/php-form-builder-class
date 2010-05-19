@@ -981,7 +981,7 @@ class form extends base {
 		}
 
 		if(empty($this->phpIncludesPath) || !is_dir($this->phpIncludesPath))
-			$str .= "\n\t" . '<script type="text/javascript">' . $this->jsErrorFunction . '("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesPath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.\n\nPath specified:\n' . $this->includesPath . '\n\nEXTRA INFORMATION:\nPHP Path Used:\n' . $this->phpIncludesPath . '\n\nJavascript Path Used:\n' . $this->jsIncludesPath . '");</script>';
+			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesPath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.\n\nPath specified:\n' . $this->includesPath . '\n\nEXTRA INFORMATION:\nPHP Path Used:\n' . $this->phpIncludesPath . '\n\nJavascript Path Used:\n' . $this->jsIncludesPath . '");</script>';
 
 		if(empty($this->tooltipIcon))
 			$this->tooltipIcon = $this->jsIncludesPath . "/jquery/plugins/qtip/tooltip-icon.gif";
