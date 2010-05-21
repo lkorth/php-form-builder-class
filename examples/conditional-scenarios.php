@@ -155,7 +155,6 @@ $billing_form->render();
 				$map_form = new form("map");
 				$map_form->setAttributes(array(
 					"includesPath" => "../includes",
-					"formIDOverride" => "location",
 					"width" => 500
 				));	
 				$map_form->addLatLng("", "LatitudeLongitude", "", array("required" => 1));
@@ -195,7 +194,6 @@ $location_form->setAttributes(array(
 $map_form = new form("map");
 $map_form->setAttributes(array(
 	"includesPath" => "../includes",
-	"formIDOverride" => "location",
 	"width" => 500
 ));	
 $map_form->addLatLng("", "LatitudeLongitude", "", array("required" => 1));

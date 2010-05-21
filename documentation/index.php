@@ -43,7 +43,6 @@ include("../class.form.php");
 							<li><a href="#Form-Attribute-emailErrorMsgFormat">emailErrorMsgFormat</a></li>
 							<li><a href="#Form-Attribute-enctype">enctype</a></li>
 							<li><a href="#Form-Attribute-errorMsgFormat">errorMsgFormat</a></li>
-							<li><a href="#Form-Attribute-formIDOverride">formIDOverride</a></li>
 							<li><a href="#Form-Attribute-id">id</a></li>
 							<li><a href="#Form-Attribute-includesPath">includesPath</a></li>
 							<li><a href="#Form-Attribute-jqueryDateFormat">jqueryDateFormat</a></li>
@@ -76,18 +75,15 @@ include("../class.form.php");
 			<div class="pfbc_doc_section">
 				<a name="Introduction"></a>
 				<h3>Introduction</h3>
-				<p>The purpose of this document is to provide a reference guide for developers to access while using this project.  If you are not comfortable working
-				with php, it is recommended that you first familiarize yourself with this web scripting language before working with this project.  There are many 
-				great references available online - specifically <a href="http://www.php.net">http://www.php.net</a>.</p>
+				<p>The purpose of this document is to provide a reference guide for developers to access while using this project.</p>
 			</div>
 
 			<div class="pfbc_doc_section">
 				<a name="The-Hello-World-of-PHP-Form-Builder-Class"></a>
 				<h3>The "Hello World" of PHP Form Builder Class</h3>
 				<p>Before getting started, you will need to <a href="http://code.google.com/apis/maps/documentation/introduction.html">downloaded the latest version 
-				of this project</a>, unzip formbuilder.zip, and install the php-form-builder-class directory it on your web server.  After you've done this, you're 
-				ready to get started building your first form.  It is recommended that the scripts building/rendering your forms be located in the same folder as 
-				the php-form-builder-class directory. Doing so will eliminate the need for specifying the includesPath attribute while building your forms.</p>
+				of this project</a>, unzip formbuilder.zip, and install the php-form-builder-class directory on your web server.  After you've done this, you're 
+				ready to get started creating your first form using this project.</p>
 					
 				<p>Consider the code snippet below...</p>	
 
@@ -140,7 +136,7 @@ $form->setAttributes(array(
 				?>
 
 				<p>The setAttributes() function accepts an associative array of key/value pairs, and is used to assign various attributes to 
-				the form.  Chances are you will be calling this function in most all of the forms you create.  In this "Hello World" example, 
+				the form.  Chances are, you will be calling this function in most all of the forms you create.  In this "Hello World" example, 
 				the form's width is set to 400.  See the <a href="">Form Attributes</a> section for a detailed list of form attributes that 
 				can be included in the associative array passed to the setAttributes() function.</p>
 
@@ -165,7 +161,7 @@ $form->addButton();
 				?>
 
 				<p>The addButton() function has optional parameters for customizing the appearance and behavior of your buttons.  With no paramaters 
-				provided, it will render a submit button titled "Submit" as is the case with this "Hello World" example.</p>
+				provided, it will render a submit button titled "Submit".</p>
 
 				<p>The final function called is render()...</p>
 
@@ -175,7 +171,7 @@ $form->render();
 '), '</pre>';
 				?>
 
-				<p>The render() function is responsible for a variety of task including building the form's html markup, including the appropriate
+				<p>The render() function is responsible for a variety of tasks including building the form's html markup, including the appropriate
 				javascript/css include files, and applying javascript validation if applicable.</p>
 
 				<p>Congratulations!  You have just created your first form using the PHP Form Builder Class.  If you're like me, and like learning 
@@ -223,7 +219,7 @@ $form->setAttributes(array(
 				</p>
 
 				<a name="Form-Attribute-ajaxPreCallback"></a>
-				<p><b>ajaxPreCallback</b>:<br>This attribute is very similar to <a href="Form-Attribute-ajaxCallback">ajaxCallback</a>.  The only differences
+				<p><b>ajaxPreCallback</b>:<br>This attribute is very similar to <a href="#Form-Attribute-ajaxCallback">ajaxCallback</a>.  The only differences
 				are the javascript function is invoked before the AJAX call is initiated and there is no response parameter passed.</p>  
 
 				<a name="Form-Attribute-ajaxType"></a>
@@ -235,22 +231,75 @@ $form->setAttributes(array(
 				<a name="Form-Attribute-method">action</a> form attribute.  This will be defaulted to the script where the form is created.  
 
 				<a name="Form-Attribute-captchaLang"></a>
-				<p><b>captchaLang</b>: </p>
+				<p><b>captchaLang</b>: Controls the language used by reCAPTCHA.  Supported languages include English(en), Dutch(nl), French(fr), German(de), 
+				Portuguese(pt), Russian(ru), Spanish(es), and Turkish(tr).  This attribute defaults to English(en).  When specifying this attribute, use
+				the two-character code seen within the parenthesis in the supported languages list above. See <a href="http://recaptcha.net/apidocs/captcha/client.html">http://recaptcha.net/apidocs/captcha/client.html</a>
+				for more information on this reCAPTCHA setting.</p>
 
 				<a name="Form-Attribute-captchaPublicKey"></a>
-				<p><b>captchaPublicKey</b>: </p>
+				<p><b>captchaPublicKey</b>: For security purposes, reCAPTCHA requires a public/private key pair to be referenced when using their web service.
+				Typically, these keys are resticted to a specific domain (and all sub-domains); however, you can generate keys that are enabled for all domains
+				through a global option during signup.  By default, the captchaPublic/PrivateKey attributes are set as global reCATPCHA keys which will allow you to
+				use the captcha form element regardless of domain.  For increased security, it is recommended that you 
+				<a href="http://recaptcha.net/api/getkey">generate reCAPTCHA public/private keys</a> for your specific domain to overwrite these default settings.
+				See <a href="http://recaptcha.net/apidocs/captcha/client.html">http://recaptcha.net/apidocs/captcha/client.html</a> for more information on this 
+				reCAPTCHA setting.</p>
 
 				<a name="Form-Attribute-captchaPrivateKey"></a>
-				<p><b>captchaPrivateKey</b>: </p>
+				<p><b>captchaPrivateKey</b>: See <a href="#Form-Attribute-captchaPublicKey">captchaPublicKey</a> attribute above.</p>
 
 				<a name="Form-Attribute-captchaTheme"></a>
-				<p><b>captchaTheme</b>: </p>
+				<p><b>captchaTheme</b>: reCAPTCHA provides several pre-built themes that can be used to customize the appearance of their interface.  Options include
+				red, white, blackglass, and clean.  By default, the red theme will be used.  See <a href="http://recaptcha.net/apidocs/captcha/client.html">http://recaptcha.net/apidocs/captcha/client.html</a>
+				for more information on this reCAPTCHA setting.</p>
 
 				<a name="Form-Attribute-ckeditorCustomConfig"></a>
-				<p><b>ckeditorCustomConfig</b>: </p>
+				<p><b>ckeditorCustomConfig</b>: Allows a URL path to a CKEditor custom configuration file to be loaded. If not provided, includes/ckeditor/config.js 
+				will be used.  See <a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html#.customConfig">http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html#.customConfig</a> 
+				for more information on this CKEditor configuration setting.</p>
 
 				<a name="Form-Attribute-ckeditorLang"></a>
-				<p><b>ckeditorLang</b>: </p>
+				<p><b>ckeditorLang</b>: Allows the language within CKEditor's user interface to be customized.  If empty, the editor automatically localizes to the user's language, if supported, 
+				otherwise the CKEDITOR.config.defaultLanguage setting is used.  See <a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html#.language">http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html#.language</a>
+				for more information on this CKEditor configuration setting.</p>
+
+				<a name="Form-Attribute-class"></a>
+				<p><b>class</b>:<br>Controls the class attribute on the &lt;form&gt; tag.  This will be empty by default.</p>
+
+				<a name="Form-Attribute-emailErrorMsgFormat"></a>
+				<p><b>emailErrorMsgFormat</b>:<br>Responsible for the error messages displayed when an invalid email address is discovered during both javascript and 
+				php validation.  By default, this attribute will be set to "Error: [LABEL] contains an invalid email address."  [LABEL] is replaced with the appropriate 
+				field's label.</p>
+
+				<a name="Form-Attribute-enctype"></a>
+				<p><b>enctype</b>:<br>Controls the enctype attribute on the &lt;form&gt; tag.  For ease-of-use, this attribute will automatically be set to 
+				"multipart/form-data" if one or more file elements are added to a form.  This will be empty by default.</p>
+
+				<a name="Form-Attribute-errorMsgFormat"></a>
+				<p><b>errorMsgFormat</b>:<br>Similar to <a href="#Form-Attribute-emailErrorMsgFormat">emailErrorMsgFormat</a>, this attribute is responsible for the error 
+				messages displayed when a required element is left blank in both javascript and php validation.  By default, this attribute will be set to "Error: [LABEL]
+				is a required field."  [LABEL] is replaced with the appropriate field's label.</p>
+
+				<a name="Form-Attribute-id"></a>
+				<p><b>id</b>:<br>Controls the id attribute on the &lt;form&gt; tag.  If left empty, this attribute will be set to "myform"; however, it is recommended 
+				that you include a unique id with each form you create.  This becomes increasingly important when multiple forms are rendered on the same webpage.
+				This attribute can be defined when creating a new form object...</p>
+
+				<?php
+echo '<pre>', htmlentities('
+$form = new form("myID");
+'), '</pre>';
+				?>
+
+				<p>Or in the setAttributes() function...</p>
+
+				<?php
+echo '<pre>', htmlentities('
+$form->setAttributes(array(
+	"id" => "myID"
+));
+'), '</pre>';
+				?>
 			</div>
 
 		</div>	
