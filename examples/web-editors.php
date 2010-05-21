@@ -27,7 +27,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 
 			<div id="pfbc_content">
 				<p><b>Web Editors</b> - There are two web editors included with this project - TinyMCE and CKEditor.  Both editors have full and minimal versions that can be used.  By default, the full version will be rendered.
-				To use TinyMCE's minimal version, set the <i>webeditorSimple</i> element attribute.  To use CKEditor's minimal version, set the <i>ckeditorBasic</i> element attribute.</p>
+				To use the minimal version, set the <i>basic</i> element attribute. </p>
 
 				<?php
 				$form = new form("web_editors");
@@ -37,9 +37,9 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				));
 				$form->addHidden("cmd", "submit");
 				$form->addWebEditor("Default Web Editor:", "field0");
-				$form->addWebEditor("Simple Web Editor:", "field1", "", array("webeditorSimple" => 1));
+				$form->addWebEditor("Simple Web Editor:", "field1", "", array("basic" => 1));
 				$form->addCKEditor("Default CKEditor Editor:", "field3");
-				$form->addCKEditor("Basic CKEditor Editor:", "field4", "", array("ckeditorBasic" => 1));
+				$form->addCKEditor("Basic CKEditor Editor:", "field4", "", array("basic" => 1));
 				$form->addButton();
 				$form->render();
 
