@@ -67,6 +67,7 @@ include("../class.form.php");
 							<li><a href="#Form-Attribute-style">style</a></li>
 							<li><a href="#Form-Attribute-tooltipIcon">tooltipIcon</a></li>
 							<li><a href="#Form-Attribute-tooltipBorderColor">tooltipBorderColor</a></li>
+							<li><a href="#Form-Attribute-width">width</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -85,7 +86,7 @@ include("../class.form.php");
 				of this project</a>, unzip formbuilder.zip, and install the php-form-builder-class directory on your web server.  After you've done this, you're 
 				ready to get started creating your first form using this project.</p>
 					
-				<p>Consider the code snippet below...</p>	
+				<p>Let's begin by looking at the code snippet of our "Hello World" form seen below...</p>	
 
 				<?php
 echo '<pre>', highlight_string('<?php
@@ -300,8 +301,125 @@ $form->setAttributes(array(
 ));
 '), '</pre>';
 				?>
-			</div>
 
+				<a name="Form-Attribute-includesPath"></a>
+				<p><b>includesPath</b>:<br>The php-form-builder-class/inclues directory contains libraries that are essential to the project such as jQuery, CKEditor, 
+				and reCAPTCHA.  Because of this, it's location must be identified by either an absolute or relative path.  The attribute defaults to "php-form-builder-class/includes",
+				which will correctly identify this directory if the script where your form is created is in the same location as the php-form-builder-class directory.  For
+				ease-of-use, a configuration error message will be displayed if the includes directory is not identified correctly.  If you see this error message, you will need
+				to provide a relative or absolute path to where the includes directory is located in relation to the script where your form is being created (not where class.form.php 
+				is located).  Absolute paths can either be identified from the document or server root.</p>
+
+				<a name="Form-Attribute-jqueryDateFormat"></a>
+				<p><b>jqueryDateFormat</b>:<br>Controls the date format returned by the date, datetime, and daterange form elements.  By default, this attribute will be set to "MM d, yy",
+				which will return dates formatted like <?=date("F j, Y")?>.  To have these elements return a MySQL friendly date format, set this attribute to "yy-mm-dd".  See 
+				<a href="http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate">http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate</a> for a complete list of available options.</p>
+
+				<a name="Form-Attribute-jqueryTimeFormat"></a>
+				<p><b>jqueryTimeFormat</b>:<br>Controls the time format returned by the time form element.  By default, this attribute will be set to "h:ii a", which will return times formatted
+				like <?=date("g:i a")?>.</p>
+
+				<a name="Form-Attribute-jsErrorFunction"></a>
+				<p><b>jsErrorFunction</b>:<br>Allows a javascript function to be specified for handling error messages.  When a required field is left blank or an invalid email
+				address is provided, an error is triggered within the form's built in onsubmit event.  By default, this error message is handled by a pre-built javascript function that
+				displays the error message in red above the form.  If you don't like this feature, you are free to specify your own, custom javascript function for processing the error
+				message however you desire.  Your custom function will automatically be passed the error message as its one and only parameter.  This attribute should be defined without
+				parenthesis as seen below...</p>
+
+				<?php
+echo '<pre>', htmlentities('
+$form->setAttributes(array(
+	"jsErrorFunction" => "myCustomErrorFunction"
+));
+'), '</pre>';
+				?>
+
+				<a name="Form-Attribute-latlngDefaultLocation"></a>
+				<p><b>latlngDefaultLocation</b>:<br>When using the latlng form element, Google Maps needs a location to center the map during initialization.  This attribute will be 
+				used if the element's value is not provided.  By default, it is set to array(41.847, -87.661), which is the approximate latitude/longitude for Chicago, IL.  This attribute can be set
+				as seen below...</p> 
+
+				<?php
+echo '<pre>', htmlentities('
+$form->setAttributes(array(
+	"latlngDefaultLocation" => array(41.847, -87.661)
+));
+'), '</pre>';
+				?>
+
+				<a name="Form-Attribute-map"></a>
+				<p><b>map</b>:<br>This attribute has no relation to the Google Maps functionality.  When using this project, you'll notice that form elements span the entire width of their row.  This attribute allows you to override this default behavior and render 
+				multiple elements in a single row.  Simply set this attribute to a one dimensional array of numbers corresponding with how many elements you would like rendered on each line.
+				In the example provided below, two elements will be displayed in the first row, one on the second row, and three on the third row.</p>
+
+				<?php
+echo '<pre>', htmlentities('
+$form->setAttributes(array(
+	"map" => array(2, 1, 3)
+));
+'), '</pre>';
+				?>
+
+				<p>It is highly recommended that you specify a <a href="#Form-Attribute-width">width</a> when using this attribute.</p>
+
+				<a name="Form-Attribute-mapMargin"></a>
+				<p><b>mapMargin</b>:<br>When using the map attribute, this setting controls the spacing between form elements in the same row.  If the <a href="#Form-Attribute-width">width</a>
+				of your form is specified in pixels, this attribute will be pixel based.  Likewise, if your form's <a href="#Form-Attribute-width">width</a> is defined as a percentage, this 
+				attribute will be percentage based.  The actual margin between form elements will be twice the value of this attribute, as margin will be applied for each element on the
+				appropriate left/right side.  This attribute will be set to "1" by default.</p>
+
+				<a name="Form-Attribute-method"></a>
+				<p><b>method</b>:<br>Controls the method attribute on the &lt;form&gt; tag.  This will be set to "post" by default.</p>
+
+				<a name="Form-Attribute-noAutoFocus"></a>
+				<p><b>noAutoFocus</b>:<br>For ease-of-use, the first non-hidden element within a form will be focussed.  This attribute can be used to prevent this default befault behavior
+				from occurring.</p>
+
+				<a name="Form-Attribute-onsubmitFunction"></a>
+				<p><b>onsubmitFunction</b>:<br></p>
+
+				<a name="Form-Attribute-preventJQueryLoad"></a>
+				<p><b>preventJQueryLoad</b>:<br></p>
+
+				<a name="Form-Attribute-preventJQueryUILoad"></a>
+				<p><b>preventJQueryUILoad</b>:<br></p>
+
+				<a name="Form-Attribute-preventQTipLoad"></a>
+				<p><b>preventQTipLoad</b>:<br></p>
+
+				<a name="Form-Attribute-preventGoogleMapsLoad"></a>
+				<p><b>preventGoogleMapsLoad</b>:<br></p>
+
+				<a name="Form-Attribute-preventTinyMCELoad"></a>
+				<p><b>preventTinyMCELoad</b>:<br></p>
+
+				<a name="Form-Attribute-preventTinyMCEInitLoad"></a>
+				<p><b>preventTinyMCEInitLoad</b>:<br></p>
+
+				<a name="Form-Attribute-preventCaptchaLoad"></a>
+				<p><b>preventCaptchaLoad</b>:<br></p>
+
+				<a name="Form-Attribute-preventCKEditorLoad"></a>
+				<p><b>preventCKEditorLoad</b>:<br></p>
+
+				<a name="Form-Attribute-preventDefaultCSS"></a>
+				<p><b>preventDefaultCSS</b>:<br></p>
+
+				<a name="Form-Attribute-preventXHTMLStrict"></a>
+				<p><b>preventXHTMLStrict</b>:<br></p>
+
+				<a name="Form-Attribute-style"></a>
+				<p><b>style</b>:<br></p>
+
+				<a name="Form-Attribute-tooltipIcon"></a>
+				<p><b>tooltipIcon</b>:<br></p>
+
+				<a name="Form-Attribute-tooltipBorderColor"></a>
+				<p><b>tooltipBorderColor</b>:<br></p>
+
+				<a name="Form-Attribute-width"></a>
+				<p><b>width</b>:<br></p>
+			</div>
 		</div>	
 	</body>
 </html>
