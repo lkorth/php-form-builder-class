@@ -372,7 +372,7 @@ $form->setAttributes(array(
 				<p><b>method</b>:<br>Controls the method attribute on the &lt;form&gt; tag.  This will be set to "post" by default.</p>
 
 				<a name="Form-Attribute-noAutoFocus"></a>
-				<p><b>noAutoFocus</b>:<br>For ease-of-use, the first non-hidden element within a form will be focussed.  This attribute can be used to prevent this default befault behavior
+				<p><b>noAutoFocus</b>:<br>For ease-of-use, the first non-hidden element within a form will be focussed.  This attribute can be used to prevent this default behavior
 				from occurring.</p>
 
 				<a name="Form-Attribute-onsubmitFunction"></a>
