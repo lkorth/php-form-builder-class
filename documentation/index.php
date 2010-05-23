@@ -53,7 +53,6 @@ include("../class.form.php");
 							<li><a href="#Form-Attribute-mapMargin">mapMargin</a></li>
 							<li><a href="#Form-Attribute-method">method</a></li>
 							<li><a href="#Form-Attribute-noAutoFocus">noAutoFocus</a></li>
-							<li><a href="#Form-Attribute-onsubmitFunction">onsubmitFunction</a></li>
 							<li><a href="#Form-Attribute-preventJQueryLoad">preventJQueryLoad</a></li>
 							<li><a href="#Form-Attribute-preventJQueryUILoad">preventJQueryUILoad</a></li>
 							<li><a href="#Form-Attribute-preventQTipLoad">preventQTipLoad</a></li>
@@ -190,13 +189,13 @@ $form->render();
 				you can pass to the setAttributes() function.</p>
 
 				<a name="Form-Attribute-action"></a>
-				<p><b>action</b>:<br>Controls the action attribute on the &lt;form&gt; tag.  This will be defaulted to the script where the form is created.</p>
+				<p><b>action</b>:<br/>Controls the action attribute on the &lt;form&gt; tag.  This will be defaulted to the script where the form is created.</p>
 
 				<a name="Form-Attribute-ajax"></a>
-				<p><b>ajax</b>:<br>Activates AJAX form submission.</p>
+				<p><b>ajax</b>:<br/>Activates AJAX form submission.</p>
 
 				<a name="Form-Attribute-ajaxCallback"></a>
-				<p><b>ajaxCallback</b>:<br>If AJAX form submission is activated, this attribute allows you to specify the name of a javascript function to be
+				<p><b>ajaxCallback</b>:<br/>If AJAX form submission is activated, this attribute allows you to specify the name of a javascript function to be
 				invoked after a successful submission.  This js function name should be passed as a string without any parenthesis or parameters.  An example
 				would be...</p>
 
@@ -214,13 +213,13 @@ $form->setAttributes(array(
 				triggered.</p>
 
 				<a name="Form-Attribute-ajaxDataType"></a>
-				<p><b>ajaxDataType</b>:<br>If AJAX form submission is activated, this attribute allows you to specify the type of data that you're expecting back 
+				<p><b>ajaxDataType</b>:<br/>If AJAX form submission is activated, this attribute allows you to specify the type of data that you're expecting back 
 				from the server.  By default, jQuery will intelligently try to get the results, based on the MIME type of the response. Possible values for this
 				attribute include xml, html, script, json, jsonp, and text.
 				</p>
 
 				<a name="Form-Attribute-ajaxPreCallback"></a>
-				<p><b>ajaxPreCallback</b>:<br>This attribute is very similar to <a href="#Form-Attribute-ajaxCallback">ajaxCallback</a>.  The only differences
+				<p><b>ajaxPreCallback</b>:<br/>This attribute is very similar to <a href="#Form-Attribute-ajaxCallback">ajaxCallback</a>.  The only differences
 				are the javascript function is invoked before the AJAX call is initiated and there is no response parameter passed.</p>  
 
 				<a name="Form-Attribute-ajaxType"></a>
@@ -229,7 +228,7 @@ $form->setAttributes(array(
 
 				<a name="Form-Attribute-ajaxUrl"></a>
 				<p><b>ajaxType</b>: If AJAX form submission is activated, this attribute controls where the data is submitted to - similar to the 
-				<a name="Form-Attribute-method">action</a> form attribute.  This will be defaulted to the script where the form is created.  
+				<a name="Form-Attribute-method">action</a> form attribute.  This will be defaulted to the script where the form is created.</p>
 
 				<a name="Form-Attribute-captchaLang"></a>
 				<p><b>captchaLang</b>: Controls the language used by reCAPTCHA.  Supported languages include English(en), Dutch(nl), French(fr), German(de), 
@@ -265,24 +264,24 @@ $form->setAttributes(array(
 				for more information on this CKEditor configuration setting.</p>
 
 				<a name="Form-Attribute-class"></a>
-				<p><b>class</b>:<br>Controls the class attribute on the &lt;form&gt; tag.  This will be empty by default.</p>
+				<p><b>class</b>:<br/>Controls the class attribute on the &lt;form&gt; tag.  This will be empty by default.</p>
 
 				<a name="Form-Attribute-emailErrorMsgFormat"></a>
-				<p><b>emailErrorMsgFormat</b>:<br>Responsible for the error messages displayed when an invalid email address is discovered during both javascript and 
+				<p><b>emailErrorMsgFormat</b>:<br/>Responsible for the error messages displayed when an invalid email address is discovered during both javascript and 
 				php validation.  By default, this attribute will be set to "Error: [LABEL] contains an invalid email address."  [LABEL] is replaced with the appropriate 
 				field's label.</p>
 
 				<a name="Form-Attribute-enctype"></a>
-				<p><b>enctype</b>:<br>Controls the enctype attribute on the &lt;form&gt; tag.  For ease-of-use, this attribute will automatically be set to 
+				<p><b>enctype</b>:<br/>Controls the enctype attribute on the &lt;form&gt; tag.  For ease-of-use, this attribute will automatically be set to 
 				"multipart/form-data" if one or more file elements are added to a form.  This will be empty by default.</p>
 
 				<a name="Form-Attribute-errorMsgFormat"></a>
-				<p><b>errorMsgFormat</b>:<br>Similar to <a href="#Form-Attribute-emailErrorMsgFormat">emailErrorMsgFormat</a>, this attribute is responsible for the error 
+				<p><b>errorMsgFormat</b>:<br/>Similar to <a href="#Form-Attribute-emailErrorMsgFormat">emailErrorMsgFormat</a>, this attribute is responsible for the error 
 				messages displayed when a required element is left blank in both javascript and php validation.  By default, this attribute will be set to "Error: [LABEL]
 				is a required field."  [LABEL] is replaced with the appropriate field's label.</p>
 
 				<a name="Form-Attribute-id"></a>
-				<p><b>id</b>:<br>Controls the id attribute on the &lt;form&gt; tag.  If left empty, this attribute will be set to "myform"; however, it is recommended 
+				<p><b>id</b>:<br/>Controls the id attribute on the &lt;form&gt; tag.  If left empty, this attribute will be set to "myform"; however, it is recommended 
 				that you include a unique id with each form you create.  This becomes increasingly important when multiple forms are rendered on the same webpage.
 				This attribute can be defined when creating a new form object...</p>
 
@@ -303,7 +302,7 @@ $form->setAttributes(array(
 				?>
 
 				<a name="Form-Attribute-includesPath"></a>
-				<p><b>includesPath</b>:<br>The php-form-builder-class/inclues directory contains libraries that are essential to the project such as jQuery, CKEditor, 
+				<p><b>includesPath</b>:<br/>The php-form-builder-class/inclues directory contains libraries that are essential to the project such as jQuery, CKEditor, 
 				and reCAPTCHA.  Because of this, it's location must be identified by either an absolute or relative path.  The attribute defaults to "php-form-builder-class/includes",
 				which will correctly identify this directory if the script where your form is created is in the same location as the php-form-builder-class directory.  For
 				ease-of-use, a configuration error message will be displayed if the includes directory is not identified correctly.  If you see this error message, you will need
@@ -311,16 +310,16 @@ $form->setAttributes(array(
 				is located).  Absolute paths can either be identified from the document or server root.</p>
 
 				<a name="Form-Attribute-jqueryDateFormat"></a>
-				<p><b>jqueryDateFormat</b>:<br>Controls the date format returned by the date, datetime, and daterange form elements.  By default, this attribute will be set to "MM d, yy",
+				<p><b>jqueryDateFormat</b>:<br/>Controls the date format returned by the date, datetime, and daterange form elements.  By default, this attribute will be set to "MM d, yy",
 				which will return dates formatted like <?=date("F j, Y")?>.  To have these elements return a MySQL friendly date format, set this attribute to "yy-mm-dd".  See 
 				<a href="http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate">http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate</a> for a complete list of available options.</p>
 
 				<a name="Form-Attribute-jqueryTimeFormat"></a>
-				<p><b>jqueryTimeFormat</b>:<br>Controls the time format returned by the time form element.  By default, this attribute will be set to "h:ii a", which will return times formatted
+				<p><b>jqueryTimeFormat</b>:<br/>Controls the time format returned by the time form element.  By default, this attribute will be set to "h:ii a", which will return times formatted
 				like <?=date("g:i a")?>.</p>
 
 				<a name="Form-Attribute-jsErrorFunction"></a>
-				<p><b>jsErrorFunction</b>:<br>Allows a javascript function to be specified for handling error messages.  When a required field is left blank or an invalid email
+				<p><b>jsErrorFunction</b>:<br/>Allows a javascript function to be specified for handling error messages.  When a required field is left blank or an invalid email
 				address is provided, an error is triggered within the form's built in onsubmit event.  By default, this error message is handled by a pre-built javascript function that
 				displays the error message in red above the form.  If you don't like this feature, you are free to specify your own, custom javascript function for processing the error
 				message however you desire.  Your custom function will automatically be passed the error message as its one and only parameter.  This attribute should be defined without
@@ -335,7 +334,7 @@ $form->setAttributes(array(
 				?>
 
 				<a name="Form-Attribute-latlngDefaultLocation"></a>
-				<p><b>latlngDefaultLocation</b>:<br>When using the latlng form element, Google Maps needs a location to center the map during initialization.  This attribute will be 
+				<p><b>latlngDefaultLocation</b>:<br/>When using the latlng form element, Google Maps needs a location to center the map during initialization.  This attribute will be 
 				used if the element's value is not provided.  By default, it is set to array(41.847, -87.661), which is the approximate latitude/longitude for Chicago, IL.  This attribute can be set
 				as seen below...</p> 
 
@@ -348,7 +347,7 @@ $form->setAttributes(array(
 				?>
 
 				<a name="Form-Attribute-map"></a>
-				<p><b>map</b>:<br>This attribute has no relation to the Google Maps functionality.  When using this project, you'll notice that form elements span the entire width of their row.  This attribute allows you to override this default behavior and render 
+				<p><b>map</b>:<br/>This attribute has no relation to the Google Maps functionality.  When using this project, you'll notice that form elements span the entire width of their row.  This attribute allows you to override this default behavior and render 
 				multiple elements in a single row.  Simply set this attribute to a one dimensional array of numbers corresponding with how many elements you would like rendered on each line.
 				In the example provided below, two elements will be displayed in the first row, one on the second row, and three on the third row.</p>
 
@@ -363,62 +362,65 @@ $form->setAttributes(array(
 				<p>It is highly recommended that you specify a <a href="#Form-Attribute-width">width</a> when using this attribute.</p>
 
 				<a name="Form-Attribute-mapMargin"></a>
-				<p><b>mapMargin</b>:<br>When using the map attribute, this setting controls the spacing between form elements in the same row.  If the <a href="#Form-Attribute-width">width</a>
+				<p><b>mapMargin</b>:<br/>When using the map attribute, this setting controls the spacing between form elements in the same row.  If the <a href="#Form-Attribute-width">width</a>
 				of your form is specified in pixels, this attribute will be pixel based.  Likewise, if your form's <a href="#Form-Attribute-width">width</a> is defined as a percentage, this 
 				attribute will be percentage based.  The actual margin between form elements will be twice the value of this attribute, as margin will be applied for each element on the
 				appropriate left/right side.  This attribute will be set to "1" by default.</p>
 
 				<a name="Form-Attribute-method"></a>
-				<p><b>method</b>:<br>Controls the method attribute on the &lt;form&gt; tag.  This will be set to "post" by default.</p>
+				<p><b>method</b>:<br/>Controls the method attribute on the &lt;form&gt; tag.  This will be set to "post" by default.</p>
 
 				<a name="Form-Attribute-noAutoFocus"></a>
-				<p><b>noAutoFocus</b>:<br>For ease-of-use, the first non-hidden element within a form will be focussed.  This attribute can be used to prevent this default behavior
+				<p><b>noAutoFocus</b>:<br/>For ease-of-use, the first non-hidden element within a form will be focussed.  This attribute can be used to prevent this default behavior
 				from occurring.</p>
 
-				<a name="Form-Attribute-onsubmitFunction"></a>
-				<p><b>onsubmitFunction</b>:<br></p>
-
 				<a name="Form-Attribute-preventJQueryLoad"></a>
-				<p><b>preventJQueryLoad</b>:<br></p>
+				<p><b>preventJQueryLoad</b>:<br/>Prevents jQuery's javascript file from being included.</p>
 
 				<a name="Form-Attribute-preventJQueryUILoad"></a>
-				<p><b>preventJQueryUILoad</b>:<br></p>
+				<p><b>preventJQueryUILoad</b>:<br/>Prevents jQuery UI's javascript file from being included.</p>
 
 				<a name="Form-Attribute-preventQTipLoad"></a>
-				<p><b>preventQTipLoad</b>:<br></p>
+				<p><b>preventQTipLoad</b>:<br/>Prevents qTip's javascript file from being included.</p>
 
 				<a name="Form-Attribute-preventGoogleMapsLoad"></a>
-				<p><b>preventGoogleMapsLoad</b>:<br></p>
+				<p><b>preventGoogleMapsLoad</b>:<br/>Prevents Google Map's javascript file from being included.</p>
 
 				<a name="Form-Attribute-preventTinyMCELoad"></a>
-				<p><b>preventTinyMCELoad</b>:<br></p>
+				<p><b>preventTinyMCELoad</b>:<br/>Prevents TinyMCE's javascript file from being included.</p>
 
 				<a name="Form-Attribute-preventTinyMCEInitLoad"></a>
-				<p><b>preventTinyMCEInitLoad</b>:<br></p>
+				<p><b>preventTinyMCEInitLoad</b>:<br/>Prevents TinyMCE's init sections from being rendered.</p>
 
 				<a name="Form-Attribute-preventCaptchaLoad"></a>
-				<p><b>preventCaptchaLoad</b>:<br></p>
+				<p><b>preventCaptchaLoad</b>:<br/>Prevents reCAPTCHA's javascript file from being included.</p>
 
 				<a name="Form-Attribute-preventCKEditorLoad"></a>
-				<p><b>preventCKEditorLoad</b>:<br></p>
+				<p><b>preventCKEditorLoad</b>:<br/>Prevents CKEditor's javascript file from being included.</p>
 
 				<a name="Form-Attribute-preventDefaultCSS"></a>
-				<p><b>preventDefaultCSS</b>:<br></p>
+				<p><b>preventDefaultCSS</b>:<br/>This project generates flexible, css-driven markup.  For ease-of-use, a default stylesheet is applied; however, you can set this attribute to turn
+				off these css definitions.</p>
 
 				<a name="Form-Attribute-preventXHTMLStrict"></a>
-				<p><b>preventXHTMLStrict</b>:<br></p>
+				<p><b>preventXHTMLStrict</b>:<br/>The php-form-builder-class/includes directory contains two files - js.php and css.php - that are used to generate the form's required javascript/css 
+				information and externally include them in the document's &lt;head&gt; tag for xhtml 1.0 strict compliance.  If you're using this project in an environment with its own session 
+				handler, such as Joomla!, you may need to use this attribute to render the form's javascript/css inside the body tag.
+				</p>
 
 				<a name="Form-Attribute-style"></a>
-				<p><b>style</b>:<br></p>
+				<p><b>style</b>:<br/>Controls the style attribute on the &lt;form&gt; tag.  This attribute will be empty by default.</p>
 
 				<a name="Form-Attribute-tooltipIcon"></a>
-				<p><b>tooltipIcon</b>:<br></p>
+				<p><b>tooltipIcon</b>:<br/>Controls the image displayed for an element's tooltip.  By default, this attribute is set to "php-form-builder-class/includes/jquery/plugins/qtip/tooltip-icon.gif"
+				- <img src="../includes/jquery/plugins/qtip/tooltip-icon.gif" alt=""/></p>
 
 				<a name="Form-Attribute-tooltipBorderColor"></a>
-				<p><b>tooltipBorderColor</b>:<br></p>
+				<p><b>tooltipBorderColor</b>:<br/>Allows the tooltip's border color to be customized.  By default, this attribute will be set to a light grey.</p>
 
 				<a name="Form-Attribute-width"></a>
-				<p><b>width</b>:<br></p>
+				<p><b>width</b>:<br/>Controls the form's width.  By default, this attribute will be blank causing the form to span the entire width of its container.  This parameter can be set
+				to a pixel or percentage value.</p>  
 			</div>
 		</div>	
 	</body>
