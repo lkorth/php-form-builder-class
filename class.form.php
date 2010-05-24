@@ -823,6 +823,11 @@ class form extends base {
 		$this->addMap($label, $name, $value, $additionalParams);
 	}
 
+	/*This function is included for backwards compatability.*/
+	public function addMap($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "latlng", $value, $additionalParams);
+	}
+
 	public function addPassword($label, $name, $value="", $additionalParams="") {
 		$this->addElement($label, $name, "password", $value, $additionalParams);
 	}
