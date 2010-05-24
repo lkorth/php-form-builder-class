@@ -69,6 +69,45 @@ include("../class.form.php");
 							<li><a href="#Form-Attribute-width">width</a></li>
 						</ul>
 					</li>
+					<li><a href="#Form-Functions">Form Functions</a>
+						<ul>
+							<li><a href="#Form-Function-addButton">addButton</a></li>
+							<li><a href="#Form-Function-addCaptcha">addCaptcha</a></li>
+							<li><a href="#Form-Function-addCheckbox">addCheckbox</a></li>
+							<li><a href="#Form-Function-addCheckSort">addCheckSort</a></li>
+							<li><a href="#Form-Function-addCKEditor">addCKEditor</a></li>
+							<li><a href="#Form-Function-addColorPicker">addColorPicker</a></li>
+							<li><a href="#Form-Function-addCountry">addCountry</a></li>
+							<li><a href="#Form-Function-addDate">addDate</a></li>
+							<li><a href="#Form-Function-addDateRange">addDateRange</a></li>
+							<li><a href="#Form-Function-addDateTime">addDateTime</a></li>
+							<li><a href="#Form-Function-addEmail">addEmail</a></li>
+							<li><a href="#Form-Function-addFile">addFile</a></li>
+							<li><a href="#Form-Function-addHidden">addHidden</a></li>
+							<li><a href="#Form-Function-addHTML">addHTML</a></li>
+							<li><a href="#Form-Function-addLatLng">addLatLng</a></li>
+							<li><a href="#Form-Function-addPassword">addPassword</a></li>
+							<li><a href="#Form-Function-addRadio">addRadio</a></li>
+							<li><a href="#Form-Function-addRating">addRating</a></li>
+							<li><a href="#Form-Function-addSelect">addSelect</a></li>
+							<li><a href="#Form-Function-addSlider">addSlider</a></li>
+							<li><a href="#Form-Function-addSort">addSort</a></li>
+							<li><a href="#Form-Function-addState">addState</a></li>
+							<li><a href="#Form-Function-addTextarea">addTextarea</a></li>
+							<li><a href="#Form-Function-addTextbox">addTextbox</a></li>
+							<li><a href="#Form-Function-addTime">addTime</a></li>
+							<li><a href="#Form-Function-addTrueFalse">addTrueFalse</a></li>
+							<li><a href="#Form-Functimn-addWebEditor">addWebEditor</a></li>
+							<li><a href="#Form-Function-addYesNo">addYesNo</a></li>
+							<li><a href="#Form-Function-bind">bind</a></li>
+							<li><a href="#Form-Function-clearButtons">clearButtons</a></li>
+							<li><a href="#Form-Function-clearElements">clearElements</a></li>
+							<li><a href="#Form-Function-elementsToString">elementsToString</a></li>
+							<li><a href="#Form-Function-render">render</a></li>
+							<li><a href="#Form-Function-setReferenceValues">setReferenceValues</a></li>
+							<li><a href="#Form-Function-validate">validate</a></li>
+						</ul>	
+					</li>	
 				</ul>
 			</div>
 
@@ -405,7 +444,7 @@ $form->setAttributes(array(
 				<a name="Form-Attribute-preventXHTMLStrict"></a>
 				<p><b>preventXHTMLStrict</b>:<br/>The php-form-builder-class/includes directory contains two files - js.php and css.php - that are used to generate the form's required javascript/css 
 				information and externally include them in the document's &lt;head&gt; tag for xhtml 1.0 strict compliance.  If you're using this project in an environment with its own session 
-				handler, such as Joomla!, you may need to use this attribute to render the form's javascript/css inside the body tag.
+				handler, such as Joomla!, you may need to use this attribute to render the form's javascript/css inside the &lt;body&gt; tag.
 				</p>
 
 				<a name="Form-Attribute-style"></a>
@@ -413,7 +452,7 @@ $form->setAttributes(array(
 
 				<a name="Form-Attribute-tooltipIcon"></a>
 				<p><b>tooltipIcon</b>:<br/>Controls the image displayed for an element's tooltip.  By default, this attribute is set to "php-form-builder-class/includes/jquery/plugins/qtip/tooltip-icon.gif"
-				- <img src="../includes/jquery/plugins/qtip/tooltip-icon.gif" alt=""/></p>
+				<img src="../includes/jquery/plugins/qtip/tooltip-icon.gif" alt=""/></p>
 
 				<a name="Form-Attribute-tooltipBorderColor"></a>
 				<p><b>tooltipBorderColor</b>:<br/>Allows the tooltip's border color to be customized.  By default, this attribute will be set to a light grey.</p>
@@ -421,6 +460,118 @@ $form->setAttributes(array(
 				<a name="Form-Attribute-width"></a>
 				<p><b>width</b>:<br/>Controls the form's width.  By default, this attribute will be blank causing the form to span the entire width of its container.  This parameter can be set
 				to a pixel or percentage value.</p>  
+
+				<a name="Form-Functions"></a>
+				<h3>Form Functions</h3>
+				<p></p>
+
+				<a name="Form-Functions-addButton"></a>
+				<p><b>addButton</b>:<br/></p>
+
+				<a name="Form-Functions-addCaptcha"></a>
+				<p><b>addCaptcha</b>:<br/></p>
+
+				<a name="Form-Functions-addCheckbox"></a>
+				<p><b>addCheckbox</b>:<br/></p>
+
+				<a name="Form-Functions-addCheckSort"></a>
+				<p><b>addCheckSort</b>:<br/></p>
+
+				<a name="Form-Functions-addCKEditor"></a>
+				<p><b>addCKEditor</b>:<br/></p>
+
+				<a name="Form-Functions-addColorPicker"></a>
+				<p><b>addColorPicker</b>:<br/></p>
+
+				<a name="Form-Functions-addCountry"></a>
+				<p><b>addCountry</b>:<br/></p>
+
+				<a name="Form-Functions-addDate"></a>
+				<p><b>addDate</b>:<br/></p>
+
+				<a name="Form-Functions-addDateRange"></a>
+				<p><b>addDateRange</b>:<br/></p>
+
+				<a name="Form-Functions-addDateTime"></a>
+				<p><b>addDateTime</b>:<br/></p>
+
+				<a name="Form-Functions-addEmail"></a>
+				<p><b>addEmail</b>:<br/></p>
+
+				<a name="Form-Functions-addFile"></a>
+				<p><b>addFile</b>:<br/></p>
+
+				<a name="Form-Functions-addHidden"></a>
+				<p><b>addHidden</b>:<br/></p>
+
+				<a name="Form-Functions-addHTML"></a>
+				<p><b>addHTML</b>:<br/></p>
+
+				<a name="Form-Functions-addLatLng"></a>
+				<p><b>addLatLng</b>:<br/></p>
+
+				<a name="Form-Functions-addPassword"></a>
+				<p><b>addPassword</b>:<br/></p>
+
+				<a name="Form-Functions-addRadio"></a>
+				<p><b>addRadio</b>:<br/></p>
+
+				<a name="Form-Functions-addRating"></a>
+				<p><b>addRating</b>:<br/></p>
+
+				<a name="Form-Functions-addSelect"></a>
+				<p><b>addSelect</b>:<br/></p>
+
+				<a name="Form-Functions-addSlider"></a>
+				<p><b>addSlider</b>:<br/></p>
+
+				<a name="Form-Functions-addSort"></a>
+				<p><b>addSort</b>:<br/></p>
+
+				<a name="Form-Functions-addState"></a>
+				<p><b>addState</b>:<br/></p>
+
+				<a name="Form-Functions-addTextarea"></a>
+				<p><b>addTextarea</b>:<br/></p>
+
+				<a name="Form-Functions-addTextbox"></a>
+				<p><b>addTextbox</b>:<br/></p>
+
+				<a name="Form-Functions-addTime"></a>
+				<p><b>addTime</b>:<br/></p>
+
+				<a name="Form-Functions-addTrueFalse"></a>
+				<p><b>addTrueFalse</b>:<br/></p>
+
+				<a name="Form-Functions-addWebEditor"></a>
+				<p><b>addWebEditor</b>:<br/></p>
+
+				<a name="Form-Functions-addYesNo"></a>
+				<p><b>addYesNo</b>:<br/></p>
+
+				<a name="Form-Functions-bind"></a>
+				<p><b>bind</b>:<br/></p>
+
+				<a name="Form-Functions-clearButtons"></a>
+				<p><b>clearButtons</b>:<br/></p>
+
+				<a name="Form-Functions-clearElements"></a>
+				<p><b>clearElements</b>:<br/></p>
+
+				<a name="Form-Functions-bind"></a>
+				<p><b>bind</b>:<br/></p>
+
+				<a name="Form-Functions-elementsToString"></a>
+				<p><b>elementsToString</b>:<br/></p>
+
+				<a name="Form-Functions-render"></a>
+				<p><b>render</b>:<br/></p>
+
+				<a name="Form-Functions-setReferenceValues"></a>
+				<p><b>setReferenceValues</b>:<br/></p>
+
+				<a name="Form-Functions-validate"></a>
+				<p><b>validate</b>:<br/></p>
 			</div>
 		</div>	
 	</body>

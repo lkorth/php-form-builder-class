@@ -230,8 +230,7 @@ $form->render();
 
 				?>
 				<p><b>Example 4: Manual Ajax Submission</b> - This sample demonstrates how you can manually call the form's existing function responsible for ajax submission and javascript validation. 
-				By default, this onsubmit function will be named "formhandler_" + form's name; however, you can make use of the <i>onsubmitFunction</i> form attribute if you would like rename 
-				it.  You will need to pass the form's object reference when this function is invoked.</p>  
+				This onsubmit function will be named "pfbc_onsubmit_" + form's name. You will need to pass the form's object reference when this function is invoked.</p>  
 
 				<?php
 				$form = new form("manual");
@@ -241,10 +240,9 @@ $form->render();
 					"width" => 300,
 					"noAutoFocus" => 1,
 					"ajax" => 1,
-					"onsubmitFunction" => "processAjaxPost"
 				));
 				$form->addHidden("cmd", "manual");
-				$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);", "clear" => 1));
+				$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "pfbc_onsubmit_manual(this.form);", "clear" => 1));
 				$form->render();
 
 echo '<pre>', highlight_string('<?php
@@ -254,11 +252,10 @@ $form->setAttributes(array(
 	"preventJQueryLoad" => 1,
 	"width" => 300,
 	"noAutoFocus" => 1,
-	"ajax" => 1,
-	"onsubmitFunction" => "processAjaxPost"
+	"ajax" => 1
 ));
 $form->addHidden("cmd", "manual");
-$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "processAjaxPost(this.form);", "clear" => 1));
+$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "pfbc_onsubmit_manual(this.form);", "clear" => 1));
 $form->render();
 ', true), '</pre>';
 
