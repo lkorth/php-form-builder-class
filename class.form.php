@@ -7,21 +7,23 @@ Google Groups - http://groups.google.com/group/php-form-builder-class/
 class base {
 	function setAttributes($params) {
 		if(!empty($params) && is_array($params)) {
-			//Loop through and get accessible class variables
+			//Loop through and get accessible class variables.
 			$objArr = array();
 			foreach($this as $key => $value)
 				$objArr[$key] = $value;
 
 			foreach($params as $key => $value) {
+				//Set the appropriate class variable if it exists.
 				if(array_key_exists($key, $objArr)) {
 					if(is_array($this->$key) && !empty($this->$key)) {
-						//Using array_merge prevents any default values from being overwritten
+						//Using array_merge prevents any default values from being overwritten.
 						if(is_array($value))
 							$this->$key = array_merge($this->$key, $value);
 					}	
 					else
 						$this->$key = $value;
 				}
+				//Insert key/value pair into the attributes array if it does not match any class variables.
 				elseif(array_key_exists("attributes", $objArr))
 					$this->attributes[$key] = $value;
 			}
@@ -30,9 +32,7 @@ class base {
 	}
 
 	function debug() {
-		echo "<pre>";
-			print_r($this);
-		echo "</pre>";
+		echo "<pre>", print_r($this, true), "</pre>";
 	}
 }
 
@@ -104,7 +104,7 @@ class form extends base {
 	public $errorMsg;
 
 	public function __construct($id = "myform") {
-		//Non alpha-numeric characters are replaced with underscores to prevent invalid javascript function names
+		//Non alpha-numeric characters are replaced with underscores to prevent invalid javascript function names.
 		$id = preg_replace("/[^a-zA-Z0-9]/", "_", $id);
 		$this->attributes = array(
 			"id" => $id,
@@ -120,11 +120,13 @@ class form extends base {
 		$this->ajaxCallback = "alert";
 		$this->ajaxType = "post";
 		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
+		//[LABEL] is replaced with the appropriate element's label for both errorMsgFormat and emailErrorMsgFormat attributes.
 		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
 		$this->emailErrorMsgFormat = "Error: [LABEL] contains an invalid email address.";
 		$this->includesPath = "php-form-builder-class/includes";
 		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
 		$this->mapMargin = 1;
+		//These lists represent all xhtml 1.0 strict compliant attributes. See http://www.w3schools.com/tags/default.asp for reference.
 		$this->allowedFields = array(
 			"form" => array("action", "accept", "accept-charset", "enctype", "method", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onreset", "onsubmit"),
 			"text" => array("accept", "disabled", "maxlength", "name", "readonly", "size", "type", "value", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
@@ -150,23 +152,20 @@ class form extends base {
 		$this->attachElement($params);
 	}
 
-	/*This function creates new button object instances and attaches them to the form.  It is private and can only be used inside this class.*/
 	private function attachButton($params) {
 		$button = new button();
 		$button->setAttributes($params);
 		$this->buttons[] = $button;
 	}
 
-	/*Creates new element object instances and attaches them to the form object.  This function is private and can only be called inside this class.*/
 	private function attachElement($params) {
 		$ele = new element();
 		$ele->setAttributes($params);
 		$eleType = &$ele->attributes["type"];
 
-		/*This set of conditions handles form elements requiring the $option class.*/		
 		if($eleType == "state") {
-			/*This section prevents the stateArr from being generated for each form and/or multiple state field types per form.*/
 			$eleType = "select";
+
 			if(empty($this->stateArr)) {
 				$this->stateArr = array(
 					array("value" => "", "text" => "--Select a State/Province--"),
@@ -247,6 +246,7 @@ class form extends base {
 					array("value" => "VI", "text" => "Virgin Islands")
 				);
 			}
+
 			$ele->options = array();
 			$stateSize = sizeof($this->stateArr);
 			for($s = 0; $s < $stateSize; ++$s) {
@@ -256,8 +256,8 @@ class form extends base {
 			}
 		}	
 		elseif($eleType == "country") {
-			/*This section prevents the countryArr from being generated for each form and/or multiple country field types per form.*/
 			$eleType = "select";
+
 			if(empty($this->countryArr)) {
 				$this->countryArr = array(
 					array("value" => "", "text" => "--Select a Country--"),
@@ -474,6 +474,7 @@ class form extends base {
 					array("value" => "ZW", "text" => "Zimbabwe")
 				);
 			}
+
 			$ele->options = array();
 			$countrySize = sizeof($this->countryArr);
 			for($s = 0; $s < $countrySize; ++$s) {
@@ -483,7 +484,7 @@ class form extends base {
 			}
 		}
 		elseif($eleType == "yesno") {
-			/*The yesno field is shortcut creating a radio button with two options: yes and no.*/
+			//The yesno field is a shortcut for creating a radio button with two options - yes and no.
 			$eleType = "radio";
 			$ele->options = array();
 			$opt = new option();
@@ -494,7 +495,7 @@ class form extends base {
 			$ele->options[] = $opt;
 		}
 		elseif($eleType == "truefalse") {
-			/*Similar to yesno, the truefalse field is shortcut creating a radio button with two options: true and false.*/
+			//Similar to yesno, the truefalse field is shortcut creating a radio button with two options - true and false.
 			$eleType = "radio";
 			$ele->options = array();
 			$opt = new option();
@@ -505,10 +506,10 @@ class form extends base {
 			$ele->options[] = $opt;
 		}
 		elseif(array_key_exists("options", $params) && is_array($params["options"])) {
-			/*Various form types (select, radio, ect.) use the options parameter to handle multiple choice elements.*/
+			//Various form types (select, radio, sort, checksort, etc.) use the options parameter to handle value/text scenarios.
 			if(array_key_exists("options", $params) && is_array($params["options"])) {
 				$ele->options = array();
-				/*If the options array is numeric, assign the key and text to each value.*/
+				//If the options array is one-dimensional, assign the array's value to both the value and text.
 				if(array_values($params["options"]) === $params["options"]) {
 					foreach($params["options"] as $key => $value) {
 						$opt = new option();
@@ -516,7 +517,7 @@ class form extends base {
 						$ele->options[] = $opt;
 					}
 				}
-				/*If the options array is associative, assign the key and text to each key/value pair.*/
+				//If the options array is associative, assign the value and text for each key/value pair.
 				else {
 					foreach($params["options"] as $key => $value) {
 						$opt = new option();
@@ -527,13 +528,12 @@ class form extends base {
 			}
 		}
 
-		/*This set of conditions sets default information for specific form elements. Setting information here allow the elementsToString() function to be compressed.*/
+		//This set of conditions sets default information for specific form elements. Setting information here allows similar elements within the elementsToString() function to be compressed.
 		if($eleType == "email")
 			$this->emailExists = 1;
 		elseif($eleType == "file")
 			$this->attributes["enctype"] = "multipart/form-data";
 		elseif($eleType == "webeditor") {
-			/*This section ensures that each webeditor field has a unique identifier.*/
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "webeditor_" . rand(0, 999);
 			if(empty($this->tinymceIDArr))
@@ -543,7 +543,6 @@ class form extends base {
 			$this->tinymceIDArr[] = $ele->attributes["id"];
 		}
 		elseif($eleType == "ckeditor") {
-			/*This section ensures that each ckeditor field has a unique identifier.*/
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "ckeditor_" . rand(0, 999);
 			if(empty($this->ckeditorIDArr))
@@ -552,7 +551,6 @@ class form extends base {
 				$ele->attributes["id"] = "ckeditor_" . rand(0, 999);
 		}
 		elseif($eleType == "date") {
-			/*This section ensures that each date field has a unique identifier.*/
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "dateinput_" . rand(0, 999);
 			if(!isset($this->jqueryDateIDArr))
@@ -566,7 +564,6 @@ class form extends base {
 				$ele->hint = "Click to Select Date...";
 		}
 		elseif($eleType == "datetime") {
-			/*This section ensure that each daterange field has a unique identifier.*/
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "datetimeinput_" . rand(0, 999);
 			if(!isset($this->jqueryDateTimeIDArr))
@@ -580,7 +577,6 @@ class form extends base {
 				$ele->hint = "Click to Select Date/Time...";
 		}
 		elseif($eleType == "time") {
-			/*This section ensure that each daterange field has a unique identifier.*/
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "timeinput_" . rand(0, 999);
 			if(!isset($this->jqueryTimeIDArr))
@@ -595,7 +591,6 @@ class form extends base {
 			$this->jqueryTimeIDArr[$ele->attributes["id"]] = $ele;
 		}
 		elseif($eleType == "daterange") {
-			/*This section ensure that each daterange field has a unique identifier.*/
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
 			if(!isset($this->jqueryDateRangeIDArr))
@@ -609,7 +604,6 @@ class form extends base {
 				$ele->hint = "Click to Select Date Range...";
 		}
 		elseif($eleType == "sort") {
-			/*This section ensures that each sort field has a unique identifier.*/
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "sort_" . rand(0, 999);
 			if(!isset($this->jquerySortIDArr))
@@ -619,7 +613,6 @@ class form extends base {
 			$this->jquerySortIDArr[] = $ele->attributes["id"];
 		}
 		elseif($eleType == "latlng") {
-			/*This section ensures that each latlng (Google Map) field has a unique identifier.*/
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "latlnginput_" . rand(0, 999);
 			if(!isset($this->latlngIDArr))
@@ -635,8 +628,7 @@ class form extends base {
 				$ele->hint = "Drag Map Marker to Select Location...";
 		}
 		elseif($eleType == "checksort") {
-			/*This section ensure that each checksort field has a unique identifier.  You will notice that sort and checksort are stores in the same
-			array (this->jquerySortIDArr).  This is done because they both use the same jquery ui sortable functionality.*/
+			//The identifiers for both the sort and checksort element types are stores in the same array (this->jquerySortIDArr).  This is done because they use the same jquery ui sortable functionality.
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "checksort_" . rand(0, 999);
 			if(!isset($this->jquerySortIDArr))
@@ -645,11 +637,11 @@ class form extends base {
 				$ele->attributes["id"] = "checksort_" . rand(0, 999);
 			$this->jquerySortIDArr[] = $ele->attributes["id"];
 
-			/*This variable triggers a javascript section for handling the dynamic adding/removing of sortable option when a user clicks the checkbox.*/
+			//This variable triggers a javascript section for handling the dynamic adding/removing of sortable option when a user clicks the checkbox.
 			$this->jqueryCheckSort = 1;
 		}
 		elseif($eleType == "captcha") {
-			/*If there is a captcha elements in the form, make sure javascript onsubmit function is enabled.*/
+			//If there is a captcha elements in the form, make sure javascript onsubmit function is enabled.
 			if(empty($this->captchaExists))
 				$this->captchaExists = 1;
 			else
@@ -662,7 +654,6 @@ class form extends base {
 			$this->captchaID = $ele->attributes["id"];
 		}
 		elseif($eleType == "slider") {
-			/*This section ensures that each slider field has a unique identifier.*/
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "sliderinput_" . rand(0, 999);
 			if(!isset($this->jquerySliderIDArr))
@@ -693,7 +684,6 @@ class form extends base {
 			$this->jquerySliderIDArr[$ele->attributes["id"]] = $ele;
 		}
 		elseif($eleType == "rating") {
-			/*This section ensures each rating field has a unique identifier.*/
 			$ele->ratingID = "starrating_" . rand(0, 999);
 			if(!isset($this->jqueryStarRatingIDArr))
 				$this->jqueryStarRatingIDArr = array();
@@ -701,7 +691,6 @@ class form extends base {
 				$ele->ratingID = "starrating_" . rand(0, 999);
 		}
 		elseif($eleType == "colorpicker") {
-			/*This section ensures that each colorpicker field has a unique identifier.*/
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "colorinput_" . rand(0, 999);
 			if(!isset($this->jqueryColorIDArr))
@@ -714,12 +703,11 @@ class form extends base {
 				$ele->hint = "Click to Select Color...";
 		}
 
-		/*If there is a required field type in the form, make sure javascript error checking is enabled.*/
+		//If there is a required field type in the form, make sure javascript error checking is enabled.
 		if(!empty($ele->required) && empty($this->checkform))
 			$this->checkform = 1;
 
 		if(!empty($ele->label) && !empty($ele->tooltip)) {
-			/*This section ensures that each tooltip has a unique identifier.*/
 			if(!isset($this->tooltipIDArr))
 				$this->tooltipIDArr = array(); 
 			$ele->tooltipID = "tooltip_" . rand(0, 999);
@@ -728,7 +716,7 @@ class form extends base {
 			$this->tooltipIDArr[$ele->tooltipID] = $ele;
 		}
 
-		/*Add appropriate javascript event functions if hint is present.*/
+		//Add the appropriate javascript event functions if hint is present.
 		if(in_array($eleType, array("text", "textarea", "date", "datetime", "time", "daterange", "colorpicker", "latlng", "email")) && !empty($ele->hint)) {
 			$hintFocusFunction = "hintfocus_" . $this->attributes["id"] . '(this, "' . str_replace('"', '\"', stripslashes($ele->hint)) . '");';
 			if(empty($ele->attributes["onfocus"]))
@@ -751,10 +739,6 @@ class form extends base {
 
 	public function addButton($value="Submit", $type="submit", $additionalParams="") {
 		$params = array("value" => $value, "type" => $type);
-
-		/*The additionalParams performs a similar role as in the addElement function.  For more information, please read to description
-		of this field in the addElement function.  Commonly used attributes included for additionalParams in this function include
-		onclick.*/
 		if(!empty($additionalParams) && is_array($additionalParams)) {
 			foreach($additionalParams as $key => $value)
 				$params[$key] = $value;
@@ -820,11 +804,6 @@ class form extends base {
 	}
 
 	public function addLatLng($label, $name, $value="", $additionalParams="") {
-		$this->addMap($label, $name, $value, $additionalParams);
-	}
-
-	/*This function is included for backwards compatability.*/
-	public function addMap($label, $name, $value="", $additionalParams="") {
 		$this->addElement($label, $name, "latlng", $value, $additionalParams);
 	}
 
@@ -912,11 +891,11 @@ class form extends base {
 		if(empty($this->referenceValues) && !empty($_SESSION["pfbc-values"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-values"]))
 			$this->setReferenceValues($_SESSION["pfbc-values"][$this->attributes["id"]]);
 
-		//If windows normalize backslashes to forward slashes
+		//If windows normalize backslashes to forward slashes.
 		if( PHP_OS == 'WINNT' )
 			$this->includesPath = str_replace( "\\" , "/" , $this->includesPath );
 
-		//check if includesPath is absolute or not, then create variables for where you need to use it
+		//Check if includesPath is absolute or not, then create js/php specific variables.
 		if($this->includesPath[0] != '/') {
 			$this->jsIncludesPath = $this->includesPath;
 			$this->phpIncludesPath = $this->includesPath;
@@ -946,16 +925,13 @@ class form extends base {
 		if(empty($this->hasFormTag))
 			$str .= "\n" . '<div id="' . $this->attributes["id"] . '">';
 		else {
-			/*Render the form tag with all appropriate attributes.*/
 			$str .= "\n<form";
 			if(!empty($this->attributes) && is_array($this->attributes)) {
 				/*This syntax will be used throughout the render() and elementsToString() functions ensuring that attributes added to various HTML tags
-				are allowed and valid.  If you find that an attribute is not being included in your HTML tag definition, please reference $this->allowedFields.
-				This variable can be modified to fit your specific needs.*/
+				are allowed and valid.  If you find that an attribute is not being included in your HTML tag definition, please reference $this->allowedFields.*/
 				$tmpAllowFieldArr = $this->allowedFields["form"];
 				foreach($this->attributes as $key => $value) {
-					/*If an onsubmit function is defined and the form is setup for javascript error checking (checkform) or ajax submission (ajax), the user
-					defined onsubmit function will be overwritten and discarded.*/
+					//Skip any user-defined onsubmit function if one or more of the following conditions is met.
 					if($key == "onsubmit" && (!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists)))
 						continue;
 					if(in_array($key, $tmpAllowFieldArr))
@@ -980,7 +956,7 @@ class form extends base {
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = $this->elements[$i];
 			if($ele->attributes["type"] == "hidden") {
-				/*If the referenceValues array is filled, check for this specific element's name in the associative array key and populate the field's value if applicable.*/
+				//If the referenceValues array is filled, check for this specific element's name in the associative array key and populate the field's value if applicable.
 				if(!empty($this->referenceValues) && is_array($this->referenceValues)) {
 					if(array_key_exists($ele->attributes["name"], $this->referenceValues))
 						$ele->attributes["value"] = $this->referenceValues[$ele->attributes["name"]];
@@ -1012,7 +988,7 @@ class form extends base {
 			$map_element_first = false;
 			$map_element_last = false;
 
-			/*If the referenceValues array is filled, check for this specific element's name in the associative array key and populate the field's value if applicable.*/
+			//If the referenceValues array is filled, check for this specific element's name in the associative array key and populate the field's value if applicable.
 			if(!empty($this->referenceValues) && is_array($this->referenceValues)) {
 				if(array_key_exists($ele->attributes["name"], $this->referenceValues))
 					$ele->attributes["value"] = $this->referenceValues[$ele->attributes["name"]];
@@ -1020,7 +996,6 @@ class form extends base {
 					$ele->attributes["value"] = $this->referenceValues[substr($ele->attributes["name"], 0, -2)];
 			}	
 
-			/*Hidden values do not need to be inside any table cell container; therefore, they are handled differently than the other fields.*/
 			if($ele->attributes["type"] != "hidden") {
 				if(!empty($this->map)) {
 					if(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
@@ -1058,8 +1033,6 @@ class form extends base {
 					$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
 				$str .= '">';
 
-				/*preHTML and postHTML allow for any special case scenarios.  One specific situation where these may be used would
-				be if you need to toggle the visibility of an item or items based on the state of another field such as a radio button.*/
 				if(!empty($ele->preHTML))
 					$str .= $this->indent() . $ele->preHTML;
 
@@ -1067,28 +1040,24 @@ class form extends base {
 					$str .= $this->indent();
 					$str .= '<label class="pfbc-label">';
 
-					/*If this field is set as required, render an "*" inside a <span> tag.*/
 					if(!empty($ele->required))
 						$str .= '<span class="pfbc-required">*</span> ';
 					$str .= $ele->label;
 
-					/*jQuery Tooltip Functionality*/
 					if(!empty($ele->tooltip))
 						$str .= ' <img id="' . $ele->tooltipID . '" src="' . $this->tooltipIcon . '" alt=""/>';
 
 					$str .= "</label>";
 				}	
 
-				/*Check the element's type and render the field accordinly.*/
 				$eleType = &$ele->attributes["type"];
 				
-				/*Add appropriate javascript event functions if hint is present.*/
 				if(!empty($ele->hint) && empty($ele->attributes["value"]))
 					$ele->attributes["value"] = $ele->hint;
 
 				$str .= $this->indent();
 				if(in_array($eleType, array("text", "password", "email", "date", "datetime", "time", "daterange", "colorpicker"))) {
-					/*Temporarily set the type attribute to "text" for <input> tag.*/
+					//Temporarily set the type attribute to "text" for <input> tag.
 					if(in_array($eleType, array("email", "date", "datetime", "time", "daterange", "colorpicker"))) {
 						$resetTypeTo = $eleType;
 						$eleType = "text";
@@ -1111,7 +1080,7 @@ class form extends base {
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 					
-					/*Now that <input> tag his been rendered, change type attribute back appropriately.*/
+					//Now that <input> tag his been rendered, change type attribute back appropriately.
 					if(isset($resetTypeTo)) {
 						$eleType = $resetTypeTo;
 						unset($resetTypeTo);
@@ -1279,7 +1248,7 @@ class form extends base {
 							$tmpID = str_replace(array('"', '[]'), array('&quot;', '-'), $ele->attributes["name"]) . $o;
 							$str .= ' id="' . $tmpID . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';		
 
-							/*For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.*/
+							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"])))
 								$str .= ' checked="checked"';
 							$str .= '/>';
@@ -1333,13 +1302,13 @@ class form extends base {
 					if(empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "";
 
-					/*If the value is formatted "Latitude: 123.45, Longitude: -67.89" parse and convert to array.*/
+					//If the value is formatted "Latitude: 123.45, Longitude: -67.89" parse and convert to array.
 					if(!empty($ele->attributes["value"]) && !is_array($ele->attributes["value"]) && strpos($ele->attributes["value"], "Latitude:", 0) === 0)
 						$ele->attributes["value"] = array(substr($ele->attributes["value"], strpos($ele->attributes["value"], ":") + 2, strpos($ele->attributes["value"], ",") - strpos($ele->attributes["value"], ":") - 2), substr($ele->attributes["value"], strrpos($ele->attributes["value"], ":") + 1));
 
 					$latlngID = htmlentities($ele->attributes["id"], ENT_QUOTES);
 
-					/*Temporarily set the type attribute to "text" for <input> tag.*/
+					//Temporarily set the type attribute to "text" for <input> tag.
 					$eleType = "text";
 
 					$str .= "<input";
@@ -1357,7 +1326,7 @@ class form extends base {
 						$str .= str_replace('"', '&quot;', $ele->hint);
 					$str .= '"/>';
 
-					/*Now that <input> tag his been rendered, change type attribute back to "latlng".*/
+					//Now that <input> tag his been rendered, change type attribute back to "latlng".
 					$eleType = "latlng";
 
 					$str .= $this->indent();
@@ -1382,12 +1351,10 @@ class form extends base {
 						if(substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
 
-						/*This variable triggers a javascript section for handling the dynamic adding/removing of sortable option when a user clicks the checkbox.*/
+						//This variable triggers a javascript section for handling the dynamic adding/removing of sortable option when a user clicks the checkbox.
 						$this->jqueryCheckSort = 1;
 
-						/*Temporary variable for building <ul> sorting structure for checked options.*/
 						$sortLIArr = array();
-
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o) {
 							if($o != 0)
@@ -1410,7 +1377,7 @@ class form extends base {
 							$tmpID = str_replace(array('"', '[]'), array('&quot;', '-'), $ele->attributes["name"]) . $o;
 							$str .= ' id="' . $tmpID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->options[$o]->value) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->options[$o]->text) . '\');"';
 
-							/*For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.*/
+							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"]))) {
 								$str .= ' checked="checked"';
 								$sortLIArr[$ele->options[$o]->value] = '<li id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . $o . '" class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2em; line-height: 2em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"/></span>' . $ele->options[$o]->text . '</li>' . "\n";
@@ -1422,7 +1389,7 @@ class form extends base {
 						if(!empty($ele->clear))
 							$str .= '<div style="clear: both;"></div>';
 
-						/*If there are any check options by default, render the <ul> sorting structure.*/
+						//If there are any check options by default, render the <ul> sorting structure.
 						$str .= $this->indent();
 						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
 						if(!empty($sortLIArr)) {
@@ -1517,7 +1484,7 @@ class form extends base {
 			}	
 		}
 
-		/*This javascript section loads all required js and css files needed for a specific form.  CSS files are loaded into the <head> tag with javascript.*/
+		//This javascript section loads all required js and css files needed for a specific form.  CSS files are loaded into the <head> tag with javascript.
 		$str .= <<<STR
 
 	<div class="pfbc-script">
@@ -1532,7 +1499,7 @@ class form extends base {
 		</script>
 
 STR;
-		/*Unless prevented, jQuery will be loaded with each form that is built using this class.*/
+		//Unless prevented, jQuery will be loaded with each form that is built using this class.
 		if(empty($this->preventJQueryLoad)) {
 			$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
@@ -1648,7 +1615,7 @@ STR;
 			}	
 		}
 
-		/*Serialize the form and store it in a session array.  This variable will be unserialized and used within the validate() method.*/
+		//Serialize the form and store it in a session array.  This variable will be unserialized and used within js/css.php and the validate() method.
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
 		if(empty($this->preventXHTMLStrict)) {
@@ -1696,12 +1663,12 @@ STR;
 
 STR;
 		if(!empty($this->hasFormTag)) {
-			/*If there are buttons included, render those to the screen now.*/
+			//If there are buttons included, render those to the screen now.
 			if(!empty($this->buttons)) {
 				$str .= "\t" . '<div class="pfbc-buttons">';
 				$buttonSize = sizeof($this->buttons);
 				for($i = 0; $i < $buttonSize; ++$i) {
-					/*The wraplink parameter will simply wrap an anchor tag (<a>) around the button treating it as a link.*/
+					//The wraplink parameter will simply wrap an anchor tag (<a>) around the button treating it as a link.
 					if(!empty($this->buttons[$i]->wrapLink)) {
 						$str .= "\n\t\t<a";
 						if(!empty($this->buttons[$i]->linkAttributes) && is_array($this->buttons[$i]->linkAttributes)) {
@@ -1717,8 +1684,7 @@ STR;
 						$str .= "\n\t\t";
 
 
-					/*The phpFunction parameter was included to give the developer the flexibility to use any custom button generation function 
-					they might currently use in their development environment.*/
+					//The phpFunction parameter was included to give developers the flexibility to use any custom button generation function they might currently use in their environment.
 					if(!empty($this->buttons[$i]->phpFunction)) {
 						$execStr = $this->buttons[$i]->phpFunction . "(";
 						if(!empty($this->buttons[$i]->phpParams)) {
@@ -1790,7 +1756,7 @@ STR;
 	}
 
 	public function validate() {
-		/*Determine if the form's submit method was get or post.*/
+		//Determine if the form's submit method was get or post.
 		if(!empty($_POST))
 			$referenceValues = $_POST;
 		elseif(!empty($_GET))
@@ -1801,10 +1767,10 @@ STR;
 		}
 
 		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
-			/*Automatically unserialize the appropriate form instance stored in the session array.*/
+			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-			/*Store the form's submitted values in a session array for prefilling if validation fails.*/
+			//Store the form's submitted values in a session array for prefilling if validation fails.
 			$this->buildSessionValues($form, $referenceValues);
 			if(!empty($form->bindRules)) {
 				$bindRuleKeys = array_keys($form->bindRules);
@@ -1817,7 +1783,7 @@ STR;
 				}	
 			}	
 
-			/*Cycle through the form's required elements to ensure they are valid.*/
+			//Cycle through the form's required elements to ensure they are valid.
 			if(!$this->phpCycleElements($form->elements, $referenceValues, $form))
 				return false;
 			if(!empty($form->bindRules)) {
@@ -1833,7 +1799,7 @@ STR;
 				}
 			}
 
-			/*Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.*/
+			//Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.
 			if(!empty($_SESSION["pfbc-values"][$form->attributes["id"]]))
 				unset($_SESSION["pfbc-values"][$form->attributes["id"]]);
 			if(!empty($form->bindRules)) {
@@ -1856,7 +1822,6 @@ STR;
 		}
 	}
 
-	/*This function handles javascript validation of all required form elements as well as ajax submission.  It was moved from within the render function to it's own function to be reused by nested forms.*/
 	private function jsCycleElements($elements) {
 		$str = "";
 		$elementSize = sizeof($elements);
@@ -2224,7 +2189,7 @@ STR;
 			}
 		}	
 
-		/*Remove hints if they remain as form element values.*/
+		//Remove hints if they remain as form element values.
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = $elements[$i];
 			if(!empty($ele->hint)) {
@@ -2240,11 +2205,11 @@ STR;
 		return $str;
 	}
 
-	/*This function renders the form's javascript.  This function is invoked within includes/js.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.*/
+	//This function renders the form's javascript.  This function is invoked within includes/js.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.
 	public function renderJS($returnString=false) {
 		$str = "";
 		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
-			/*Automatically unserialize the appropriate form instance stored in the session array.*/
+			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
 			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateTimeIDArr) || !empty($form->jqueryTimeIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr)) {
@@ -2327,7 +2292,7 @@ STR;
 					}	
 				}
 
-				/*For more information on qtip, visit http://craigsworks.com/projects/qtip/.*/
+				//For more information on qtip, visit http://craigsworks.com/projects/qtip/.
 				if(!empty($form->tooltipIDArr)) {
 					$tooltipKeys = array_keys($form->tooltipIDArr);
 					$tooltipSize = sizeof($tooltipKeys);
@@ -2362,7 +2327,7 @@ STR;
 					}	
 				}
 
-				/*For more information on the jQuery UI slider, visit http://jqueryui.com/demos/slider/.*/
+				//For more information on the jQuery UI slider, visit http://jqueryui.com/demos/slider/.
 				if(!empty($form->jquerySliderIDArr)) {
 					$sliderKeys = array_keys($form->jquerySliderIDArr);
 					$sliderSize = sizeof($form->jquerySliderIDArr);
@@ -2440,7 +2405,7 @@ STR;
 					}
 				}
 
-				/*For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.*/
+				//For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.
 				if(!empty($form->jqueryStarRatingIDArr)) {
 					$ratingKeys = array_keys($form->jqueryStarRatingIDArr);
 					$ratingSize = sizeof($form->jqueryStarRatingIDArr);
@@ -2471,7 +2436,7 @@ STR;
 					}	
 				}
 
-				/*For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.*/
+				//For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.
 				if(!empty($form->jqueryColorIDArr)) {
 					$colorSize = sizeof($form->jqueryColorIDArr);
 					for($c = 0; $c < $colorSize; ++$c) {
@@ -2695,10 +2660,8 @@ STR;
 			}
 
 			if(!empty($form->hasFormTag)) {
-				/*
-				If there are any required fields in the form or if this form is setup to utilize ajax, build a javascript 
-				function for performing form validation before submission and/or for building and submitting a data string through ajax.
-				*/
+				/*If there are any required fields in the form or if this form is setup to utilize ajax, build a javascript 
+				function for performing form validation before submission and/or for building and submitting a data string through ajax.*/
 				if(!empty($form->checkform) || !empty($form->ajax) || !empty($form->captchaExists) || !empty($form->hintExists) || !empty($form->emailExists)) {
 					if(!empty($form->emailExists)) {
 						$str .= <<<STR
@@ -2800,10 +2763,9 @@ STR;
 STR;
 				}
 
-				/*This javascript section sets the focus of the first field in the form.  This default behavior can be overwritten by setting the
-				noAutoFocus parameter.*/
+				//This javascript section sets the focus of the first field in the form.  This default behavior can be overwritten by setting the noAutoFocus parameter.
 				if(empty($form->noAutoFocus) && !empty($form->focusElement)) {
-					/*The webeditor and ckeditor fields are a special case.*/
+					//The webeditor and ckeditor fields are a special case.
 					if(!empty($form->tinymceIDArr) && is_array($form->tinymceIDArr) && in_array($form->focusElement, $form->tinymceIDArr)) {
 						$str .= <<<STR
 setTimeout("if(tinyMCE.get(\"{$form->focusElement}\")) tinyMCE.get(\"{$form->focusElement}\").focus();", 1000);
@@ -2817,7 +2779,7 @@ STR;
 
 					}	
 					else {
-						/*Any fields with multiple options such as radio button, checkboxes, etc. are handled accordingly.*/
+						//Any fields with multiple options such as radio button, checkboxes, etc. are handled accordingly.
 						$str .= <<<STR
 if(document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-one" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-multiple" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].length)
 	document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"][0].focus();
@@ -2836,11 +2798,11 @@ STR;
 			return $str;
 	}
 
-	/*This function renders the form's css.  This function is invoked within includes/css.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.*/
+	//This function renders the form's css.  This function is invoked within includes/css.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.
 	public function renderCSS($returnString=false) {
 		$str = "";
 		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
-			/*Automatically unserialize the appropriate form instance stored in the session array.*/
+			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
 			if(empty($form->preventDefaultCSS)) {
@@ -3057,13 +3019,6 @@ STR;
 		return $str;
 	}
 
-	/*
-	This function validates all required fields.  If a captcha field is found, it is validated as well.  This function returns 
-	true if the form successfully passes validation or false if errors were found.  If the form does return false, the errorMsg 
-	variable will be populated with a human readable error message that can be displayed to the user upon redirect if desired.
-	*/
-
-	/*This function is responsible for storing the form's submitted values in a session array for prefilling if the form fails validation.*/
 	private function buildSessionValues($form, $referenceValues) {
 		$elementSize = sizeof($form->elements);
 		for($e = 0; $e < $elementSize; ++$e) {
@@ -3088,13 +3043,12 @@ STR;
 			unset($_SESSION["pfbc-values"][$form->attributes["id"]]["recaptcha_response_field"]);
 	}
 
-	/*This function handles php validation of all required form elements.  It was moved from within the validate function to it's own function to be reused by nested forms.*/
 	private function phpCycleElements($elements, $referenceValues, $form) {
 		$elementSize = sizeof($elements);
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = $elements[$i];
 
-			/*The html, sort, and element types are ignored.*/
+			//The html, sort, and hidden element types are ignored.
 			if($ele->attributes["type"] == "html" || $ele->attributes["type"] == "sort" || $ele->attributes["type"] == "hidden")
 				continue;
 			elseif($ele->attributes["type"] == "captcha") {
@@ -3143,65 +3097,61 @@ STR;
 }
 
 class element extends base {
-	public $attributes;					/*HTML attibutes that are applied to form input type.*/
-	public $label;						/*Text/HTML that is placed in <div> about form input type.*/
-	public $options;					/*Contains multiple options such as select, radio, checkbox, etc.  Can exist as associative or one-dimensional array.*/
-	public $required;					/*Will trigger javascript error checking.*/
-	public $nobreak;					/*Applicable for radio, yesno, truefalse, and checkbox elements.  If this parameter is set, there will not be <br> tags separating each option.*/
-	public $preHTML;					/*HTML content that is rendered before <div> containing the element's label.*/
-	public $postHTML;					/*HTML content that is rendered just before the closing </td> of the element.*/
-	public $tooltip;					/*If provided, this content (text or HTML) will generate a tooltip activated onkeyup.*/
-	public $tooltipWidth;				/*Allows tooltip widths to be customized.*/
-	public $tooltipID;					/*Uniquely identifies each tooltip.*/
-	public $hint;						/*If provided, this content will be displayed as the field's value until focus event.*/
-	public $clear;						/*Only applicable for checkbox, radio, and checksort elements.  Inserts float-clearing div tag after last option.*/
-	public $width;						/*Generic width used for multiple elements.*/
-	public $height;						/*Generic height used for multiple elements.*/
-	public $basic;						/*Used for both web editors to render minified version.*/
+	public $attributes;
+	public $label;
+	public $options;
+	public $required;
+	public $nobreak;
+	public $preHTML;
+	public $postHTML;
+	public $tooltip;
+	public $tooltipWidth;
+	public $tooltipID;
+	public $hint;
+	public $clear;
+	public $width;
+	public $height;
+	public $basic;
 
-	/*latlng specific fields*/
-	public $zoom;						/*Controls zoom level when Google Map is initially loaded.*/
-	public $hideJump;					/*Will hide the textbox for location jump functionality.*/
+	//latlng specific fields
+	public $zoom;
+	public $hideJump;
 
-	/*slider specific fields*/
-	public $min;						/*Controls lowest value of slider.*/ 
-	public $max;						/*Controls highest value of slider.*/
-	public $snapIncrement;				/*Controls incremental step of slider.*/
-	public $orientation;				/*Defaults to horizontal but can be set to vertical.*/
-	public $prefix;						/*Will prepend dynamic slider label with specified string.*/
-	public $suffix;						/*Will append end of dynamic slider label with specified string.*/
-	public $hideDisplay;				/*Hides dynamic slider label.*/
+	//slider specific fields
+	public $min;
+	public $max;
+	public $snapIncrement;
+	public $orientation;
+	public $prefix;
+	public $suffix;
+	public $hideDisplay;
 
-	/*rating specific fields*/
-	public $hideCaption;				/*Hides dynamic rating label.*/
-	public $hideCancel;					/*Hides rating cancel image.*/
+	//rating specific fields
+	public $hideCaption;
+	public $hideCancel;
 
-	/*time specific fields*/
-	public $minuteSnapIncrement;		/*Controls incremental step of minute slider.*/
-	public $hourSnapIncrement;			/*Controls incremental step of hour slider.*/
-	public $is24Hour;					/*Controls if time returned is in 24 hour format.*/
+	//time specific fields
+	public $minuteSnapIncrement;
+	public $hourSnapIncrement;
+	public $is24Hour;
 
 	public function __construct() {
-		/*Set default values where appropriate.*/
 		$this->attributes = array(
 			"type" => "text"
 		);
 	}
 }
 class option extends base {
-	/*Public variables to be read/written in both the base and form classes.*/
-	public $value;						/*Contains input value.*/
-	public $text;						/*Contains displayed text.*/
+	public $value;
+	public $text;
 }
 class button extends base {
-	/*Public variables to be read/written in both the base and form classes.*/
-	public $attributes;					/*HTML attibutes that are applied to button input type.*/
-	public $phpFunction;				/*Specified php function for generating button images.*/
-	public $phpParams;					/*Array containing paramters passed to phpFunction.*/
-	public $wrapLink;					/*Wraps anchor tag around button.*/
-	public $linkAttributes;				/*HTML attibutes that are applied to the anchor tag is the wrapLink parameter is specified.*/
+	public $attributes;
+	public $phpFunction;
+	public $phpParams;
+	public $wrapLink;
+	public $linkAttributes;
 
-	/*Set default values where appropriate.*/
 	public function __construct() {
 		$this->linkAttributes = array(
 			"style" => "text-decoration: none;"
