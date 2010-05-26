@@ -104,6 +104,7 @@ include("../class.form.php");
 							<li><a href="#Form-Function-clearElements">clearElements</a></li>
 							<li><a href="#Form-Function-elementsToString">elementsToString</a></li>
 							<li><a href="#Form-Function-render">render</a></li>
+							<li><a href="#Form-Function-setAttributes">setAttributes</a></li>
 							<li><a href="#Form-Function-setReferenceValues">setReferenceValues</a></li>
 							<li><a href="#Form-Function-validate">validate</a></li>
 						</ul>	
@@ -463,115 +464,332 @@ $form->setAttributes(array(
 
 				<a name="Form-Functions"></a>
 				<h3>Form Functions</h3>
-				<p></p>
+				<p>Below, you will find a list of all available form functions you can invoke within this project.  Before you can use any of these functions, you will need a create a new
+				form object instance.  If you have questions about this, review the <a href="#The-Hello-World-of-PHP-Form-Builder-Class">"Hello World"</a> tutorial provided above.</p>
 
 				<a name="Form-Functions-addButton"></a>
-				<p><b>addButton</b>:<br/></p>
+				<p><b>addButton</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addButton($value="Submit", $type="submit", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addCaptcha"></a>
-				<p><b>addCaptcha</b>:<br/></p>
+				<p><b>addCaptcha</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addCaptcha($label="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addCheckbox"></a>
-				<p><b>addCheckbox</b>:<br/></p>
+				<p><b>addCheckbox</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addCheckbox($label, $name, $value="", $options="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addCheckSort"></a>
-				<p><b>addCheckSort</b>:<br/></p>
+				<p><b>addCheckSort</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addCheckSort($label, $name, $value="", $options="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addCKEditor"></a>
-				<p><b>addCKEditor</b>:<br/></p>
+				<p><b>addCKEditor</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addCKEditor($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addColorPicker"></a>
-				<p><b>addColorPicker</b>:<br/></p>
+				<p><b>addColorPicker</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addColorPicker($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addCountry"></a>
-				<p><b>addCountry</b>:<br/></p>
+				<p><b>addCountry</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addCountry($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addDate"></a>
-				<p><b>addDate</b>:<br/></p>
+				<p><b>addDate</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addDate($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addDateRange"></a>
-				<p><b>addDateRange</b>:<br/></p>
+				<p><b>addDateRange</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addDateRange($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addDateTime"></a>
-				<p><b>addDateTime</b>:<br/></p>
+				<p><b>addDateTime</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addDateTime($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addEmail"></a>
-				<p><b>addEmail</b>:<br/></p>
+				<p><b>addEmail</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addEmail($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addFile"></a>
-				<p><b>addFile</b>:<br/></p>
+				<p><b>addFile</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addFile($label, $name, $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addHidden"></a>
-				<p><b>addHidden</b>:<br/></p>
+				<p><b>addHidden</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addHidden($name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addHTML"></a>
-				<p><b>addHTML</b>:<br/></p>
+				<p><b>addHTML</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addHTML($value)
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addLatLng"></a>
-				<p><b>addLatLng</b>:<br/></p>
+				<p><b>addLatLng</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addLatLng($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addPassword"></a>
-				<p><b>addPassword</b>:<br/></p>
+				<p><b>addPassword</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addPassword($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addRadio"></a>
-				<p><b>addRadio</b>:<br/></p>
+				<p><b>addRadio</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addRadio($label, $name, $value="", $options="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addRating"></a>
-				<p><b>addRating</b>:<br/></p>
+				<p><b>addRating</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addRating($label, $name, $value="", $options="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addSelect"></a>
-				<p><b>addSelect</b>:<br/></p>
+				<p><b>addSelect</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addSelect($label, $name, $value="", $options="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addSlider"></a>
-				<p><b>addSlider</b>:<br/></p>
+				<p><b>addSlider</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addSlider($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addSort"></a>
-				<p><b>addSort</b>:<br/></p>
+				<p><b>addSort</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addSort($label, $name, $options="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addState"></a>
-				<p><b>addState</b>:<br/></p>
+				<p><b>addState</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addState($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addTextarea"></a>
-				<p><b>addTextarea</b>:<br/></p>
+				<p><b>addTextarea</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addTextarea($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addTextbox"></a>
-				<p><b>addTextbox</b>:<br/></p>
+				<p><b>addTextbox</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addTextbox($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addTime"></a>
-				<p><b>addTime</b>:<br/></p>
+				<p><b>addTime</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addTime($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addTrueFalse"></a>
-				<p><b>addTrueFalse</b>:<br/></p>
+				<p><b>addTrueFalse</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addTrueFalse($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addWebEditor"></a>
-				<p><b>addWebEditor</b>:<br/></p>
+				<p><b>addWebEditor</b>:</p>
+
+				<?php
+echo '<pre>', htmlentities('
+addWebEditor($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-addYesNo"></a>
 				<p><b>addYesNo</b>:<br/></p>
 
+				<?php
+echo '<pre>', htmlentities('
+addYesNo($label, $name, $value="", $additionalParams="")
+'), '</pre>';
+				?>
+
 				<a name="Form-Functions-bind"></a>
 				<p><b>bind</b>:<br/></p>
+
+				<?php
+echo '<pre>', htmlentities('
+bind($ref, $jsIfCondition = "", $phpIfCondition = "")
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-clearButtons"></a>
 				<p><b>clearButtons</b>:<br/></p>
 
+				<?php
+echo '<pre>', htmlentities('
+clearButtons()
+'), '</pre>';
+				?>
+
 				<a name="Form-Functions-clearElements"></a>
 				<p><b>clearElements</b>:<br/></p>
 
-				<a name="Form-Functions-bind"></a>
-				<p><b>bind</b>:<br/></p>
+				<?php
+echo '<pre>', htmlentities('
+clearElements()
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-elementsToString"></a>
 				<p><b>elementsToString</b>:<br/></p>
 
+				<?php
+echo '<pre>', htmlentities('
+elementsToString()
+'), '</pre>';
+				?>
+
 				<a name="Form-Functions-render"></a>
 				<p><b>render</b>:<br/></p>
+
+				<?php
+echo '<pre>', htmlentities('
+render($returnString=false)
+'), '</pre>';
+				?>
+
+				<a name="Form-Functions-setAttributes"></a>
+				<p><b>setAttributes</b>:<br/></p>
+
+				<?php
+echo '<pre>', htmlentities('
+setAttributes($params)
+'), '</pre>';
+				?>
 
 				<a name="Form-Functions-setReferenceValues"></a>
 				<p><b>setReferenceValues</b>:<br/></p>
 
+				<?php
+echo '<pre>', htmlentities('
+setReferenceValues($params)
+'), '</pre>';
+				?>
+
 				<a name="Form-Functions-validate"></a>
 				<p><b>validate</b>:<br/></p>
+
+				<?php
+echo '<pre>', htmlentities('
+validate()
+'), '</pre>';
+				?>
 			</div>
 		</div>	
 	</body>

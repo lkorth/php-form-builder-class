@@ -27,7 +27,7 @@ body, #pfbc_banner h2, #pfbc_banner h5 {
 .pfbc_doc_section h3 {
 	border: 1px solid #cccccc; 
 	padding: 5px;
-	margin: 0;
+	margin: 10px 0 0 0;
 	background-color: #efefef;
 }
 

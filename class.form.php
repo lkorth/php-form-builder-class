@@ -871,18 +871,18 @@ class form extends base {
 		$this->addElement($label, $name, "yesno", $value, $additionalParams);
 	}
 
+	public function bind($ref, $jsIfCondition = "", $phpIfCondition = "") {
+		$this->bindRules[$ref->attributes["id"]] = array($ref, $jsIfCondition, $phpIfCondition);
+		if(!empty($ref->emailExists))
+			$this->emailExists = 1;
+	}
+
 	public function clearButtons() {
 		$this->buttons = array();
 	}
 
 	public function clearElements() {
 		$this->elements = array();
-	}
-
-	public function bind($ref, $jsIfCondition = "", $phpIfCondition = "") {
-		$this->bindRules[$ref->attributes["id"]] = array($ref, $jsIfCondition, $phpIfCondition);
-		if(!empty($ref->emailExists))
-			$this->emailExists = 1;
 	}
 
 	public function elementsToString() {
@@ -1002,6 +1002,8 @@ class form extends base {
 						if($mapCount == 0) {
 							$map_element_first = true;
 							$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
+							if(($elementSize - $i) < $this->map[$mapIndex])
+								$this->map[$mapIndex] = $elementSize - $i;
 						}	
 					}
 					else {
@@ -1029,8 +1031,12 @@ class form extends base {
 					$str .= ' pfbc-map-element-first';
 				elseif($map_element_last)
 					$str .= ' pfbc-map-element-last';
-				if(!empty($this->map))
-					$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
+				if(!empty($this->map)) {
+					if(array_key_exists($mapIndex, $this->map))
+						$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
+					else	
+						$str .= ' pfbc-map-columns-1';
+				}	
 				$str .= '">';
 
 				if(!empty($ele->preHTML))
@@ -1751,8 +1757,8 @@ STR;
 			return $content;
 	}
 
-	public function setReferenceValues($ref) {
-		$this->referenceValues = $ref;
+	public function setReferenceValues($params) {
+		$this->referenceValues = $params;
 	}
 
 	public function validate() {
