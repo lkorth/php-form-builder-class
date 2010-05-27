@@ -964,11 +964,6 @@ class form extends base {
 						$ele->attributes["value"] = $this->referenceValues[substr($ele->attributes["name"], 0, -2)];
 				}	
 
-				if(!$hiddenElementExists) {
-					$str .= "\n\t" . '<div class="pfbc-hidden">';
-					$hiddenElementExists = true;
-				}	
-
 				$str .= "\n\t\t<input";
 				if(!empty($ele->attributes) && is_array($ele->attributes)) {
 					$tmpAllowFieldArr = $this->allowedFields["text"];
@@ -980,8 +975,6 @@ class form extends base {
 				$str .= "/>";
 			}
 		}	
-		if($hiddenElementExists)
-			$str .= "\n\t</div>";
 
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = &$this->elements[$i];
@@ -1001,16 +994,14 @@ class form extends base {
 					if(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
 						if($mapCount == 0) {
 							$map_element_first = true;
-							$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
 							if(($elementSize - $i) < $this->map[$mapIndex])
 								$this->map[$mapIndex] = $elementSize - $i;
 						}	
 					}
 					else {
 						$map_element_first = true;
-						$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
-					}	
-
+                                        }
+						
 					if(($i + 1) == $elementSize)
 						$map_element_last = true;
 					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
@@ -1022,22 +1013,17 @@ class form extends base {
 				}
 
 				$str .= "\n\t";
-				if(!empty($this->map))
+				if(!empty($this->map)){
 					$str .= "\t";
-				$str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="pfbc-element';
-				if($map_element_first && $map_element_last)
-					$str .= ' pfbc-map-element-single';
-				elseif($map_element_first)
-					$str .= ' pfbc-map-element-first';
-				elseif($map_element_last)
-					$str .= ' pfbc-map-element-last';
-				if(!empty($this->map)) {
-					if(array_key_exists($mapIndex, $this->map))
-						$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
-					else	
-						$str .= ' pfbc-map-columns-1';
-				}	
-				$str .= '">';
+                                        $str .= '<div class="';
+                                        if(!empty($this->map)) {
+                                                if(array_key_exists($mapIndex, $this->map))
+                                                        $str .= 'pfbc-map-columns-' . $this->map[$mapIndex];
+                                                else
+                                                        $str .= 'pfbc-map-columns-1';
+                                        }
+                                        $str .= '">';
+                                }
 
 				if(!empty($ele->preHTML))
 					$str .= $this->indent() . $ele->preHTML;
@@ -1201,10 +1187,6 @@ class form extends base {
 								$str .= $this->indent();
 
 							$str .= '<div class="pfbc-radio';
-							if($o == 0)
-								$str .= ' pfbc-radio-first';
-							elseif($o + 1 == $optionSize)	
-								$str .= ' pfbc-radio-last';
 							$str .= '"><input';
 							$tmpAllowFieldArr = $this->allowedFields["radio"];
 							if(!empty($ele->attributes) && is_array($ele->attributes)) {
@@ -1464,18 +1446,19 @@ class form extends base {
 					$str .= $this->indent() . $ele->postHTML;
 				
 				$str .= "\n\t";
-				if(!empty($this->map))
+				if(!empty($this->map)){
 					$str .= "\t";
-				$str .= "</div>";
+                                        $str .= "</div>";
+                                        if($map_element_last == true){
+                                            $str .= '<br class="cls" />';
+                                        }
+                                }
 
 				if(!empty($this->map)) {
-					if(($i + 1) == $elementSize)
-						$str .= "\n\t</div>";
-					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
+                                        if(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
 						if(($mapCount + 1) == $this->map[$mapIndex]) {
 							$mapCount = 0;
 							++$mapIndex;
-							$str .= "\n\t</div>";
 						}
 						else
 							++$mapCount;
@@ -1483,8 +1466,7 @@ class form extends base {
 					else {
 						++$mapIndex;
 						$mapCount = 0;
-						$str .= "\n\t</div>";
-					}	
+                                        }
 				}
 				$focus = false;
 			}	
@@ -1493,7 +1475,6 @@ class form extends base {
 		//This javascript section loads all required js and css files needed for a specific form.  CSS files are loaded into the <head> tag with javascript.
 		$str .= <<<STR
 
-	<div class="pfbc-script">
 		<script type="text/javascript">
 			var head = document.getElementsByTagName("head")[0];
 
@@ -1664,14 +1645,9 @@ STR;
 STR;
 		}
 
-		$str .= <<<STR
-	</div>	
-
-STR;
 		if(!empty($this->hasFormTag)) {
 			//If there are buttons included, render those to the screen now.
 			if(!empty($this->buttons)) {
-				$str .= "\t" . '<div class="pfbc-buttons">';
 				$buttonSize = sizeof($this->buttons);
 				for($i = 0; $i < $buttonSize; ++$i) {
 					//The wraplink parameter will simply wrap an anchor tag (<a>) around the button treating it as a link.
@@ -1713,7 +1689,7 @@ STR;
 						$str .= eval("return " . $execStr);
 					}
 					else {
-						$str .= "<input";
+						$str .= '<input class="pfbc-buttons"';
 						if(!empty($this->buttons[$i]->attributes) && is_array($this->buttons[$i]->attributes)) {
 							$tmpAllowFieldArr = $this->allowedFields["button"];
 							foreach($this->buttons[$i]->attributes as $key => $value) {
@@ -1727,7 +1703,6 @@ STR;
 					if(!empty($this->buttons[$i]->wrapLink))
 						$str .= "</a>";
 				}
-				$str .= "\n\t</div>";
 				$str .= "\n";
 			}
 		}
@@ -2828,16 +2803,23 @@ $id .pfbc-clear:after {
 	content: ":)";
 }	
 $id .pfbc-label {
+        margin: 8px 0 2px 0;
 	display: block;
 }
 $id .pfbc-buttons {
-	text-align: right;
+        margin: 5px;
+	display: block;
+        margin-left: auto;
 }
 $id .pfbc-required {
 	color: #990000; 
 }
 $id .pfbc-element {
 	padding-bottom: 5px;
+}
+
+$id .cls {
+    clear: both
 }
 
 STR;
