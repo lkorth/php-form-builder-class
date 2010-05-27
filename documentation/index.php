@@ -121,7 +121,7 @@ include("../class.form.php");
 			<div class="pfbc_doc_section">
 				<a name="The-Hello-World-of-PHP-Form-Builder-Class"></a>
 				<h3>The "Hello World" of PHP Form Builder Class</h3>
-				<p>Before getting started, you will need to <a href="http://code.google.com/apis/maps/documentation/introduction.html">downloaded the latest version 
+				<p>Before getting started, you will need to <a href="http://code.google.com/p/php-form-builder-class/downloads/list">download the latest version
 				of this project</a>, unzip formbuilder.zip, and install the php-form-builder-class directory on your web server.  After you've done this, you're 
 				ready to get started creating your first form using this project.</p>
 					
@@ -267,7 +267,7 @@ $form->setAttributes(array(
 				default value is set to "post".</p>
 
 				<a name="Form-Attribute-ajaxUrl"></a>
-				<p><b>ajaxType</b>: If AJAX form submission is activated, this attribute controls where the data is submitted to - similar to the 
+				<p><b>ajaxUrl</b>: If AJAX form submission is activated, this attribute controls where the data is submitted to - similar to the
 				<a name="Form-Attribute-method">action</a> form attribute.  This will be defaulted to the script where the form is created.</p>
 
 				<a name="Form-Attribute-captchaLang"></a>
