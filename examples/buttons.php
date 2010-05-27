@@ -37,7 +37,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				));
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("Textbox:", "field0");
-				$form->addSelectbox("Selectbox:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+				$form->addSelect("Select:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
 				$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 				$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 				$form->addButton();
@@ -61,7 +61,7 @@ $form->setAttributes(array(
 ));
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Textbox:", "field0");
-$form->addSelectbox("Selectbox:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+$form->addSelect("Select:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
 $form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 $form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 $form->addButton();
