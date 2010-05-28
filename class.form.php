@@ -125,7 +125,7 @@ class form extends base {
 		$this->emailErrorMsgFormat = "Error: [LABEL] contains an invalid email address.";
 		$this->includesPath = "php-form-builder-class/includes";
 		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
-		$this->mapMargin = 1;
+		$this->mapMargin = 2;
 		//These lists represent all xhtml 1.0 strict compliant attributes. See http://www.w3schools.com/tags/default.asp for reference.
 		$this->allowedFields = array(
 			"form" => array("action", "accept", "accept-charset", "enctype", "method", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onreset", "onsubmit"),
@@ -974,7 +974,7 @@ class form extends base {
 				}
 				$str .= "/>";
 			}
-		}	
+		}
 
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = &$this->elements[$i];
@@ -1015,12 +1015,16 @@ class form extends base {
 				$str .= "\n\t";
 				if(!empty($this->map)){
 					$str .= "\t";
-                                        $str .= '<div class="';
+                                        $str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="';
                                         if(!empty($this->map)) {
                                                 if(array_key_exists($mapIndex, $this->map))
                                                         $str .= 'pfbc-map-columns-' . $this->map[$mapIndex];
                                                 else
                                                         $str .= 'pfbc-map-columns-1';
+                                                if($map_element_last == true){
+                                                    $str .= ' pfbc-map-element-last ';
+                                                }
+                                                $str .= ' pfbc-element';
                                         }
                                         $str .= '">';
                                 }
@@ -1450,7 +1454,7 @@ class form extends base {
 					$str .= "\t";
                                         $str .= "</div>";
                                         if($map_element_last == true){
-                                            $str .= '<br class="cls" />';
+                                            $str .= "<br class='pfbc-clear' />";
                                         }
                                 }
 
@@ -2793,33 +2797,24 @@ $id {
 	margin: 0;
 	padding: 0;
 }
-$id .pfbc-clear:after {
-	clear: both;
-	display: block;
-	margin: 0;
-	padding: 0;
-	visibility: hidden;
-	height: 0;
-	content: ":)";
-}	
+	
 $id .pfbc-label {
-        margin: 8px 0 2px 0;
 	display: block;
 }
 $id .pfbc-buttons {
-        margin: 5px;
 	display: block;
         margin-left: auto;
 }
 $id .pfbc-required {
 	color: #990000; 
 }
+
 $id .pfbc-element {
 	padding-bottom: 5px;
 }
 
-$id .cls {
-    clear: both
+$id .pfbc-clear {
+        clear: both
 }
 
 STR;
@@ -2852,13 +2847,13 @@ STR;
 					$mapValSize = sizeof($mapVals);
 					for($m = 0; $m < $mapValSize; ++$m) {
 						if($suffix == "px") {
-							$elementWidth = number_format((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+							$elementWidth = number_format((($formWidth - ($form->mapMargin * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
 							$textboxWidth = $elementWidth - 6;
 							$textareaWidth = $elementWidth - 2;
 							$selectWidth = $elementWidth;
 						}	
 						else {
-							$elementWidth = number_format(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+							$elementWidth = number_format(((100 - ($form->mapMargin * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
 							$textboxWidth = 98;
 							$textareaWidth = 98;
 							$selectWidth = 98;
@@ -2882,18 +2877,12 @@ $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
 STR;
 					}
 					$str .= <<<STR
-$id .pfbc-map-element-first {
-	margin-left: 0 !important;
-}
 $id .pfbc-map-element-last {
 	float: right !important;
 	margin-right: 0 !important;
 }
-$id .pfbc-map-element-single {
-	margin: 0 !important;
-}
 $id .pfbc-element {
-	margin: 0 {$form->mapMargin}$suffix;
+	margin-right: {$form->mapMargin}$suffix;
 }
 
 STR;
