@@ -52,7 +52,6 @@ class form extends base {
 	protected $ckeditorLang;
 	protected $emailErrorMsgFormat;
 	protected $errorMsgFormat;
-        protected $generateInlineResources;
 	protected $includesPath;
 	protected $jqueryDateFormat;
 	protected $jqueryTimeFormat;
@@ -126,7 +125,7 @@ class form extends base {
 		$this->emailErrorMsgFormat = "Error: [LABEL] contains an invalid email address.";
 		$this->includesPath = "php-form-builder-class/includes";
 		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
-		$this->mapMargin = 2;
+		$this->mapMargin = 1;
 		//These lists represent all xhtml 1.0 strict compliant attributes. See http://www.w3schools.com/tags/default.asp for reference.
 		$this->allowedFields = array(
 			"form" => array("action", "accept", "accept-charset", "enctype", "method", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onreset", "onsubmit"),
@@ -965,6 +964,11 @@ class form extends base {
 						$ele->attributes["value"] = $this->referenceValues[substr($ele->attributes["name"], 0, -2)];
 				}	
 
+				if(!$hiddenElementExists) {
+					$str .= "\n\t" . '<div class="pfbc-hidden">';
+					$hiddenElementExists = true;
+				}	
+
 				$str .= "\n\t\t<input";
 				if(!empty($ele->attributes) && is_array($ele->attributes)) {
 					$tmpAllowFieldArr = $this->allowedFields["text"];
@@ -975,7 +979,9 @@ class form extends base {
 				}
 				$str .= "/>";
 			}
-		}
+		}	
+		if($hiddenElementExists)
+			$str .= "\n\t</div>";
 
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = &$this->elements[$i];
@@ -995,14 +1001,16 @@ class form extends base {
 					if(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
 						if($mapCount == 0) {
 							$map_element_first = true;
+							$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
 							if(($elementSize - $i) < $this->map[$mapIndex])
 								$this->map[$mapIndex] = $elementSize - $i;
 						}	
 					}
 					else {
 						$map_element_first = true;
-                                        }
-						
+						$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
+					}	
+
 					if(($i + 1) == $elementSize)
 						$map_element_last = true;
 					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
@@ -1014,21 +1022,22 @@ class form extends base {
 				}
 
 				$str .= "\n\t";
-				if(!empty($this->map)){
+				if(!empty($this->map))
 					$str .= "\t";
-                                        $str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="';
-                                        if(!empty($this->map)) {
-                                                if(array_key_exists($mapIndex, $this->map))
-                                                        $str .= 'pfbc-map-columns-' . $this->map[$mapIndex];
-                                                else
-                                                        $str .= 'pfbc-map-columns-1';
-                                                if($map_element_last == true){
-                                                    $str .= ' pfbc-map-element-last ';
-                                                }
-                                                $str .= ' pfbc-element';
-                                        }
-                                        $str .= '">';
-                                }
+				$str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="pfbc-element';
+				if($map_element_first && $map_element_last)
+					$str .= ' pfbc-map-element-single';
+				elseif($map_element_first)
+					$str .= ' pfbc-map-element-first';
+				elseif($map_element_last)
+					$str .= ' pfbc-map-element-last';
+				if(!empty($this->map)) {
+					if(array_key_exists($mapIndex, $this->map))
+						$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
+					else	
+						$str .= ' pfbc-map-columns-1';
+				}	
+				$str .= '">';
 
 				if(!empty($ele->preHTML))
 					$str .= $this->indent() . $ele->preHTML;
@@ -1192,6 +1201,10 @@ class form extends base {
 								$str .= $this->indent();
 
 							$str .= '<div class="pfbc-radio';
+							if($o == 0)
+								$str .= ' pfbc-radio-first';
+							elseif($o + 1 == $optionSize)	
+								$str .= ' pfbc-radio-last';
 							$str .= '"><input';
 							$tmpAllowFieldArr = $this->allowedFields["radio"];
 							if(!empty($ele->attributes) && is_array($ele->attributes)) {
@@ -1451,19 +1464,18 @@ class form extends base {
 					$str .= $this->indent() . $ele->postHTML;
 				
 				$str .= "\n\t";
-				if(!empty($this->map)){
+				if(!empty($this->map))
 					$str .= "\t";
-                                        $str .= "</div>";
-                                        if($map_element_last == true){
-                                            $str .= "<br class='pfbc-clear' />";
-                                        }
-                                }
+				$str .= "</div>";
 
 				if(!empty($this->map)) {
-                                        if(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
+					if(($i + 1) == $elementSize)
+						$str .= "\n\t</div>";
+					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
 						if(($mapCount + 1) == $this->map[$mapIndex]) {
 							$mapCount = 0;
 							++$mapIndex;
+							$str .= "\n\t</div>";
 						}
 						else
 							++$mapCount;
@@ -1471,7 +1483,8 @@ class form extends base {
 					else {
 						++$mapIndex;
 						$mapCount = 0;
-                                        }
+						$str .= "\n\t</div>";
+					}	
 				}
 				$focus = false;
 			}	
@@ -1480,8 +1493,8 @@ class form extends base {
 		//This javascript section loads all required js and css files needed for a specific form.  CSS files are loaded into the <head> tag with javascript.
 		$str .= <<<STR
 
+	<div class="pfbc-script">
 		<script type="text/javascript">
-                        //<![CDATA[
 			var head = document.getElementsByTagName("head")[0];
 
 			var css = document.createElement('link');
@@ -1489,7 +1502,6 @@ class form extends base {
 			css.type = 'text/css';
 			css.href = '{$this->jsIncludesPath}/jquery/ui/jquery-ui.css';
 			head.appendChild(css);
-                        //]]>
 		</script>
 
 STR;
@@ -1533,13 +1545,11 @@ STR;
 		if(!empty($this->jqueryTimeIDArr)) {
 			$str .= <<<STR
 		<script type="text/javascript">
-                        //<![CDATA[
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
 			css.href = '{$this->jsIncludesPath}/jquery/plugins/timepicker/km.timepicker.css';
 			head.appendChild(css);
-                        //]]>
 		</script>
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/timepicker/km.timepicker.js"></script>
 
@@ -1549,13 +1559,11 @@ STR;
 		if(!empty($this->jqueryDateRangeIDArr)) {
 			$str .= <<<STR
 		<script type="text/javascript">
-                        //<![CDATA[
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
 			css.href = '{$this->jsIncludesPath}/jquery/ui/ui.daterangepicker.css';
 			head.appendChild(css);
-                        //]]>
 		</script>
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"></script>
 
@@ -1565,51 +1573,58 @@ STR;
 		if(!empty($this->jqueryColorIDArr)) {
 			$str .= <<<STR
 		<script type="text/javascript">
-                        //<![CDATA[
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
 			css.href = '{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css';
 			head.appendChild(css);
-                        //]]>
 		</script>
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js"></script>
 
 STR;
 		}
 
-		if(!empty($this->latlngIDArr) && empty($this->preventGoogleMapsLoad)) {
+		if(!empty($this->latlngIDArr)) {
+			if(empty($this->preventGoogleMapsLoad)) {
 				$str .= <<<STR
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
 STR;
-		}	
+			}	
+		}
 
-		if(!empty($this->tinymceIDArr) && empty($this->preventTinyMCELoad)){
+		if(!empty($this->tinymceIDArr)) {
+			if(empty($this->preventTinyMCELoad)) {
 				$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
 
 STR;
-                }
+			}	
 
-		if(!empty($this->ckeditorIDArr) && empty($this->preventCKEditorLoad)) {
+		}
+
+		if(!empty($this->ckeditorIDArr)) {
+			if(empty($this->preventCKEditorLoad)) {
 				$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
 
 STR;
+			}	
 		}	
 
-		if(!empty($this->captchaID) && empty($this->preventCaptchaLoad)) {
+		if(!empty($this->captchaID)) {
+			if(empty($this->preventCaptchaLoad)) {
 				$str .= <<<STR
 		<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
 
 STR;
-		}	
+			}	
+		}
 
 		//Serialize the form and store it in a session array.  This variable will be unserialized and used within js/css.php and the validate() method.
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
-		if(empty($this->generateInlineResources) || $this->generateInlineResources == False){
+		if(empty($this->preventXHTMLStrict)) {
 			$session_param = "";
 			$session_name = session_name();
 			if($session_name != "PHPSESSID")
@@ -1617,7 +1632,6 @@ STR;
 
 			$str .= <<<STR
 		<script type="text/javascript">
-                        //<![CDATA[
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
@@ -1628,26 +1642,36 @@ STR;
 			script.type = 'text/javascript';
 			script.src = '{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param';
 			head.appendChild(script);
-                        //]]>
 		</script>
 
 STR;
-		} else {
-                        $str .= <<<STR
+		}
+		else {
+			$str .= <<<STR
+		<style type="text/css">
+
+STR;
+			$str .= $this->renderCSS(true);
+			$str .= <<<STR
+		</style>	
 		<script type="text/javascript">
-                //<![CDATA[
 
 STR;
 			$str .= $this->renderJS(true);
 			$str .= <<<STR
-                //]]>
 		</script>
+
 STR;
 		}
 
+		$str .= <<<STR
+	</div>	
+
+STR;
 		if(!empty($this->hasFormTag)) {
 			//If there are buttons included, render those to the screen now.
 			if(!empty($this->buttons)) {
+				$str .= "\t" . '<div class="pfbc-buttons">';
 				$buttonSize = sizeof($this->buttons);
 				for($i = 0; $i < $buttonSize; ++$i) {
 					//The wraplink parameter will simply wrap an anchor tag (<a>) around the button treating it as a link.
@@ -1689,7 +1713,7 @@ STR;
 						$str .= eval("return " . $execStr);
 					}
 					else {
-						$str .= '<input class="pfbc-buttons"';
+						$str .= "<input";
 						if(!empty($this->buttons[$i]->attributes) && is_array($this->buttons[$i]->attributes)) {
 							$tmpAllowFieldArr = $this->allowedFields["button"];
 							foreach($this->buttons[$i]->attributes as $key => $value) {
@@ -1703,6 +1727,7 @@ STR;
 					if(!empty($this->buttons[$i]->wrapLink))
 						$str .= "</a>";
 				}
+				$str .= "\n\t</div>";
 				$str .= "\n";
 			}
 		}
@@ -1717,27 +1742,14 @@ STR;
 		return $str;
 	}
 
-        public function headData(){
-                $this->generateInlineResources = True;
-            	$str = '<style type="text/css">';
-		$str .= $this->renderCSS(true);
-		$str .= "</style>";
-                return $str;
-        }
-
-        public function bodyData(){
-                $this->generateInlineResources = True;
-                return $this->render(TRUE);
-        }
-
 	public function render($returnString=false) {
 		$this->hasFormTag = 1;
+		ob_start();
 
-                if(empty($this->generateInlineResources)){
-                    $this->generateInlineResources = False;
-                }
+		echo $this->elementsToString();
 
-		$content = $this->elementsToString();
+		$content = ob_get_contents();
+		ob_end_clean();
 
 		if(!$returnString)
 			echo($content);
@@ -2215,17 +2227,17 @@ STR;
 					$dateSize = sizeof($form->jqueryDateIDArr);
 					for($d = 0; $d < $dateSize; ++$d) {
 						$str .= <<<STR
-	$("#{$form->jqueryDateIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", showButtonPanel: true });
+	$("#{$form->jqueryDateIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", changeMonth: true, changeYear: true });
 
 STR;
-					}
+					}	
 				}
 
 				if(!empty($form->jqueryDateTimeIDArr)) {
 					$dateTimeSize = sizeof($form->jqueryDateTimeIDArr);
 					for($d = 0; $d < $dateTimeSize; ++$d) {
 						$str .= <<<STR
-	$("#{$form->jqueryDateTimeIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", duration: "", showTime: true, constrainInput: false });
+	$("#{$form->jqueryDateTimeIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", changeMonth: true, changeYear: true, duration: "", showTime: true });
 
 STR;
 					}	
@@ -2806,24 +2818,26 @@ $id {
 	margin: 0;
 	padding: 0;
 }
-	
+$id .pfbc-clear:after {
+	clear: both;
+	display: block;
+	margin: 0;
+	padding: 0;
+	visibility: hidden;
+	height: 0;
+	content: ":)";
+}	
 $id .pfbc-label {
 	display: block;
 }
 $id .pfbc-buttons {
-	display: block;
-        margin-left: auto;
+	text-align: right;
 }
 $id .pfbc-required {
 	color: #990000; 
 }
-
 $id .pfbc-element {
 	padding-bottom: 5px;
-}
-
-$id .pfbc-clear {
-        clear: both
 }
 
 STR;
@@ -2856,13 +2870,13 @@ STR;
 					$mapValSize = sizeof($mapVals);
 					for($m = 0; $m < $mapValSize; ++$m) {
 						if($suffix == "px") {
-							$elementWidth = number_format((($formWidth - ($form->mapMargin * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+							$elementWidth = number_format((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
 							$textboxWidth = $elementWidth - 6;
 							$textareaWidth = $elementWidth - 2;
 							$selectWidth = $elementWidth;
 						}	
 						else {
-							$elementWidth = number_format(((100 - ($form->mapMargin * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+							$elementWidth = number_format(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
 							$textboxWidth = 98;
 							$textareaWidth = 98;
 							$selectWidth = 98;
@@ -2886,12 +2900,18 @@ $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
 STR;
 					}
 					$str .= <<<STR
+$id .pfbc-map-element-first {
+	margin-left: 0 !important;
+}
 $id .pfbc-map-element-last {
 	float: right !important;
 	margin-right: 0 !important;
 }
+$id .pfbc-map-element-single {
+	margin: 0 !important;
+}
 $id .pfbc-element {
-	margin-right: {$form->mapMargin}$suffix;
+	margin: 0 {$form->mapMargin}$suffix;
 }
 
 STR;
