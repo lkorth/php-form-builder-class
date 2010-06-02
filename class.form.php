@@ -719,10 +719,10 @@ class form extends base {
 		//Add the appropriate javascript event functions if hint is present.
 		if(in_array($eleType, array("text", "textarea", "date", "datetime", "time", "daterange", "colorpicker", "latlng", "email")) && !empty($ele->hint)) {
 			$hintFocusFunction = "hintfocus_" . $this->attributes["id"] . '(this, "' . str_replace('"', '\"', stripslashes($ele->hint)) . '");';
-			if(empty($ele->attributes["onfocus"]))
-				$ele->attributes["onfocus"] = $hintFocusFunction;
+			if(empty($ele->attributes["onclick"]))
+				$ele->attributes["onclick"] = $hintFocusFunction;
 			else
-				$ele->attributes["onfocus"] .= " " . $hintFocusFunction;
+				$ele->attributes["onclick"] .= " " . $hintFocusFunction;
 
 			$hintBlurFunction = "hintblur_" . $this->attributes["id"] . '(this, "' . str_replace('"', '\"', stripslashes($ele->hint)) . '");';
 			if(empty($ele->attributes["onblur"]))
@@ -2284,7 +2284,7 @@ STR;
 					$dateRangeSize = sizeof($form->jqueryDateRangeIDArr);
 					for($d = 0; $d < $dateRangeSize; ++$d) {
 						$str .= <<<STR
-	$("#{$form->jqueryDateRangeIDArr[$d]}").daterangepicker({ dateFormat: "{$form->jqueryDateFormat}" });
+	$("#{$form->jqueryDateRangeIDArr[$d]}").daterangepicker({ dateFormat: "{$form->jqueryDateFormat}", datepickerOptions: { changeMonth: true, changeYear: true }, });
 
 STR;
 					}	

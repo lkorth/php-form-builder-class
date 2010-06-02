@@ -43,8 +43,8 @@ jQuery.fn.daterangepicker = function(settings){
 			allDatesAfter: 'All Dates After', 
 			dateRange: 'Date Range'
 		},
-		rangeStartTitle: 'Start date',
-		rangeEndTitle: 'End date',
+		rangeStartTitle: 'Date Range',
+		rangeEndTitle: '&nbsp;',
 		nextLinkText: 'Next',
 		prevLinkText: 'Prev',
 		doneButtonText: 'Done',
@@ -226,7 +226,7 @@ jQuery.fn.daterangepicker = function(settings){
 			doneBtn.hide();
 			rpPickers.show();
 			rp.find('.title-start').text(options.rangeStartTitle);
-			rp.find('.title-end').text(options.rangeEndTitle);
+			rp.find('.title-end').html(options.rangeEndTitle);
 			rp.find('.range-start').restoreDateFromData().show(400);
 			rp.find('.range-end').restoreDateFromData().show(400);
 			setTimeout(function(){doneBtn.fadeIn();}, 400);
@@ -248,7 +248,7 @@ jQuery.fn.daterangepicker = function(settings){
 	
 
 	//picker divs
-	var rpPickers = jQuery('<div class="ranges ui-widget-header ui-corner-all ui-helper-clearfix"><div class="range-start"><span class="title-start">Start Date</span></div><div class="range-end"><span class="title-end">End Date</span></div></div>').appendTo(rp);
+	var rpPickers = jQuery('<div class="ranges ui-widget-header ui-corner-all ui-helper-clearfix"><div class="range-start"><span class="title-start">Date Range</span></div><div class="range-end"><span class="title-end">&nbsp;</span></div></div>').appendTo(rp);
 	rpPickers.find('.range-start, .range-end').datepicker(options.datepickerOptions);
 	rpPickers.find('.range-start').datepicker('setDate', inputDateA);
 	rpPickers.find('.range-end').datepicker('setDate', inputDateB);

@@ -115,7 +115,7 @@ include("../class.form.php");
 			<div class="pfbc_doc_section">
 				<a name="Introduction"></a>
 				<h3>Introduction</h3>
-				<p>The purpose of this document is to provide a reference guide for developers to access while using this project.</p>
+				<p>The purpose of this document is to provide a reference guide for users to access while incorporating this project into their development.</p>
 			</div>
 
 			<div class="pfbc_doc_section">
@@ -150,8 +150,7 @@ include("php-form-builder-class/class.form.php");
 '), '</pre>';
 				?>
 
-				<p>This file is where most of the magic happens within the project. It can be found within the php-form-builder-class 
-				directory, and must be included in each script that makes use of this project.</p>
+				<p>This file can be found within the php-form-builder-class directory, and must be included in each script that makes use of this project.</p>
 				
 				<p>Next, a new form object is created with...</p>	
 
@@ -165,7 +164,7 @@ $form = new form("HelloWorld");
 				it is recommended that you include an identifier with each form you create.  This becomes increasingly important when multiple
 				forms are rendered on the same webpage.</p>	
 
-				<p>Once the form object is created, the setAttributes() function is invoked...</p>
+				<p>Once the form object is created, the <a href="#Form-Function-setAttributes">setAttributes()</a> function is invoked...</p>
 
 				<?php
 echo '<pre>', htmlentities('
@@ -175,10 +174,10 @@ $form->setAttributes(array(
 '), '</pre>';
 				?>
 
-				<p>The setAttributes() function accepts an associative array of key/value pairs, and is used to assign various attributes to 
+				<p>The <a href="#Form-Function-setAttributes">setAttributes()</a> function accepts an associative array of key/value pairs, and is used to assign various attributes to 
 				the form.  Chances are, you will be calling this function in most all of the forms you create.  In this "Hello World" example, 
-				the form's width is set to 400.  See the <a href="">Form Attributes</a> section for a detailed list of form attributes that 
-				can be included in the associative array passed to the setAttributes() function.</p>
+				the form's width is set to 400 pixels.  See the <a href="">Form Attributes</a> section for a detailed list of form attributes that 
+				can be included in the associative array passed to the <a href="#Form-Function-setAttributes">setAttributes()</a> function.</p>
 
 				<p>Now, we're ready to add our form elements.  In our "Hello World" example, there's only one element - a textbox.</p>
 
@@ -188,8 +187,8 @@ $form->addTextbox("My Textbox:", "MyTextbox", "Hello World");
 '), '</pre>';
 				?>
 				
-				<p>More information on the addTextbox() function, and all the other functions for rendering form elements,  can be found 
-				in the <a href="">Form Elements</a> section.  This textbox has a label assigned as "My Textbox:", a name set to "MyTextbox", and a
+				<p>More information on the <a href="#Form-Function-addTextbox">addTextbox()</a> function, and all the other functions for rendering form elements,  can be found 
+				in the <a href="#Form-Functions">Form Functions</a> section.  This textbox has a label assigned as "My Textbox:", a name set to "MyTextbox", and a
 				default value of "Hello World".</p>
 
 				<p>A button is attached to the form with...</p>
@@ -200,10 +199,10 @@ $form->addButton();
 '), '</pre>';
 				?>
 
-				<p>The addButton() function has optional parameters for customizing the appearance and behavior of your buttons.  With no paramaters 
+				<p>The <a href="#Form-Function-addButton">addButton()</a> function has optional parameters for customizing the appearance and behavior of your buttons.  With no paramaters 
 				provided, it will render a submit button titled "Submit".</p>
 
-				<p>The final function called is render()...</p>
+				<p>The final function called is <a href="#Form-Function-render">render()</a>...</p>
 
 				<?php
 echo '<pre>', htmlentities('
@@ -211,7 +210,7 @@ $form->render();
 '), '</pre>';
 				?>
 
-				<p>The render() function is responsible for a variety of tasks including building the form's html markup, including the appropriate
+				<p>The <a href="#Form-Function-render">render()</a> function is responsible for a variety of tasks including building the form's html markup, including the appropriate
 				javascript/css include files, and applying javascript validation if applicable.</p>
 
 				<p>Congratulations!  You have just created your first form using the PHP Form Builder Class.  If you're like me, and like learning 
@@ -223,10 +222,10 @@ $form->render();
 			<div class="pfbc_doc_section">
 				<a name="Form-Attributes"></a>
 				<h3>Form Attributes</h3>
-				<p>Form Attributes are set through the setAttributes() function and provide a way to customize how a particular form appears and/or behaves.
+				<p>Form Attributes are set through the <a href="#Form-Function-setAttributes">setAttributes()</a> function and provide a way to customize how a particular form appears and/or behaves.
 				These customizations may include specifying a form's width, indicating that you want to turn on ajax submission, or changing the default
 				date format returned by the jQuery date/daterange/datetime elements.  Below you will find a detailed list of all the available form attributes
-				you can pass to the setAttributes() function.</p>
+				you can pass to the <a href="#Form-Function-setAttributes">setAttributes()</a> function.</p>
 
 				<a name="Form-Attribute-action"></a>
 				<p><b>action</b>:<br/>Controls the action attribute on the &lt;form&gt; tag.  This will be defaulted to the script where the form is created.</p>
@@ -331,7 +330,7 @@ $form = new form("myID");
 '), '</pre>';
 				?>
 
-				<p>Or in the setAttributes() function...</p>
+				<p>Or in the <a href="#Form-Function-setAttributes">setAttributes()</a> function...</p>
 
 				<?php
 echo '<pre>', htmlentities('
