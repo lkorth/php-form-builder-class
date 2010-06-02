@@ -3053,6 +3053,8 @@ STR;
 		$elementSize = sizeof($elements);
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = $elements[$i];
+			if(substr($ele->attributes["name"], -2) == "[]")
+				$ele->attributes["name"] = substr($ele->attributes["name"], 0, -2);
 
 			//The html, sort, and hidden element types are ignored.
 			if($ele->attributes["type"] == "html" || $ele->attributes["type"] == "sort" || $ele->attributes["type"] == "hidden")
