@@ -472,7 +472,26 @@ $form->setAttributes(array(
 
 				<?php
 echo '<pre>', htmlentities('
-addButton($value="Submit", $type="submit", $additionalParams="")
+public function addButton($value="Submit", $type="submit", $additionalParams="")
+'), '</pre>';
+				?>
+
+				<p>This function is responsible for adding buttons to the forms that you create.  The form's declaration includes three parameters.  The first - value - controls the value attribute of the &lt;input&gt;
+				tag, which the browser uses for the button's displayed text.  The second parameter - type - controls the type attribute of the &lt;input&gt; tag.  Possible values for this parameter include button, image,
+				reset, and submit.  The final parameter - additionalParams - accepts an associative array of key/value pairs allowing a variety of settings to be applied.  A list of these settings are provided below.</p>
+				
+				<p>additionalParams: alt, disabled, name, size, src, type, value, accesskey, class, dir, id, lang, style, tabindex, title, xml:lang, onblur, onchange, onclick, ondblclick, onfocus, onmousedown, 
+				onmousemove, onmouseout, onmouseover, onmouseup, onkeydown, onkeypress, onkeyup, onselect, phpFunction, phpParams, wrapLink, linkAttributes</p>
+
+				<p>By default, buttons are rendered in the lower-right corner of a form's container; however, this can be modified through css if you wish with the help of the <a href="#Form-Attribute-preventDefaultCSS">preventDefaultCSS</a> 
+				form attribute.</p>
+
+				<p>If your system has a utility in place for dynamically generating button images, you will want to utilize the phpFunction, phpParams, wrapLink, and hrefAttributes button attributes.  
+				A sample is provided below of what this function - addButton - might look like with these attributes applied.</p>
+
+				<?php
+echo '<pre>', htmlentities('
+$form->addButton("", "", array("phpFunction" => "renderDynamicButton", "phpParams" => array("#ffffff", "#cccccc", "My Button"), "wrapLink" => 1, "linkAttributes" => array("href" => "http://www.php.net/")));
 '), '</pre>';
 				?>
 
@@ -481,61 +500,85 @@ addButton($value="Submit", $type="submit", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addCaptcha($label="", $additionalParams="")
+public function addCaptcha($label="", $additionalParams="")
 '), '</pre>';
 				?>
+
+				<p>Adds reCAPTCHA's anti-bot service to your form.  More information on reCAPTCHA can be found at <a href="http://recaptcha.net">http://recaptcha.net</a>.  Unlike other form elements,
+				there can only be one captcha element attached to a form, which means any additional addCatpcha() function calls will be ignored.  If you look at this function's declaration provided above, you will notice
+				that there are no parameters available for specifying the name and value attributes.  The name attribute is hardcoded to "recaptcha_response_field" for reCAPTCHA validation purposes.  As for the value attribute, it
+				is not applicable because reCATCHA generates a new challenge phrase with each page load.  There are several form attributes - <a href="#Form-Attribute-captchaLang">captchaLang</a>, 
+				<a href="#Form-Attribute-captchaPublicKey">captchaPublicKey</a>, <a href="#Form-Attribute-captchaPrivateKey">captchaPrivateKey</a>, <a href="#Form-Attribute-captchaTheme">captchaTheme</a> - that you will want to review when using
+				reCAPTCHA within your forms.</p>
 
 				<a name="Form-Functions-addCheckbox"></a>
 				<p><b>addCheckbox</b>:</p>
 
 				<?php
 echo '<pre>', htmlentities('
-addCheckbox($label, $name, $value="", $options="", $additionalParams="")
+public function addCheckbox($label, $name, $value="", $options="", $additionalParams="")
 '), '</pre>';
 				?>
+
+				<p>Adds a group of one or more checkboxes to your form.  The value parameter controls which checkboxes in the group are checked by default, and it can contain a string or an array or strings.  An array should be used if 
+				if you want multiple checkboxes to be checked by default.  Similar to other elements, the options parameter can contain either a one dimensional or associative array.  If you want the value and displayed text of the checkboxes to be the
+				same, you can use a one dimensional array.  If you need the value and displayed text to be different, use an associative array for the keys to be used as the values and the values to be used for the displayed text.</p>
 
 				<a name="Form-Functions-addCheckSort"></a>
 				<p><b>addCheckSort</b>:</p>
 
 				<?php
 echo '<pre>', htmlentities('
-addCheckSort($label, $name, $value="", $options="", $additionalParams="")
+public function addCheckSort($label, $name, $value="", $options="", $additionalParams="")
 '), '</pre>';
 				?>
+
+				<p>Adds the checksort element to your form, which makes use of jQuery UI to allow checkbox options to be selected and sorted in one area.  It combines the functionality of the checkbox and sort elements.
+				This element could be used to help your users create a playlist of songs - since this activity requires selecting which songs to include and then sorting them in the desired order.  See the <a href="">addCheckbox()</a>
+				function for instructions on how to use the value and options parameters.  More information on jQuery UI can be found at <a href="http://jqueryui.com">http://jqueryui.com</a>.</p>
 
 				<a name="Form-Functions-addCKEditor"></a>
 				<p><b>addCKEditor</b>:</p>
 
 				<?php
 echo '<pre>', htmlentities('
-addCKEditor($label, $name, $value="", $additionalParams="")
+public function addCKEditor($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
+
+				<p>Adds CKEditor's WYSIWYG text and html web editor to your form.  This is one of two web editors that is available within this project - the other being <a href="#Form-Functions-addWebEditor">TinyMCE</a>.
+				More information on CKEditor can be found at <a href="http://ckeditor.com">http://ckeditor.com</a>.  The basic element attribute can be utilized to display the editor with a minimal toolbar, which includes options for 
+				bold, italic, creating ordered/unordered lists, and hyperlinking.  Form attributes unique to this element include <a href="#Form-Attributes-ckeditorCustomConfig">ckeditorCustomConfig</a> and <a href="#Form-Attributes-ckeditorLang">ckeditorLang</a>.</p>
 
 				<a name="Form-Functions-addColorPicker"></a>
 				<p><b>addColorPicker</b>:</p>
 
 				<?php
 echo '<pre>', htmlentities('
-addColorPicker($label, $name, $value="", $additionalParams="")
+public function addColorPicker($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
+
+				<p>Adds the colorpicker element to your form, which utilizes a jQuery plugin found at <a href="http://plugins.jquery.com/project/color_picker">http://plugins.jquery.com/project/color_picker</a>.  When setting the
+				default value, you can pass the 6 character hex color string with or without the leading "#".</p>
 
 				<a name="Form-Functions-addCountry"></a>
 				<p><b>addCountry</b>:</p>
 
 				<?php
 echo '<pre>', htmlentities('
-addCountry($label, $name, $value="", $additionalParams="")
+public function addCountry($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
+
+				<p>Adds a select box pre-populated with an alphabetized list of countries.  The &lt;option&gt; values contain the corresponding 2 character country codes.</p>
 
 				<a name="Form-Functions-addDate"></a>
 				<p><b>addDate</b>:</p>
 
 				<?php
 echo '<pre>', htmlentities('
-addDate($label, $name, $value="", $additionalParams="")
+public function addDate($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -544,7 +587,7 @@ addDate($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addDateRange($label, $name, $value="", $additionalParams="")
+public function addDateRange($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -553,7 +596,7 @@ addDateRange($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addDateTime($label, $name, $value="", $additionalParams="")
+public function addDateTime($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -562,7 +605,7 @@ addDateTime($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addEmail($label, $name, $value="", $additionalParams="")
+public function addEmail($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -571,7 +614,7 @@ addEmail($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addFile($label, $name, $additionalParams="")
+public function addFile($label, $name, $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -580,7 +623,7 @@ addFile($label, $name, $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addHidden($name, $value="", $additionalParams="")
+public function addHidden($name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -589,7 +632,7 @@ addHidden($name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addHTML($value)
+public function addHTML($value)
 '), '</pre>';
 				?>
 
@@ -598,7 +641,7 @@ addHTML($value)
 
 				<?php
 echo '<pre>', htmlentities('
-addLatLng($label, $name, $value="", $additionalParams="")
+public function addLatLng($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -607,7 +650,7 @@ addLatLng($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addPassword($label, $name, $value="", $additionalParams="")
+public function addPassword($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -616,7 +659,7 @@ addPassword($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addRadio($label, $name, $value="", $options="", $additionalParams="")
+public function addRadio($label, $name, $value="", $options="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -625,7 +668,7 @@ addRadio($label, $name, $value="", $options="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addRating($label, $name, $value="", $options="", $additionalParams="")
+public function addRating($label, $name, $value="", $options="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -634,7 +677,7 @@ addRating($label, $name, $value="", $options="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addSelect($label, $name, $value="", $options="", $additionalParams="")
+public function addSelect($label, $name, $value="", $options="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -643,7 +686,7 @@ addSelect($label, $name, $value="", $options="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addSlider($label, $name, $value="", $additionalParams="")
+public function addSlider($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -652,7 +695,7 @@ addSlider($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addSort($label, $name, $options="", $additionalParams="")
+public function addSort($label, $name, $options="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -661,7 +704,7 @@ addSort($label, $name, $options="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addState($label, $name, $value="", $additionalParams="")
+public function addState($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -670,7 +713,7 @@ addState($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addTextarea($label, $name, $value="", $additionalParams="")
+public function addTextarea($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -679,7 +722,7 @@ addTextarea($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addTextbox($label, $name, $value="", $additionalParams="")
+public function addTextbox($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -688,7 +731,7 @@ addTextbox($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addTime($label, $name, $value="", $additionalParams="")
+public function addTime($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -697,7 +740,7 @@ addTime($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addTrueFalse($label, $name, $value="", $additionalParams="")
+public function addTrueFalse($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -706,7 +749,7 @@ addTrueFalse($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addWebEditor($label, $name, $value="", $additionalParams="")
+public function addWebEditor($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -715,7 +758,7 @@ addWebEditor($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-addYesNo($label, $name, $value="", $additionalParams="")
+public function addYesNo($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
@@ -724,7 +767,7 @@ addYesNo($label, $name, $value="", $additionalParams="")
 
 				<?php
 echo '<pre>', htmlentities('
-bind($ref, $jsIfCondition = "", $phpIfCondition = "")
+public function bind($ref, $jsIfCondition = "", $phpIfCondition = "")
 '), '</pre>';
 				?>
 
@@ -733,7 +776,7 @@ bind($ref, $jsIfCondition = "", $phpIfCondition = "")
 
 				<?php
 echo '<pre>', htmlentities('
-clearButtons()
+public function clearButtons()
 '), '</pre>';
 				?>
 
@@ -742,7 +785,7 @@ clearButtons()
 
 				<?php
 echo '<pre>', htmlentities('
-clearElements()
+public function clearElements()
 '), '</pre>';
 				?>
 
@@ -751,7 +794,7 @@ clearElements()
 
 				<?php
 echo '<pre>', htmlentities('
-elementsToString()
+public function elementsToString()
 '), '</pre>';
 				?>
 
@@ -760,7 +803,7 @@ elementsToString()
 
 				<?php
 echo '<pre>', htmlentities('
-render($returnString=false)
+public function render($returnString=false)
 '), '</pre>';
 				?>
 
@@ -769,7 +812,7 @@ render($returnString=false)
 
 				<?php
 echo '<pre>', htmlentities('
-setAttributes($params)
+public function setAttributes($params)
 '), '</pre>';
 				?>
 
@@ -778,7 +821,7 @@ setAttributes($params)
 
 				<?php
 echo '<pre>', htmlentities('
-setReferenceValues($params)
+public function setReferenceValues($params)
 '), '</pre>';
 				?>
 
@@ -787,7 +830,7 @@ setReferenceValues($params)
 
 				<?php
 echo '<pre>', htmlentities('
-validate()
+public function validate()
 '), '</pre>';
 				?>
 			</div>
