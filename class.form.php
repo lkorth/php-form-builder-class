@@ -1614,8 +1614,11 @@ STR;
 
 		if(!empty($this->captchaID)) {
 			if(empty($this->preventCaptchaLoad)) {
+				$captchaDomain = "http://api.recaptcha.net";
+				if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
+					$captchaDomain = "https://api-secure.recaptcha.net";
 				$str .= <<<STR
-		<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
+		<script type="text/javascript" src="$captchaDomain/js/recaptcha_ajax.js"></script>
 
 STR;
 			}	
