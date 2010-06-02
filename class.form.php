@@ -52,7 +52,7 @@ class form extends base {
 	protected $ckeditorLang;
 	protected $emailErrorMsgFormat;
 	protected $errorMsgFormat;
-        protected $generateExternalResources;
+        protected $generateInlineResources;
 	protected $includesPath;
 	protected $jqueryDateFormat;
 	protected $jqueryTimeFormat;
