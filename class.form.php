@@ -52,6 +52,7 @@ class form extends base {
 	protected $ckeditorLang;
 	protected $emailErrorMsgFormat;
 	protected $errorMsgFormat;
+        protected $generateExternalResources;
 	protected $includesPath;
 	protected $jqueryDateFormat;
 	protected $jqueryTimeFormat;
@@ -1480,6 +1481,7 @@ class form extends base {
 		$str .= <<<STR
 
 		<script type="text/javascript">
+                        //<![CDATA[
 			var head = document.getElementsByTagName("head")[0];
 
 			var css = document.createElement('link');
@@ -1487,6 +1489,7 @@ class form extends base {
 			css.type = 'text/css';
 			css.href = '{$this->jsIncludesPath}/jquery/ui/jquery-ui.css';
 			head.appendChild(css);
+                        //]]>
 		</script>
 
 STR;
@@ -1530,11 +1533,13 @@ STR;
 		if(!empty($this->jqueryTimeIDArr)) {
 			$str .= <<<STR
 		<script type="text/javascript">
+                        //<![CDATA[
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
 			css.href = '{$this->jsIncludesPath}/jquery/plugins/timepicker/km.timepicker.css';
 			head.appendChild(css);
+                        //]]>
 		</script>
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/timepicker/km.timepicker.js"></script>
 
@@ -1544,11 +1549,13 @@ STR;
 		if(!empty($this->jqueryDateRangeIDArr)) {
 			$str .= <<<STR
 		<script type="text/javascript">
+                        //<![CDATA[
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
 			css.href = '{$this->jsIncludesPath}/jquery/ui/ui.daterangepicker.css';
 			head.appendChild(css);
+                        //]]>
 		</script>
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"></script>
 
@@ -1558,58 +1565,51 @@ STR;
 		if(!empty($this->jqueryColorIDArr)) {
 			$str .= <<<STR
 		<script type="text/javascript">
+                        //<![CDATA[
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
 			css.href = '{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css';
 			head.appendChild(css);
+                        //]]>
 		</script>
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js"></script>
 
 STR;
 		}
 
-		if(!empty($this->latlngIDArr)) {
-			if(empty($this->preventGoogleMapsLoad)) {
+		if(!empty($this->latlngIDArr) && empty($this->preventGoogleMapsLoad)) {
 				$str .= <<<STR
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
 STR;
-			}	
-		}
+		}	
 
-		if(!empty($this->tinymceIDArr)) {
-			if(empty($this->preventTinyMCELoad)) {
+		if(!empty($this->tinymceIDArr) && empty($this->preventTinyMCELoad)){
 				$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
 
 STR;
-			}	
+                }
 
-		}
-
-		if(!empty($this->ckeditorIDArr)) {
-			if(empty($this->preventCKEditorLoad)) {
+		if(!empty($this->ckeditorIDArr) && empty($this->preventCKEditorLoad)) {
 				$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
 
 STR;
-			}	
 		}	
 
-		if(!empty($this->captchaID)) {
-			if(empty($this->preventCaptchaLoad)) {
+		if(!empty($this->captchaID) && empty($this->preventCaptchaLoad)) {
 				$str .= <<<STR
 		<script type="text/javascript" src="http://api.recaptcha.net/js/recaptcha_ajax.js"></script>
 
 STR;
-			}	
-		}
+		}	
 
 		//Serialize the form and store it in a session array.  This variable will be unserialized and used within js/css.php and the validate() method.
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
-		if(empty($this->preventXHTMLStrict)) {
+		if(empty($this->generateInlineResources) || $this->generateInlineResources == False){
 			$session_param = "";
 			$session_name = session_name();
 			if($session_name != "PHPSESSID")
@@ -1617,6 +1617,7 @@ STR;
 
 			$str .= <<<STR
 		<script type="text/javascript">
+                        //<![CDATA[
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
@@ -1627,25 +1628,20 @@ STR;
 			script.type = 'text/javascript';
 			script.src = '{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param';
 			head.appendChild(script);
+                        //]]>
 		</script>
 
 STR;
-		}
-		else {
-			$str .= <<<STR
-		<style type="text/css">
-
-STR;
-			$str .= $this->renderCSS(true);
-			$str .= <<<STR
-		</style>	
+		} else {
+                        $str .= <<<STR
 		<script type="text/javascript">
+                //<![CDATA[
 
 STR;
 			$str .= $this->renderJS(true);
 			$str .= <<<STR
+                //]]>
 		</script>
-
 STR;
 		}
 
@@ -1721,14 +1717,27 @@ STR;
 		return $str;
 	}
 
+        public function headData(){
+                $this->generateInlineResources = True;
+            	$str = '<style type="text/css">';
+		$str .= $this->renderCSS(true);
+		$str .= "</style>";
+                return $str;
+        }
+
+        public function bodyData(){
+                $this->generateInlineResources = True;
+                return $this->render(TRUE);
+        }
+
 	public function render($returnString=false) {
 		$this->hasFormTag = 1;
-		ob_start();
 
-		echo $this->elementsToString();
+                if(empty($this->generateInlineResources)){
+                    $this->generateInlineResources = False;
+                }
 
-		$content = ob_get_contents();
-		ob_end_clean();
+		$content = $this->elementsToString();
 
 		if(!$returnString)
 			echo($content);
@@ -2209,7 +2218,7 @@ STR;
 	$("#{$form->jqueryDateIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", showButtonPanel: true });
 
 STR;
-					}	
+					}
 				}
 
 				if(!empty($form->jqueryDateTimeIDArr)) {
