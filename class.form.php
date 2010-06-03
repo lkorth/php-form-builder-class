@@ -555,13 +555,14 @@ class form extends base {
 				$ele->attributes["id"] = "dateinput_" . rand(0, 999);
 			if(!isset($this->jqueryDateIDArr))
 				$this->jqueryDateIDArr = array();
-			while(in_array($ele->attributes["id"], $this->jqueryDateIDArr))
+			while(array_key_exists($ele->attributes["id"], $this->jqueryDateIDArr))
 				$ele->attributes["id"] = "dateinput_" . rand(0, 999);
-			$this->jqueryDateIDArr[] = $ele->attributes["id"];
 
 			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date...";
+
+			$this->jqueryDateIDArr[$ele->attributes["id"]] = $ele;
 		}
 		elseif($eleType == "datetime") {
 			if(empty($ele->attributes["id"]))
@@ -595,13 +596,14 @@ class form extends base {
 				$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
 			if(!isset($this->jqueryDateRangeIDArr))
 				$this->jqueryDateRangeIDArr = array();
-			while(in_array($ele->attributes["id"], $this->jqueryDateRangeIDArr))
+			while(array_key_exists($ele->attributes["id"], $this->jqueryDateRangeIDArr))
 				$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
-			$this->jqueryDateRangeIDArr[] = $ele->attributes["id"];
 
 			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date Range...";
+
+			$this->jqueryDateRangeIDArr[$ele->attributes["id"]] = $ele;
 		}
 		elseif($eleType == "sort") {
 			if(empty($ele->attributes["id"]))
@@ -2227,10 +2229,31 @@ $(function() {
 
 STR;
 				if(!empty($form->jqueryDateIDArr)) {
+					$dateKeys = array_keys($form->jqueryDateIDArr);
 					$dateSize = sizeof($form->jqueryDateIDArr);
 					for($d = 0; $d < $dateSize; ++$d) {
+						$date = $form->jqueryDateIDArr[$dateKeys[$d]];
 						$str .= <<<STR
-	$("#{$form->jqueryDateIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", changeMonth: true, changeYear: true });
+	$("#{$dateKeys[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", changeMonth: true, changeYear: true
+STR;
+						if(!empty($date->min)) {
+							$str .= <<<STR
+, minDate: "{$date->min}"
+STR;
+						}
+						if(!empty($date->max)) {
+							$str .= <<<STR
+, maxDate: "{$date->max}"
+STR;
+						}
+						if(!empty($date->numMonths)) {
+							$str .= <<<STR
+, numberOfMonths: {$date->numMonths}
+STR;
+						}
+
+						$str .= <<<STR
+ });
 
 STR;
 					}	
@@ -2253,24 +2276,20 @@ STR;
 						$time = $form->jqueryTimeIDArr[$timeKeys[$t]];
 						$str .= <<<STR
 	$("#{$timeKeys[$t]}").kmTimepicker({ timeFormat: "{$form->jqueryTimeFormat}", duration: ""
-
 STR;
 						if(!empty($time->minuteSnapIncrement)) {
 							$str .= <<<STR
 , stepMinutes: {$time->minuteSnapIncrement}
-
 STR;
 						}
 						if(!empty($time->hourSnapIncrement)) {
 							$str .= <<<STR
 , stepHours: {$time->hourSnapIncrement}
-
 STR;
 						}
 						if(!empty($time->is24Hour)) {
 							$str .= <<<STR
 , time24h: true
-
 STR;
 						}
 						$str .= <<<STR
@@ -2281,10 +2300,25 @@ STR;
 				}
 
 				if(!empty($form->jqueryDateRangeIDArr)) {
+					$dateRangeKeys = array_keys($form->jqueryDateRangeIDArr);
 					$dateRangeSize = sizeof($form->jqueryDateRangeIDArr);
 					for($d = 0; $d < $dateRangeSize; ++$d) {
+						$dateRange = $form->jqueryDateRangeIDArr[$dateRangeKeys[$d]];
 						$str .= <<<STR
-	$("#{$form->jqueryDateRangeIDArr[$d]}").daterangepicker({ dateFormat: "{$form->jqueryDateFormat}", datepickerOptions: { changeMonth: true, changeYear: true }, });
+	$("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "{$form->jqueryDateFormat}", changeMonth: true, changeYear: true, datepickerOptions: { changeMonth: true, changeYear: true
+STR;
+						if(!empty($dateRange->min)) {
+							$str .= <<<STR
+, minDate: "{$dateRange->min}"
+STR;
+						}
+						if(!empty($dateRange->max)) {
+							$str .= <<<STR
+, maxDate: "{$dateRange->max}"
+STR;
+						}
+						$str .= <<<STR
+} });
 
 STR;
 					}	
@@ -3123,14 +3157,17 @@ class element extends base {
 	public $width;
 	public $height;
 	public $basic;
+	public $min;
+	public $max;
+
+	//date specific fields
+	public $numMonths;
 
 	//latlng specific fields
 	public $zoom;
 	public $hideJump;
 
 	//slider specific fields
-	public $min;
-	public $max;
 	public $snapIncrement;
 	public $orientation;
 	public $prefix;
