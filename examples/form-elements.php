@@ -43,8 +43,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addPassword("Password:", "field4");
 				$form->addFile("File:", "field5");
 				$form->addDate("Date:", "field6");
-				$form->addDateTime("Date/Time:", "field7");
-				$form->addTime("Time:", "field8");
 				$form->addDateRange("Date Range:", "field9");
 				$form->addState("State:", "field10");
 				$form->addCountry("Country:", "field11");
@@ -80,8 +78,6 @@ $form->addCKEditor("Web Editor - CKEditor:", "field3");
 $form->addPassword("Password:", "field4");
 $form->addFile("File:", "field5");
 $form->addDate("Date:", "field6");
-$form->addDateTime("Date/Time:", "field7");
-$form->addTime("Time:", "field8");
 $form->addDateRange("Date Range:", "field9");
 $form->addState("State:", "field10");
 $form->addCountry("Country:", "field11");

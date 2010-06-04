@@ -54,7 +54,6 @@ class form extends base {
 	protected $errorMsgFormat;
 	protected $includesPath;
 	protected $jqueryDateFormat;
-	protected $jqueryTimeFormat;
 	protected $jsErrorFunction;
 	protected $latlngDefaultLocation;
 	protected $map;
@@ -89,10 +88,8 @@ class form extends base {
 	private $jqueryColorIDArr;
 	private $jqueryDateIDArr;
 	private $jqueryDateRangeIDArr;
-	private $jqueryDateTimeIDArr;
 	private $jquerySliderIDArr;
 	private $jqueryStarRatingIDArr;
-	private $jqueryTimeIDArr;
 	private $jsIncludesPath;
 	private $latlngIDArr;
 	private $phpIncludesPath;
@@ -116,7 +113,6 @@ class form extends base {
 		$this->captchaPublicKey = "6LcazwoAAAAAADamFkwqj5KN1Gla7l4fpMMbdZfi";
 		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
 		$this->jqueryDateFormat = "MM d, yy";
-		$this->jqueryTimeFormat = "h:ii a";
 		$this->ajaxCallback = "alert";
 		$this->ajaxType = "post";
 		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
@@ -564,33 +560,6 @@ class form extends base {
 
 			$this->jqueryDateIDArr[$ele->attributes["id"]] = $ele;
 		}
-		elseif($eleType == "datetime") {
-			if(empty($ele->attributes["id"]))
-				$ele->attributes["id"] = "datetimeinput_" . rand(0, 999);
-			if(!isset($this->jqueryDateTimeIDArr))
-				$this->jqueryDateTimeIDArr = array();
-			while(in_array($ele->attributes["id"], $this->jqueryDateTimeIDArr))
-				$ele->attributes["id"] = "datetimeinput_" . rand(0, 999);
-			$this->jqueryDateTimeIDArr[] = $ele->attributes["id"];
-
-			$ele->attributes["readonly"] = "readonly";
-			if(empty($ele->hint))
-				$ele->hint = "Click to Select Date/Time...";
-		}
-		elseif($eleType == "time") {
-			if(empty($ele->attributes["id"]))
-				$ele->attributes["id"] = "timeinput_" . rand(0, 999);
-			if(!isset($this->jqueryTimeIDArr))
-				$this->jqueryTimeIDArr = array();
-			while(in_array($ele->attributes["id"], $this->jqueryTimeIDArr))
-				$ele->attributes["id"] = "timeinput_" . rand(0, 999);
-
-			$ele->attributes["readonly"] = "readonly";
-			if(empty($ele->hint))
-				$ele->hint = "Click to Select Time...";
-
-			$this->jqueryTimeIDArr[$ele->attributes["id"]] = $ele;
-		}
 		elseif($eleType == "daterange") {
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "daterangeinput_" . rand(0, 999);
@@ -719,7 +688,7 @@ class form extends base {
 		}
 
 		//Add the appropriate javascript event functions if hint is present.
-		if(in_array($eleType, array("text", "textarea", "date", "datetime", "time", "daterange", "colorpicker", "latlng", "email")) && !empty($ele->hint)) {
+		if(in_array($eleType, array("text", "textarea", "date", "daterange", "colorpicker", "latlng", "email")) && !empty($ele->hint)) {
 			$hintFocusFunction = "hintfocus_" . $this->attributes["id"] . '(this, "' . str_replace('"', '\"', stripslashes($ele->hint)) . '");';
 			if(empty($ele->attributes["onclick"]))
 				$ele->attributes["onclick"] = $hintFocusFunction;
@@ -783,10 +752,6 @@ class form extends base {
 	}
 	public function addDateRange($label, $name, $value="", $additionalParams="") {
 		$this->addElement($label, $name, "daterange", $value, $additionalParams);
-	}
-
-	public function addDateTime($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "datetime", $value, $additionalParams);
 	}
 
 	public function addEmail($label, $name, $value="", $additionalParams="") {
@@ -855,10 +820,6 @@ class form extends base {
 
 	public function addTextbox($label, $name, $value="", $additionalParams="") {
 		$this->addElement($label, $name, "text", $value, $additionalParams);
-	}
-
-	public function addTime($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "time", $value, $additionalParams);
 	}
 
 	public function addTrueFalse($label, $name, $value="", $additionalParams="") {
@@ -1064,9 +1025,9 @@ class form extends base {
 					$ele->attributes["value"] = $ele->hint;
 
 				$str .= $this->indent();
-				if(in_array($eleType, array("text", "password", "email", "date", "datetime", "time", "daterange", "colorpicker"))) {
+				if(in_array($eleType, array("text", "password", "email", "date", "daterange", "colorpicker"))) {
 					//Temporarily set the type attribute to "text" for <input> tag.
-					if(in_array($eleType, array("email", "date", "datetime", "time", "daterange", "colorpicker"))) {
+					if(in_array($eleType, array("email", "date", "daterange", "colorpicker"))) {
 						$resetTypeTo = $eleType;
 						$eleType = "text";
 					}	
@@ -1515,7 +1476,7 @@ STR;
 STR;
 		}
 
-		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateTimeIDArr) || !empty($this->jqueryTimeIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr)) {
+		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr)) {
 			if(empty($this->preventJQueryUILoad)) {
 				$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/jquery-ui.js"></script>
@@ -1536,27 +1497,6 @@ STR;
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js"></script>
 STR;
 		}
-
-		if(!empty($this->jqueryDateTimeIDArr)) {
-			$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/timepicker.js"></script>
-
-STR;
-		}	
-
-		if(!empty($this->jqueryTimeIDArr)) {
-			$str .= <<<STR
-		<script type="text/javascript">
-			var css = document.createElement('link');
-			css.rel = 'stylesheet';
-			css.type = 'text/css';
-			css.href = '{$this->jsIncludesPath}/jquery/plugins/timepicker/km.timepicker.css';
-			head.appendChild(css);
-		</script>
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/timepicker/km.timepicker.js"></script>
-
-STR;
-		}	
 
 		if(!empty($this->jqueryDateRangeIDArr)) {
 			$str .= <<<STR
@@ -1998,7 +1938,7 @@ STR;
 
 STR;
 			}
-			elseif($eleType == "text" || $eleType == "textarea" || $eleType == "date" || $eleType == "datetime" || $eleType == "time" || $eleType == "daterange" || $eleType == "latlng" || $eleType == "colorpicker" || $eleType == "email") {
+			elseif($eleType == "text" || $eleType == "textarea" || $eleType == "date" || $eleType == "daterange" || $eleType == "latlng" || $eleType == "colorpicker" || $eleType == "email") {
 				if(!empty($this->ajax)) {
 					$str .= <<<STR
 	form_data += "&$eleName=";
@@ -2223,7 +2163,7 @@ STR;
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateTimeIDArr) || !empty($form->jqueryTimeIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr)) {
+			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr)) {
 				$str .= <<<STR
 $(function() {
 
@@ -2246,52 +2186,12 @@ STR;
 , maxDate: "{$date->max}"
 STR;
 						}
-						if(!empty($date->numMonths)) {
+						if(!empty($date->months)) {
 							$str .= <<<STR
-, numberOfMonths: {$date->numMonths}
+, numberOfMonths: {$date->months}
 STR;
 						}
 
-						$str .= <<<STR
- });
-
-STR;
-					}	
-				}
-
-				if(!empty($form->jqueryDateTimeIDArr)) {
-					$dateTimeSize = sizeof($form->jqueryDateTimeIDArr);
-					for($d = 0; $d < $dateTimeSize; ++$d) {
-						$str .= <<<STR
-	$("#{$form->jqueryDateTimeIDArr[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", changeMonth: true, changeYear: true, duration: "", showTime: true });
-
-STR;
-					}	
-				}
-
-				if(!empty($form->jqueryTimeIDArr)) {
-					$timeKeys = array_keys($form->jqueryTimeIDArr);
-					$timeSize = sizeof($form->jqueryTimeIDArr);
-					for($t = 0; $t < $timeSize; ++$t) {
-						$time = $form->jqueryTimeIDArr[$timeKeys[$t]];
-						$str .= <<<STR
-	$("#{$timeKeys[$t]}").kmTimepicker({ timeFormat: "{$form->jqueryTimeFormat}", duration: ""
-STR;
-						if(!empty($time->minuteSnapIncrement)) {
-							$str .= <<<STR
-, stepMinutes: {$time->minuteSnapIncrement}
-STR;
-						}
-						if(!empty($time->hourSnapIncrement)) {
-							$str .= <<<STR
-, stepHours: {$time->hourSnapIncrement}
-STR;
-						}
-						if(!empty($time->is24Hour)) {
-							$str .= <<<STR
-, time24h: true
-STR;
-						}
 						$str .= <<<STR
  });
 
@@ -2979,7 +2879,7 @@ STR;
 				}
 			}
 
-			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateTimeIDArr)) {
+			if(!empty($form->jqueryDateIDArr)) {
 				$str .= <<<STR
 .ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 1em !important; }
 
@@ -3161,7 +3061,7 @@ class element extends base {
 	public $max;
 
 	//date specific fields
-	public $numMonths;
+	public $months;
 
 	//latlng specific fields
 	public $zoom;

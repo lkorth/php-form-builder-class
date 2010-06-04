@@ -581,6 +581,11 @@ public function addDate($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
+				<p>Adds the date element to your form, which makes use of jQuery UI's datepicker widget.  More information can be found on jQuery UI's website at <a href="http://jqueryui.com/demos/datepicker/">http://jqueryui.com/demos/datepicker</a>.
+				By default, this element will return date's formatted like <?=date("F j, Y")?>; however, you can customize this formatting by using the <a href="#Form-Attribute-jqueryDateFormat">jqueryDateFormat</a> form attribute.  There are several element
+				attributes specific to this element that are worth mentioned here as well.  The range of selectable dates can be restricted by using the <a href="Element-Attribute-min">min</a> and <a href="">max</a> attributes.  Also, you can control the number of months
+				displayed on the calendar with the <a href="Element-Attribute-months">months</a> attribute.</p>
+
 				<a name="Form-Functions-addDateRange"></a>
 				<p><b>addDateRange</b>:</p>
 

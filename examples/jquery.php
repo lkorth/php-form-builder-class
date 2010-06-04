@@ -39,9 +39,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addSort("Sort These MLB Baseball Teams Alphabetically:", "field1", array("Dodgers", "Cubs", "Cardinals"));
 				$form->addDate("Your Birthday:", "field2");
 				$form->addDate("Today's Date Pre-filled:", "field3", date("F j, Y"));
-				$form->addDateTime("Select Date/Time:", "field4");
-				$form->addTime("Select Time:", "field5");
-				$form->addTime("Select Time w/Minute Increment:", "field6", date("g:i a"), array("minuteSnapIncrement" => 5));
 				$form->addDateRange("Select a Date Range:", "field7");
 				$form->addDateRange("Select a Date Range:<br/>(prefilled)", "field8", date("F j, Y", strtotime("-1 month")) . " - " . date("F j, Y"));
 				$form->addSlider("Select Rating:<br/>(1 = lowest; 5 = highest)", "field9", 3, array("min" => 1, "max" => 5));
@@ -67,9 +64,6 @@ $form->addCheckSort("Select And Rank Your Favorite Sports:", "field0", "", array
 $form->addSort("Sort These MLB Baseball Teams Alphabetically:", "field1", array("Dodgers", "Cubs", "Cardinals"));
 $form->addDate("Your Birthday:", "field2");
 $form->addDate("Today\'s Date Pre-filled:", "field3", date("F j, Y"));
-$form->addDateTime("Select Date/Time:", "field4");
-$form->addTime("Select Time:", "field5");
-$form->addTime("Select Time w/Minute Increment:", "field6", date("g:i a"), array("minuteSnapIncrement" => 5));
 $form->addDateRange("Select a Date Range:", "field7");
 $form->addDateRange("Select a Date Range:<br/>(prefilled)", "field8", date("F j, Y", strtotime("-1 month")) . " - " . date("F j, Y"));
 $form->addSlider("Select Rating:<br/>(1 = lowest; 5 = highest)", "field9", 3, array("min" => 1, "max" => 5));

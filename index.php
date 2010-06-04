@@ -64,7 +64,7 @@
 			<b>Documentation:</b>
 			<div>
 				<ul style="margin-top: 0; padding-top: 0;">
-					<li><a href="documentation/index.php">Developer's Reference Guide</a></li>
+					<li><a href="documentation/index.php">User's Reference Guide</a></li>
 				</ul>
 			</div>	
 
