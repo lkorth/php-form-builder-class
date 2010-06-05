@@ -852,7 +852,7 @@ class form extends base {
 		$str = "";
 
 		if(empty($this->referenceValues) && !empty($_SESSION["pfbc-values"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-values"]))
-			$this->setReferenceValues($_SESSION["pfbc-values"][$this->attributes["id"]]);
+			$this->setValues($_SESSION["pfbc-values"][$this->attributes["id"]]);
 
 		//If windows normalize backslashes to forward slashes.
 		if( PHP_OS == 'WINNT' )
@@ -1702,7 +1702,12 @@ STR;
 			return $content;
 	}
 
+	//This function is identical to setValues() and is included for backwards compatibility.
 	public function setReferenceValues($params) {
+		$this->setValues($params);
+	}
+
+	public function setValues($params) {
 		$this->referenceValues = $params;
 	}
 
