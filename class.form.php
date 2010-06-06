@@ -136,6 +136,10 @@ class form extends pfbc {
 		);
 	}
 
+	public function __toString() {
+		return $this->render(true);
+	}
+
 	private function addElement($label, $name, $type="", $value="", $additionalParams="") {
 		$params = array("label" => $label, "name" => $name);
 		if(!empty($type))
