@@ -1,7 +1,8 @@
 <?php
 /*
 Google Code Project Hosting - http://code.google.com/p/php-form-builder-class/
-Google Groups - http://groups.google.com/group/php-form-builder-class/
+User Google Group - http://groups.google.com/group/php-form-builder-class/
+Developer Google Group - http://groups.google.com/group/php-form-builder-class-developer/
 */
 
 abstract class pfbc {
@@ -3052,45 +3053,32 @@ STR;
 
 class element extends pfbc {
 	public $attributes;
+	public $basic;
+	public $clear;
+	public $height;
+	public $hint;
+	public $hideCancel;
+	public $hideCaption;
+	public $hideDisplay;
+	public $hideJump;
 	public $label;
-	public $options;
-	public $required;
+	public $max;
+	public $min;
+	public $months;
 	public $nobreak;
+	public $options;
+	public $orientation;
+	public $prefix;
 	public $preHTML;
 	public $postHTML;
+	public $required;
+	public $snapIncrement;
+	public $suffix;
 	public $tooltip;
 	public $tooltipWidth;
 	public $tooltipID;
-	public $hint;
-	public $clear;
 	public $width;
-	public $height;
-	public $basic;
-	public $min;
-	public $max;
-
-	//date specific fields
-	public $months;
-
-	//latlng specific fields
 	public $zoom;
-	public $hideJump;
-
-	//slider specific fields
-	public $snapIncrement;
-	public $orientation;
-	public $prefix;
-	public $suffix;
-	public $hideDisplay;
-
-	//rating specific fields
-	public $hideCaption;
-	public $hideCancel;
-
-	//time specific fields
-	public $minuteSnapIncrement;
-	public $hourSnapIncrement;
-	public $is24Hour;
 
 	public function __construct() {
 		$this->attributes = array(
@@ -3099,15 +3087,15 @@ class element extends pfbc {
 	}
 }
 class option extends pfbc {
-	public $value;
 	public $text;
+	public $value;
 }
 class button extends pfbc {
 	public $attributes;
+	public $linkAttributes;
 	public $phpFunction;
 	public $phpParams;
 	public $wrapLink;
-	public $linkAttributes;
 
 	public function __construct() {
 		$this->linkAttributes = array(
