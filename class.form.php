@@ -4,7 +4,7 @@ Google Code Project Hosting - http://code.google.com/p/php-form-builder-class/
 Google Groups - http://groups.google.com/group/php-form-builder-class/
 */
 
-class base {
+abstract class pfbc {
 	function setAttributes($params) {
 		if(!empty($params) && is_array($params)) {
 			//Loop through and get accessible class variables.
@@ -36,7 +36,7 @@ class base {
 	}
 }
 
-class form extends base { 
+class form extends pfbc { 
 	protected $ajax;
 	protected $ajaxCallback;
 	protected $ajaxDataType;
@@ -3046,7 +3046,7 @@ STR;
 	}	
 }
 
-class element extends base {
+class element extends pfbc {
 	public $attributes;
 	public $label;
 	public $options;
@@ -3094,11 +3094,11 @@ class element extends base {
 		);
 	}
 }
-class option extends base {
+class option extends pfbc {
 	public $value;
 	public $text;
 }
-class button extends base {
+class button extends pfbc {
 	public $attributes;
 	public $phpFunction;
 	public $phpParams;
