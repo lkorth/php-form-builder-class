@@ -55,6 +55,7 @@ class form extends pfbc {
 	protected $errorMsgFormat;
 	protected $includesPath;
 	protected $jqueryDateFormat;
+	protected $jqueryUITheme;
 	protected $jsErrorFunction;
 	protected $latlngDefaultLocation;
 	protected $map;
@@ -109,18 +110,19 @@ class form extends pfbc {
 			"method" => "post",
 			"action" => basename($_SERVER["SCRIPT_NAME"]),
 		);
-		$this->captchaTheme = "white";
-		$this->captchaLang = "en";
-		$this->captchaPublicKey = "6LcazwoAAAAAADamFkwqj5KN1Gla7l4fpMMbdZfi";
-		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
-		$this->jqueryDateFormat = "MM d, yy";
 		$this->ajaxCallback = "alert";
 		$this->ajaxType = "post";
 		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
-		//[LABEL] is replaced with the appropriate element's label for both errorMsgFormat and emailErrorMsgFormat attributes.
-		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
+		$this->captchaLang = "en";
+		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
+		$this->captchaPublicKey = "6LcazwoAAAAAADamFkwqj5KN1Gla7l4fpMMbdZfi";
+		$this->captchaTheme = "white";
+		//[LABEL] is replaced with the appropriate element's label for both emailErrorMsgFormat and errorMsgFormat attributes.
 		$this->emailErrorMsgFormat = "Error: [LABEL] contains an invalid email address.";
+		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
 		$this->includesPath = "php-form-builder-class/includes";
+		$this->jqueryDateFormat = "MM d, yy";
+		$this->jqueryUITheme = "smoothness";
 		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
 		$this->mapMargin = 1;
 		//These lists represent all xhtml 1.0 strict compliant attributes. See http://www.w3schools.com/tags/default.asp for reference.
@@ -1468,7 +1470,7 @@ class form extends pfbc {
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
-			css.href = '{$this->jsIncludesPath}/jquery/ui/jquery-ui.css';
+			css.href = '{$this->jsIncludesPath}/jquery/ui/themes/{$this->jqueryUITheme}/jquery-ui.css';
 			head.appendChild(css);
 		</script>
 
@@ -3092,6 +3094,7 @@ class option extends pfbc {
 }
 class button extends pfbc {
 	public $attributes;
+	public $jqueryUI;
 	public $linkAttributes;
 	public $phpFunction;
 	public $phpParams;
