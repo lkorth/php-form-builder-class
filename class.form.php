@@ -715,6 +715,14 @@ class form extends pfbc {
 		$this->elements[] = $ele;
 	}
 
+        public function openFieldSet($legend){
+                $this->addElement("", "", "openFieldSet", $legend, Array('nodiv' => True));
+        }
+
+        public function closeFieldSet(){
+        	$this->addElement("", "", "closeFieldSet", "", Array('nodiv' => True));
+        }
+
 	public function addButton($value="Submit", $type="submit", $additionalParams="") {
 		$params = array("value" => $value, "type" => $type);
 		if(!empty($additionalParams) && is_array($additionalParams)) {
@@ -994,20 +1002,24 @@ class form extends pfbc {
 				$str .= "\n\t";
 				if(!empty($this->map))
 					$str .= "\t";
-				$str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="pfbc-element';
-				if($map_element_first && $map_element_last)
-					$str .= ' pfbc-map-element-single';
-				elseif($map_element_first)
-					$str .= ' pfbc-map-element-first';
-				elseif($map_element_last)
-					$str .= ' pfbc-map-element-last';
-				if(!empty($this->map)) {
-					if(array_key_exists($mapIndex, $this->map))
-						$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
-					else	
-						$str .= ' pfbc-map-columns-1';
-				}	
-				$str .= '">';
+
+                                if(empty($ele->attributes["nodiv"])){
+                                        $str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="pfbc-element';
+
+                                        if($map_element_first && $map_element_last)
+                                                $str .= ' pfbc-map-element-single';
+                                        elseif($map_element_first)
+                                                $str .= ' pfbc-map-element-first';
+                                        elseif($map_element_last)
+                                                $str .= ' pfbc-map-element-last';
+                                        if(!empty($this->map)) {
+                                                if(array_key_exists($mapIndex, $this->map))
+                                                        $str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
+                                                else
+                                                        $str .= ' pfbc-map-columns-1';
+                                        }
+                                        $str .= '">';
+                                }
 
 				if(!empty($ele->preHTML))
 					$str .= $this->indent() . $ele->preHTML;
@@ -1429,6 +1441,10 @@ class form extends pfbc {
 				}
 				elseif($eleType == "html")
 					$str .= $ele->attributes["value"];
+                                elseif($eleType == "openFieldSet")
+                                        $str .= "<fieldset><legend>{$ele->attributes['value']}</legend>";
+                                elseif($eleType == "closeFieldSet")
+                                        $str .= "</fieldset>";
 
 				if(!empty($ele->postHTML))
 					$str .= $this->indent() . $ele->postHTML;
@@ -1436,7 +1452,9 @@ class form extends pfbc {
 				$str .= "\n\t";
 				if(!empty($this->map))
 					$str .= "\t";
-				$str .= "</div>";
+
+                                if(empty($ele->attributes["nodiv"]))
+                                        $str .= "</div>";
 
 				if(!empty($this->map)) {
 					if(($i + 1) == $elementSize)
