@@ -781,8 +781,8 @@ class form extends pfbc {
 		$this->addElement("", $name, "hidden", $value, $additionalParams);
 	}
 
-	public function addHTML($value) {
-		$this->addElement("", "", "html", $value);
+	public function addHTML($value , $additionalParams="") {
+		$this->addElement("", "", "html", $value, $additionalParams);
 	}
 
 	public function addLatLng($label, $name, $value="", $additionalParams="") {
