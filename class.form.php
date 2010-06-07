@@ -1187,6 +1187,12 @@ class form extends pfbc {
 								$str .= ' pfbc-radio-first';
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-radio-last';
+
+                                                        if(!empty($ele->nobreak)){
+                                                                if($o + 1 != $optionSize)
+                                                                        $str .= '" style="float:left';
+                                                        }
+
 							$str .= '"><input';
 							$tmpAllowFieldArr = $this->allowedFields["radio"];
 							if(!empty($ele->attributes) && is_array($ele->attributes)) {
@@ -1225,6 +1231,12 @@ class form extends pfbc {
 								$str .= ' pfbc-checkbox-first';
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-checkbox-last';
+
+                                                        if(!empty($ele->nobreak)){
+                                                                if($o + 1 != $optionSize)
+                                                                        $str .= '" style="float:left';
+                                                        }
+                                                        
 							$str .= '"><input';
 							if(!empty($ele->attributes) && is_array($ele->attributes)) {
 								$tmpAllowFieldArr = $this->allowedFields["radio"];
