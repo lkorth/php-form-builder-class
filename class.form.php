@@ -715,14 +715,6 @@ class form extends pfbc {
 		$this->elements[] = $ele;
 	}
 
-        public function openFieldSet($legend){
-                $this->addElement("", "", "openFieldSet", $legend, Array('nodiv' => True));
-        }
-
-        public function closeFieldSet(){
-        	$this->addElement("", "", "closeFieldSet", "", Array('nodiv' => True));
-        }
-
 	public function addButton($value="Submit", $type="submit", $additionalParams="") {
 		$params = array("value" => $value, "type" => $type);
 		if(!empty($additionalParams) && is_array($additionalParams)) {
@@ -1003,23 +995,23 @@ class form extends pfbc {
 				if(!empty($this->map))
 					$str .= "\t";
 
-                                if(empty($ele->attributes["nodiv"])){
-                                        $str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="pfbc-element';
+				if(empty($ele->noDiv)) {
+					$str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="pfbc-element';
 
-                                        if($map_element_first && $map_element_last)
-                                                $str .= ' pfbc-map-element-single';
-                                        elseif($map_element_first)
-                                                $str .= ' pfbc-map-element-first';
-                                        elseif($map_element_last)
-                                                $str .= ' pfbc-map-element-last';
-                                        if(!empty($this->map)) {
-                                                if(array_key_exists($mapIndex, $this->map))
-                                                        $str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
-                                                else
-                                                        $str .= ' pfbc-map-columns-1';
-                                        }
-                                        $str .= '">';
-                                }
+					if($map_element_first && $map_element_last)
+							$str .= ' pfbc-map-element-single';
+					elseif($map_element_first)
+							$str .= ' pfbc-map-element-first';
+					elseif($map_element_last)
+							$str .= ' pfbc-map-element-last';
+					if(!empty($this->map)) {
+							if(array_key_exists($mapIndex, $this->map))
+									$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
+							else
+									$str .= ' pfbc-map-columns-1';
+					}
+					$str .= '">';
+				}
 
 				if(!empty($ele->preHTML))
 					$str .= $this->indent() . $ele->preHTML;
@@ -1188,11 +1180,6 @@ class form extends pfbc {
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-radio-last';
 
-                                                        if(!empty($ele->nobreak)){
-                                                                if($o + 1 != $optionSize)
-                                                                        $str .= '" style="float:left';
-                                                        }
-
 							$str .= '"><input';
 							$tmpAllowFieldArr = $this->allowedFields["radio"];
 							if(!empty($ele->attributes) && is_array($ele->attributes)) {
@@ -1208,7 +1195,7 @@ class form extends pfbc {
 							$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->options[$o]->text . "</label></div>";
 						}	
 
-						if(!empty($ele->clear))
+						if(!empty($ele->noBreak))
 							$str .= '<div style="clear: both;"></div>';
 
 						if($focus)
@@ -1232,11 +1219,6 @@ class form extends pfbc {
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-checkbox-last';
 
-                                                        if(!empty($ele->nobreak)){
-                                                                if($o + 1 != $optionSize)
-                                                                        $str .= '" style="float:left';
-                                                        }
-                                                        
 							$str .= '"><input';
 							if(!empty($ele->attributes) && is_array($ele->attributes)) {
 								$tmpAllowFieldArr = $this->allowedFields["radio"];
@@ -1255,7 +1237,7 @@ class form extends pfbc {
 							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
 						}	
 
-						if(!empty($ele->clear))
+						if(!empty($ele->noBreak))
 							$str .= '<div style="clear: both;"></div>';
 
 						if($focus)
@@ -1386,7 +1368,7 @@ class form extends pfbc {
 							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
 						}	
 
-						if(!empty($ele->clear))
+						if(!empty($ele->noBreak))
 							$str .= '<div style="clear: both;"></div>';
 
 						//If there are any check options by default, render the <ul> sorting structure.
@@ -1453,10 +1435,6 @@ class form extends pfbc {
 				}
 				elseif($eleType == "html")
 					$str .= $ele->attributes["value"];
-                                elseif($eleType == "openFieldSet")
-                                        $str .= "<fieldset><legend>{$ele->attributes['value']}</legend>";
-                                elseif($eleType == "closeFieldSet")
-                                        $str .= "</fieldset>";
 
 				if(!empty($ele->postHTML))
 					$str .= $this->indent() . $ele->postHTML;
@@ -1465,8 +1443,8 @@ class form extends pfbc {
 				if(!empty($this->map))
 					$str .= "\t";
 
-                                if(empty($ele->attributes["nodiv"]))
-                                        $str .= "</div>";
+				if(empty($ele->noDiv))
+					$str .= "</div>";
 
 				if(!empty($this->map)) {
 					if(($i + 1) == $elementSize)
@@ -2988,6 +2966,38 @@ cursor: default !important;
 
 STR;
 			}
+
+			$id = str_replace("#", "", $id);
+			$elementSize = sizeof($form->elements);
+			for($e = 0; $e < $elementSize; ++$e) {
+				$ele = $form->elements[$e];
+				if(!empty($ele->noBreak)) {
+					if($ele->attributes["type"] == "radio") {
+						$str .= <<<STR
+#pfbc-$id-element-$e .pfbc-radio {
+	float: left;
+	margin-left: 5px;
+}
+#pfbc-$id-element-$e .pfbc-radio-first {
+	margin: 0 !important;
+}
+
+STR;
+					}
+					elseif(in_array($ele->attributes["type"], array("checkbox", "checksort"))) {
+						$str .= <<<STR
+#pfbc-$id-element-$e .pfbc-checkbox {
+	float: left;
+	margin-left: 5px;
+}
+#pfbc-$id-element-$e .pfbc-checkbox-first {
+	margin: 0 !important;
+}
+
+STR;
+					}
+				}
+			}	
 		}	
 
 		if(!$returnString)
@@ -3086,7 +3096,6 @@ STR;
 class element extends pfbc {
 	public $attributes;
 	public $basic;
-	public $clear;
 	public $height;
 	public $hint;
 	public $hideCancel;
@@ -3097,7 +3106,8 @@ class element extends pfbc {
 	public $max;
 	public $min;
 	public $months;
-	public $nobreak;
+	public $noBreak;
+	public $noDiv;
 	public $options;
 	public $orientation;
 	public $prefix;
