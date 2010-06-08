@@ -496,6 +496,8 @@ class form extends pfbc {
 			$opt = new option();
 			$opt->setAttributes(array("value" => "0", "text" => "No"));
 			$ele->options[] = $opt;
+			if(!isset($ele->noBreak))
+				$ele->noBreak = 1;
 		}
 		elseif($eleType == "truefalse") {
 			//Similar to yesno, the truefalse field is shortcut creating a radio button with two options - true and false.
@@ -507,6 +509,8 @@ class form extends pfbc {
 			$opt = new option();
 			$opt->setAttributes(array("value" => "0", "text" => "False"));
 			$ele->options[] = $opt;
+			if(!isset($ele->noBreak))
+				$ele->noBreak = 1;
 		}
 		elseif(array_key_exists("options", $params) && is_array($params["options"])) {
 			//Various form types (select, radio, sort, checksort, etc.) use the options parameter to handle value/text scenarios.
@@ -1634,58 +1638,7 @@ STR;
 				$str .= "\t" . '<div class="pfbc-buttons">';
 				$buttonSize = sizeof($this->buttons);
 				for($i = 0; $i < $buttonSize; ++$i) {
-					//The wraplink parameter will simply wrap an anchor tag (<a>) around the button treating it as a link.
-					if(!empty($this->buttons[$i]->wrapLink)) {
-						$str .= "\n\t\t<a";
-						if(!empty($this->buttons[$i]->linkAttributes) && is_array($this->buttons[$i]->linkAttributes)) {
-							$tmpAllowFieldArr = $this->allowedFields["a"];
-							foreach($this->buttons[$i]->linkAttributes as $key => $value) {
-								if(in_array($key, $tmpAllowFieldArr))
-									$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-							}		
-						}
-						$str .= ">";
-					}
-					else
-						$str .= "\n\t\t";
-
-
-					//The phpFunction parameter was included to give developers the flexibility to use any custom button generation function they might currently use in their environment.
-					if(!empty($this->buttons[$i]->phpFunction)) {
-						$execStr = $this->buttons[$i]->phpFunction . "(";
-						if(!empty($this->buttons[$i]->phpParams)) {
-							if(is_array($this->buttons[$i]->phpParams)) {
-								$paramSize = sizeof($this->buttons[$i]->phpParams);
-								for($p = 0; $p < $paramSize; ++$p) {
-									if($p != 0)
-										$execStr .= ",";
-
-									if(is_string($this->buttons[$i]->phpParams[$p]))	
-										$execStr .= '"' . $this->buttons[$i]->phpParams[$p] . '"';
-									else	
-										$execStr .= $this->buttons[$i]->phpParams[$p];	
-								}
-							}
-							else
-								$execStr .= $this->buttons[$i]->phpParams;
-						}
-						$execStr .= ");";
-						$str .= eval("return " . $execStr);
-					}
-					else {
-						$str .= "<input";
-						if(!empty($this->buttons[$i]->attributes) && is_array($this->buttons[$i]->attributes)) {
-							$tmpAllowFieldArr = $this->allowedFields["button"];
-							foreach($this->buttons[$i]->attributes as $key => $value) {
-								if(in_array($key, $tmpAllowFieldArr))
-									$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-							}		
-						}
-						$str .= "/>";
-					}
-
-					if(!empty($this->buttons[$i]->wrapLink))
-						$str .= "</a>";
+					$str .= $this->buttons[$i]->render();
 				}
 				$str .= "\n\t</div>";
 				$str .= "\n";
@@ -3133,6 +3086,8 @@ class option extends pfbc {
 	public $value;
 }
 class button extends pfbc {
+	private $allowedFields; 
+
 	public $attributes;
 	public $jqueryUI;
 	public $linkAttributes;
@@ -3144,6 +3099,68 @@ class button extends pfbc {
 		$this->linkAttributes = array(
 			"style" => "text-decoration: none;"
 		);
+		$this->allowedFields = array(
+			"button" => array("alt", "disabled", "name", "size", "src", "type", "value", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
+			"a" => array("charset", "coords", "href", "hreflang", "name", "rel", "rev", "sharp", "accesskey", "clas", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup"),
+		);
+	}
+
+	public function render() {
+		$str = "";
+		//The wraplink parameter will simply wrap an anchor tag (<a>) around the button treating it as a link.
+		if(!empty($this->wrapLink)) {
+			$str .= "\n\t\t<a";
+			if(!empty($this->linkAttributes) && is_array($this->linkAttributes)) {
+				$tmpAllowFieldArr = $this->allowedFields["a"];
+				foreach($this->linkAttributes as $key => $value) {
+					if(in_array($key, $tmpAllowFieldArr))
+						$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
+				}		
+			}
+			$str .= ">";
+		}
+		else
+			$str .= "\n\t\t";
+
+
+		//The phpFunction parameter was included to give developers the flexibility to use any custom button generation function they might currently use in their environment.
+		if(!empty($this->phpFunction)) {
+			$execStr = $this->phpFunction . "(";
+			if(!empty($this->phpParams)) {
+				if(is_array($this->phpParams)) {
+					$paramSize = sizeof($this->phpParams);
+					for($p = 0; $p < $paramSize; ++$p) {
+						if($p != 0)
+							$execStr .= ",";
+
+						if(is_string($this->phpParams[$p]))	
+							$execStr .= '"' . $this->phpParams[$p] . '"';
+						else	
+							$execStr .= $this->phpParams[$p];	
+					}
+				}
+				else
+					$execStr .= $this->phpParams;
+			}
+			$execStr .= ");";
+			$str .= eval("return " . $execStr);
+		}
+		else {
+			$str .= "<input";
+			if(!empty($this->attributes) && is_array($this->attributes)) {
+				$tmpAllowFieldArr = $this->allowedFields["button"];
+				foreach($this->attributes as $key => $value) {
+					if(in_array($key, $tmpAllowFieldArr))
+						$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
+				}		
+			}
+			$str .= "/>";
+		}
+
+		if(!empty($this->wrapLink))
+			$str .= "</a>";
+		
+		return $str;
 	}
 }
 ?>
