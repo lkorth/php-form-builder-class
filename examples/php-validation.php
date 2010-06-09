@@ -8,10 +8,10 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
 	$form = new form("php_validation");
 	if($form->validate())
 		echo "Congratulations! The information you enter passed the form's validation.";
-	else{
+	else {
 		$msg = "Oops! The information you entered did not pass the form's validation.  Please review the following error message and re-try - " . $form->errorMsg;
-                header("Location: php-validation.php?error_message=" . urlencode($msg));
-        }
+		header("Location: php-validation.php?error_message=" . urlencode($msg));
+	}
 	
 	exit();
 }
@@ -52,10 +52,10 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 					"width" => 400
 				));
 
-                                if(!empty($_GET["error_message"]))
-                                        $form->errorMsg = $_GET["error_message"];
+				if(!empty($_GET["error_message"]))
+					$form->errorMsg = "<b>Error:</b> " . filter_var(stripslashes($_GET["error_message"]) , FILTER_SANITIZE_SPECIAL_CHARS);
 
-                		$form->addHidden("cmd", "submit");
+				$form->addHidden("cmd", "submit");
 				$form->addTextbox("Required Textbox:", "field0", "", array("required" => 1));
 				$form->addDate("Required Date:", "field1", "", array("required" => 1));
 				$form->addWebEditor("Required Web Editor:", "field2", "", array("required" => 1));
