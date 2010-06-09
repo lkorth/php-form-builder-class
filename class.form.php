@@ -927,12 +927,14 @@ class form extends pfbc {
 
 		$str .= "\n" . '<div class="pfbc-main">';
 
-                if(isset($this->errorMsg) && $this->errorMsg != False)
-                        $str .= '<div style="margin: 7px 0pt;" id="pfbc-' . $form->attributes["id"] . '-error" class="ui-widget">
-                                        <div class="ui-state-error ui-corner-all" style="padding: 7px;">
-                                            <b>Error:</b> ' . filter_var($this->errorMsg , FILTER_SANITIZE_SPECIAL_CHARS) . '
-                                        </div>
-                                 </div>';
+                if(!empty($this->errorMsg)){
+                        $str .= "
+        <div style='margin: 7px 0pt;' id='pfbc-" . $this->attributes["id"] . "-error' class='ui-widget'>
+                <div class='ui-state-error ui-corner-all' style='padding: 7px;'>
+                        <b>Error:</b> " . filter_var($this->errorMsg , FILTER_SANITIZE_SPECIAL_CHARS) . "
+                </div>
+        </div>";
+                }
 
 		if(!empty($this->map)) {
 			$mapIndex = 0;
