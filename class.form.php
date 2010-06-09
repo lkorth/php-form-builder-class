@@ -3030,7 +3030,6 @@ STR;
 					}
 				}
 				elseif(empty($referenceValues[$ele->attributes["name"]])) {
-					$ele->debug();
 					$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->errorMsgFormat);
 					return false;
 				}	
