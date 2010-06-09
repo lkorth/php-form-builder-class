@@ -6,6 +6,10 @@ Developer Google Group - http://groups.google.com/group/php-form-builder-class-d
 */
 
 abstract class pfbc {
+	function debug() {
+		echo "<pre>", print_r($this, true), "</pre>";
+	}
+
 	function setAttributes($params) {
 		if(!empty($params) && is_array($params)) {
 			//Loop through and get accessible class variables.
@@ -30,10 +34,6 @@ abstract class pfbc {
 			}
 			unset($objArr);
 		}
-	}
-
-	function debug() {
-		echo "<pre>", print_r($this, true), "</pre>";
 	}
 }
 
@@ -3023,11 +3023,14 @@ STR;
 				}
 			}
 			elseif(!empty($ele->required)) {
-				if(($ele->attributes["type"] == "checkbox" || $ele->attributes["type"] == "radio" || $ele->attributes["type"] == "checksort" || $ele->attributes["type"] == "rating") && !isset($referenceValues[$ele->attributes["name"]])) {
-					$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->errorMsgFormat);
-					return false;
+				if($ele->attributes["type"] == "checkbox" || $ele->attributes["type"] == "radio" || $ele->attributes["type"] == "checksort" || $ele->attributes["type"] == "rating") {
+					if(!isset($referenceValues[$ele->attributes["name"]])) {
+						$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->errorMsgFormat);
+						return false;
+					}
 				}
 				elseif(empty($referenceValues[$ele->attributes["name"]])) {
+					$ele->debug();
 					$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->errorMsgFormat);
 					return false;
 				}	
