@@ -769,6 +769,14 @@ class form extends pfbc {
 		$this->addElement($label, $name, "email", $value, $additionalParams);
 	}
 
+	public function openFieldset($legend) {
+		$this->addElement("", "", "html", "<fieldset><legend>" . $legend . "</legend>", array("noDiv" => 1));
+	}
+
+	public function closeFieldset() {
+		$this->addElement("", "", "html", '</fieldset>', array("noDiv" => 1));
+	}
+
 	public function addFile($label, $name, $additionalParams="") {
 		$this->addElement($label, $name, "file", "", $additionalParams);
 	}
