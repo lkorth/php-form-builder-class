@@ -919,6 +919,9 @@ class form extends pfbc {
 
 		$str .= "\n" . '<div class="pfbc-main">';
 
+                if(isset($this->errorMsg) && $this->errorMsg != False)
+                        $str .= '<div style="margin: 7px 0pt;" id="pfbc-php_validation-error" class="ui-widget"><div class="ui-state-error ui-corner-all" style="padding: 7px;"><b>Error:</b> ' . $this->errorMsg . '</div></div>';
+
 		if(!empty($this->map)) {
 			$mapIndex = 0;
 			$mapCount = 0;
