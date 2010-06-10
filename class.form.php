@@ -92,6 +92,7 @@ class form extends pfbc {
 	private $jqueryDateRangeIDArr;
 	private $jquerySliderIDArr;
 	private $jqueryStarRatingIDArr;
+	private $jqueryUIButtonExists;
 	private $jsIncludesPath;
 	private $latlngIDArr;
 	private $phpIncludesPath;
@@ -133,8 +134,6 @@ class form extends pfbc {
 			"select" => array("disabled", "multiple", "name", "size", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup"),
 			"radio" => array("checked", "disabled", "name", "size", "type", "accesskey", "class", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
 			"checksort" => array("checked", "disabled", "size", "accesskey", "class", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
-			"button" => array("alt", "disabled", "name", "size", "src", "type", "value", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
-			"a" => array("charset", "coords", "href", "hreflang", "name", "rel", "rev", "sharp", "accesskey", "clas", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup"),
 			"latlng" => array("disabled", "maxlength", "name", "readonly", "size", "type", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
 		);
 	}
@@ -159,6 +158,8 @@ class form extends pfbc {
 		$button = new button();
 		$button->setAttributes($params);
 		$this->buttons[] = $button;
+		if(!empty($params["jqueryUI"]))
+			$this->jqueryUIButtonExists = 1;
 	}
 
 	private function attachElement($params) {
@@ -1512,7 +1513,7 @@ STR;
 STR;
 		}
 
-		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr)) {
+		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists)) {
 			if(empty($this->preventJQueryUILoad)) {
 				$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/jquery-ui.js"></script>
@@ -2153,7 +2154,7 @@ STR;
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr)) {
+			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr) || !empty($form->jqueryUIButtonExists)) {
 				$str .= <<<STR
 $(function() {
 
@@ -2391,7 +2392,14 @@ STR;
 					}	
 				}
 
+				if(!empty($form->jqueryUIButtonExists)) {
 					$str .= <<<STR
+	$(".jqueryui-button").button();
+
+STR;
+				}
+
+				$str .= <<<STR
 });
 
 STR;
@@ -3107,62 +3115,35 @@ class option extends pfbc {
 class button extends pfbc {
 	private $allowedFields; 
 
-	public $attributes;
-	public $jqueryUI;
-	public $linkAttributes;
-	public $phpFunction;
-	public $phpParams;
-	public $wrapLink;
+	protected $attributes;
+	protected $jqueryUI;
 
 	public function __construct() {
-		$this->linkAttributes = array(
-			"style" => "text-decoration: none;"
-		);
 		$this->allowedFields = array(
 			"button" => array("alt", "disabled", "name", "size", "src", "type", "value", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
-			"a" => array("charset", "coords", "href", "hreflang", "name", "rel", "rev", "sharp", "accesskey", "clas", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup"),
+			"a" => array("charset", "coords", "href", "hreflang", "name", "rel", "rev", "sharp", "accesskey", "class", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup"),
 		);
 	}
 
 	public function render() {
-		$str = "";
-		//The wraplink parameter will simply wrap an anchor tag (<a>) around the button treating it as a link.
-		if(!empty($this->wrapLink)) {
+		if(!empty($this->jqueryUI)) {
+			if(!empty($this->attributes["class"]))
+				$this->attributes["class"] .= " jqueryui-button";
+			else	
+				$this->attributes["class"] = "jqueryui-button";
+		}	
+
+		$str = "\n\t\t";
+		if($this->attributes["type"] == "link") {
 			$str .= "\n\t\t<a";
-			if(!empty($this->linkAttributes) && is_array($this->linkAttributes)) {
+			if(!empty($this->attributes) && is_array($this->attributes)) {
 				$tmpAllowFieldArr = $this->allowedFields["a"];
-				foreach($this->linkAttributes as $key => $value) {
+				foreach($this->attributes as $key => $value) {
 					if(in_array($key, $tmpAllowFieldArr))
 						$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 				}		
-			}
-			$str .= ">";
-		}
-		else
-			$str .= "\n\t\t";
-
-
-		//The phpFunction parameter was included to give developers the flexibility to use any custom button generation function they might currently use in their environment.
-		if(!empty($this->phpFunction)) {
-			$execStr = $this->phpFunction . "(";
-			if(!empty($this->phpParams)) {
-				if(is_array($this->phpParams)) {
-					$paramSize = sizeof($this->phpParams);
-					for($p = 0; $p < $paramSize; ++$p) {
-						if($p != 0)
-							$execStr .= ",";
-
-						if(is_string($this->phpParams[$p]))	
-							$execStr .= '"' . $this->phpParams[$p] . '"';
-						else	
-							$execStr .= $this->phpParams[$p];	
-					}
-				}
-				else
-					$execStr .= $this->phpParams;
-			}
-			$execStr .= ");";
-			$str .= eval("return " . $execStr);
+			}	
+			$str .= ">" . $this->attributes["value"] . "</a>";
 		}
 		else {
 			$str .= "<input";
@@ -3176,9 +3157,6 @@ class button extends pfbc {
 			$str .= "/>";
 		}
 
-		if(!empty($this->wrapLink))
-			$str .= "</a>";
-		
 		return $str;
 	}
 }

@@ -41,16 +41,9 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 				$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 				$form->addButton();
-				$form->addButton("Apply");
+				$form->addButton("Apply", "submit", array("jqueryUI" => 1));
 				$form->addButton("php.net", "button", array("onclick" => "window.location = 'http://www.php.net';"));
-
-				/*
-				If your system has a utility in place for dynamically generating button images, you will want to utilize the phpFunction, phpParams, wrapLink, and hrefAttributes button attributes.  
-				A sample is provided below of what this function call might look like.  View the source of class.form.php to learn more about these attributes.
-
-				$form->addButton("", "", array("phpFunction" => "RenderDynamicButton", "phpParams" => array("param1","param2"), "wrapLink" => 1, "linkAttributes" => array("href" => "http://www.php.net/")));
-				*/
-
+				$form->addButton("php.net", "link", array("href" => "http://www.php.net", "jqueryUI" => 1));
 				$form->render();
 
 echo '<pre>', highlight_string('<?php
@@ -65,15 +58,9 @@ $form->addSelect("Select:", "field1", "", array("" => "--Select an Option--", "1
 $form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 $form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 $form->addButton();
-$form->addButton("Apply");
+$form->addButton("Apply", "submit", array("jqueryUI" => 1));
 $form->addButton("php.net", "button", array("onclick" => "window.location = \'http://www.php.net\';"));
-/*
-If your system has a utility in place for dynamically generating button images, you will want to utilize the phpFunction, phpParams, wrapLink, and hrefAttributes button attributes.  
-A sample is provided below of what this function call might look like.  View the source of class.form.php to learn more about these attributes.
-
-$form->addButton("", "", array("phpFunction" => "RenderDynamicButton", "phpParams" => array("param1","param2"), "wrapLink" => 1, "linkAttributes" => array("href" => "http://www.php.net/")));
-*/
-
+$form->addButton("php.net", "link", array("href" => "http://www.php.net", "jqueryUI" => 1));
 $form->render();
 ?>', true), '</pre>';
 
