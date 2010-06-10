@@ -770,12 +770,12 @@ class form extends pfbc {
 		$this->addElement($label, $name, "email", $value, $additionalParams);
 	}
 
-	public function openFieldset($legend) {
-		$this->addElement("", "", "html", "<fieldset><legend>" . $legend . "</legend>", array("noDiv" => 1));
+	public function openFieldset($legend, $additionalParams="") {
+		$this->addElement("", "", "htmlexternal", '<fieldset class="pfbc-fieldset"><legend>' . $legend . "</legend>");
 	}
 
 	public function closeFieldset() {
-		$this->addElement("", "", "html", '</fieldset>', array("noDiv" => 1));
+		$this->addElement("", "", "htmlexternal", '</fieldset>');
 	}
 
 	public function addFile($label, $name, $additionalParams="") {
@@ -788,6 +788,10 @@ class form extends pfbc {
 
 	public function addHTML($value , $additionalParams="") {
 		$this->addElement("", "", "html", $value, $additionalParams);
+	}
+
+	public function addHTMLExternal($value , $additionalParams="") {
+		$this->addElement("", "", "htmlexternal", $value, $additionalParams);
 	}
 
 	public function addLatLng($label, $name, $value="", $additionalParams="") {
@@ -945,6 +949,8 @@ class form extends pfbc {
 		$elementSize = sizeof($this->elements);
 
 		$hiddenElementExists = false;
+		$nonHiddenElements = array();
+		$nonHiddenNonHTMLExternalElementSize = 0;
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = $this->elements[$i];
 			if($ele->attributes["type"] == "hidden") {
@@ -971,12 +977,20 @@ class form extends pfbc {
 				}
 				$str .= "/>";
 			}
+			else {
+				if($ele->attributes["type"] != "htmlexternal")
+					++$nonHiddenNonHTMLExternalElementSize;
+				$nonHiddenElements[] = &$this->elements[$i];
+			}	
 		}	
 		if($hiddenElementExists)
 			$str .= "\n\t</div>";
+		
+		$elementSize = sizeof($nonHiddenElements);
+		$nonHiddenNonHTMLExternalElementCount = 0;
 
 		for($i = 0; $i < $elementSize; ++$i) {
-			$ele = &$this->elements[$i];
+			$ele = &$nonHiddenElements[$i];
 			$map_element_first = false;
 			$map_element_last = false;
 
@@ -988,14 +1002,16 @@ class form extends pfbc {
 					$ele->attributes["value"] = $this->referenceValues[substr($ele->attributes["name"], 0, -2)];
 			}	
 
-			if($ele->attributes["type"] != "hidden") {
+			if($ele->attributes["type"] == "htmlexternal")
+				$str .= "\n\t" . $ele->attributes["value"];
+			else {	
 				if(!empty($this->map)) {
 					if(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
 						if($mapCount == 0) {
 							$map_element_first = true;
 							$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
-							if(($elementSize - $i) < $this->map[$mapIndex])
-								$this->map[$mapIndex] = $elementSize - $i;
+							if(($nonHiddenNonHTMLExternalElementSize - $nonHiddenNonHTMLExternalElementCount) < $this->map[$mapIndex])
+								$this->map[$mapIndex] = $nonHiddenNonHTMLExternalElementSize - $nonHiddenNonHTMLExternalElementCount;
 						}	
 					}
 					else {
@@ -1003,7 +1019,7 @@ class form extends pfbc {
 						$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
 					}	
 
-					if(($i + 1) == $elementSize)
+					if(($nonHiddenNonHTMLExternalElementCount + 1) == $nonHiddenNonHTMLExternalElementSize)
 						$map_element_last = true;
 					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
 						if(($mapCount + 1) == $this->map[$mapIndex])
@@ -1017,23 +1033,21 @@ class form extends pfbc {
 				if(!empty($this->map))
 					$str .= "\t";
 
-				if(empty($ele->noDiv)) {
-					$str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="pfbc-element';
+				$str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="pfbc-element';
 
-					if($map_element_first && $map_element_last)
-							$str .= ' pfbc-map-element-single';
-					elseif($map_element_first)
-							$str .= ' pfbc-map-element-first';
-					elseif($map_element_last)
-							$str .= ' pfbc-map-element-last';
-					if(!empty($this->map)) {
-							if(array_key_exists($mapIndex, $this->map))
-									$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
-							else
-									$str .= ' pfbc-map-columns-1';
-					}
-					$str .= '">';
+				if($map_element_first && $map_element_last)
+						$str .= ' pfbc-map-element-single';
+				elseif($map_element_first)
+						$str .= ' pfbc-map-element-first';
+				elseif($map_element_last)
+						$str .= ' pfbc-map-element-last';
+				if(!empty($this->map)) {
+						if(array_key_exists($mapIndex, $this->map))
+								$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
+						else
+								$str .= ' pfbc-map-columns-1';
 				}
+				$str .= '">';
 
 				if(!empty($ele->preHTML))
 					$str .= $this->indent() . $ele->preHTML;
@@ -1465,11 +1479,10 @@ class form extends pfbc {
 				if(!empty($this->map))
 					$str .= "\t";
 
-				if(empty($ele->noDiv))
-					$str .= "</div>";
+				$str .= "</div>";
 
 				if(!empty($this->map)) {
-					if(($i + 1) == $elementSize)
+					if(($nonHiddenNonHTMLExternalElementCount + 1) == $nonHiddenNonHTMLExternalElementSize)
 						$str .= "\n\t</div>";
 					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
 						if(($mapCount + 1) == $this->map[$mapIndex]) {
@@ -1487,7 +1500,8 @@ class form extends pfbc {
 					}	
 				}
 				$focus = false;
-			}	
+				++$nonHiddenNonHTMLExternalElementCount;
+			}
 		}
 
 		//This javascript section loads all required js and css files needed for a specific form.  CSS files are loaded into the <head> tag with javascript.
@@ -2774,6 +2788,9 @@ $id .pfbc-required {
 $id .pfbc-element {
 	padding-bottom: 5px;
 }
+$id .pfbc-fieldset {
+	width: 100%; 
+}
 
 STR;
 
@@ -3087,7 +3104,6 @@ class element extends pfbc {
 	public $min;
 	public $months;
 	public $noBreak;
-	public $noDiv;
 	public $options;
 	public $orientation;
 	public $prefix;
