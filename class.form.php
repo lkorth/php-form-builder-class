@@ -76,7 +76,6 @@ class form extends pfbc {
 
 	private $allowedFields;
 	private $bindRules;
-	private $buttons;
 	private $captchaExists;
 	private $checkform;
 	private $ckeditorIDArr;
@@ -152,14 +151,6 @@ class form extends pfbc {
 				$params[$key] = $value;
 		}
 		$this->attachElement($params);
-	}
-
-	private function attachButton($params) {
-		$button = new button();
-		$button->setAttributes($params);
-		$this->buttons[] = $button;
-		if(!empty($params["jqueryUI"]))
-			$this->jqueryUIButtonExists = 1;
 	}
 
 	private function attachElement($params) {
@@ -726,7 +717,13 @@ class form extends pfbc {
 			foreach($additionalParams as $key => $value)
 				$params[$key] = $value;
 		}
-		$this->attachButton($params);
+
+		$button = new button();
+		$button->setAttributes($params);
+		if(!empty($params["jqueryUI"]))
+			$this->jqueryUIButtonExists = 1;
+
+		$this->addElement("", "", "button", $button->render(true));
 	}
 
 	public function addCaptcha($label="", $additionalParams="") {
@@ -864,10 +861,6 @@ class form extends pfbc {
 			$this->emailExists = 1;
 	}
 
-	public function clearButtons() {
-		$this->buttons = array();
-	}
-
 	public function clearElements() {
 		$this->elements = array();
 	}
@@ -950,7 +943,7 @@ class form extends pfbc {
 
 		$hiddenElementExists = false;
 		$nonHiddenElements = array();
-		$nonHiddenNonHTMLExternalElementSize = 0;
+		$nonHiddenInternalElementSize = 0;
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = $this->elements[$i];
 			if($ele->attributes["type"] == "hidden") {
@@ -978,8 +971,8 @@ class form extends pfbc {
 				$str .= "/>";
 			}
 			else {
-				if($ele->attributes["type"] != "htmlexternal")
-					++$nonHiddenNonHTMLExternalElementSize;
+				if(!in_array($ele->attributes["type"], array("button", "htmlexternal")))
+					++$nonHiddenInternalElementSize;
 				$nonHiddenElements[] = &$this->elements[$i];
 			}	
 		}	
@@ -987,7 +980,7 @@ class form extends pfbc {
 			$str .= "\n\t</div>";
 		
 		$elementSize = sizeof($nonHiddenElements);
-		$nonHiddenNonHTMLExternalElementCount = 0;
+		$nonHiddenInternalElementCount = 0;
 
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = &$nonHiddenElements[$i];
@@ -1004,14 +997,21 @@ class form extends pfbc {
 
 			if($ele->attributes["type"] == "htmlexternal")
 				$str .= "\n\t" . $ele->attributes["value"];
+			elseif($ele->attributes["type"] == "button") {
+				if($i == 0 || $nonHiddenElements[($i - 1)]->attributes["type"] != "button")
+					$str .= "\n\t" . '<div class="pfbc-buttons">';
+				$str .= $ele->attributes["value"];
+				if(($i + 1) == $elementSize || $nonHiddenElements[($i + 1)]->attributes["type"] != "button")
+					$str .= "\n\t" . '</div>';
+			}	
 			else {	
 				if(!empty($this->map)) {
 					if(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
 						if($mapCount == 0) {
 							$map_element_first = true;
 							$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
-							if(($nonHiddenNonHTMLExternalElementSize - $nonHiddenNonHTMLExternalElementCount) < $this->map[$mapIndex])
-								$this->map[$mapIndex] = $nonHiddenNonHTMLExternalElementSize - $nonHiddenNonHTMLExternalElementCount;
+							if(($nonHiddenInternalElementSize - $nonHiddenInternalElementCount) < $this->map[$mapIndex])
+								$this->map[$mapIndex] = $nonHiddenInternalElementSize - $nonHiddenInternalElementCount;
 						}	
 					}
 					else {
@@ -1019,7 +1019,7 @@ class form extends pfbc {
 						$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
 					}	
 
-					if(($nonHiddenNonHTMLExternalElementCount + 1) == $nonHiddenNonHTMLExternalElementSize)
+					if(($nonHiddenInternalElementCount + 1) == $nonHiddenInternalElementSize)
 						$map_element_last = true;
 					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
 						if(($mapCount + 1) == $this->map[$mapIndex])
@@ -1482,7 +1482,7 @@ class form extends pfbc {
 				$str .= "</div>";
 
 				if(!empty($this->map)) {
-					if(($nonHiddenNonHTMLExternalElementCount + 1) == $nonHiddenNonHTMLExternalElementSize)
+					if(($nonHiddenInternalElementCount + 1) == $nonHiddenInternalElementSize)
 						$str .= "\n\t</div>";
 					elseif(array_key_exists($mapIndex, $this->map) && $this->map[$mapIndex] > 1) {
 						if(($mapCount + 1) == $this->map[$mapIndex]) {
@@ -1500,7 +1500,7 @@ class form extends pfbc {
 					}	
 				}
 				$focus = false;
-				++$nonHiddenNonHTMLExternalElementCount;
+				++$nonHiddenInternalElementCount;
 			}
 		}
 
@@ -1664,18 +1664,6 @@ STR;
 	</div>	
 
 STR;
-		if(!empty($this->hasFormTag)) {
-			//If there are buttons included, render those to the screen now.
-			if(!empty($this->buttons)) {
-				$str .= "\t" . '<div class="pfbc-buttons">';
-				$buttonSize = sizeof($this->buttons);
-				for($i = 0; $i < $buttonSize; ++$i) {
-					$str .= $this->buttons[$i]->render();
-				}
-				$str .= "\n\t</div>";
-				$str .= "\n";
-			}
-		}
 
 		$str .= "</div>";
 
@@ -2781,6 +2769,7 @@ $id .pfbc-label {
 }
 $id .pfbc-buttons {
 	text-align: right;
+	padding-bottom: 5px;
 }
 $id .pfbc-required {
 	color: #990000; 
@@ -3141,7 +3130,7 @@ class button extends pfbc {
 		);
 	}
 
-	public function render() {
+	public function render($returnString) {
 		if(!empty($this->jqueryUI)) {
 			if(!empty($this->attributes["class"]))
 				$this->attributes["class"] .= " jqueryui-button";
@@ -3151,7 +3140,7 @@ class button extends pfbc {
 
 		$str = "\n\t\t";
 		if($this->attributes["type"] == "link") {
-			$str .= "\n\t\t<a";
+			$str .= "<a";
 			if(!empty($this->attributes) && is_array($this->attributes)) {
 				$tmpAllowFieldArr = $this->allowedFields["a"];
 				foreach($this->attributes as $key => $value) {
@@ -3173,7 +3162,10 @@ class button extends pfbc {
 			$str .= "/>";
 		}
 
-		return $str;
+		if(!$returnString)
+			echo($str);
+		else
+			return $str;
 	}
 }
 ?>

@@ -26,8 +26,9 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			</div>
 
 			<div id="pfbc_content">
-				<p><b>Buttons</b> - This example demonstrates how buttons are handled within the class.  By default, all buttons attached to forms via the addButton() function will be rendered in the lower right corner of the form.
-				You can make use of the html form element - addHTML() - and/or the <i>postHTML</i>/<i>preHTML</i> element attributes if you need to render button in another location.</p>
+				<p><b>Buttons</b> - This example demonstrates how buttons are handled within the class.  The addButton() function can be called anywhere in the flow of your form's elements allowing you to 
+				insert buttons in various places in your form's structure.  By default, buttons are right-aligned within their respective row.  The <i>jqueryUI</i> can be applied to leverage jQuery UI's button
+				widget functionality.</b>
 
 				<?php
 				$form = new form("buttons");
@@ -38,12 +39,12 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("Textbox:", "field0");
 				$form->addSelect("Select:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
-				$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
-				$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 				$form->addButton();
 				$form->addButton("Apply", "submit", array("jqueryUI" => 1));
-				$form->addButton("php.net", "button", array("onclick" => "window.location = 'http://www.php.net';"));
+				$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
+				$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 				$form->addButton("php.net", "link", array("href" => "http://www.php.net", "jqueryUI" => 1));
+				$form->addButton("php.net", "button", array("onclick" => "window.location = 'http://www.php.net';"));
 				$form->render();
 
 echo '<pre>', highlight_string('<?php
@@ -55,12 +56,12 @@ $form->setAttributes(array(
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Textbox:", "field0");
 $form->addSelect("Select:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
-$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
-$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 $form->addButton();
 $form->addButton("Apply", "submit", array("jqueryUI" => 1));
-$form->addButton("php.net", "button", array("onclick" => "window.location = \'http://www.php.net\';"));
+$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
+$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 $form->addButton("php.net", "link", array("href" => "http://www.php.net", "jqueryUI" => 1));
+$form->addButton("php.net", "button", array("onclick" => "window.location = \'http://www.php.net\';"));
 $form->render();
 ?>', true), '</pre>';
 
