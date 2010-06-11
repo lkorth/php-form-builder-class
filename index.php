@@ -86,6 +86,7 @@
 					<li><a href="examples/conditional-scenarios.php">Conditional Scenarios</a></li>
 					<li><a href="examples/custom-css.php">Custom CSS Styling</a></li>
 					<li><a href="examples/includes-directory-path-error.php">Invalid includes Directory Path Error</a></li>
+					<li><a href="examples/fieldsets.php">Fieldsets</a></li>
 				</ul>
 			</div>
 
