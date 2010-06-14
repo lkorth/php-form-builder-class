@@ -14,7 +14,7 @@ include("../class.form.php");
 	<body>
 		<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 		<div id="pfbc_banner">
-			<h2>PHP Form Builder Class / Documentation</h2>
+			<h2><a href="../index.php">PHP Form Builder Class</a> / Documentation</h2>
 			<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
 		</div>
 
@@ -46,7 +46,7 @@ include("../class.form.php");
 							<li><a href="#Form-Attribute-id">id</a></li>
 							<li><a href="#Form-Attribute-includesPath">includesPath</a></li>
 							<li><a href="#Form-Attribute-jqueryDateFormat">jqueryDateFormat</a></li>
-							<li><a href="#Form-Attribute-jqueryTimeFormat">jqueryTimeFormat</a></li>
+							<li><a href="#Form-Attribute-jqueryUITheme">jqueryUITheme</a></li>
 							<li><a href="#Form-Attribute-jsErrorFunction">jsErrorFunction</a></li>
 							<li><a href="#Form-Attribute-latlngDefaultLocation">latlngDefaultLocation</a></li>
 							<li><a href="#Form-Attribute-map">map</a></li>
@@ -80,7 +80,6 @@ include("../class.form.php");
 							<li><a href="#Form-Function-addCountry">addCountry</a></li>
 							<li><a href="#Form-Function-addDate">addDate</a></li>
 							<li><a href="#Form-Function-addDateRange">addDateRange</a></li>
-							<li><a href="#Form-Function-addDateTime">addDateTime</a></li>
 							<li><a href="#Form-Function-addEmail">addEmail</a></li>
 							<li><a href="#Form-Function-addFile">addFile</a></li>
 							<li><a href="#Form-Function-addHidden">addHidden</a></li>
@@ -95,7 +94,6 @@ include("../class.form.php");
 							<li><a href="#Form-Function-addState">addState</a></li>
 							<li><a href="#Form-Function-addTextarea">addTextarea</a></li>
 							<li><a href="#Form-Function-addTextbox">addTextbox</a></li>
-							<li><a href="#Form-Function-addTime">addTime</a></li>
 							<li><a href="#Form-Function-addTrueFalse">addTrueFalse</a></li>
 							<li><a href="#Form-Functimn-addWebEditor">addWebEditor</a></li>
 							<li><a href="#Form-Function-addYesNo">addYesNo</a></li>
@@ -106,6 +104,7 @@ include("../class.form.php");
 							<li><a href="#Form-Function-render">render</a></li>
 							<li><a href="#Form-Function-setAttributes">setAttributes</a></li>
 							<li><a href="#Form-Function-setReferenceValues">setReferenceValues</a></li>
+							<li><a href="#Form-Function-setValues">setValues</a></li>
 							<li><a href="#Form-Function-validate">validate</a></li>
 						</ul>	
 					</li>	
@@ -353,9 +352,13 @@ $form->setAttributes(array(
 				which will return dates formatted like <?=date("F j, Y")?>.  To have these elements return a MySQL friendly date format, set this attribute to "yy-mm-dd".  See 
 				<a href="http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate">http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate</a> for a complete list of available options.</p>
 
-				<a name="Form-Attribute-jqueryTimeFormat"></a>
-				<p><b>jqueryTimeFormat</b>:<br/>Controls the time format returned by the time form element.  By default, this attribute will be set to "h:ii a", which will return times formatted
-				like <?=date("g:i a")?>.</p>
+				<a name="Form-Attribute-jqueryUITheme"></a>
+				<p><b>jqueryUITheme</b>:<br/>jQuery UI themes are leveraged throughout this project to apply css definitions to various entities including the date/daterange/slider/sort/checksort elements, the js/php error reporting 
+				section, and buttons.  If the jqueryUITheme attribute is not specified, it will be set to "smoothness", which uses a generic grey color pallet.  Checkout jQuery UI's site at
+				<a href="http://jqueryui.com/themeroller/">http://jqueryui.com/themeroller/</a> for a closer look at the various themes that can be used within this project.  You can even create your own, custom theme
+				on the jQuery UI site.  The value of this attribute must correspond with one of the folders within the php-form-builder-class/includes/jquery/ui/themes directory.  These options include...</p>
+
+				<p>"black-tie", "blitzer", "cupertino", "dark-hive", "dot-luv", "eggplant", "excite-bike", "flick", "hot-sneaks", "humanity", "le-frog", "mint-choc", "overcast", "pepper-grinder", "redmond", "smoothness", "south-street", "start", "sunny", "swanky-purse", "trontastic", "ui-darkness", "ui-lightness", "vader"</p>
 
 				<a name="Form-Attribute-jsErrorFunction"></a>
 				<p><b>jsErrorFunction</b>:<br/>Allows a javascript function to be specified for handling error messages.  When a required field is left blank or an invalid email
@@ -595,15 +598,6 @@ public function addDateRange($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
-				<a name="Form-Functions-addDateTime"></a>
-				<p><b>addDateTime</b>:</p>
-
-				<?php
-echo '<pre>', htmlentities('
-public function addDateTime($label, $name, $value="", $additionalParams="")
-'), '</pre>';
-				?>
-
 				<a name="Form-Functions-addEmail"></a>
 				<p><b>addEmail</b>:</p>
 
@@ -730,15 +724,6 @@ public function addTextbox($label, $name, $value="", $additionalParams="")
 '), '</pre>';
 				?>
 
-				<a name="Form-Functions-addTime"></a>
-				<p><b>addTime</b>:</p>
-
-				<?php
-echo '<pre>', htmlentities('
-public function addTime($label, $name, $value="", $additionalParams="")
-'), '</pre>';
-				?>
-
 				<a name="Form-Functions-addTrueFalse"></a>
 				<p><b>addTrueFalse</b>:</p>
 
@@ -826,6 +811,15 @@ public function setAttributes($params)
 				<?php
 echo '<pre>', htmlentities('
 public function setReferenceValues($params)
+'), '</pre>';
+				?>
+
+				<a name="Form-Functions-setValues"></a>
+				<p><b>setValues</b>:<br/></p>
+
+				<?php
+echo '<pre>', htmlentities('
+public function setValues($params)
 '), '</pre>';
 				?>
 
