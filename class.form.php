@@ -1038,7 +1038,7 @@ class form extends pfbc {
 				if(!empty($this->map))
 					$str .= "\t";
 
-				$str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $i . '" class="pfbc-element';
+				$str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $nonHiddenInternalElementCount . '" class="pfbc-element';
 
 				if($map_element_first && $map_element_last)
 						$str .= ' pfbc-map-element-single';
@@ -2958,33 +2958,37 @@ STR;
 
 			$id = str_replace("#", "", $id);
 			$elementSize = sizeof($form->elements);
+			$nonHiddenInternalElementCount = 0;
 			for($e = 0; $e < $elementSize; ++$e) {
 				$ele = $form->elements[$e];
-				if(!empty($ele->noBreak)) {
-					if($ele->attributes["type"] == "radio") {
-						$str .= <<<STR
-#pfbc-$id-element-$e .pfbc-radio {
+				if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
+					if(!empty($ele->noBreak)) {
+						if($ele->attributes["type"] == "radio") {
+							$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio {
 	float: left;
 	margin-left: 5px;
 }
-#pfbc-$id-element-$e .pfbc-radio-first {
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-first {
 	margin: 0 !important;
 }
 
 STR;
-					}
-					elseif(in_array($ele->attributes["type"], array("checkbox", "checksort"))) {
-						$str .= <<<STR
-#pfbc-$id-element-$e .pfbc-checkbox {
+						}
+						elseif(in_array($ele->attributes["type"], array("checkbox", "checksort"))) {
+							$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox {
 	float: left;
 	margin-left: 5px;
 }
-#pfbc-$id-element-$e .pfbc-checkbox-first {
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox-first {
 	margin: 0 !important;
 }
 
 STR;
+						}
 					}
+					++$nonHiddenInternalElementCount;
 				}
 			}	
 		}	

@@ -41,7 +41,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addHidden("cmd", "submit");
 				$form->addDateRange("Required Date Range:", "field0", "", array("required" => 1));
 				$form->addColorPicker("Required Color Picker:", "field1", "", array("required" => 1));
-				$form->addCheckSort("Required Check Sort:", "field2", "", array("Option #1", "Option #2", "Option #3", "Option #4", "Option #5"), array("required" => 1, "clear" => 1));
+				$form->addCheckSort("Required Check Sort:", "field2", "", array("Option #1", "Option #2", "Option #3", "Option #4", "Option #5"), array("required" => 1));
 				$form->addRating("Required Rating:", "field3", "", range(1, 10), array("ratingHideCaption" => 1, "required" => 1));
 				$form->addButton();
 				$form->render();
@@ -57,7 +57,7 @@ $form->setAttributes(array(
 $form->addHidden("cmd", "submit");
 $form->addDateRange("Required Date Range:", "field0", "", array("required" => 1));
 $form->addColorPicker("Required Color Picker:", "field1", "", array("required" => 1));
-$form->addCheckSort("Required Check Sort:", "field2", "", array("Option #1", "Option #2", "Option #3", "Option #4", "Option #5"), array("required" => 1, "clear" => 1));
+$form->addCheckSort("Required Check Sort:", "field2", "", array("Option #1", "Option #2", "Option #3", "Option #4", "Option #5"), array("required" => 1));
 $form->addRating("Required Rating:", "field3", "", range(1, 10), array("ratingHideCaption" => 1, "required" => 1));
 $form->addButton();
 $form->render();

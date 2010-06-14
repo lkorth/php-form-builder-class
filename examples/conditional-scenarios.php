@@ -79,7 +79,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$shipping_form->addState("State:", "ShippingState", "", array("required" => 1));
 				$shipping_form->addTextbox("Zip Code:", "ShippingZip", "", array("required" => 1));
 
-				$billing_form->addYesNo("Use my billing address for shipping?", "UseBilling", 1, array("clear" => 1, "onclick" => "toggleShipping(this.value);", "postHTML" => '<div id="shipping_section" style="display: none;">' . $shipping_form->elementsToString() . '</div>'));
+				$billing_form->addYesNo("Use my billing address for shipping?", "UseBilling", 1, array("onclick" => "toggleShipping(this.value);", "postHTML" => '<div id="shipping_section" style="display: none;">' . $shipping_form->elementsToString() . '</div>'));
 				$billing_form->addButton();
 				$billing_form->bind($shipping_form, 'document.getElementById("billing").UseBilling[1].checked', '$_POST["UseBilling"] == 0');
 				$billing_form->render();
@@ -124,7 +124,7 @@ $shipping_form->addTextbox("City:", "ShippingCity", "", array("required" => 1));
 $shipping_form->addState("State:", "ShippingState", "", array("required" => 1));
 $shipping_form->addTextbox("Zip Code:", "ShippingZip", "", array("required" => 1));
 
-$billing_form->addYesNo("Use my billing address for shipping?", "UseBilling", 1, array("clear" => 1, "onclick" => "toggleShipping(this.value);", "postHTML" => \'<div id="shipping_section" style="display: none;">\' . $shipping_form->elementsToString() . \'</div>\'));
+$billing_form->addYesNo("Use my billing address for shipping?", "UseBilling", 1, array("onclick" => "toggleShipping(this.value);", "postHTML" => \'<div id="shipping_section" style="display: none;">\' . $shipping_form->elementsToString() . \'</div>\'));
 $billing_form->addButton();
 $billing_form->bind($shipping_form, \'document.getElementById("billing").UseBilling[1].checked\', \'$_POST["UseBilling"] == 0\');
 $billing_form->render();

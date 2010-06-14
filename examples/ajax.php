@@ -242,7 +242,7 @@ $form->render();
 					"ajax" => 1,
 				));
 				$form->addHidden("cmd", "manual");
-				$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "pfbc_onsubmit_manual(this.form);", "clear" => 1));
+				$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "pfbc_onsubmit_manual(this.form);"));
 				$form->render();
 
 echo '<pre>', highlight_string('<?php
@@ -255,7 +255,7 @@ $form->setAttributes(array(
 	"ajax" => 1
 ));
 $form->addHidden("cmd", "manual");
-$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "pfbc_onsubmit_manual(this.form);", "clear" => 1));
+$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "pfbc_onsubmit_manual(this.form);"));
 $form->render();
 ', true), '</pre>';
 

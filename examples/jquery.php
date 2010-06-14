@@ -43,7 +43,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				));
 				$form->addHidden("cmd", "submit");
 				$form->addSelect("jQueryUI Theme:", "jQueryUITheme", $jQueryUIThemeID, $jQueryUIThemes, array("onchange" => "window.location = 'jquery.php?jQueryThemeID=' + this.value;"));
-				$form->addCheckSort("Select And Rank Your Favorite Sports:", "field0", "", array("Baseball", "Basketball", "Golf", "Soccer"), array("clear" => 1));
+				$form->addCheckSort("Select And Rank Your Favorite Sports:", "field0", "", array("Baseball", "Basketball", "Golf", "Soccer"));
 				$form->addSort("Sort These MLB Baseball Teams Alphabetically:", "field1", array("Dodgers", "Cubs", "Cardinals"));
 				$form->addDate("Select Date:", "field2");
 				$form->addDate("Date: (w/multiple months and range limit):", "field3", "", array("min" => "-30", "max" => "30", "months" => 2));
@@ -76,7 +76,7 @@ $form->setAttributes(array(
 ));
 $form->addHidden("cmd", "submit");
 $form->addSelect("jQueryUI Theme:", "jQueryUITheme", $jQueryUIThemeID, $jQueryUIThemes, array("onchange" => "window.location = \'jquery.php?jQueryThemeID=\' + this.value;"));
-$form->addCheckSort("Select And Rank Your Favorite Sports:", "field0", "", array("Baseball", "Basketball", "Golf", "Soccer"), array("clear" => 1));
+$form->addCheckSort("Select And Rank Your Favorite Sports:", "field0", "", array("Baseball", "Basketball", "Golf", "Soccer"));
 $form->addSort("Sort These MLB Baseball Teams Alphabetically:", "field1", array("Dodgers", "Cubs", "Cardinals"));
 $form->addDate("Select Date:", "field2");
 $form->addDate("Date: (w/multiple months and range limit):", "field3", "", array("min" => "-30", "max" => "30", "months" => 2));

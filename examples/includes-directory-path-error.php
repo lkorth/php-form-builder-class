@@ -52,8 +52,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("Textbox:", "field0");
 				$form->addSelect("Selectbox:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
-				$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
-				$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
+				$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"));
+				$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"));
 				$form->addButton();
 				$form->render();
 
