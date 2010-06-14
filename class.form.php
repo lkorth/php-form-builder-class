@@ -13,13 +13,19 @@ abstract class pfbc {
 	function setAttributes($params) {
 		if(!empty($params) && is_array($params)) {
 			//Loop through and get accessible class variables.
+			//Build lookup array for the keys allowing for case insensitive attribute setting.
 			$objArr = array();
-			foreach($this as $key => $value)
+			$keyLookupArr = array();
+			foreach($this as $key => $value) {
 				$objArr[$key] = $value;
+				$keyLookupArr[strtolower($key)] = $key;
+			}	
 
 			foreach($params as $key => $value) {
 				//Set the appropriate class variable if it exists.
-				if(array_key_exists($key, $objArr)) {
+				$key = strtolower($key);
+				if(array_key_exists($key, $keyLookupArr)) {
+					$key = $keyLookupArr[$key];
 					if(is_array($this->$key) && !empty($this->$key)) {
 						//Using array_merge prevents any default values from being overwritten.
 						if(is_array($value))
@@ -32,7 +38,6 @@ abstract class pfbc {
 				elseif(array_key_exists("attributes", $objArr))
 					$this->attributes[$key] = $value;
 			}
-			unset($objArr);
 		}
 	}
 }
