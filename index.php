@@ -30,6 +30,7 @@
 					<li>Ajax Form Submission</li>
 					<li>Javascript and PHP Validation</li>
 					<li>jQuery Elements - date, datetime, time, daterange, sort, checksort, slider, rating, colorpicker (<a href="http://www.jquery.com/">jQuery</a>)</li>
+					<li>jQuery UI Themes - (<a href="http://jqueryui.com">jQuery UI</a>)</li>
 					<li>Google Maps Element - latlng (<a href="http://code.google.com/apis/maps/documentation/v3/">Google Maps API v3</a>)</li>
 					<li>Hybrid Form Element Types - state, country, yesno, truefalse, date, datetime, time, daterange, sort, latlng, checksort, webeditor, slider, rating, captcha, html, colorpicker, email</li>
 					<li>File Upload Support</li>

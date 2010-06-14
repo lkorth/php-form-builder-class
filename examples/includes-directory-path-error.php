@@ -22,7 +22,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 			<div id="pfbc_banner">
-				<h2>PHP Form Builder Class / Examples / Invalid includes Directory Path Error</h2>
+				<h2><a href="../index.php">PHP Form Builder Class</a> / <a href="index.php">Examples</a> / Invalid includes Directory Path Error</h2>
 				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
 			</div>
 
@@ -51,7 +51,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				));
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("Textbox:", "field0");
-				$form->addSelectbox("Selectbox:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+				$form->addSelect("Selectbox:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
 				$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 				$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"), array("clear" => 1));
 				$form->addButton();
@@ -65,7 +65,7 @@ $form->setAttributes(array(
 ));
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Textbox:", "field0");
-$form->addSelectbox("Selectbox:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+$form->addSelect("Selectbox:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
 $form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"));
 $form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"));
 $form->addButton();

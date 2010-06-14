@@ -8,16 +8,22 @@ body, #pfbc_banner h2, #pfbc_banner h5 {
 	margin: 0; 
 }	
 
+
+
 #pfbc_links {
 	text-align: right;
 	padding: 5px;
 }
 
 #pfbc_banner {
-	border-top: 1px solid #cccccc; 
-	border-bottom: 1px solid #cccccc; 
+	border-top: 1px solid #ccc; 
+	border-bottom: 1px solid #ccc; 
 	padding: 10px 5px; 
 	background-color: #efefef;
+}
+
+#pfbc_banner a {
+	color: #000;
 }
 
 .pfbc_doc_section {
@@ -25,7 +31,7 @@ body, #pfbc_banner h2, #pfbc_banner h5 {
 }
 
 .pfbc_doc_section h3 {
-	border: 1px solid #cccccc; 
+	border: 1px solid #ccc; 
 	padding: 5px;
 	margin: 10px 0 0 0;
 	background-color: #efefef;

@@ -8,7 +8,7 @@
 	<body>
 		<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 		<div id="pfbc_banner">
-			<h2>PHP Form Builder Class / Examples</h2>
+			<h2><a href="../index.php">PHP Form Builder Class</a> / Examples</h2>
 			<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
 		</div>
 
@@ -31,7 +31,7 @@
 					<li><a href="conditional-scenarios.php">Conditional Scenarios</a></li>
 					<li><a href="custom-css.php">Custom CSS Styling</a></li>
 					<li><a href="includes-directory-path-error.php">Invalid includes Directory Path Error</a></li>
-					<li><a href="examples/fieldsets.php">Fieldsets</a></li>
+					<li><a href="fieldsets.php">Fieldsets</a></li>
 				</ul>
 			</div>
 		</div>	

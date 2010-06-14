@@ -45,7 +45,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
 			<div id="pfbc_banner">
-				<h2>PHP Form Builder Class / Examples / Ajax</h2>
+				<h2><a href="../index.php">PHP Form Builder Class</a> / <a href="index.php">Examples</a> / Ajax</h2>
 				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
 			</div>
 
