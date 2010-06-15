@@ -480,16 +480,12 @@ public function addButton($value="Submit", $type="submit", $additionalParams="")
 
 				<p>This function is responsible for adding buttons to the forms that you create.  The form's declaration includes three parameters.  The first - value - controls the value attribute of the &lt;input&gt;
 				tag, which the browser uses for the button's displayed text.  The second parameter - type - controls the type attribute of the &lt;input&gt; tag.  Possible values for this parameter include button, image,
-				reset, and submit.  The final parameter - additionalParams - accepts an associative array of key/value pairs allowing a variety of settings to be applied.  A list of these settings are provided below.</p>
+				reset, submit, and link.  "link" can be used to render an &lt;a&gt; tag instead of an &lt;input&gt; tag.  The final parameter - additionalParams - accepts an associative array of key/value pairs allowing a variety of settings to be applied.  A list of these settings are provided below.</p>
 				
-				<p>additionalParams: alt, disabled, name, size, src, type, value, accesskey, class, dir, id, lang, style, tabindex, title, xml:lang, onblur, onchange, onclick, ondblclick, onfocus, onmousedown, 
-				onmousemove, onmouseout, onmouseover, onmouseup, onkeydown, onkeypress, onkeyup, onselect, phpFunction, phpParams, wrapLink, linkAttributes</p>
+				<p>additionalParams: alt, disabled, name, size, src, type, value, accesskey, class, dir, id, jqueryUI, lang, style, tabindex, title, xml:lang, onblur, onchange, onclick, ondblclick, onfocus, onmousedown, 
+				onmousemove, onmouseout, onmouseover, onmouseup, onkeydown, onkeypress, onkeyup, onselect</p>
 
-				<p>By default, buttons are rendered in the lower-right corner of a form's container; however, this can be modified through css if you wish with the help of the <a href="#Form-Attribute-preventDefaultCSS">preventDefaultCSS</a> 
-				form attribute.</p>
-
-				<p>If your system has a utility in place for dynamically generating button images, you will want to utilize the phpFunction, phpParams, wrapLink, and hrefAttributes button attributes.  
-				A sample is provided below of what this function - addButton - might look like with these attributes applied.</p>
+				<p>The jQueryUI attribute can be set to leverage the project's built in jQueryUI theme support to style buttons.</p>
 
 				<?php
 echo '<pre>', htmlentities('

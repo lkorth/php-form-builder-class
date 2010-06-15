@@ -171,7 +171,7 @@ $billing_form->render();
 				$address_form->addTextbox("Zip Code:", "BillingZip", "", array("required" => 1));
 
 				$location_form->addHidden("cmd", "submit");
-				$location_form->addSelect("How would you like to specify your location?", "LocationOption", "Map", array("Map" => "Select My Location Using Google Maps", "Address" => "Enter My Address Manually"), array("onchange" => "toggleLocationOptions(this.value);", "postHTML" => '<div id="MapDiv" style="display: none; padding-top: 10px;">' . $map_form->elementsToString() . '</div><div id="AddressDiv" style="display: none; padding-top: 10px;">' . $address_form->elementsToString() . '</div>', "required" => 1));
+				$location_form->addSelect("How would you like to specify your location?", "LocationOption", "Map", array("Map" => "Select My Location Using Google Maps", "Address" => "Enter My Address Manually"), array("onchange" => "toggleLocationOptions(this.value);", "postHTML" => '<div id="MapDiv" style="padding-top: 10px;">' . $map_form->elementsToString() . '</div><div id="AddressDiv" style="display: none; padding-top: 10px;">' . $address_form->elementsToString() . '</div>', "required" => 1));
 				$location_form->addButton();
 				$location_form->bind($map_form, 'document.getElementById("location").LocationOption.value == "Map"', '$_POST["LocationOption"] == "Map"');
 				$location_form->bind($address_form, 'document.getElementById("location").LocationOption.value == "Address"', '$_POST["LocationOption"] == "Address"');
@@ -210,7 +210,7 @@ $address_form->addState("State:", "BillingState", "", array("required" => 1));
 $address_form->addTextbox("Zip Code:", "BillingZip", "", array("required" => 1));
 
 $location_form->addHidden("cmd", "submit");
-$location_form->addSelect("How would you like to specify your location?", "LocationOption", "Map", array("Map" => "Select My Location Using Google Maps", "Address" => "Enter My Address Manually"), array("onchange" => "toggleLocationOptions(this.value);", "postHTML" => \'<div id="MapDiv" style="display: none; padding-top: 10px;">\' . $map_form->elementsToString() . \'</div><div id="AddressDiv" style="display: none; padding-top: 10px;">\' . $address_form->elementsToString() . \'</div>\', "required" => 1));
+$location_form->addSelect("How would you like to specify your location?", "LocationOption", "Map", array("Map" => "Select My Location Using Google Maps", "Address" => "Enter My Address Manually"), array("onchange" => "toggleLocationOptions(this.value);", "postHTML" => \'<div id="MapDiv" style="padding-top: 10px;">\' . $map_form->elementsToString() . \'</div><div id="AddressDiv" style="display: none; padding-top: 10px;">\' . $address_form->elementsToString() . \'</div>\', "required" => 1));
 $location_form->addButton();
 $location_form->bind($map_form, \'document.getElementById("location").LocationOption.value == "Map"\', \'$_POST["LocationOption"] == "Map"\');
 $location_form->bind($address_form, \'document.getElementById("location").LocationOption.value == "Address"\', \'$_POST["LocationOption"] == "Address"\');

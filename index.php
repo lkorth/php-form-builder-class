@@ -66,6 +66,7 @@
 			<div>
 				<ul style="margin-top: 0; padding-top: 0;">
 					<li><a href="documentation/index.php">User's Reference Guide</a></li>
+					<li>This is an unfinished work in progress.  Contributions to enhance this section are always appreciated.</li>
 				</ul>
 			</div>	
 
