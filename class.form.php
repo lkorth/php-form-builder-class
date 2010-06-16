@@ -2907,51 +2907,51 @@ STR;
 				$str .= <<<STR
 .ui-stars-star,
 .ui-stars-cancel {
-float: left;
-display: block;
-overflow: hidden;
-text-indent: -999em;
-cursor: pointer;
+	float: left;
+	display: block;
+	overflow: hidden;
+	text-indent: -999em;
+	cursor: pointer;
 }
 .ui-stars-star a,
 .ui-stars-cancel a {
-width: 28px;
-height: 26px;
-display: block;
-position: relative;
-background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png") 0 0 no-repeat;
-_background: none;
-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-	(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png", sizingMethod="scale");
+	width: 28px;
+	height: 26px;
+	display: block;
+	position: relative;
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png", sizingMethod="scale");
 }
 .ui-stars-star a {
-background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png") 0 0 no-repeat;
-_background: none;
-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-	(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png", sizingMethod="scale");
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png", sizingMethod="scale");
 }
 .ui-stars-star-on a {
-background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png") 0 0 no-repeat;
-_background: none;
-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-	(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png", sizingMethod="scale");
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png", sizingMethod="scale");
 }
 .ui-stars-star-hover a {
-background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png") 0 0 no-repeat;
-_background: none;
-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-	(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png", sizingMethod="scale");
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png", sizingMethod="scale");
 }
 .ui-stars-cancel-hover a {
-background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png") 0 0 no-repeat;
-_background: none;
-filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-	(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png", sizingMethod="scale");
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png", sizingMethod="scale");
 }
 .ui-stars-star-disabled,
 .ui-stars-star-disabled a,
 .ui-stars-cancel-disabled a {
-cursor: default !important;
+	cursor: default !important;
 }
 
 STR;
@@ -2963,15 +2963,28 @@ STR;
 			for($e = 0; $e < $elementSize; ++$e) {
 				$ele = $form->elements[$e];
 
-                                if(!empty($ele->eleFloat)){
-                                        $str .= <<<STR
+				if(!empty($ele->eleFloat)) {
+					if(substr($ele->eleFloat, -1) == "%") {
+						$labelWidth = substr($ele->eleFloat, 0, -1);
+						$labelWidthSuffix = "%";
+					}	
+					elseif(substr($ele->eleFloat, -2) == "px") {
+						$labelWidth = substr($ele->eleFloat, 0, -2);
+						$labelWidthSuffix = "px";
+					}	
+					else {
+						$labelWidth = $ele->eleFloat;
+						$labelWidthSuffix = "px";
+					}	
+
+					$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
-        float: left;
-        clear: both;
-        width: $ele->eleFloat
+	float: left;
+	width: {$labelWidth}$labelWidthSuffix;
 }
+
 STR;
-                                }
+				}
 
 				if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
 					if(!empty($ele->noBreak)) {
@@ -3103,7 +3116,7 @@ STR;
 class element extends pfbc {
 	public $attributes;
 	public $basic;
-        public $eleFloat;
+	public $eleFloat;
 	public $height;
 	public $hint;
 	public $hideCancel;

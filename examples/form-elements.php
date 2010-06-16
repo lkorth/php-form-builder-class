@@ -17,6 +17,12 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 			<title>PHP Form Builder Class | Examples | All Supported Form Elements</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
+			<style type="text/css">
+				#pfbc-form_elements-element-10 .pfbc-label {
+					float: left;
+					width: 80px;
+				}
+			</style>
 		</head>
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
@@ -46,7 +52,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addDateRange("Date Range:", "field9");
 				$form->addState("State:", "field10");
 				$form->addCountry("Country:", "field11");
-				$form->addYesNo("Yes/No:", "field12");
+				//$form->addYesNo("Yes/No:", "field12");
+				$form->addYesNo("Yes/No:", "field12", "" , array('eleFloat' => '50px'));
 				$form->addTrueFalse("True/False:", "field13");
 				$form->addSelect("Select Box:", "field14", "", array("Option #0", "Option #1", "Option #2"));
 				$form->addRadio("Radio Buttons:", "field15", "", array("Option #0", "Option #1", "Option #2"));
