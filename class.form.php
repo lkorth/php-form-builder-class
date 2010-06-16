@@ -1056,18 +1056,7 @@ class form extends pfbc {
 
 				if(!empty($ele->label)) {
 					$str .= $this->indent();
-					$str .= '<label class="pfbc-label ';
-
-                                        if(!empty($ele->eleFloat)){
-                                                $str .= 'pfbc-elefloat ';
-                                                $ele->labelStyle .= "width: $ele->eleFloat";
-                                        }
-
-                                        if(!empty($ele->labelStyle)) {
-                                                $str .= '" style="' . $ele->labelStyle . '" ';
-                                        }
-
-                                        $str .= '">';
+					$str .= '<label class="pfbc-label">';
 
 					if(!empty($ele->required))
 						$str .= '<span class="pfbc-required">*</span> ';
@@ -2969,24 +2958,21 @@ STR;
 			}
                         
 			$elementSize = sizeof($form->elements);
-			for($e = 0; $e < $elementSize; ++$e) {
-				$ele = $form->elements[$e];
-                                if(!empty($ele->eleFloat)){
-                                        $str .= <<<STR
-$id .pfbc-elefloat{
-        float: left;
-        clear: both;
-}
-
-STR;
-                                        break;
-                                }
-                        }
-
 			$id = str_replace("#", "", $id);
 			$nonHiddenInternalElementCount = 0;
 			for($e = 0; $e < $elementSize; ++$e) {
 				$ele = $form->elements[$e];
+
+                                if(!empty($ele->eleFloat)){
+                                        $str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
+        float: left;
+        clear: both;
+        width: $ele->eleFloat
+}
+STR;
+                                }
+
 				if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
 					if(!empty($ele->noBreak)) {
 						if($ele->attributes["type"] == "radio") {
@@ -3125,7 +3111,6 @@ class element extends pfbc {
 	public $hideDisplay;
 	public $hideJump;
 	public $label;
-        public $labelStyle;
 	public $max;
 	public $min;
 	public $months;
