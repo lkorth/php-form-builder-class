@@ -52,8 +52,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addDateRange("Date Range:", "field9");
 				$form->addState("State:", "field10");
 				$form->addCountry("Country:", "field11");
-				//$form->addYesNo("Yes/No:", "field12");
-				$form->addYesNo("Yes/No:", "field12", "" , array('eleFloat' => '50px'));
+				$form->addYesNo("Yes/No:", "field12");
 				$form->addTrueFalse("True/False:", "field13");
 				$form->addSelect("Select Box:", "field14", "", array("Option #0", "Option #1", "Option #2"));
 				$form->addRadio("Radio Buttons:", "field15", "", array("Option #0", "Option #1", "Option #2"));

@@ -2792,31 +2792,31 @@ STR;
 				if(!empty($form->attributes["width"])) {
 					if(substr($form->attributes["width"], -1) == "%") {
 						$formWidth = substr($form->attributes["width"], 0, -1);
-						$suffix = "%";
+						$formWidthSuffix = "%";
 					}	
 					elseif(substr($form->attributes["width"], -2) == "px") {
 						$formWidth = substr($form->attributes["width"], 0, -2);
-						$suffix = "px";
+						$formWidthSuffix = "px";
 					}
 					else {
 						$formWidth = $form->attributes["width"];
-						$suffix = "px";
+						$formWidthSuffix = "px";
 					}	
 					$str .= <<<STR
 $id .pfbc-main {
-	width: {$formWidth}$suffix;
+	width: {$formWidth}$formWidthSuffix;
 }
 
 STR;
 				}
 				else
-					$suffix = "%";
+					$formWidthSuffix = "%";
 
 				if(!empty($form->map)) {
 					$mapVals = array_values(array_unique($form->map));
 					$mapValSize = sizeof($mapVals);
 					for($m = 0; $m < $mapValSize; ++$m) {
-						if($suffix == "px") {
+						if($formWidthSuffix == "px") {
 							$elementWidth = number_format((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
 							$textboxWidth = $elementWidth - 6;
 							$textareaWidth = $elementWidth - 2;
@@ -2832,16 +2832,16 @@ STR;
 						$str .= <<<STR
 $id .pfbc-map-columns-{$mapVals[$m]} {
 	float: left; 
-	width: {$elementWidth}$suffix;
+	width: {$elementWidth}$formWidthSuffix;
 }
 $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textbox {
-	width: {$textboxWidth}$suffix;
+	width: {$textboxWidth}$formWidthSuffix;
 }
 $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textarea {
-	width: {$textboxWidth}$suffix;
+	width: {$textboxWidth}$formWidthSuffix;
 }
 $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
-	width: {$selectWidth}$suffix;
+	width: {$selectWidth}$formWidthSuffix;
 }
 
 STR;
@@ -2858,13 +2858,13 @@ $id .pfbc-map-element-single {
 	margin: 0 !important;
 }
 $id .pfbc-element {
-	margin: 0 {$form->mapMargin}$suffix;
+	margin: 0 {$form->mapMargin}$formWidthSuffix;
 }
 
 STR;
 				}
 				else {
-					if($suffix == "px") {
+					if($formWidthSuffix == "px") {
 						$textboxWidth = $formWidth - 6;
 						$textareaWidth = $formWidth - 2;
 						$selectWidth = $formWidth;
@@ -2876,13 +2876,13 @@ STR;
 					}
 					$str .= <<<STR
 $id .pfbc-textbox {
-	width: {$textboxWidth}$suffix;
+	width: {$textboxWidth}$formWidthSuffix;
 }
 $id .pfbc-textarea {
-	width: {$textareaWidth}$suffix;
+	width: {$textareaWidth}$formWidthSuffix;
 }
 $id .pfbc-select {
-	width: {$selectWidth}$suffix;
+	width: {$selectWidth}$formWidthSuffix;
 }
 
 STR;
@@ -2976,14 +2976,36 @@ STR;
 						$labelWidth = $ele->eleFloat;
 						$labelWidthSuffix = "px";
 					}	
+					
+					if($labelWidthSuffix == $formWidthSuffix) {
+						if($formWidthSuffix == "px") {
+							$textboxWidth = $formWidth - $labelWidth - 6;
+							$textareaWidth = $formWidth - $labelWidth - 2;
+							$selectWidth = $formWidth - $labelWidth;
+						}
+						else {
+							$textboxWidth = 98 - $labelWidth;
+							$textareaWidth = 98 - $labelWidth;
+							$selectWidth = 98 - $labelWidth;
+						}
 
-					$str .= <<<STR
+						$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
 	float: left;
 	width: {$labelWidth}$labelWidthSuffix;
 }
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
+	width: {$textboxWidth}$labelWidthSuffix;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
+	width: {$textareaWidth}$labelWidthSuffix;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
+	width: {$selectWidth}$labelWidthSuffix;
+}
 
 STR;
+					}
 				}
 
 				if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
