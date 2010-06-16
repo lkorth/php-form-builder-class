@@ -1056,7 +1056,18 @@ class form extends pfbc {
 
 				if(!empty($ele->label)) {
 					$str .= $this->indent();
-					$str .= '<label class="pfbc-label">';
+					$str .= '<label class="pfbc-label ';
+
+                                        if(!empty($ele->eleFloat)){
+                                                $str .= 'pfbc-elefloat ';
+                                                $ele->labelStyle .= "width: $ele->eleFloat";
+                                        }
+
+                                        if(!empty($ele->labelStyle)) {
+                                                $str .= '" style="' . $ele->labelStyle . '" ';
+                                        }
+
+                                        $str .= '">';
 
 					if(!empty($ele->required))
 						$str .= '<span class="pfbc-required">*</span> ';
@@ -2888,7 +2899,7 @@ $id .pfbc-select {
 STR;
 				}
 			}
-
+                        
 			if(!empty($form->jqueryDateIDArr)) {
 				$str .= <<<STR
 .ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 1em !important; }
@@ -2956,9 +2967,23 @@ cursor: default !important;
 
 STR;
 			}
+                        
+			$elementSize = sizeof($form->elements);
+			for($e = 0; $e < $elementSize; ++$e) {
+				$ele = $form->elements[$e];
+                                if(!empty($ele->eleFloat)){
+                                        $str .= <<<STR
+$id .pfbc-elefloat{
+        float: left;
+        clear: both;
+}
+
+STR;
+                                        break;
+                                }
+                        }
 
 			$id = str_replace("#", "", $id);
-			$elementSize = sizeof($form->elements);
 			$nonHiddenInternalElementCount = 0;
 			for($e = 0; $e < $elementSize; ++$e) {
 				$ele = $form->elements[$e];
@@ -3092,6 +3117,7 @@ STR;
 class element extends pfbc {
 	public $attributes;
 	public $basic;
+        public $eleFloat;
 	public $height;
 	public $hint;
 	public $hideCancel;
@@ -3099,6 +3125,7 @@ class element extends pfbc {
 	public $hideDisplay;
 	public $hideJump;
 	public $label;
+        public $labelStyle;
 	public $max;
 	public $min;
 	public $months;
