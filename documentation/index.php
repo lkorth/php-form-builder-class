@@ -84,6 +84,7 @@ include("../class.form.php");
 							<li><a href="#Form-Function-addFile">addFile</a></li>
 							<li><a href="#Form-Function-addHidden">addHidden</a></li>
 							<li><a href="#Form-Function-addHTML">addHTML</a></li>
+							<li><a href="#Form-Function-addHTMLExternal">addHTMLExternal</a></li>
 							<li><a href="#Form-Function-addLatLng">addLatLng</a></li>
 							<li><a href="#Form-Function-addPassword">addPassword</a></li>
 							<li><a href="#Form-Function-addRadio">addRadio</a></li>
@@ -99,8 +100,10 @@ include("../class.form.php");
 							<li><a href="#Form-Function-addYesNo">addYesNo</a></li>
 							<li><a href="#Form-Function-bind">bind</a></li>
 							<li><a href="#Form-Function-clearButtons">clearButtons</a></li>
+							<li><a href="#Form-Function-closeFieldset">closeFieldset</a></li>
 							<li><a href="#Form-Function-clearElements">clearElements</a></li>
 							<li><a href="#Form-Function-elementsToString">elementsToString</a></li>
+							<li><a href="#Form-Function-openFieldset">openFieldset</a></li>
 							<li><a href="#Form-Function-render">render</a></li>
 							<li><a href="#Form-Function-setAttributes">setAttributes</a></li>
 							<li><a href="#Form-Function-setReferenceValues">setReferenceValues</a></li>

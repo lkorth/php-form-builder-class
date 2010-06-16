@@ -772,14 +772,6 @@ class form extends pfbc {
 		$this->addElement($label, $name, "email", $value, $additionalParams);
 	}
 
-	public function openFieldset($legend, $additionalParams="") {
-		$this->addElement("", "", "htmlexternal", '<fieldset class="pfbc-fieldset"><legend>' . $legend . "</legend>");
-	}
-
-	public function closeFieldset() {
-		$this->addElement("", "", "htmlexternal", '</fieldset>');
-	}
-
 	public function addFile($label, $name, $additionalParams="") {
 		$this->addElement($label, $name, "file", "", $additionalParams);
 	}
@@ -869,6 +861,11 @@ class form extends pfbc {
 	public function clearElements() {
 		$this->elements = array();
 	}
+
+	public function closeFieldset() {
+		$this->addElement("", "", "htmlexternal", '</fieldset>');
+	}
+
 
 	public function elementsToString() {
 		$str = "";
@@ -1678,6 +1675,10 @@ STR;
 			$str .= "\n</form>";
 
 		return $str;
+	}
+
+	public function openFieldset($legend, $additionalParams="") {
+		$this->addElement("", "", "htmlexternal", '<fieldset class="pfbc-fieldset"><legend>' . $legend . "</legend>");
 	}
 
 	public function render($returnString=false) {
