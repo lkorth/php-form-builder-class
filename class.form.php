@@ -2819,7 +2819,7 @@ STR;
 						if($formWidthSuffix == "px") {
 							$elementWidth = number_format((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
 							$textboxWidth = $elementWidth - 6;
-							$textareaWidth = $elementWidth - 2;
+							$textareaWidth = $elementWidth - 6;
 							$selectWidth = $elementWidth;
 						}	
 						else {
@@ -2839,6 +2839,7 @@ $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textbox {
 }
 $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textarea {
 	width: {$textboxWidth}$formWidthSuffix;
+	padding: 2px;
 }
 $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
 	width: {$selectWidth}$formWidthSuffix;
@@ -2866,7 +2867,7 @@ STR;
 				else {
 					if($formWidthSuffix == "px") {
 						$textboxWidth = $formWidth - 6;
-						$textareaWidth = $formWidth - 2;
+						$textareaWidth = $formWidth - 6;
 						$selectWidth = $formWidth;
 					}
 					else {
@@ -2880,6 +2881,7 @@ $id .pfbc-textbox {
 }
 $id .pfbc-textarea {
 	width: {$textareaWidth}$formWidthSuffix;
+	padding: 2px;
 }
 $id .pfbc-select {
 	width: {$selectWidth}$formWidthSuffix;
@@ -2980,7 +2982,7 @@ STR;
 					if($labelWidthSuffix == $formWidthSuffix) {
 						if($formWidthSuffix == "px") {
 							$textboxWidth = $formWidth - $labelWidth - 6;
-							$textareaWidth = $formWidth - $labelWidth - 2;
+							$textareaWidth = $formWidth - $labelWidth - 6;
 							$selectWidth = $formWidth - $labelWidth;
 						}
 						else {
