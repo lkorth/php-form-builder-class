@@ -34,11 +34,11 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				));
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("Field #1:", "Field1");
-				$form->addTextbox("Field #2:", "Field2", "", array("eleFloat" => 100));
+				$form->addTextbox("Field #2:", "Field2", "", array("labelWidth" => 100));
 				$form->addTextbox("Field #3:", "Field3");
-				$form->addSelect("Field #4:", "Field4", "", array("Option #1", "Option #2", "Option #3"), array("eleFloat" => 150));
+				$form->addSelect("Field #4:", "Field4", "", array("Option #1", "Option #2", "Option #3"), array("labelWidth" => 150));
 				$form->addTextbox("Field #5:", "Field5");
-				$form->addTextarea("Field #6:", "Field6", "", array("eleFloat" => 75));
+				$form->addTextarea("Field #6:", "Field6", "", array("labelWidth" => 75));
 				$form->addTextbox("Field #7:", "Field7");
 				$form->render();
 
@@ -50,33 +50,13 @@ $form->setAttributes(array(
 ));
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Field #1:", "Field1");
-$form->addTextbox("Field #2:", "Field2", "", array("eleFloat" => 100));
+$form->addTextbox("Field #2:", "Field2", "", array("labelWidth" => 100));
 $form->addTextbox("Field #3:", "Field3");
-$form->addSelect("Field #4:", "Field4", "", array("Option #1", "Option #2", "Option #3"), array("eleFloat" => 150));
+$form->addSelect("Field #4:", "Field4", "", array("Option #1", "Option #2", "Option #3"), array("labelWidth" => 150));
 $form->addTextbox("Field #5:", "Field5");
-$form->addTextarea("Field #6:", "Field6", "", array("eleFloat" => 75));
+$form->addTextarea("Field #6:", "Field6", "", array("labelWidth" => 75));
 $form->addTextbox("Field #7:", "Field7");
 $form->render();
-?>', true), '</pre>';
-
-				$form = new form("test2");
-				$form->setAttributes(array(
-					"includesPath" => "../includes",
-					"width" => 600,
-					"noAutoFocus" => 1,
-					"map" => array(2, 2, 1, 3, 1)
-				));
-				$form->addHidden("cmd", "submit");
-				$form->addTextbox("Field #1:", "Field1");
-				$form->addTextbox("Field #2:", "Field2", "", array("eleFloat" => 100));
-				$form->addTextbox("Field #3:", "Field3");
-				$form->addSelect("Field #4:", "Field4", "", array("Option #1", "Option #2", "Option #3"), array("eleFloat" => 150));
-				$form->addTextbox("Field #5:", "Field5");
-				$form->addTextarea("Field #6:", "Field6", "", array("eleFloat" => 75));
-				$form->addTextbox("Field #7:", "Field7");
-				$form->render();
-
-echo '<pre>', highlight_string('<?php
 ?>', true), '</pre>';
 
 				?>

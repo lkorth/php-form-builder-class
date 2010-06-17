@@ -2965,17 +2965,17 @@ STR;
 			for($e = 0; $e < $elementSize; ++$e) {
 				$ele = $form->elements[$e];
 
-				if(!empty($ele->eleFloat)) {
-					if(substr($ele->eleFloat, -1) == "%") {
-						$labelWidth = substr($ele->eleFloat, 0, -1);
+				if(!empty($ele->labelWidth)) {
+					if(substr($ele->labelWidth, -1) == "%") {
+						$labelWidth = substr($ele->labelWidth, 0, -1);
 						$labelWidthSuffix = "%";
 					}	
-					elseif(substr($ele->eleFloat, -2) == "px") {
-						$labelWidth = substr($ele->eleFloat, 0, -2);
+					elseif(substr($ele->labelWidth, -2) == "px") {
+						$labelWidth = substr($ele->labelWidth, 0, -2);
 						$labelWidthSuffix = "px";
 					}	
 					else {
-						$labelWidth = $ele->eleFloat;
+						$labelWidth = $ele->labelWidth;
 						$labelWidthSuffix = "px";
 					}	
 					
@@ -3140,7 +3140,6 @@ STR;
 class element extends pfbc {
 	public $attributes;
 	public $basic;
-	public $eleFloat;
 	public $height;
 	public $hint;
 	public $hideCancel;
@@ -3148,6 +3147,7 @@ class element extends pfbc {
 	public $hideDisplay;
 	public $hideJump;
 	public $label;
+	public $labelWidth;
 	public $max;
 	public $min;
 	public $months;
