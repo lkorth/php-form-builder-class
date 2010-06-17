@@ -2813,22 +2813,25 @@ STR;
 					$formWidthSuffix = "%";
 
 				if(!empty($form->map)) {
-					$mapVals = array_values(array_unique($form->map));
+                                        $mapVals = array_values(array_unique($form->map));
 					$mapValSize = sizeof($mapVals);
-					for($m = 0; $m < $mapValSize; ++$m) {
+                                        for($m = 0; $m < $mapValSize; ++$m) {  
 						if($formWidthSuffix == "px") {
 							$elementWidth = number_format((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
-							$textboxWidth = $elementWidth - 6;
+                                                	$elementWidthMap[$m] = $elementWidth;
+                                                        $textboxWidth = $elementWidth - 6;
 							$textareaWidth = $elementWidth - 6;
 							$selectWidth = $elementWidth;
-						}	
-						else {
+						} else {
 							$elementWidth = number_format(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
-							$textboxWidth = 98;
-							$textareaWidth = 98;
+                                                	$elementWidthMap[$m] = $elementWidth;
+                                                        $textboxWidth = 98 - $labelWidth;
+							$textareaWidth = 98 - $labelWidth;
 							$selectWidth = 98;
-						}	
-							
+						}
+
+                                                rsort($elementWidthMap);
+
 						$str .= <<<STR
 $id .pfbc-map-columns-{$mapVals[$m]} {
 	float: left; 
@@ -2980,30 +2983,49 @@ STR;
 					}	
 					
 					if($labelWidthSuffix == $formWidthSuffix) {
-						if($formWidthSuffix == "px") {
-							$textboxWidth = $formWidth - $labelWidth - 6;
-							$textareaWidth = $formWidth - $labelWidth - 6;
-							$selectWidth = $formWidth - $labelWidth;
-						}
-						else {
-							$textboxWidth = 98 - $labelWidth;
-							$textareaWidth = 98 - $labelWidth;
-							$selectWidth = 98 - $labelWidth;
-						}
+                                                if(!empty($form->map)) {
+
+                                                        //Gets the map column number for the current element
+                                                        $mapnum = $form->map[0];
+                                                        for( $num = 0 ; $mapnum < $e ; ){
+                                                                $mapnum += $form->map[++$num];
+                                                        }
+
+                                                        if($formWidthSuffix == "px") {
+                                                                $textboxWidth = $elementWidthMap[$form->map[$num] -1] - $labelWidth - 6;
+                                                                $textareaWidth = $elementWidthMap[$form->map[$num] -1] - $labelWidth - 8;
+                                                                $selectWidth = $elementWidthMap[$form->map[$num] -1] - $labelWidth;
+                                                        } else {
+                                                                $textboxWidth = 98 - $labelWidth;
+                                                                $textareaWidth = 98 - $labelWidth;
+                                                                $selectWidth = 98 - $labelWidth;
+                                                        }
+
+                                                } else {
+                                                        if($formWidthSuffix == "px") {
+                                                        $textboxWidth = $formWidth - $labelWidth - 6;
+                                                        $textareaWidth = $formWidth - $labelWidth - 6;
+                                                        $selectWidth = $formWidth - $labelWidth;
+                                                } else {
+                                                        $textboxWidth = 98 - $labelWidth;
+                                                        $textareaWidth = 98 - $labelWidth;
+                                                        $selectWidth = 98 - $labelWidth;
+                                                }
+                                        }
 
 						$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
-	float: left;
-	width: {$labelWidth}$labelWidthSuffix;
+	float: left !important;
+	width: {$labelWidth}$labelWidthSuffix !important;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
-	width: {$textboxWidth}$labelWidthSuffix;
+	width: {$textboxWidth}$labelWidthSuffix !important;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
-	width: {$textareaWidth}$labelWidthSuffix;
+	width: {$textareaWidth}$labelWidthSuffix !important;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
-	width: {$selectWidth}$labelWidthSuffix;
+	width: {$selectWidth}$labelWidthSuffix !important;
 }
 
 STR;
