@@ -47,7 +47,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->openFieldset("Fieldset #3");
 				$form->addTextbox("Field #5:", "Field5");
 				$form->addTextbox("Field #6:", "Field6");
-				$form->addHTML('<div style="text-align: right;"><input type="submit" value="Submit"/></div>');
+				$form->addButton();
 				$form->closeFieldset();
 				$form->render();
 
@@ -69,8 +69,8 @@ $form->closeFieldset();
 $form->openFieldset("Fieldset #3");
 $form->addTextbox("Field #5:", "Field5");
 $form->addTextbox("Field #6:", "Field6");
-$form->closeFieldset();
 $form->addButton();
+$form->closeFieldset();
 $form->render();
 ?>', true), '</pre>';
 
@@ -91,7 +91,7 @@ $form->render();
 				$form->addTextbox("City:", "City");
 				$form->addState("State:", "State");
 				$form->addTextbox("Zip Code:", "Zip");
-				$form->addHTML('<div style="text-align: right;"><input type="submit" value="Submit"/></div>');
+				$form->addButton();
 				$form->closeFieldset();
 				$form->render();
 
@@ -113,7 +113,7 @@ $form->addTextbox("Address:", "Address");
 $form->addTextbox("City:", "City");
 $form->addState("State:", "State");
 $form->addTextbox("Zip Code:", "Zip");
-$form->addHTML(\'<div style="text-align: right;"><input type="submit" value="Submit"/></div>\');
+$form->addButton();
 $form->closeFieldset();
 $form->render();
 ?>', true), '</pre>';
