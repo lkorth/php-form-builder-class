@@ -1017,6 +1017,7 @@ class form extends pfbc {
 						}	
 					}
 					else {
+						$this->map[$mapIndex] = 1;
 						$map_element_first = true;
 						$str .= "\n\t" . '<div class="pfbc-map pfbc-clear">';
 					}	
@@ -2813,24 +2814,23 @@ STR;
 					$formWidthSuffix = "%";
 
 				if(!empty($form->map)) {
-                                        $mapVals = array_values(array_unique($form->map));
+					$mapVals = array_values(array_unique($form->map));
 					$mapValSize = sizeof($mapVals);
-                                        for($m = 0; $m < $mapValSize; ++$m) {  
+					$elementWidthMap = array();
+					for($m = 0; $m < $mapValSize; ++$m) {  
 						if($formWidthSuffix == "px") {
 							$elementWidth = number_format((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
-                                                	$elementWidthMap[$m] = $elementWidth;
-                                                        $textboxWidth = $elementWidth - 6;
+							$elementWidthMap[$mapVals[$m]] = $elementWidth;
+							$textboxWidth = $elementWidth - 6;
 							$textareaWidth = $elementWidth - 6;
 							$selectWidth = $elementWidth;
-						} else {
+						} 
+						else {
 							$elementWidth = number_format(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
-                                                	$elementWidthMap[$m] = $elementWidth;
-                                                        $textboxWidth = 98 - $labelWidth;
-							$textareaWidth = 98 - $labelWidth;
+							$textboxWidth = 98;
+							$textareaWidth = 98;
 							$selectWidth = 98;
 						}
-
-                                                rsort($elementWidthMap);
 
 						$str .= <<<STR
 $id .pfbc-map-columns-{$mapVals[$m]} {
@@ -2850,6 +2850,7 @@ $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
 
 STR;
 					}
+
 					$str .= <<<STR
 $id .pfbc-map-element-first {
 	margin-left: 0 !important;
@@ -2965,74 +2966,16 @@ STR;
 			$elementSize = sizeof($form->elements);
 			$id = str_replace("#", "", $id);
 			$nonHiddenInternalElementCount = 0;
+			if(!empty($form->map)) {
+				$mapIndex = 0;
+				$mapCount = 0;
+			}
+
 			for($e = 0; $e < $elementSize; ++$e) {
 				$ele = $form->elements[$e];
-
-				if(!empty($ele->labelWidth)) {
-					if(substr($ele->labelWidth, -1) == "%") {
-						$labelWidth = substr($ele->labelWidth, 0, -1);
-						$labelWidthSuffix = "%";
-					}	
-					elseif(substr($ele->labelWidth, -2) == "px") {
-						$labelWidth = substr($ele->labelWidth, 0, -2);
-						$labelWidthSuffix = "px";
-					}	
-					else {
-						$labelWidth = $ele->labelWidth;
-						$labelWidthSuffix = "px";
-					}	
-					
-					if($labelWidthSuffix == $formWidthSuffix) {
-                                                if(!empty($form->map)) {
-
-                                                        //Gets the map column number for the current element
-                                                        $mapnum = $form->map[0];
-                                                        for( $num = 0 ; $mapnum < $e ; ){
-                                                                $mapnum += $form->map[++$num];
-                                                        }
-
-                                                        if($formWidthSuffix == "px") {
-                                                                $textboxWidth = $elementWidthMap[$form->map[$num] -1] - $labelWidth - 6;
-                                                                $textareaWidth = $elementWidthMap[$form->map[$num] -1] - $labelWidth - 8;
-                                                                $selectWidth = $elementWidthMap[$form->map[$num] -1] - $labelWidth;
-                                                        } else {
-                                                                $textboxWidth = 98 - $labelWidth;
-                                                                $textareaWidth = 98 - $labelWidth;
-                                                                $selectWidth = 98 - $labelWidth;
-                                                        }
-
-                                                } else {
-                                                        if($formWidthSuffix == "px") {
-                                                        $textboxWidth = $formWidth - $labelWidth - 6;
-                                                        $textareaWidth = $formWidth - $labelWidth - 6;
-                                                        $selectWidth = $formWidth - $labelWidth;
-                                                } else {
-                                                        $textboxWidth = 98 - $labelWidth;
-                                                        $textareaWidth = 98 - $labelWidth;
-                                                        $selectWidth = 98 - $labelWidth;
-                                                }
-                                        }
-
-						$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
-	float: left !important;
-	width: {$labelWidth}$labelWidthSuffix !important;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
-	width: {$textboxWidth}$labelWidthSuffix !important;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
-	width: {$textareaWidth}$labelWidthSuffix !important;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
-	width: {$selectWidth}$labelWidthSuffix !important;
-}
-
-STR;
-					}
-				}
-
 				if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
+
+					//If the noBreak attribute is set, handle appropriately.
 					if(!empty($ele->noBreak)) {
 						if($ele->attributes["type"] == "radio") {
 							$str .= <<<STR
@@ -3059,6 +3002,82 @@ STR;
 STR;
 						}
 					}
+
+					//If the labelWidth attribute is set, handle appropriately.
+					if(!empty($ele->labelWidth)) {
+						if(substr($ele->labelWidth, -1) == "%") {
+							$labelWidth = substr($ele->labelWidth, 0, -1);
+							$labelWidthSuffix = "%";
+						}	
+						elseif(substr($ele->labelWidth, -2) == "px") {
+							$labelWidth = substr($ele->labelWidth, 0, -2);
+							$labelWidthSuffix = "px";
+						}	
+						else {
+							$labelWidth = $ele->labelWidth;
+							$labelWidthSuffix = "px";
+						}	
+
+						if($labelWidthSuffix == $formWidthSuffix) {
+							if(!empty($form->map)) {
+								if($formWidthSuffix == "px") {
+									$textboxWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth - 6;
+									$textareaWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth - 6;
+									$selectWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth;
+								} 
+								else {
+									$textboxWidth = 98 - $labelWidth;
+									$textareaWidth = 98 - $labelWidth;
+									$selectWidth = 98 - $labelWidth;
+								}
+							} 
+							else {
+								if($formWidthSuffix == "px") {
+									$textboxWidth = $formWidth - $labelWidth - 6;
+									$textareaWidth = $formWidth - $labelWidth - 6;
+									$selectWidth = $formWidth - $labelWidth;
+								} 
+								else {
+									$textboxWidth = 98 - $labelWidth;
+									$textareaWidth = 98 - $labelWidth;
+									$selectWidth = 98 - $labelWidth;
+								}
+							}
+
+							$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
+	float: left !important;
+	width: {$labelWidth}$labelWidthSuffix !important;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
+	width: {$textboxWidth}$labelWidthSuffix !important;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
+	width: {$textareaWidth}$labelWidthSuffix !important;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
+	width: {$selectWidth}$labelWidthSuffix !important;
+}
+
+STR;
+						}
+					}
+
+					if(!empty($form->map)) {
+						if(array_key_exists($mapIndex, $form->map) && $form->map[$mapIndex] > 1) {
+							if(($mapCount + 1) == $form->map[$mapIndex]) {
+								$mapCount = 0;
+								++$mapIndex;
+							}
+							else
+								++$mapCount;
+						}
+						else {
+							++$mapIndex;
+							$mapCount = 0;
+						}	
+					}
+
 					++$nonHiddenInternalElementCount;
 				}
 			}	
