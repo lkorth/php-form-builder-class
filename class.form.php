@@ -2809,7 +2809,7 @@ STR;
 				}
 				else
 					$formWidthSuffix = "%";
-if($labelWidthSuffix == $formWidthSuffix) {
+
 				if(!empty($form->map)) {
 					$mapVals = array_values(array_unique($form->map));
 					$mapValSize = sizeof($mapVals);
@@ -2846,8 +2846,7 @@ $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
 }
 
 STR;
-					}
-                                }
+					}                                
 
 					$str .= <<<STR
 $id .pfbc-map-element-first {
