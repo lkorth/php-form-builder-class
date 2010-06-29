@@ -70,6 +70,131 @@ $form->render();
 ?>', true), '</pre>';
 
 				?>
+				<p>In the sample login form provided below, the <i>labelWidth</i> attribute is used to render the label on the same line as the form elements.  <i>labelWidth</i> can be set as both a form and element level attribute.</p>
+				<?
+				$form = new form("login");
+				$form->setAttributes(array(
+					"width" => 300,
+					"includesPath" => "../includes",
+					"labelWidth" => 100
+				));
+				$form->addHidden("cmd", "submit");
+				$form->addTextbox("Username:", "Username", "", array("required" => 1));
+				$form->addPassword("Password:", "Password", "", array("required" => 1));
+				$form->addHTML('<a href="#">Forgot your password?</a>');
+				$form->addButton("Login");
+				$form->render();
+
+echo '<pre>', highlight_string('<?php
+$form = new form("login");
+$form->setAttributes(array(
+	"width" => 300,
+	"includesPath" => "../includes",
+	"labelWidth" => 100
+));
+$form->addHidden("cmd", "submit");
+$form->addTextbox("Username:", "Username", "", array("required" => 1));
+$form->addPassword("Password:", "Password", "", array("required" => 1));
+$form->addHTML(\'<a href="#">Forgot your password?</a>\');
+$form->addButton("Login");
+$form->render();
+', true), '</pre>';
+
+				?>
+				<p>This form demonstrates how the <i>labelWidth, labelRightAlign, and map</i> attributes can all be used in combination to produce yet another possible layout.  <i>labelPaddingRight</i> can be used to control the padding applied to the right of the each label.</p>
+				<?
+				$form = new form("signup");
+				$form->setAttributes(array(
+					"width" => 700,
+					"includesPath" => "../includes",
+					"noAutoFocus" => 1,
+					"labelWidth" => 100,
+					"labelRightAlign" => 1,
+					"map" => array(2, 2, 1, 3)
+				));
+				$form->addHidden("cmd", "submit");
+				$form->addTextbox("First Name:", "FName", "", array("required" => 1));
+				$form->addTextbox("Last Name:", "LName", "", array("required" => 1));
+				$form->addEmail("Email Address:", "Email", "", array("required" => 1));
+				$form->addTextbox("Phone Number:", "Phone");
+				$form->addTextbox("Address:", "Address");
+				$form->addTextbox("City:", "City");
+				$form->addState("State:", "State");
+				$form->addTextbox("Zip Code:", "Zip");
+				$form->addButton();
+				$form->render();
+
+echo '<pre>', highlight_string('<?php
+$form = new form("signup");
+$form->setAttributes(array(
+	"width" => 700,
+	"includesPath" => "../includes",
+	"noAutoFocus" => 1,
+	"labelWidth" => 100,
+	"labelRightAlign" => 1,
+	"map" => array(2, 2, 1, 3)
+));
+$form->addHidden("cmd", "submit");
+$form->addTextbox("First Name:", "FName", "", array("required" => 1));
+$form->addTextbox("Last Name:", "LName", "", array("required" => 1));
+$form->addEmail("Email Address:", "Email", "", array("required" => 1));
+$form->addTextbox("Phone Number:", "Phone");
+$form->addTextbox("Address:", "Address");
+$form->addTextbox("City:", "City");
+$form->addState("State:", "State");
+$form->addTextbox("Zip Code:", "Zip");
+$form->addButton();
+$form->render();
+', true), '</pre>';
+
+				?>
+				<p>Using pixels when building your forms will give you more accurate alignment; however, you can defines widths in percentages if desired.
+				Please note that percentages and pixels should not be mixed together in the same form.</p>
+				<?
+				$form = new form("percentages");
+				$form->setAttributes(array(
+					"width" => "80%",
+					"includesPath" => "../includes",
+					"noAutoFocus" => 1,
+					"labelWidth" => "30%",
+					"labelRightAlign" => 1,
+					"labelPaddingRight" => "1%"
+				));
+				$form->addHidden("cmd", "submit");
+				$form->addTextbox("First Name:", "FName", "", array("required" => 1));
+				$form->addTextbox("Last Name:", "LName", "", array("required" => 1));
+				$form->addEmail("Email Address:", "Email", "", array("required" => 1));
+				$form->addTextbox("Phone Number:", "Phone");
+				$form->addTextbox("Address:", "Address");
+				$form->addTextbox("City:", "City");
+				$form->addState("State:", "State");
+				$form->addTextbox("Zip Code:", "Zip");
+				$form->addButton();
+				$form->render();
+
+echo '<pre>', highlight_string('<?php
+$form = new form("percentages");
+$form->setAttributes(array(
+	"width" => "80%",
+	"includesPath" => "../includes",
+	"noAutoFocus" => 1,
+	"labelWidth" => "30%",
+	"labelRightAlign" => 1,
+	"labelPaddingRight" => "1%"
+));
+$form->addHidden("cmd", "submit");
+$form->addTextbox("First Name:", "FName", "", array("required" => 1));
+$form->addTextbox("Last Name:", "LName", "", array("required" => 1));
+$form->addEmail("Email Address:", "Email", "", array("required" => 1));
+$form->addTextbox("Phone Number:", "Phone");
+$form->addTextbox("Address:", "Address");
+$form->addTextbox("City:", "City");
+$form->addState("State:", "State");
+$form->addTextbox("Zip Code:", "Zip");
+$form->addButton();
+$form->render();
+', true), '</pre>';
+				?>
 			</div>
 		</body>	
 	</html>	

@@ -29,7 +29,6 @@
 					<li><a href="web-editors.php">Web Editors</a></li>
 					<li><a href="buttons.php">Buttons</a></li>
 					<li><a href="conditional-scenarios.php">Conditional Scenarios</a></li>
-					<li><a href="custom-css.php">Custom CSS Styling</a></li>
 					<li><a href="includes-directory-path-error.php">Invalid includes Directory Path Error</a></li>
 					<li><a href="fieldsets.php">Fieldsets</a></li>
 				</ul>
