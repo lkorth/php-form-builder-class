@@ -62,6 +62,9 @@ class form extends pfbc {
 	protected $jqueryDateFormat;
 	protected $jqueryUITheme;
 	protected $jsErrorFunction;
+	protected $labelPaddingRight;
+	protected $labelRightAlign;
+	protected $labelWidth;
 	protected $latlngDefaultLocation;
 	protected $map;
 	protected $mapMargin;
@@ -129,7 +132,8 @@ class form extends pfbc {
 		$this->jqueryDateFormat = "MM d, yy";
 		$this->jqueryUITheme = "smoothness";
 		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
-		$this->mapMargin = 1;
+		$this->labelPaddingRight = 4;
+		$this->mapMargin = 2;
 		//These lists represent all xhtml 1.0 strict compliant attributes. See http://www.w3schools.com/tags/default.asp for reference.
 		$this->allowedFields = array(
 			"form" => array("action", "accept", "accept-charset", "enctype", "method", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onreset", "onsubmit"),
@@ -3001,19 +3005,35 @@ STR;
 					}
 
 					//If the labelWidth attribute is set, handle appropriately.
-					if(!empty($ele->labelWidth)) {
-						if(substr($ele->labelWidth, -1) == "%") {
-							$labelWidth = substr($ele->labelWidth, 0, -1);
+					$labelWidth = "";
+					if(!empty($ele->labelWidth))
+						$labelWidth = $ele->labelWidth;
+					elseif(!empty($form->labelWidth))
+						$labelWidth = $form->labelWidth;
+
+					if(!empty($labelWidth)) {
+						$labelRightAlign = false;
+						if(!empty($ele->labelRightAlign))
+							$labelRightAlign = true;
+						elseif(!empty($form->labelRightAlign))
+							$labelRightAlign = true;
+						
+						if($labelRightAlign) {
+							$labelPaddingRight = $form->labelPaddingRight;
+							if(!empty($ele->labelPaddingRight))
+								$labelPaddingRight = $ele->labelPaddingRight;
+						}	
+
+						if(substr($labelWidth, -1) == "%") {
+							$labelWidth = substr($labelWidth, 0, -1);
 							$labelWidthSuffix = "%";
 						}	
-						elseif(substr($ele->labelWidth, -2) == "px") {
-							$labelWidth = substr($ele->labelWidth, 0, -2);
+						elseif(substr($labelWidth, -2) == "px") {
+							$labelWidth = substr($labelWidth, 0, -2);
 							$labelWidthSuffix = "px";
 						}	
-						else {
-							$labelWidth = $ele->labelWidth;
+						else
 							$labelWidthSuffix = "px";
-						}	
 
 						if($labelWidthSuffix == $formWidthSuffix) {
 							if(!empty($form->map)) {
@@ -3044,6 +3064,28 @@ STR;
 							$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
 	float: left !important;
+
+STR;
+							if(!empty($labelRightAlign)) {
+								$str .= <<<STR
+	text-align: right;
+
+STR;
+							}
+
+							if(!empty($labelPaddingRight)) {
+								if(substr($labelPaddingRight, -1) == "%")
+									$labelPaddingRight = substr($labelPaddingRight, 0, -1);
+								elseif(substr($labelPaddingRight, -2) == "px")
+									$labelPaddingRight = substr($labelPaddingRight, 0, -2);
+								$labelWidth -= $labelPaddingRight;
+								$str .= <<<STR
+	padding-right: {$labelPaddingRight}$labelWidthSuffix;
+
+STR;
+							}
+
+							$str .= <<<STR
 	width: {$labelWidth}$labelWidthSuffix !important;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
@@ -3185,6 +3227,8 @@ class element extends pfbc {
 	public $hideDisplay;
 	public $hideJump;
 	public $label;
+	public $labelPaddingRight;
+	public $labelRightAlign;
 	public $labelWidth;
 	public $max;
 	public $min;

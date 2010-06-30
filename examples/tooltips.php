@@ -53,7 +53,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>' . htmlentities('<style type="text/css">
+echo '<pre>', highlight_string('<?php
 	.tooltipTitle {
 		font-weight: bold;
 		color: #990000;;
@@ -78,7 +78,7 @@ $form->addTextbox("Basic/Plain Text Tooltip:", "field0", "", array("tooltip" => 
 $form->addTextbox("HTML/Styled Tooltip:", "field1", "", array("tooltip" => \'<div class="tooltipTitle">HTML/Styled Tooltip Example</div><div class="tooltipBody">This example demonstates how to incorporate rich text into tooltips.</div>\'));
 $form->addButton();
 $form->render();
-?>') . '</pre>';
+?>', true), '</pre>';
 
 				?>
 			</div>	

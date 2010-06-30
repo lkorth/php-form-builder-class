@@ -76,6 +76,7 @@ $form->render();
 				$form->setAttributes(array(
 					"width" => 300,
 					"includesPath" => "../includes",
+					"noAutoFocus" => 1,
 					"labelWidth" => 100
 				));
 				$form->addHidden("cmd", "submit");
@@ -90,6 +91,7 @@ $form = new form("login");
 $form->setAttributes(array(
 	"width" => 300,
 	"includesPath" => "../includes",
+	"noAutoFocus" => 1,
 	"labelWidth" => 100
 ));
 $form->addHidden("cmd", "submit");
