@@ -49,7 +49,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>', highlight_string('<?php
+echo '<pre>', highlight_string('<?phpphp
 $form = new form("layout");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -71,7 +71,7 @@ $form->render();
 
 				?>
 				<p>In the sample login form provided below, the <i>labelWidth</i> attribute is used to render the label on the same line as the form elements.  <i>labelWidth</i> can be set as both a form and element level attribute.</p>
-				<?
+				<?php
 				$form = new form("login");
 				$form->setAttributes(array(
 					"width" => 300,
@@ -104,7 +104,7 @@ $form->render();
 
 				?>
 				<p>This form demonstrates how the <i>labelWidth, labelRightAlign, and map</i> attributes can all be used in combination to produce yet another possible layout.  <i>labelPaddingRight</i> can be used to control the padding applied to the right of the each label.</p>
-				<?
+				<?php
 				$form = new form("signup");
 				$form->setAttributes(array(
 					"width" => 700,
@@ -152,7 +152,7 @@ $form->render();
 				?>
 				<p>Using pixels when building your forms will give you more accurate alignment; however, you can defines widths in percentages if desired.
 				Please note that percentages and pixels should not be mixed together in the same form.</p>
-				<?
+				<?php
 				$form = new form("percentages");
 				$form->setAttributes(array(
 					"width" => "80%",
