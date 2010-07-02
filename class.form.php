@@ -1179,13 +1179,34 @@ class form extends pfbc {
 					}
 					$str .= ">";
 
+					if(!is_array($ele->attributes["value"])) {
+						if($ele->attributes["value"] !== "") {
+							if(is_numeric($ele->attributes["value"]))
+								$ele->attributes["value"] = (string) $ele->attributes["value"];
+						}		
+					}
+					else {
+						$valueSize = sizeof($ele->attributes["value"]);
+						for($v = 0; $v < $valueSize; ++$v) {
+							if($ele->attributes["value"][$v] !== "") {
+								if(is_numeric($ele->attributes["value"][$v]))
+									$ele->attributes["value"][$v] = (string) $ele->attributes["value"][$v];
+							}		
+						}
+					}
+
 					$selected = false;
 					if(is_array($ele->options)) {
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o) {
+							if($ele->options[$o]->value !== "") {
+								if(is_numeric($ele->options[$o]->value))
+									$ele->options[$o]->value = (string) $ele->options[$o]->value;
+							}		
+
 							$str .= $this->indent("\t");
 							$str .= '<option value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';
-							if($ele->attributes["value"] !== "" && ((!is_array($ele->attributes["value"]) && !$selected && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"])))) {
+							if((!is_array($ele->attributes["value"]) && !$selected && $ele->attributes["value"] === $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true))) {
 								$str .= ' selected="selected"';
 								$selected = true;
 							}
@@ -1212,10 +1233,21 @@ class form extends pfbc {
 				}
 				elseif($eleType == "radio") {
 					if(is_array($ele->options)) {
+
+						if($ele->attributes["value"] !== "") {
+							if(is_numeric($ele->attributes["value"]))
+								$ele->attributes["value"] = (string) $ele->attributes["value"];
+						}		
+
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o) {
 							if($o != 0)
 								$str .= $this->indent();
+
+							if($ele->options[$o]->value !== "") {
+								if(is_numeric($ele->options[$o]->value))
+									$ele->options[$o]->value = (string) $ele->options[$o]->value;
+							}		
 
 							$str .= '<div class="pfbc-radio';
 							if($o == 0)
@@ -1232,7 +1264,7 @@ class form extends pfbc {
 								}		
 							}
 							$str .= ' id="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';		
-							if($ele->attributes["value"] == $ele->options[$o]->value)
+							if($ele->attributes["value"] === $ele->options[$o]->value)
 								$str .= ' checked="checked"';
 							$str .= '/>';
 							$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->options[$o]->text . "</label></div>";
@@ -1247,14 +1279,35 @@ class form extends pfbc {
 				}
 				elseif($eleType == "checkbox") {
 					if(is_array($ele->options)) {
-						$optionSize = sizeof($ele->options);
 
 						if($optionSize > 1 && substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
 
+						if(!is_array($ele->attributes["value"])) {
+							if($ele->attributes["value"] !== "") {
+								if(is_numeric($ele->attributes["value"]))
+									$ele->attributes["value"] = (string) $ele->attributes["value"];
+							}		
+						}
+						else {
+							$valueSize = sizeof($ele->attributes["value"]);
+							for($v = 0; $v < $valueSize; ++$v) {
+								if($ele->attributes["value"][$v] !== "") {
+									if(is_numeric($ele->attributes["value"][$v]))
+										$ele->attributes["value"][$v] = (string) $ele->attributes["value"][$v];
+								}		
+							}
+						}
+
+						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o) {
 							if($o != 0)
 								$str .= $this->indent();
+
+							if($ele->options[$o]->value !== "") {
+								if(is_numeric($ele->options[$o]->value))
+									$ele->options[$o]->value = (string) $ele->options[$o]->value;
+							}		
 
 							$str .= '<div class="pfbc-checkbox';
 							if($o == 0)
@@ -1274,7 +1327,7 @@ class form extends pfbc {
 							$str .= ' id="' . $tmpID . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';		
 
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
-							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"])))
+							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true)))
 								$str .= ' checked="checked"';
 							$str .= '/>';
 							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
@@ -1376,6 +1429,22 @@ class form extends pfbc {
 						if(substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
 
+						if(!is_array($ele->attributes["value"])) {
+							if($ele->attributes["value"] !== "") {
+								if(is_numeric($ele->attributes["value"]))
+									$ele->attributes["value"] = (string) $ele->attributes["value"];
+							}		
+						}
+						else {
+							$valueSize = sizeof($ele->attributes["value"]);
+							for($v = 0; $v < $valueSize; ++$v) {
+								if($ele->attributes["value"][$v] !== "") {
+									if(is_numeric($ele->attributes["value"][$v]))
+										$ele->attributes["value"][$v] = (string) $ele->attributes["value"][$v];
+								}		
+							}
+						}
+
 						//This variable triggers a javascript section for handling the dynamic adding/removing of sortable option when a user clicks the checkbox.
 						$this->jqueryCheckSort = 1;
 
@@ -1384,6 +1453,11 @@ class form extends pfbc {
 						for($o = 0; $o < $optionSize; ++$o) {
 							if($o != 0)
 								$str .= $this->indent();
+
+							if($ele->options[$o]->value !== "") {
+								if(is_numeric($ele->options[$o]->value))
+									$ele->options[$o]->value = (string) $ele->options[$o]->value;
+							}		
 
 							$str .= '<div class="pfbc-checkbox';
 							if($o == 0)
@@ -1403,7 +1477,7 @@ class form extends pfbc {
 							$str .= ' id="' . $tmpID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->options[$o]->value) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->options[$o]->text) . '\');"';
 
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
-							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"]))) {
+							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true))) {
 								$str .= ' checked="checked"';
 								$sortLIArr[$ele->options[$o]->value] = '<li id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . $o . '" class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"/></span>' . $ele->options[$o]->text . '</li>' . "\n";
 							}	
@@ -3167,6 +3241,14 @@ STR;
 			if(substr($ele->attributes["name"], -2) == "[]")
 				$ele->attributes["name"] = substr($ele->attributes["name"], 0, -2);
 
+			if(!empty($ele->label)) {
+				$eleLabel = strip_tags($ele->label);
+				if(substr($eleLabel, -1) == ":")
+					$eleLabel = substr($eleLabel, 0, -1);
+			}	
+			else
+				$eleLabel = strip_tags($ele->attributes["name"]);
+
 			//The html, sort, and hidden element types are ignored.
 			if($ele->attributes["type"] == "html" || $ele->attributes["type"] == "sort" || $ele->attributes["type"] == "hidden")
 				continue;
@@ -3194,21 +3276,21 @@ STR;
 			elseif(!empty($ele->required)) {
 				if($ele->attributes["type"] == "checkbox" || $ele->attributes["type"] == "radio" || $ele->attributes["type"] == "checksort" || $ele->attributes["type"] == "rating") {
 					if(!isset($referenceValues[$ele->attributes["name"]])) {
-						$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->errorMsgFormat);
+						$this->errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
 						return false;
 					}
 				}
-				elseif(empty($referenceValues[$ele->attributes["name"]])) {
-					$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->errorMsgFormat);
+				elseif($referenceValues[$ele->attributes["name"]] === "") {
+					$this->errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
 					return false;
 				}	
 			}
 
-			if($ele->attributes["type"] == "email" && !empty($referenceValues[$ele->attributes["name"]])) {
+			if($ele->attributes["type"] == "email" && $referenceValues[$ele->attributes["name"]] !== "") {
 				require_once($form->phpIncludesPath . "/php-email-address-validation/EmailAddressValidator.php");
 				$emailObj = new EmailAddressValidator;
 				if(!$emailObj->check_email_address($referenceValues[$ele->attributes["name"]])) {
-					$this->errorMsg = str_replace("[LABEL]", $ele->label, $form->emailErrorMsgFormat);
+					$this->errorMsg = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
 					return false;
 				}	
 			}
