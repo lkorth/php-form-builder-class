@@ -1185,7 +1185,7 @@ class form extends pfbc {
 						for($o = 0; $o < $optionSize; ++$o) {
 							$str .= $this->indent("\t");
 							$str .= '<option value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';
-							if((!is_array($ele->attributes["value"]) && !$selected && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"]))) {
+							if($ele->attributes["value"] !== "" && ((!is_array($ele->attributes["value"]) && !$selected && $ele->attributes["value"] == $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"])))) {
 								$str .= ' selected="selected"';
 								$selected = true;
 							}
