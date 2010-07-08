@@ -60,8 +60,8 @@ class form extends pfbc {
 	protected $errorMsgFormat;
 	protected $includesPath;
 	protected $jqueryDateFormat;
-        protected $jqueryIncludePath;
-        protected $jqueryUIIncludePath;
+        protected $jqueryInclude;
+        protected $jqueryUIInclude;
 	protected $jqueryUITheme;
 	protected $jsErrorFunction;
 	protected $labelPaddingRight;
