@@ -60,6 +60,8 @@ class form extends pfbc {
 	protected $errorMsgFormat;
 	protected $includesPath;
 	protected $jqueryDateFormat;
+        protected $jqueryIncludePath;
+        protected $jqueryUIIncludePath;
 	protected $jqueryUITheme;
 	protected $jsErrorFunction;
 	protected $labelPaddingRight;
@@ -130,6 +132,8 @@ class form extends pfbc {
 		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
 		$this->includesPath = "php-form-builder-class/includes";
 		$this->jqueryDateFormat = "MM d, yy";
+                $this->jqueryInclude = 'https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js';
+                $this->jqueryUIInclude = 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js';
 		$this->jqueryUITheme = "smoothness";
 		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
 		$this->labelPaddingRight = 4;
@@ -1603,7 +1607,7 @@ STR;
 		//Unless prevented, jQuery will be loaded with each form that is built using this class.
 		if(empty($this->preventJQueryLoad)) {
 			$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/jquery.js"></script>
+		<script type="text/javascript" src="{$this->jqueryInclude}"></script>
 
 STR;
 		}
@@ -1611,7 +1615,7 @@ STR;
 		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists)) {
 			if(empty($this->preventJQueryUILoad)) {
 				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/jquery-ui.js"></script>
+		<script type="text/javascript" src="{$this->jqueryUIInclude}"></script>
 
 STR;
 			}	
