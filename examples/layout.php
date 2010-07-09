@@ -49,7 +49,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addButton();
 				$form->render();
 
-echo '<pre>', highlight_string('<?phpphp
+echo '<pre>', highlight_string('<?php
 $form = new form("layout");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
