@@ -60,8 +60,8 @@ class form extends pfbc {
 	protected $errorMsgFormat;
 	protected $includesPath;
 	protected $jqueryDateFormat;
-        protected $jqueryInclude;
-        protected $jqueryUIInclude;
+	protected $jqueryInclude;
+	protected $jqueryUIInclude;
 	protected $jqueryUITheme;
 	protected $jsErrorFunction;
 	protected $labelPaddingRight;
@@ -95,6 +95,7 @@ class form extends pfbc {
 	private $focusElement;
 	private $hasFormTag;
 	private $hintExists;
+	private $jqueryAllowedParams;
 	private $jqueryCheckSort;
 	private $jqueryColorIDArr;
 	private $jqueryDateIDArr;
@@ -132,8 +133,8 @@ class form extends pfbc {
 		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
 		$this->includesPath = "php-form-builder-class/includes";
 		$this->jqueryDateFormat = "MM d, yy";
-                $this->jqueryInclude = 'https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js';
-                $this->jqueryUIInclude = 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js';
+		$this->jqueryInclude = 'https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js';
+		$this->jqueryUIInclude = 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js';
 		$this->jqueryUITheme = "smoothness";
 		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
 		$this->labelPaddingRight = 4;
@@ -574,6 +575,24 @@ class form extends pfbc {
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date...";
 
+			$jqueryParams = array("dateFormat" => $this->jqueryDateFormat, "changeMonth" => true, "changeYear" => true);	
+			if(empty($this->jqueryAllowedParams["date"]))
+				$this->jqueryAllowedParams["date"] = array("disabled", "altField", "altFormat", "appendText", "autoSize", "buttonImage", "buttonImageOnly", "buttonText", "calculateWeek", "changeMonth", "changeYear", "closeText", "constrainInput", "currentText", "dateFormat", "dayNames", "dayNamesMin", "dayNamesShort", "defaultDate", "duration", "firstDay", "gotoCurrent", "hideIfNoPrevNext", "isRTL", "maxDate", "minDate", "monthNames", "monthNamesShort", "navigationAsDateFormat", "nextText", "numberOfMonths", "prevText", "selectOtherMonths", "shortYearCutoff", "showAnim", "showButtonPanel", "showCurrentAtPos", "showMonthAfterYear", "showOn", "showOptions", "showOtherMonths", "showWeek", "stepMonths", "weekHeader", "yearRange", "yearSuffix");
+			if(!empty($ele->jqueryParams)) {
+				foreach($ele->jqueryParams as $key => $val) {
+					if(in_array($key, $this->jqueryAllowedParams["date"])) 
+						$jqueryParams[$key] = $val;
+				}
+			}
+			//Added for backwards compatibility to ensure the minDate, maxDate, and months element attributes are still functional in future releases.
+			if(isset($ele->min) && !array_key_exists("minDate", $jqueryParams))
+				$jqueryParams["minDate"] = $ele->min;
+			if(isset($ele->max) && !array_key_exists("maxDate", $jqueryParams))
+				$jqueryParams["maxDate"] = $ele->max;
+			if(isset($ele->months) && !array_key_exists("numberOfMonths", $jqueryParams))
+				$jqueryParams["numberOfMonths"] = $ele->months;
+			$ele->jqueryParams = $jqueryParams;
+
 			$this->jqueryDateIDArr[$ele->attributes["id"]] = $ele;
 		}
 		elseif($eleType == "daterange") {
@@ -587,6 +606,22 @@ class form extends pfbc {
 			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date Range...";
+
+			$jqueryParams = array("dateFormat" => $this->jqueryDateFormat, "changeMonth" => true, "changeYear" => true);	
+			if(empty($this->jqueryAllowedParams["daterange"]))
+				$this->jqueryAllowedParams["daterange"] = array("disabled", "altField", "altFormat", "appendText", "autoSize", "buttonImage", "buttonImageOnly", "buttonText", "calculateWeek", "changeMonth", "changeYear", "closeText", "constrainInput", "currentText", "dateFormat", "dayNames", "dayNamesMin", "dayNamesShort", "defaultDate", "duration", "firstDay", "gotoCurrent", "hideIfNoPrevNext", "isRTL", "maxDate", "minDate", "monthNames", "monthNamesShort", "navigationAsDateFormat", "nextText", "numberOfMonths", "prevText", "selectOtherMonths", "shortYearCutoff", "showAnim", "showButtonPanel", "showCurrentAtPos", "showMonthAfterYear", "showOn", "showOptions", "showOtherMonths", "showWeek", "stepMonths", "weekHeader", "yearRange", "yearSuffix");
+			if(!empty($ele->jqueryParams)) {
+				foreach($ele->jqueryParams as $key => $val) {
+					if(in_array($key, $this->jqueryAllowedParams["daterange"])) 
+						$jqueryParams[$key] = $val;
+				}
+			}
+			//Added for backwards compatibility to ensure the minDate, maxDate, and months element attributes are still functional in future releases.
+			if(isset($ele->min) && !array_key_exists("minDate", $jqueryParams))
+				$jqueryParams["minDate"] = $ele->min;
+			if(isset($ele->max) && !array_key_exists("maxDate", $jqueryParams))
+				$jqueryParams["maxDate"] = $ele->max;
+			$ele->jqueryParams = $jqueryParams;
 
 			$this->jqueryDateRangeIDArr[$ele->attributes["id"]] = $ele;
 		}
@@ -2255,27 +2290,20 @@ STR;
 					$dateSize = sizeof($form->jqueryDateIDArr);
 					for($d = 0; $d < $dateSize; ++$d) {
 						$date = $form->jqueryDateIDArr[$dateKeys[$d]];
-						$str .= <<<STR
-	$("#{$dateKeys[$d]}").datepicker({ dateFormat: "{$form->jqueryDateFormat}", changeMonth: true, changeYear: true
-STR;
-						if(!empty($date->min)) {
-							$str .= <<<STR
-, minDate: "{$date->min}"
-STR;
-						}
-						if(!empty($date->max)) {
-							$str .= <<<STR
-, maxDate: "{$date->max}"
-STR;
-						}
-						if(!empty($date->months)) {
-							$str .= <<<STR
-, numberOfMonths: {$date->months}
-STR;
+
+						$jqueryParamStr = "";
+						foreach($date->jqueryParams as $key => $val) {
+							if(!empty($jqueryParamStr))
+								$jqueryParamStr .= ", ";
+							$jqueryParamStr .= $key . ': ';
+							if(is_string($val))
+								$jqueryParamStr .= '"' . $val . '"';	
+							else
+								$jqueryParamStr .= var_export($val, true);
 						}
 
 						$str .= <<<STR
- });
+	$("#{$dateKeys[$d]}").datepicker({ $jqueryParamStr });
 
 STR;
 					}	
@@ -2286,21 +2314,23 @@ STR;
 					$dateRangeSize = sizeof($form->jqueryDateRangeIDArr);
 					for($d = 0; $d < $dateRangeSize; ++$d) {
 						$dateRange = $form->jqueryDateRangeIDArr[$dateRangeKeys[$d]];
-						$str .= <<<STR
-	$("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "{$form->jqueryDateFormat}", changeMonth: true, changeYear: true, datepickerOptions: { changeMonth: true, changeYear: true
-STR;
-						if(!empty($dateRange->min)) {
-							$str .= <<<STR
-, minDate: "{$dateRange->min}"
-STR;
+
+						$jqueryDateFormat = $dateRange->jqueryParams["dateFormat"];
+						unset($dateRange->jqueryParams["dateFormat"]);
+
+						$jqueryParamStr = "";
+						foreach($dateRange->jqueryParams as $key => $val) {
+							if(!empty($jqueryParamStr))
+								$jqueryParamStr .= ", ";
+							$jqueryParamStr .= $key . ': ';
+							if(is_string($val))
+								$jqueryParamStr .= '"' . $val . '"';	
+							else
+								$jqueryParamStr .= var_export($val, true);
 						}
-						if(!empty($dateRange->max)) {
-							$str .= <<<STR
-, maxDate: "{$dateRange->max}"
-STR;
-						}
+
 						$str .= <<<STR
-} });
+	$("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryParamStr } });
 
 STR;
 					}	
@@ -3333,6 +3363,7 @@ class element extends pfbc {
 	public $tooltipID;
 	public $width;
 	public $zoom;
+	public $jqueryParams;
 
 	public function __construct() {
 		$this->attributes = array(
