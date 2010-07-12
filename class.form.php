@@ -683,14 +683,35 @@ class form extends pfbc {
 			while(array_key_exists($ele->attributes["id"], $this->jquerySliderIDArr))
 				$ele->attributes["id"] = "sliderinput_" . rand(0, 999);
 
-			if(empty($ele->min))
-				$ele->min = "0";
+			$jqueryParams = array();
+			if(empty($this->jqueryAllowedParams["slider"]))
+				$this->jqueryAllowedParams["slider"] = array("disabled", "animate", "max", "min", "orientation", "step");
+			if(!empty($ele->jqueryParams)) {
+				foreach($ele->jqueryParams as $key => $val) {
+					if(in_array($key, $this->jqueryAllowedParams["slider"])) 
+						$jqueryParams[$key] = $val;
+				}
+			}
 
-			if(empty($ele->max))
-				$ele->max = "100";
+			//Added for backwards compatibility to ensure the min, max, orientation, and snapIncrement element attributes are still functional in future releases.
+			if(isset($ele->min) && !array_key_exists("min", $jqueryParams))
+				$jqueryParams["min"] = $ele->min;
+			if(isset($ele->max) && !array_key_exists("max", $jqueryParams))
+				$jqueryParams["max"] = $ele->max;
+			if(isset($ele->orientation) && !array_key_exists("orientation", $jqueryParams))
+				$jqueryParams["orientation"] = $ele->orientation;
+			if(isset($ele->snapIncrement) && !array_key_exists("step", $jqueryParams))
+				$jqueryParams["step"] = $ele->snapIncrement;
 
-			if(empty($ele->orientation) || !in_array($ele->orientation, array("horizontal", "vertical")))
-				$ele->orientation = "horizontal";
+			//Set default values if not specified by user.
+			if(!array_key_exists("min", $jqueryParams))
+				$jqueryParams["min"] = "0";
+			if(!array_key_exists("max", $jqueryParams))
+				$jqueryParams["max"] = "100";
+			if(!array_key_exists("orientation", $jqueryParams) || !in_array($jqueryParams["orientation"], array("horizontal", "vertical")))
+				$jqueryParams["orientation"] = "horizontal";
+
+			$ele->jqueryParams = $jqueryParams;
 
 			if(empty($ele->prefix))
 				$ele->prefix = "";
@@ -698,7 +719,7 @@ class form extends pfbc {
 			if(empty($ele->suffix))
 				$ele->suffix = "";
 
-			if($ele->orientation == "vertical" && !empty($ele->height)) {
+			if($ele->jqueryParams["orientation"] == "vertical" && !empty($ele->height)) {
 				if(substr($ele->height, -2) != "px")
 					$ele->height .= "px";
 			}		
@@ -1560,7 +1581,7 @@ class form extends pfbc {
 						$ele->attributes["value"] = $ele->attributes["value"][0];
 					
 					$str .= '<div id="' . $ele->attributes["id"] . '" style="font-size: 12px !important; margin: 2px 0;';
-					if($ele->orientation == "vertical" && !empty($ele->height))
+					if($ele->jqueryParams["orientation"] == "vertical" && !empty($ele->height))
 						$str .= ' height: ' . $ele->height;
 					$str .= '"></div>';
 
@@ -2296,10 +2317,10 @@ STR;
 							if(!empty($jqueryParamStr))
 								$jqueryParamStr .= ", ";
 							$jqueryParamStr .= $key . ': ';
-							if(is_string($val))
-								$jqueryParamStr .= '"' . $val . '"';	
-							else
-								$jqueryParamStr .= var_export($val, true);
+                            if(is_string($val) && $val[0] == "[" && $val[strlen($val) - 1] == "]")
+                                $jqueryParamStr .= $val;
+                            else
+                                $jqueryParamStr .= var_export($val, true);
 						}
 
 						$str .= <<<STR
@@ -2323,10 +2344,10 @@ STR;
 							if(!empty($jqueryParamStr))
 								$jqueryParamStr .= ", ";
 							$jqueryParamStr .= $key . ': ';
-							if(is_string($val))
-								$jqueryParamStr .= '"' . $val . '"';	
-							else
-								$jqueryParamStr .= var_export($val, true);
+                            if(is_string($val) && $val[0] == "[" && $val[strlen($val) - 1] == "]")
+                                $jqueryParamStr .= $val;
+                            else
+                                $jqueryParamStr .= var_export($val, true);
 						}
 
 						$str .= <<<STR
@@ -2389,36 +2410,31 @@ STR;
 					for($s = 0; $s < $sliderSize; ++$s) {
 						$slider = $form->jquerySliderIDArr[$sliderKeys[$s]];
 						$sliderName = str_replace('"', '&quot;', $slider->attributes["name"]);
-						$str .= <<<STR
-	$("#{$sliderKeys[$s]}").slider({
 
-STR;
 						if(is_array($slider->attributes["value"])) {
-							$str .= <<<STR
-		range: true, 
-		values: [{$slider->attributes["value"][0]}, {$slider->attributes["value"][1]}],
-
-STR;
-						}	
+							$slider->jqueryParams["range"] = true;
+							$slider->jqueryParams["values"] = "[" . $slider->attributes["value"][0] . ", " . $slider->attributes["value"][1] . "]";
+						}
 						else {
-							$str .= <<<STR
-		range: "min", 
-		value: {$slider->attributes["value"]},
+							$slider->jqueryParams["range"] = "min";
+							$slider->jqueryParams["value"] = $slider->attributes["value"];
 
-STR;
-						}	
+						}
+
+						$jqueryParamStr = "";
+                        foreach($slider->jqueryParams as $key => $val) {
+                            $jqueryParamStr .= $key . ': ';
+                            if(is_string($val) && $val[0] == "[" && $val[strlen($val) - 1] == "]")
+                                $jqueryParamStr .= $val;
+                            else
+                                $jqueryParamStr .= var_export($val, true);
+							$jqueryParamStr .= ", ";
+                        }
+
 						$str .= <<<STR
-		min: {$slider->min}, 
-		max: {$slider->max}, 
-		orientation: "{$slider->orientation}",
+	$("#{$sliderKeys[$s]}").slider({ $jqueryParamStr
 
 STR;
-						if(!empty($slider->snapIncrement)) {
-							$str .= <<<STR
-		step: {$slider->snapIncrement},
-
-STR;
-						}	
 						if(is_array($slider->attributes["value"])) {
 							$str .= <<<STR
 		slide: function(event, ui) {
