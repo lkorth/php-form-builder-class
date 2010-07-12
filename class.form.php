@@ -575,23 +575,23 @@ class form extends pfbc {
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date...";
 
-			$jqueryParams = array("dateFormat" => $this->jqueryDateFormat, "changeMonth" => true, "changeYear" => true);	
+			$jqueryOptions = array("dateFormat" => $this->jqueryDateFormat, "changeMonth" => true, "changeYear" => true);	
 			if(empty($this->jqueryAllowedParams["date"]))
 				$this->jqueryAllowedParams["date"] = array("disabled", "altField", "altFormat", "appendText", "autoSize", "buttonImage", "buttonImageOnly", "buttonText", "calculateWeek", "changeMonth", "changeYear", "closeText", "constrainInput", "currentText", "dateFormat", "dayNames", "dayNamesMin", "dayNamesShort", "defaultDate", "duration", "firstDay", "gotoCurrent", "hideIfNoPrevNext", "isRTL", "maxDate", "minDate", "monthNames", "monthNamesShort", "navigationAsDateFormat", "nextText", "numberOfMonths", "prevText", "selectOtherMonths", "shortYearCutoff", "showAnim", "showButtonPanel", "showCurrentAtPos", "showMonthAfterYear", "showOn", "showOptions", "showOtherMonths", "showWeek", "stepMonths", "weekHeader", "yearRange", "yearSuffix");
-			if(!empty($ele->jqueryParams)) {
-				foreach($ele->jqueryParams as $key => $val) {
+			if(!empty($ele->jqueryOptions)) {
+				foreach($ele->jqueryOptions as $key => $val) {
 					if(in_array($key, $this->jqueryAllowedParams["date"])) 
-						$jqueryParams[$key] = $val;
+						$jqueryOptions[$key] = $val;
 				}
 			}
 			//Added for backwards compatibility to ensure the minDate, maxDate, and months element attributes are still functional in future releases.
-			if(isset($ele->min) && !array_key_exists("minDate", $jqueryParams))
-				$jqueryParams["minDate"] = $ele->min;
-			if(isset($ele->max) && !array_key_exists("maxDate", $jqueryParams))
-				$jqueryParams["maxDate"] = $ele->max;
-			if(isset($ele->months) && !array_key_exists("numberOfMonths", $jqueryParams))
-				$jqueryParams["numberOfMonths"] = $ele->months;
-			$ele->jqueryParams = $jqueryParams;
+			if(isset($ele->min) && !array_key_exists("minDate", $jqueryOptions))
+				$jqueryOptions["minDate"] = $ele->min;
+			if(isset($ele->max) && !array_key_exists("maxDate", $jqueryOptions))
+				$jqueryOptions["maxDate"] = $ele->max;
+			if(isset($ele->months) && !array_key_exists("numberOfMonths", $jqueryOptions))
+				$jqueryOptions["numberOfMonths"] = $ele->months;
+			$ele->jqueryOptions = $jqueryOptions;
 
 			$this->jqueryDateIDArr[$ele->attributes["id"]] = $ele;
 		}
@@ -607,21 +607,21 @@ class form extends pfbc {
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date Range...";
 
-			$jqueryParams = array("dateFormat" => $this->jqueryDateFormat, "changeMonth" => true, "changeYear" => true);	
+			$jqueryOptions = array("dateFormat" => $this->jqueryDateFormat, "changeMonth" => true, "changeYear" => true);	
 			if(empty($this->jqueryAllowedParams["daterange"]))
 				$this->jqueryAllowedParams["daterange"] = array("disabled", "altField", "altFormat", "appendText", "autoSize", "buttonImage", "buttonImageOnly", "buttonText", "calculateWeek", "changeMonth", "changeYear", "closeText", "constrainInput", "currentText", "dateFormat", "dayNames", "dayNamesMin", "dayNamesShort", "defaultDate", "duration", "firstDay", "gotoCurrent", "hideIfNoPrevNext", "isRTL", "maxDate", "minDate", "monthNames", "monthNamesShort", "navigationAsDateFormat", "nextText", "numberOfMonths", "prevText", "selectOtherMonths", "shortYearCutoff", "showAnim", "showButtonPanel", "showCurrentAtPos", "showMonthAfterYear", "showOn", "showOptions", "showOtherMonths", "showWeek", "stepMonths", "weekHeader", "yearRange", "yearSuffix");
-			if(!empty($ele->jqueryParams)) {
-				foreach($ele->jqueryParams as $key => $val) {
+			if(!empty($ele->jqueryOptions)) {
+				foreach($ele->jqueryOptions as $key => $val) {
 					if(in_array($key, $this->jqueryAllowedParams["daterange"])) 
-						$jqueryParams[$key] = $val;
+						$jqueryOptions[$key] = $val;
 				}
 			}
 			//Added for backwards compatibility to ensure the minDate, maxDate, and months element attributes are still functional in future releases.
-			if(isset($ele->min) && !array_key_exists("minDate", $jqueryParams))
-				$jqueryParams["minDate"] = $ele->min;
-			if(isset($ele->max) && !array_key_exists("maxDate", $jqueryParams))
-				$jqueryParams["maxDate"] = $ele->max;
-			$ele->jqueryParams = $jqueryParams;
+			if(isset($ele->min) && !array_key_exists("minDate", $jqueryOptions))
+				$jqueryOptions["minDate"] = $ele->min;
+			if(isset($ele->max) && !array_key_exists("maxDate", $jqueryOptions))
+				$jqueryOptions["maxDate"] = $ele->max;
+			$ele->jqueryOptions = $jqueryOptions;
 
 			$this->jqueryDateRangeIDArr[$ele->attributes["id"]] = $ele;
 		}
@@ -683,35 +683,35 @@ class form extends pfbc {
 			while(array_key_exists($ele->attributes["id"], $this->jquerySliderIDArr))
 				$ele->attributes["id"] = "sliderinput_" . rand(0, 999);
 
-			$jqueryParams = array();
+			$jqueryOptions = array();
 			if(empty($this->jqueryAllowedParams["slider"]))
 				$this->jqueryAllowedParams["slider"] = array("disabled", "animate", "max", "min", "orientation", "step");
-			if(!empty($ele->jqueryParams)) {
-				foreach($ele->jqueryParams as $key => $val) {
+			if(!empty($ele->jqueryOptions)) {
+				foreach($ele->jqueryOptions as $key => $val) {
 					if(in_array($key, $this->jqueryAllowedParams["slider"])) 
-						$jqueryParams[$key] = $val;
+						$jqueryOptions[$key] = $val;
 				}
 			}
 
 			//Added for backwards compatibility to ensure the min, max, orientation, and snapIncrement element attributes are still functional in future releases.
-			if(isset($ele->min) && !array_key_exists("min", $jqueryParams))
-				$jqueryParams["min"] = $ele->min;
-			if(isset($ele->max) && !array_key_exists("max", $jqueryParams))
-				$jqueryParams["max"] = $ele->max;
-			if(isset($ele->orientation) && !array_key_exists("orientation", $jqueryParams))
-				$jqueryParams["orientation"] = $ele->orientation;
-			if(isset($ele->snapIncrement) && !array_key_exists("step", $jqueryParams))
-				$jqueryParams["step"] = $ele->snapIncrement;
+			if(isset($ele->min) && !array_key_exists("min", $jqueryOptions))
+				$jqueryOptions["min"] = $ele->min;
+			if(isset($ele->max) && !array_key_exists("max", $jqueryOptions))
+				$jqueryOptions["max"] = $ele->max;
+			if(isset($ele->orientation) && !array_key_exists("orientation", $jqueryOptions))
+				$jqueryOptions["orientation"] = $ele->orientation;
+			if(isset($ele->snapIncrement) && !array_key_exists("step", $jqueryOptions))
+				$jqueryOptions["step"] = $ele->snapIncrement;
 
 			//Set default values if not specified by user.
-			if(!array_key_exists("min", $jqueryParams))
-				$jqueryParams["min"] = "0";
-			if(!array_key_exists("max", $jqueryParams))
-				$jqueryParams["max"] = "100";
-			if(!array_key_exists("orientation", $jqueryParams) || !in_array($jqueryParams["orientation"], array("horizontal", "vertical")))
-				$jqueryParams["orientation"] = "horizontal";
+			if(!array_key_exists("min", $jqueryOptions))
+				$jqueryOptions["min"] = "0";
+			if(!array_key_exists("max", $jqueryOptions))
+				$jqueryOptions["max"] = "100";
+			if(!array_key_exists("orientation", $jqueryOptions) || !in_array($jqueryOptions["orientation"], array("horizontal", "vertical")))
+				$jqueryOptions["orientation"] = "horizontal";
 
-			$ele->jqueryParams = $jqueryParams;
+			$ele->jqueryOptions = $jqueryOptions;
 
 			if(empty($ele->prefix))
 				$ele->prefix = "";
@@ -719,7 +719,7 @@ class form extends pfbc {
 			if(empty($ele->suffix))
 				$ele->suffix = "";
 
-			if($ele->jqueryParams["orientation"] == "vertical" && !empty($ele->height)) {
+			if($ele->jqueryOptions["orientation"] == "vertical" && !empty($ele->height)) {
 				if(substr($ele->height, -2) != "px")
 					$ele->height .= "px";
 			}		
@@ -1581,7 +1581,7 @@ class form extends pfbc {
 						$ele->attributes["value"] = $ele->attributes["value"][0];
 					
 					$str .= '<div id="' . $ele->attributes["id"] . '" style="font-size: 12px !important; margin: 2px 0;';
-					if($ele->jqueryParams["orientation"] == "vertical" && !empty($ele->height))
+					if($ele->jqueryOptions["orientation"] == "vertical" && !empty($ele->height))
 						$str .= ' height: ' . $ele->height;
 					$str .= '"></div>';
 
@@ -2312,19 +2312,19 @@ STR;
 					for($d = 0; $d < $dateSize; ++$d) {
 						$date = $form->jqueryDateIDArr[$dateKeys[$d]];
 
-						$jqueryParamStr = "";
-						foreach($date->jqueryParams as $key => $val) {
-							if(!empty($jqueryParamStr))
-								$jqueryParamStr .= ", ";
-							$jqueryParamStr .= $key . ': ';
+						$jqueryOptionStr = "";
+						foreach($date->jqueryOptions as $key => $val) {
+							if(!empty($jqueryOptionStr))
+								$jqueryOptionStr .= ", ";
+							$jqueryOptionStr .= $key . ': ';
                             if(is_string($val) && $val[0] == "[" && $val[strlen($val) - 1] == "]")
-                                $jqueryParamStr .= $val;
+                                $jqueryOptionStr .= $val;
                             else
-                                $jqueryParamStr .= var_export($val, true);
+                                $jqueryOptionStr .= var_export($val, true);
 						}
 
 						$str .= <<<STR
-	$("#{$dateKeys[$d]}").datepicker({ $jqueryParamStr });
+	$("#{$dateKeys[$d]}").datepicker({ $jqueryOptionStr });
 
 STR;
 					}	
@@ -2336,22 +2336,22 @@ STR;
 					for($d = 0; $d < $dateRangeSize; ++$d) {
 						$dateRange = $form->jqueryDateRangeIDArr[$dateRangeKeys[$d]];
 
-						$jqueryDateFormat = $dateRange->jqueryParams["dateFormat"];
-						unset($dateRange->jqueryParams["dateFormat"]);
+						$jqueryDateFormat = $dateRange->jqueryOptions["dateFormat"];
+						unset($dateRange->jqueryOptions["dateFormat"]);
 
-						$jqueryParamStr = "";
-						foreach($dateRange->jqueryParams as $key => $val) {
-							if(!empty($jqueryParamStr))
-								$jqueryParamStr .= ", ";
-							$jqueryParamStr .= $key . ': ';
+						$jqueryOptionStr = "";
+						foreach($dateRange->jqueryOptions as $key => $val) {
+							if(!empty($jqueryOptionStr))
+								$jqueryOptionStr .= ", ";
+							$jqueryOptionStr .= $key . ': ';
                             if(is_string($val) && $val[0] == "[" && $val[strlen($val) - 1] == "]")
-                                $jqueryParamStr .= $val;
+                                $jqueryOptionStr .= $val;
                             else
-                                $jqueryParamStr .= var_export($val, true);
+                                $jqueryOptionStr .= var_export($val, true);
 						}
 
 						$str .= <<<STR
-	$("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryParamStr } });
+	$("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr } });
 
 STR;
 					}	
@@ -2412,27 +2412,27 @@ STR;
 						$sliderName = str_replace('"', '&quot;', $slider->attributes["name"]);
 
 						if(is_array($slider->attributes["value"])) {
-							$slider->jqueryParams["range"] = true;
-							$slider->jqueryParams["values"] = "[" . $slider->attributes["value"][0] . ", " . $slider->attributes["value"][1] . "]";
+							$slider->jqueryOptions["range"] = true;
+							$slider->jqueryOptions["values"] = "[" . $slider->attributes["value"][0] . ", " . $slider->attributes["value"][1] . "]";
 						}
 						else {
-							$slider->jqueryParams["range"] = "min";
-							$slider->jqueryParams["value"] = $slider->attributes["value"];
+							$slider->jqueryOptions["range"] = "min";
+							$slider->jqueryOptions["value"] = $slider->attributes["value"];
 
 						}
 
-						$jqueryParamStr = "";
-                        foreach($slider->jqueryParams as $key => $val) {
-                            $jqueryParamStr .= $key . ': ';
+						$jqueryOptionStr = "";
+                        foreach($slider->jqueryOptions as $key => $val) {
+                            $jqueryOptionStr .= $key . ': ';
                             if(is_string($val) && $val[0] == "[" && $val[strlen($val) - 1] == "]")
-                                $jqueryParamStr .= $val;
+                                $jqueryOptionStr .= $val;
                             else
-                                $jqueryParamStr .= var_export($val, true);
-							$jqueryParamStr .= ", ";
+                                $jqueryOptionStr .= var_export($val, true);
+							$jqueryOptionStr .= ", ";
                         }
 
 						$str .= <<<STR
-	$("#{$sliderKeys[$s]}").slider({ $jqueryParamStr
+	$("#{$sliderKeys[$s]}").slider({ $jqueryOptionStr
 
 STR;
 						if(is_array($slider->attributes["value"])) {
@@ -3379,7 +3379,7 @@ class element extends pfbc {
 	public $tooltipID;
 	public $width;
 	public $zoom;
-	public $jqueryParams;
+	public $jqueryOptions;
 
 	public function __construct() {
 		$this->attributes = array(
