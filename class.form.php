@@ -589,7 +589,7 @@ class form extends pfbc {
 				$jqueryOptions["minDate"] = $ele->min;
 			if(isset($ele->max) && !array_key_exists("maxDate", $jqueryOptions))
 				$jqueryOptions["maxDate"] = $ele->max;
-			if(isset($ele->months) && !array_key_exists("numberOfMonths", $jqueryOptions))
+			if(!empty($ele->months) && !array_key_exists("numberOfMonths", $jqueryOptions))
 				$jqueryOptions["numberOfMonths"] = $ele->months;
 			$ele->jqueryOptions = $jqueryOptions;
 
@@ -698,9 +698,9 @@ class form extends pfbc {
 				$jqueryOptions["min"] = $ele->min;
 			if(isset($ele->max) && !array_key_exists("max", $jqueryOptions))
 				$jqueryOptions["max"] = $ele->max;
-			if(isset($ele->orientation) && !array_key_exists("orientation", $jqueryOptions))
+			if(!empty($ele->orientation) && !array_key_exists("orientation", $jqueryOptions))
 				$jqueryOptions["orientation"] = $ele->orientation;
-			if(isset($ele->snapIncrement) && !array_key_exists("step", $jqueryOptions))
+			if(!empty($ele->snapIncrement) && !array_key_exists("step", $jqueryOptions))
 				$jqueryOptions["step"] = $ele->snapIncrement;
 
 			//Set default values if not specified by user.
@@ -732,6 +732,27 @@ class form extends pfbc {
 				$this->jqueryStarRatingIDArr = array();
 			while(array_key_exists($ele->ratingID, $this->jqueryStarRatingIDArr))
 				$ele->ratingID = "starrating_" . rand(0, 999);
+			$this->jqueryStarRatingIDArr[$ele->ratingID] = "";
+
+			$jqueryOptions = array("inputType" => "select", "cancelValue" => "");
+			if(empty($this->jqueryAllowedParams["rating"]))
+				$this->jqueryAllowedParams["rating"] = array("disabled", "split", "oneVoteOnly", "captionEl", "cancelShow");
+			if(!empty($ele->jqueryOptions)) {
+				foreach($ele->jqueryOptions as $key => $val) {
+					if(in_array($key, $this->jqueryAllowedParams["rating"])) 
+						$jqueryOptions[$key] = $val;
+				}
+			}
+
+			//Added for backwards compatibility to ensure the hideCancel element attribute is still functional in future releases.
+			if(!empty($ele->hideCancel) && !array_key_exists("cancelShow", $jqueryOptions))
+				$jqueryOptions["cancelShow"] = false;
+
+			//Set default values if not specified by user.
+			if(empty($ele->hideCaption) && !array_key_exists("captionEl", $jqueryOptions))
+				$jqueryOptions["captionEl"] = '$("#' . $ele->ratingID . '_caption")';
+
+			$ele->jqueryOptions = $jqueryOptions;
 		}
 		elseif($eleType == "colorpicker") {
 			if(empty($ele->attributes["id"]))
@@ -2482,26 +2503,20 @@ STR;
 					$ratingSize = sizeof($form->jqueryStarRatingIDArr);
 					for($r = 0; $r < $ratingSize; ++$r) {
 						$rating = $form->jqueryStarRatingIDArr[$ratingKeys[$r]];
+
+						$jqueryOptionStr = "";
+						foreach($rating->jqueryOptions as $key => $val) {
+							if(!empty($jqueryOptionStr))
+								$jqueryOptionStr .= ", ";
+							$jqueryOptionStr .= $key . ': ';
+                            if(is_string($val) && ($val[0] == "[" && $val[strlen($val) - 1] == "]") || (substr($val, 0, 2) == "$(" && $val[strlen($val) - 1] == ")"))
+                                $jqueryOptionStr .= $val;
+                            else
+                                $jqueryOptionStr .= var_export($val, true);
+						}
+
 						$str .= <<<STR
-	$("#{$ratingKeys[$r]}").stars({
-
-STR;
-						if(empty($rating->hideCaption)) {
-							$str .= <<<STR
-		captionEl: $("#{$ratingKeys[$r]}_caption"),
-
-STR;
-						}	
-						if(!empty($rating->hideCancel)) {
-							$str .= <<<STR
-		cancelShow: false,
-
-STR;
-						}	
-						$str .= <<<STR
-		inputType: "select", 
-		cancelValue: "" 
-	});
+	$("#{$ratingKeys[$r]}").stars({ $jqueryOptionStr });
 
 STR;
 					}	
