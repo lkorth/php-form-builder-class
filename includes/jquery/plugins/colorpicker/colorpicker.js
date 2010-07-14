@@ -216,7 +216,7 @@
 				}
 				cal.css({left: left + 'px', top: top + 'px'});
 				if (cal.data('colorpicker').onShow.apply(this, [cal.get(0)]) != false) {
-					cal.show();
+					cal.fadeIn(250);
 				}
 				$(document).bind('mousedown', {cal: cal}, hide);
 				return false;
@@ -224,7 +224,7 @@
 			hide = function (ev) {
 				if (!isChildOf(ev.data.cal.get(0), ev.target, ev.data.cal.get(0))) {
 					if (ev.data.cal.data('colorpicker').onHide.apply(this, [ev.data.cal.get(0)]) != false) {
-						ev.data.cal.hide();
+						ev.data.cal.fadeOut(250);
 					}
 					$(document).unbind('mousedown', hide);
 				}
@@ -444,7 +444,7 @@
 			hidePicker: function() {
 				return this.each( function () {
 					if ($(this).data('colorpickerId')) {
-						$('#' + $(this).data('colorpickerId')).hide();
+						$('#' + $(this).data('colorpickerId')).fadeOut(250);
 					}
 				});
 			},

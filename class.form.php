@@ -750,7 +750,7 @@ class form extends pfbc {
 
 			//Set default values if not specified by user.
 			if(empty($ele->hideCaption) && !array_key_exists("captionEl", $jqueryOptions))
-				$jqueryOptions["captionEl"] = '$("#' . $ele->ratingID . '_caption")';
+				$jqueryOptions["captionEl"] = 'js:$("#' . $ele->ratingID . '_caption")';
 
 			$ele->jqueryOptions = $jqueryOptions;
 		}
@@ -2338,8 +2338,8 @@ STR;
 							if(!empty($jqueryOptionStr))
 								$jqueryOptionStr .= ", ";
 							$jqueryOptionStr .= $key . ': ';
-                            if(is_string($val) && $val[0] == "[" && $val[strlen($val) - 1] == "]")
-                                $jqueryOptionStr .= $val;
+                            if(is_string($val) && substr($val, 0, 3) == "js:")
+                                $jqueryOptionStr .= substr($val, 3);
                             else
                                 $jqueryOptionStr .= var_export($val, true);
 						}
@@ -2365,8 +2365,8 @@ STR;
 							if(!empty($jqueryOptionStr))
 								$jqueryOptionStr .= ", ";
 							$jqueryOptionStr .= $key . ': ';
-                            if(is_string($val) && $val[0] == "[" && $val[strlen($val) - 1] == "]")
-                                $jqueryOptionStr .= $val;
+                            if(is_string($val) && substr($val, 0, 3) == "js:")
+                                $jqueryOptionStr .= substr($val, 3);
                             else
                                 $jqueryOptionStr .= var_export($val, true);
 						}
@@ -2434,7 +2434,7 @@ STR;
 
 						if(is_array($slider->attributes["value"])) {
 							$slider->jqueryOptions["range"] = true;
-							$slider->jqueryOptions["values"] = "[" . $slider->attributes["value"][0] . ", " . $slider->attributes["value"][1] . "]";
+							$slider->jqueryOptions["values"] = "js:[" . $slider->attributes["value"][0] . ", " . $slider->attributes["value"][1] . "]";
 						}
 						else {
 							$slider->jqueryOptions["range"] = "min";
@@ -2445,8 +2445,8 @@ STR;
 						$jqueryOptionStr = "";
                         foreach($slider->jqueryOptions as $key => $val) {
                             $jqueryOptionStr .= $key . ': ';
-                            if(is_string($val) && $val[0] == "[" && $val[strlen($val) - 1] == "]")
-                                $jqueryOptionStr .= $val;
+                            if(is_string($val) && substr($val, 0, 3) == "js:")
+                                $jqueryOptionStr .= substr($val, 3);
                             else
                                 $jqueryOptionStr .= var_export($val, true);
 							$jqueryOptionStr .= ", ";
@@ -2509,8 +2509,8 @@ STR;
 							if(!empty($jqueryOptionStr))
 								$jqueryOptionStr .= ", ";
 							$jqueryOptionStr .= $key . ': ';
-                            if(is_string($val) && ($val[0] == "[" && $val[strlen($val) - 1] == "]") || (substr($val, 0, 2) == "$(" && $val[strlen($val) - 1] == ")"))
-                                $jqueryOptionStr .= $val;
+                            if(is_string($val) && substr($val, 0, 3) == "js:")
+                                $jqueryOptionStr .= substr($val, 3);
                             else
                                 $jqueryOptionStr .= var_export($val, true);
 						}

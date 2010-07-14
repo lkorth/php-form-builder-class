@@ -56,7 +56,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addSlider("Select Rating Vertical: (1 = lowest; 5 = highest)", "field10", 3, array("height" => 200, "jqueryOptions" => array("min" => 1, "max" => 5, "orientation" => "vertical")));
 				$form->addSlider("Select Rating: (w/custom scale)", "field11", 3, array("jqueryOptions" => array("min" => 1, "max" => 5), "hideDisplay" => 1, "postHTML" => '<table cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td align="left" style="width: 73px;">1</td><td align="left" style="width: 74px;">2</td><td align="left" style="width: 74px;">3</td><td align="left">4</td><td align="right">5</td></tr></table>'));
 				$form->addRating("Default Rating:", "field12", "", array("1" => "Bad", "2" => "Below Average", "3" => "Average", "4" => "Above Average", "5" => "Good"));
-				$form->addRating('Customized Rating: <span id="customRatingCaption"></span>', "field13", 2, range(1, 10), array("jqueryOptions" => array("split" => 2, "cancelShow" => false, "captionEl" => '$("#customRatingCaption")')));
+				$form->addRating('Customized Rating: <span id="customRatingCaption"></span>', "field13", 2, range(1, 10), array("jqueryOptions" => array("split" => 2, "cancelShow" => false, "captionEl" => 'js:$("#customRatingCaption")')));
 				$form->addColorPicker("Select Color:", "field14");
 				$form->addColorPicker("Color: (pre-filled)", "field15", "009900");
 				$form->addButton();
@@ -90,7 +90,7 @@ $form->addSlider("Select Dollar Amount Range: ($5 increments)", "field9", array(
 $form->addSlider("Select Rating Vertical: (1 = lowest; 5 = highest)", "field10", 3, array("height" => 200, "jqueryOptions" => array("min" => 1, "max" => 5, "orientation" => "vertical")));
 $form->addSlider("Select Rating: (w/custom scale)", "field11", 3, array("jqueryOptions" => array("min" => 1, "max" => 5), "hideDisplay" => 1, "postHTML" => \'<table cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td align="left" style="width: 73px;">1</td><td align="left" style="width: 74px;">2</td><td align="left" style="width: 74px;">3</td><td align="left">4</td><td align="right">5</td></tr></table>\'));
 $form->addRating("Default Rating:", "field12", "", array("1" => "Bad", "2" => "Below Average", "3" => "Average", "4" => "Above Average", "5" => "Good"));
-$form->addRating(\'Customized Rating: <span id="customRatingCaption"></span>\', "field13", 2, range(1, 10), array("jqueryOptions" => array("split" => 2, "cancelShow" => false, "captionEl" => \'$("#customRatingCaption")\')));
+$form->addRating(\'Customized Rating: <span id="customRatingCaption"></span>\', "field13", 2, range(1, 10), array("jqueryOptions" => array("split" => 2, "cancelShow" => false, "captionEl" => \'js:$("#customRatingCaption")\')));
 $form->addColorPicker("Select Color:", "field14");
 $form->addColorPicker("Color: (pre-filled)", "field15", "009900");
 $form->addButton();
