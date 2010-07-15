@@ -1124,17 +1124,19 @@ class form extends pfbc {
 				$str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $nonHiddenInternalElementCount . '" class="pfbc-element';
 
 				if($map_element_first && $map_element_last)
-						$str .= ' pfbc-map-element-single';
+					$str .= ' pfbc-map-element-single';
 				elseif($map_element_first)
-						$str .= ' pfbc-map-element-first';
+					$str .= ' pfbc-map-element-first';
 				elseif($map_element_last)
-						$str .= ' pfbc-map-element-last';
+					$str .= ' pfbc-map-element-last';
 				if(!empty($this->map)) {
-						if(array_key_exists($mapIndex, $this->map))
-								$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
-						else
-								$str .= ' pfbc-map-columns-1';
+					if(array_key_exists($mapIndex, $this->map))
+						$str .= ' pfbc-map-columns-' . $this->map[$mapIndex];
+					else
+						$str .= ' pfbc-map-columns-1';
 				}
+				if(!empty($this->labelWidth) || !empty($ele->labelWidth))
+					$str .= ' pfbc-clear';
 				$str .= '">';
 
 				if(!empty($ele->preHTML))
@@ -1321,9 +1323,9 @@ class form extends pfbc {
 						}		
 
 						$optionSize = sizeof($ele->options);
+						$str .= '<div class="pfbc-radio-buttons">';
 						for($o = 0; $o < $optionSize; ++$o) {
-							if($o != 0)
-								$str .= $this->indent();
+							$str .= $this->indent("\t");
 
 							if($ele->options[$o]->value !== "") {
 								if(is_numeric($ele->options[$o]->value))
@@ -1350,6 +1352,8 @@ class form extends pfbc {
 							$str .= '/>';
 							$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->options[$o]->text . "</label></div>";
 						}	
+						$str .= $this->indent();
+						$str .= '</div>';
 
 						if(!empty($ele->noBreak))
 							$str .= '<div style="clear: both;"></div>';
@@ -1380,10 +1384,10 @@ class form extends pfbc {
 							}
 						}
 
+						$str .= '<div class="pfbc-checkboxes">';
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o) {
-							if($o != 0)
-								$str .= $this->indent();
+							$str .= $this->indent("\t");
 
 							if($ele->options[$o]->value !== "") {
 								if(is_numeric($ele->options[$o]->value))
@@ -1413,6 +1417,8 @@ class form extends pfbc {
 							$str .= '/>';
 							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
 						}	
+						$str .= $this->indent();
+						$str .= '</div>';
 
 						if(!empty($ele->noBreak))
 							$str .= '<div style="clear: both;"></div>';
@@ -3177,26 +3183,22 @@ STR;
 						if($labelWidthSuffix == $formWidthSuffix) {
 							if(!empty($form->map)) {
 								if($formWidthSuffix == "px") {
-									$textboxWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth - 6;
-									$textareaWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth - 6;
-									$selectWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth;
-								} 
+									$elementWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth;
+									$textboxTextareaWidth = $elementWidth - 6;
+								}	
 								else {
-									$textboxWidth = 98 - $labelWidth;
-									$textareaWidth = 98 - $labelWidth;
-									$selectWidth = 98 - $labelWidth;
-								}
+									$elementWidth = 98 - $labelWidth;
+									$textboxTextareaWidth = $elementWidth;
+								}	
 							} 
 							else {
 								if($formWidthSuffix == "px") {
-									$textboxWidth = $formWidth - $labelWidth - 6;
-									$textareaWidth = $formWidth - $labelWidth - 6;
-									$selectWidth = $formWidth - $labelWidth;
+									$elementWidth = $formWidth - $labelWidth;
+									$textboxTextareaWidth = $elementWidth - 6;
 								} 
 								else {
-									$textboxWidth = 98 - $labelWidth;
-									$textareaWidth = 98 - $labelWidth;
-									$selectWidth = 98 - $labelWidth;
+									$elementWidth = 98 - $labelWidth;
+									$textboxTextareaWidth = $elementWidth;
 								}
 							}
 
@@ -3228,13 +3230,21 @@ STR;
 	width: {$labelWidth}$labelWidthSuffix !important;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
-	width: {$textboxWidth}$labelWidthSuffix !important;
+	width: {$textboxTextareaWidth}$labelWidthSuffix !important;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
-	width: {$textareaWidth}$labelWidthSuffix !important;
+	width: {$textboxTextareaWidth}$labelWidthSuffix !important;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
-	width: {$selectWidth}$labelWidthSuffix !important;
+	width: {$elementWidth}$labelWidthSuffix !important;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
+	width: {$elementWidth}$labelWidthSuffix !important;
+	float: left;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
+	width: {$elementWidth}$labelWidthSuffix !important;
+	float: left;
 }
 
 STR;
