@@ -1143,8 +1143,7 @@ class form extends pfbc {
 					$str .= $this->indent() . $ele->preHTML;
 
 				if(!empty($ele->label)) {
-					$str .= $this->indent();
-					$str .= '<label class="pfbc-label">';
+					$str .= $this->indent() . '<label class="pfbc-label">';
 
 					if(!empty($ele->required))
 						$str .= '<span class="pfbc-required">*</span> ';
@@ -1287,8 +1286,7 @@ class form extends pfbc {
 									$ele->options[$o]->value = (string) $ele->options[$o]->value;
 							}		
 
-							$str .= $this->indent("\t");
-							$str .= '<option value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';
+							$str .= $this->indent("\t") . '<option value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';
 							if((!is_array($ele->attributes["value"]) && !$selected && $ele->attributes["value"] === $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true))) {
 								$str .= ' selected="selected"';
 								$selected = true;
@@ -1297,12 +1295,10 @@ class form extends pfbc {
 						}
 					}
 
-					$str .= $this->indent();
-					$str .= "</select>";
+					$str .= $this->indent() . "</select>";
 
 					if($eleType == "rating") {
-						$str .= $this->indent();
-						$str .= '</div></td>';
+						$str .= $this->indent() . '</div></td>';
 
 						if(empty($ele->hideCaption))
 							$str .= '<td valign="middle"><div id="' . $ele->ratingID . '_caption" style="padding-left: 5px;"></div></td>';
@@ -1325,14 +1321,13 @@ class form extends pfbc {
 						$optionSize = sizeof($ele->options);
 						$str .= '<div class="pfbc-radio-buttons">';
 						for($o = 0; $o < $optionSize; ++$o) {
-							$str .= $this->indent("\t");
 
 							if($ele->options[$o]->value !== "") {
 								if(is_numeric($ele->options[$o]->value))
 									$ele->options[$o]->value = (string) $ele->options[$o]->value;
 							}		
 
-							$str .= '<div class="pfbc-radio';
+							$str .= $this->indent("\t") . '<div class="pfbc-radio';
 							if($o == 0)
 								$str .= ' pfbc-radio-first';
 							elseif($o + 1 == $optionSize)	
@@ -1352,11 +1347,11 @@ class form extends pfbc {
 							$str .= '/>';
 							$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->options[$o]->text . "</label></div>";
 						}	
-						$str .= $this->indent();
-						$str .= '</div>';
 
 						if(!empty($ele->noBreak))
-							$str .= '<div style="clear: both;"></div>';
+							$str .= $this->indent("\t") . '<div style="clear: both;"></div>';
+
+						$str .= $this->indent() . '</div>';
 
 						if($focus)
 							$this->focusElement = $ele->attributes["name"];
@@ -1387,14 +1382,12 @@ class form extends pfbc {
 						$str .= '<div class="pfbc-checkboxes">';
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o) {
-							$str .= $this->indent("\t");
-
 							if($ele->options[$o]->value !== "") {
 								if(is_numeric($ele->options[$o]->value))
 									$ele->options[$o]->value = (string) $ele->options[$o]->value;
 							}		
 
-							$str .= '<div class="pfbc-checkbox';
+							$str .= $this->indent("\t") . '<div class="pfbc-checkbox';
 							if($o == 0)
 								$str .= ' pfbc-checkbox-first';
 							elseif($o + 1 == $optionSize)	
@@ -1417,11 +1410,11 @@ class form extends pfbc {
 							$str .= '/>';
 							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
 						}	
-						$str .= $this->indent();
-						$str .= '</div>';
 
 						if(!empty($ele->noBreak))
-							$str .= '<div style="clear: both;"></div>';
+							$str .= $this->indent("\t") . '<div style="clear: both;"></div>';
+
+						$str .= $this->indent() . '</div>';
 
 						if($focus)
 							$this->focusElement = $ele->attributes["name"];
@@ -1448,14 +1441,13 @@ class form extends pfbc {
 							}
 						}
 
-						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
+						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" class="pfbc-sort" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
+
 						$optionSize = sizeof($ele->options);
-						for($o = 0; $o < $optionSize; ++$o) {
-							$str .= $this->indent("\t");
-							$str .= '<li class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"/>' . $ele->options[$o]->text . '</li>';
-						}	
-						$str .= $this->indent();
-						$str .= "</ul>";
+						for($o = 0; $o < $optionSize; ++$o)
+							$str .= $this->indent("\t") . '<li class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"/>' . $ele->options[$o]->text . '</li>';
+
+						$str .= $this->indent() . "</ul>";
 					}
 				}
 				elseif($eleType == "latlng") {
@@ -1476,7 +1468,8 @@ class form extends pfbc {
 					//Temporarily set the type attribute to "text" for <input> tag.
 					$eleType = "text";
 
-					$str .= "<input";
+					$str .= '<div class="pfbc-latlng">';
+					$str .= $this->indent("\t") . "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes)) {
 						$tmpAllowFieldArr = $this->allowedFields["latlng"];
 						foreach($ele->attributes as $key => $value) {
@@ -1494,20 +1487,19 @@ class form extends pfbc {
 					//Now that <input> tag his been rendered, change type attribute back to "latlng".
 					$eleType = "latlng";
 
-					$str .= $this->indent();
-					$str .= '<div id="' . $latlngID . '_canvas" style="margin: 2px 0; height: ' . $ele->height . 'px;';
+					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_canvas" style="margin: 2px 0; height: ' . $ele->height . 'px;';
 					if(!empty($ele->width))
 						$str .= ' width: ' . $ele->width . 'px;';
 					$str .= '"></div>';
-					if(empty($ele->hideJump)) {
-						$str .= $this->indent();
-						$str .= '<input id="' . $latlngID . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["id"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["id"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["id"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');"/>';
-					}
-					$str .= $this->indent();
-					$str .= '<div id="' . $latlngID . '_clearDiv" style="';
+
+					if(empty($ele->hideJump))
+						$str .= $this->indent("\t") . '<input id="' . $latlngID . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["id"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["id"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["id"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');"/>';
+
+					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_clearDiv" style="';
 					if(empty($ele->attributes["value"]) || !is_array($ele->attributes["value"]))
 						$str .= 'display: none;';
 					$str .= '"><a href="javascript: clearLatLng_' . $this->attributes["id"] . '(\'' . $latlngID . '\', \'' . htmlentities($ele->hint, ENT_QUOTES) . '\');" class="pfbc-link">Clear Latitude/Longitude</a></div>';	
+					$str .= $this->indent() . "</div>";
 
 					$this->latlngIDArr[$ele->attributes["id"]] = $ele;
 				}
@@ -1535,18 +1527,16 @@ class form extends pfbc {
 						//This variable triggers a javascript section for handling the dynamic adding/removing of sortable option when a user clicks the checkbox.
 						$this->jqueryCheckSort = 1;
 
+						$str .= '<div class="pfbc-checkboxes">';
 						$sortLIArr = array();
 						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o) {
-							if($o != 0)
-								$str .= $this->indent();
-
 							if($ele->options[$o]->value !== "") {
 								if(is_numeric($ele->options[$o]->value))
 									$ele->options[$o]->value = (string) $ele->options[$o]->value;
 							}		
 
-							$str .= '<div class="pfbc-checkbox';
+							$str .= $this->indent("\t") . '<div class="pfbc-checkbox';
 							if($o == 0)
 								$str .= ' pfbc-checkbox-first';
 							elseif($o + 1 == $optionSize)	
@@ -1571,50 +1561,45 @@ class form extends pfbc {
 							$str .= '/>';
 							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
 						}	
+						$str .= $this->indent() . "</div>";
 
 						if(!empty($ele->noBreak))
 							$str .= '<div style="clear: both;"></div>';
 
 						//If there are any check options by default, render the <ul> sorting structure.
-						$str .= $this->indent();
-						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
+						$str .= $this->indent() . '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" class="pfbc-sort" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
 						if(!empty($sortLIArr)) {
 							if(is_array($ele->attributes["value"])) {
 								$eleValueSize = sizeof($ele->attributes["value"]);
 								for($li = 0; $li < $eleValueSize; ++$li) {
-									if(isset($sortLIArr[$ele->attributes["value"][$li]])) {
-										$str .= $this->indent("\t");
-										$str .= $sortLIArr[$ele->attributes["value"][$li]];	
-									}
+									if(isset($sortLIArr[$ele->attributes["value"][$li]]))
+										$str .= $this->indent("\t") . $sortLIArr[$ele->attributes["value"][$li]];	
 								}
 							}
 							else {
-								if(isset($sortLIArr[$ele->attributes["value"][$li]])) {
-									$str .= $this->indent("\t");
-									$str .= $sortLIArr[$ele->attributes["value"]];
-								}
+								if(isset($sortLIArr[$ele->attributes["value"][$li]]))
+									$str .= $this->indent("\t") . $sortLIArr[$ele->attributes["value"]];
 							}		
 						}
-						$str .= $this->indent("\t");
-						$str .= "<li style='display: none'>&nbsp;</li>" . $this->indent() . "</ul>";
+						$str .= $this->indent("\t") . "<li style='display: none'>&nbsp;</li>" . $this->indent() . "</ul>";
 					}
 				}
 				elseif($eleType == "captcha")
-					$str .= '<div id="' . $ele->attributes["id"] . '"></div>';
+					$str .= '<div id="' . $ele->attributes["id"] . '" class="pfbc-captcha"></div>';
 				elseif($eleType == "slider") {
 					if(empty($ele->attributes["value"]))
 						$ele->attributes["value"] = "0";
 					if(is_array($ele->attributes["value"]) && sizeof($ele->attributes["value"]) == 1)
 						$ele->attributes["value"] = $ele->attributes["value"][0];
 					
-					$str .= '<div id="' . $ele->attributes["id"] . '" style="font-size: 12px !important; margin: 2px 0;';
+					$str .= '<div class="pfbc-slider">';
+					$str .= $this->indent("\t") . '<div id="' . $ele->attributes["id"] . '" style="font-size: 12px !important; margin: 2px 0;';
 					if($ele->jqueryOptions["orientation"] == "vertical" && !empty($ele->height))
 						$str .= ' height: ' . $ele->height;
 					$str .= '"></div>';
 
 					if(empty($ele->hideDisplay)) {
-						$str .= $this->indent();
-						$str .= '<div id="' . $ele->attributes["id"] . '_display">';
+						$str .= $this->indent("\t") . '<div id="' . $ele->attributes["id"] . '_display">';
 						if(is_array($ele->attributes["value"])) {
 							sort($ele->attributes["value"]);
 							$str .= $ele->prefix . $ele->attributes["value"][0] . $ele->suffix . " - " . $ele->prefix . $ele->attributes["value"][1] . $ele->suffix;
@@ -1624,16 +1609,17 @@ class form extends pfbc {
 						$str .= '</div>';
 					}
 
-					$str .= $this->indent();
+					$str .= $this->indent("\t");
 					if(is_array($ele->attributes["value"])) {
 						if(substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
 						$str .= '<input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->attributes["value"][0]) . '"/>';
-						$str .= $this->indent();
+						$str .= $this->indent("\t");
 						$str .= '<input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->attributes["value"][1]) . '"/>';
 					}
 					else
 						$str .= '<input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->attributes["value"]) . '"/>';
+					$str .= $this->indent() . "</div>";	
 
 					$this->jquerySliderIDArr[$ele->attributes["id"]] = $ele;
 				}
@@ -3240,11 +3226,27 @@ STR;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
 	width: {$elementWidth}$labelWidthSuffix !important;
-	float: left;
+	float: right;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
 	width: {$elementWidth}$labelWidthSuffix !important;
-	float: left;
+	float: right;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
+	width: {$elementWidth}$labelWidthSuffix !important;
+	float: right;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-latlng {
+	width: {$elementWidth}$labelWidthSuffix !important;
+	float: right;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-captcha {
+	width: {$elementWidth}$labelWidthSuffix !important;
+	float: right;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-slider {
+	width: {$elementWidth}$labelWidthSuffix !important;
+	float: right;
 }
 
 STR;

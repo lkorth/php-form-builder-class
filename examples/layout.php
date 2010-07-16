@@ -74,9 +74,10 @@ $form->render();
 				<?php
 				$form = new form("login");
 				$form->setAttributes(array(
-					"width" => 300,
+					"width" => 500,
 					"includesPath" => "../includes",
 					"noAutoFocus" => 1,
+					"preventJqueryLoad" => 1,
 					"labelWidth" => 100
 				));
 				$form->addHidden("cmd", "submit");
@@ -110,6 +111,7 @@ $form->render();
 					"width" => 700,
 					"includesPath" => "../includes",
 					"noAutoFocus" => 1,
+					"preventJqueryLoad" => 1,
 					"labelWidth" => 100,
 					"labelRightAlign" => 1,
 					"map" => array(2, 2, 1, 3)
@@ -158,6 +160,7 @@ $form->render();
 					"width" => "80%",
 					"includesPath" => "../includes",
 					"noAutoFocus" => 1,
+					"preventJqueryLoad" => 1,
 					"labelWidth" => "30%",
 					"labelRightAlign" => 1,
 					"labelPaddingRight" => "1%"
