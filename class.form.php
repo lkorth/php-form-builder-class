@@ -2860,8 +2860,8 @@ STR;
 					elseif(!empty($form->ckeditorIDArr) && is_array($form->ckeditorIDArr) && array_key_exists($form->focusElement, $form->ckeditorIDArr)) {
 						$str .= <<<STR
 setTimeout("CKEDITOR.instances.{$form->focusElement}.focus();", 1000);
-STR;
 
+STR;
 					}	
 					else {
 						//Any fields with multiple options such as radio button, checkboxes, etc. are handled accordingly.
@@ -3215,41 +3215,79 @@ STR;
 							$str .= <<<STR
 	width: {$labelWidth}$labelWidthSuffix !important;
 }
+STR;
+							if(in_array($ele->attributes["type"], array("text", "password", "email", "date", "daterange", "latlng", "colorpicker"))) {
+								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
 	width: {$textboxTextareaWidth}$labelWidthSuffix !important;
+	float: right;
 }
+STR;
+							}
+							if(in_array($ele->attributes["type"], array("textarea", "webeditor", "ckeditor"))) {
+								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
 	width: {$textboxTextareaWidth}$labelWidthSuffix !important;
+	float: right;
 }
+STR;
+							}
+							if(in_array($ele->attributes["type"], array("select", "rating"))) {
+								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
 	width: {$elementWidth}$labelWidthSuffix !important;
+	float: right;
 }
+STR;
+							}
+							if($ele->attributes["type"] == "radio") {
+								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
 	width: {$elementWidth}$labelWidthSuffix !important;
 	float: right;
 }
+STR;
+							}
+							if(in_array($ele->attributes["type"], array("checkbox", "checksort"))) {
+								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
 	width: {$elementWidth}$labelWidthSuffix !important;
 	float: right;
 }
+STR;
+							}
+							if(in_array($ele->attributes["type"], array("sort", "checksort"))) {
+								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
 	width: {$elementWidth}$labelWidthSuffix !important;
 	float: right;
 }
+STR;
+							}
+							if($ele->attributes["type"] == "latlng") {
+								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-latlng {
 	width: {$elementWidth}$labelWidthSuffix !important;
 	float: right;
 }
+STR;
+							}
+							if($ele->attributes["type"] == "captcha") {
+								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-captcha {
 	width: {$elementWidth}$labelWidthSuffix !important;
 	float: right;
 }
+STR;
+							}
+							if($ele->attributes["type"] == "slider") {
+								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-slider {
 	width: {$elementWidth}$labelWidthSuffix !important;
 	float: right;
 }
-
 STR;
+							}
 						}
 					}
 
