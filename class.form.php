@@ -60,8 +60,6 @@ class form extends pfbc {
 	protected $errorMsgFormat;
 	protected $includesPath;
 	protected $jqueryDateFormat;
-	protected $jqueryInclude;
-	protected $jqueryUIInclude;
 	protected $jqueryUITheme;
 	protected $jsErrorFunction;
 	protected $labelPaddingRight;
@@ -95,6 +93,7 @@ class form extends pfbc {
 	private $focusElement;
 	private $hasFormTag;
 	private $hintExists;
+	private $https;
 	private $jqueryAllowedParams;
 	private $jqueryCheckSort;
 	private $jqueryColorIDArr;
@@ -131,10 +130,12 @@ class form extends pfbc {
 		//[LABEL] is replaced with the appropriate element's label for both emailErrorMsgFormat and errorMsgFormat attributes.
 		$this->emailErrorMsgFormat = "Error: [LABEL] contains an invalid email address.";
 		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
+		if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
+			$this->https = true;
+		else	
+			$this->https = false;
 		$this->includesPath = "php-form-builder-class/includes";
 		$this->jqueryDateFormat = "MM d, yy";
-		$this->jqueryInclude = 'https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js';
-		$this->jqueryUIInclude = 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js';
 		$this->jqueryUITheme = "smoothness";
 		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
 		$this->labelPaddingRight = 4;
@@ -1658,6 +1659,10 @@ class form extends pfbc {
 			}
 		}
 
+		if($this->https)
+			$prefix = "https";
+		else
+			$prefix = "http";
 		//This javascript section loads all required js and css files needed for a specific form.  CSS files are loaded into the <head> tag with javascript.
 		$str .= <<<STR
 
@@ -1668,7 +1673,7 @@ class form extends pfbc {
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
-			css.href = '{$this->jsIncludesPath}/jquery/ui/themes/{$this->jqueryUITheme}/jquery-ui.css';
+			css.href = '$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$this->jqueryUITheme}/jquery-ui.css';
 			head.appendChild(css);
 		</script>
 
@@ -1676,7 +1681,7 @@ STR;
 		//Unless prevented, jQuery will be loaded with each form that is built using this class.
 		if(empty($this->preventJQueryLoad)) {
 			$str .= <<<STR
-		<script type="text/javascript" src="{$this->jqueryInclude}"></script>
+		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 
 STR;
 		}
@@ -1684,7 +1689,7 @@ STR;
 		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists)) {
 			if(empty($this->preventJQueryUILoad)) {
 				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jqueryUIInclude}"></script>
+		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"></script>
 
 STR;
 			}	
@@ -1761,9 +1766,10 @@ STR;
 
 		if(!empty($this->captchaID)) {
 			if(empty($this->preventCaptchaLoad)) {
-				$captchaDomain = "http://api.recaptcha.net";
-				if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
+				if($this->https)
 					$captchaDomain = "https://api-secure.recaptcha.net";
+				else	
+					$captchaDomain = "http://api.recaptcha.net";
 				$str .= <<<STR
 		<script type="text/javascript" src="$captchaDomain/js/recaptcha_ajax.js"></script>
 
