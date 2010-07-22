@@ -12,8 +12,7 @@ abstract class pfbc {
 
 	function setAttributes($params) {
 		if(!empty($params) && is_array($params)) {
-			//Loop through and get accessible class variables.
-			//Build lookup array for the keys allowing for case insensitive attribute setting.
+			//Loop through and get accessible class variables. Build lookup array for the keys allowing for case insensitive attribute setting.
 			$objArr = array();
 			$keyLookupArr = array();
 			foreach($this as $key => $value) {
@@ -152,6 +151,7 @@ class form extends pfbc {
 		);
 	}
 
+	//Instead of calling the render() function to display your form, this magic method allows you to use the familiar echo function.
 	public function __toString() {
 		return $this->render(true);
 	}
@@ -585,7 +585,7 @@ class form extends pfbc {
 						$jqueryOptions[$key] = $val;
 				}
 			}
-			//Added for backwards compatibility to ensure the minDate, maxDate, and months element attributes are still functional in future releases.
+			//Added for backwards compatibility to ensure the minDate, maxDate, and months element attributes are still functional in future releases  The jqueryOptions attribute scales better and is now the favored approach.
 			if(isset($ele->min) && !array_key_exists("minDate", $jqueryOptions))
 				$jqueryOptions["minDate"] = $ele->min;
 			if(isset($ele->max) && !array_key_exists("maxDate", $jqueryOptions))
@@ -751,7 +751,7 @@ class form extends pfbc {
 
 			//Set default values if not specified by user.
 			if(empty($ele->hideCaption) && !array_key_exists("captionEl", $jqueryOptions))
-				$jqueryOptions["captionEl"] = 'js:$("#' . $ele->ratingID . '_caption")';
+				$jqueryOptions["captionEl"] = 'js:jQuery("#' . $ele->ratingID . '_caption")';
 
 			$ele->jqueryOptions = $jqueryOptions;
 		}
@@ -781,7 +781,7 @@ class form extends pfbc {
 			$this->tooltipIDArr[$ele->tooltipID] = $ele;
 		}
 
-		//Add the appropriate javascript event functions if hint is present.
+		//Add the appropriate javascript event functions if hint is present.  Several elements such as date and latlng have default hints that will be automatically applied.  An example of a hint is "Click to Select Date".
 		if(in_array($eleType, array("text", "textarea", "date", "daterange", "colorpicker", "latlng", "email")) && !empty($ele->hint)) {
 			$hintFocusFunction = "hintfocus_" . $this->attributes["id"] . '(this, "' . str_replace('"', '\"', stripslashes($ele->hint)) . '");';
 			if(empty($ele->attributes["onclick"]))
@@ -2322,7 +2322,7 @@ STR;
 
 			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr) || !empty($form->jqueryUIButtonExists)) {
 				$str .= <<<STR
-$(function() {
+jQuery(function() {
 
 STR;
 				if(!empty($form->jqueryDateIDArr)) {
@@ -2343,7 +2343,7 @@ STR;
 						}
 
 						$str .= <<<STR
-	$("#{$dateKeys[$d]}").datepicker({ $jqueryOptionStr });
+	jQuery("#{$dateKeys[$d]}").datepicker({ $jqueryOptionStr });
 
 STR;
 					}	
@@ -2370,7 +2370,7 @@ STR;
 						}
 
 						$str .= <<<STR
-	$("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr } });
+	jQuery("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr } });
 
 STR;
 					}	
@@ -2380,8 +2380,8 @@ STR;
 					$sortSize = sizeof($form->jquerySortIDArr);
 					for($s = 0; $s < $sortSize; ++$s) {
 						$str .= <<<STR
-	$("#{$form->jquerySortIDArr[$s]}").sortable({ axis: "y" });
-	$("#{$form->jquerySortIDArr[$s]}").disableSelection();
+	jQuery("#{$form->jquerySortIDArr[$s]}").sortable({ axis: "y" });
+	jQuery("#{$form->jquerySortIDArr[$s]}").disableSelection();
 
 STR;
 					}	
@@ -2395,7 +2395,7 @@ STR;
 						$tooltipEle = $form->tooltipIDArr[$tooltipKeys[$t]];
 						$tooltipContent = str_replace('"', '\"', $tooltipEle->tooltip);
 						$str .= <<<STR
-	$("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
+	jQuery("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
 STR;
 						if(!empty($form->tooltipBorderColor)) {
 							if($form->tooltipBorderColor[0] != "#")
@@ -2451,7 +2451,7 @@ STR;
                         }
 
 						$str .= <<<STR
-	$("#{$sliderKeys[$s]}").slider({ $jqueryOptionStr
+	jQuery("#{$sliderKeys[$s]}").slider({ $jqueryOptionStr
 
 STR;
 						if(is_array($slider->attributes["value"])) {
@@ -2461,7 +2461,7 @@ STR;
 STR;
 							if(empty($slider->hideDisplay)) {
 								$str .= <<<STR
-			$("#{$sliderKeys[$s]}_display").text("{$slider->prefix}" + ui.values[0] + "{$slider->suffix} - {$slider->prefix}" + ui.values[1] + "{$slider->suffix}");
+			jQuery("#{$sliderKeys[$s]}_display").text("{$slider->prefix}" + ui.values[0] + "{$slider->suffix} - {$slider->prefix}" + ui.values[1] + "{$slider->suffix}");
 
 STR;
 							}	
@@ -2478,7 +2478,7 @@ STR;
 STR;
 							if(empty($slider->hideDisplay)) {
 								$str .= <<<STR
-			$("#{$slider->attributes["id"]}_display").text("{$slider->prefix}" + ui.value + "{$slider->suffix}");
+			jQuery("#{$slider->attributes["id"]}_display").text("{$slider->prefix}" + ui.value + "{$slider->suffix}");
 
 STR;
 							}	
@@ -2514,7 +2514,7 @@ STR;
 						}
 
 						$str .= <<<STR
-	$("#{$ratingKeys[$r]}").stars({ $jqueryOptionStr });
+	jQuery("#{$ratingKeys[$r]}").stars({ $jqueryOptionStr });
 
 STR;
 					}	
@@ -2525,17 +2525,17 @@ STR;
 					$colorSize = sizeof($form->jqueryColorIDArr);
 					for($c = 0; $c < $colorSize; ++$c) {
 						$str .= <<<STR
-	$("#{$form->jqueryColorIDArr[$c]}").ColorPicker({	
+	jQuery("#{$form->jqueryColorIDArr[$c]}").ColorPicker({	
 		onSubmit: function(hsb, hex, rgb, el) { 
-			$(el).val(hex); 
-			$(el).ColorPickerHide(); 
+			jQuery(el).val(hex); 
+			jQuery(el).ColorPickerHide(); 
 		}, 
 		onBeforeShow: function() { 
 			if(this.value != "Click to Select Color..." && this.value != "") 
-				$(this).ColorPickerSetColor(this.value); 
+				jQuery(this).ColorPickerSetColor(this.value); 
 		} 
 	}).bind("keyup", function(){ 
-		$(this).ColorPickerSetColor(this.value); 
+		jQuery(this).ColorPickerSetColor(this.value); 
 	});
 
 STR;
@@ -2544,7 +2544,7 @@ STR;
 
 				if(!empty($form->jqueryUIButtonExists)) {
 					$str .= <<<STR
-	$(".jqueryui-button").button();
+	jQuery(".jqueryui-button").button();
 
 STR;
 				}
@@ -2767,11 +2767,11 @@ function pfbc_error_{$form->attributes["id"]}(errorMsg) {
 	error.id = 'pfbc-{$form->attributes["id"]}-error';
 	error.style.cssText = 'margin: 7px 0;';
 	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
-	$("#{$form->attributes["id"]} .pfbc-main:first").prepend(error);
-	$('html, body').animate({ scrollTop: $("#{$form->attributes["id"]}").offset().top }, 500);
+	jQuery("#{$form->attributes["id"]} .pfbc-main:first").prepend(error);
+	jQuery('html, body').animate({ scrollTop: jQuery("#{$form->attributes["id"]}").offset().top }, 500);
 }
 function pfbc_onsubmit_{$form->attributes["id"]}(formObj) {
-	$("#pfbc-{$form->attributes["id"]}-error").remove();
+	jQuery("#pfbc-{$form->attributes["id"]}-error").remove();
 
 STR;
 					/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
