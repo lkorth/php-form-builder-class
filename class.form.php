@@ -1360,6 +1360,7 @@ class form extends pfbc {
 				}
 				elseif($eleType == "checkbox") {
 					if(is_array($ele->options)) {
+						$optionSize = sizeof($ele->options);
 
 						if($optionSize > 1 && substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
@@ -1381,7 +1382,6 @@ class form extends pfbc {
 						}
 
 						$str .= '<div class="pfbc-checkboxes">';
-						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o) {
 							if($ele->options[$o]->value !== "") {
 								if(is_numeric($ele->options[$o]->value))
