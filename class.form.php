@@ -59,6 +59,7 @@ class form extends pfbc {
 	protected $errorMsgFormat;
 	protected $includesPath;
 	protected $jqueryDateFormat;
+	protected $jqueryUIButtons;
 	protected $jqueryUITheme;
 	protected $jsErrorFunction;
 	protected $labelPaddingRight;
@@ -808,6 +809,9 @@ class form extends pfbc {
 			foreach($additionalParams as $key => $value)
 				$params[$key] = $value;
 		}
+
+		if(!empty($this->jqueryUIButtons))
+			$params["jqueryUI"] = 1;
 
 		$button = new button();
 		$button->setAttributes($params);
