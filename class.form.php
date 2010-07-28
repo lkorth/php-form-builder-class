@@ -69,9 +69,6 @@ class form extends pfbc {
 	protected $map;
 	protected $mapMargin;
 	protected $noAutoFocus;
-	protected $preventJQueryLoad;
-	protected $preventJQueryUILoad;
-	protected $preventQTipLoad;
 	protected $preventGoogleMapsLoad;
 	protected $preventTinyMCELoad;	
 	protected $preventTinyMCEInitLoad;
@@ -1674,6 +1671,8 @@ class form extends pfbc {
 		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 		<script type="text/javascript">
 			var head = document.getElementsByTagName("head")[0];
+			if(typeof pfbc_jsincludes == "undefined")
+				var pfbc_jsincludes = new Array;
 
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
@@ -1695,19 +1694,6 @@ STR;
 
 STR;
 
-		if(!empty($this->tooltipIDArr) && empty($this->preventQTipLoad)) {
-			$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/qtip/jquery.qtip.js"></script>
-
-STR;
-		}	
-
-		if(!empty($this->jqueryStarRatingIDArr)) {
-			$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js"></script>
-STR;
-		}
-
 		if(!empty($this->jqueryDateRangeIDArr)) {
 			$str .= <<<STR
 		<script type="text/javascript">
@@ -1717,7 +1703,6 @@ STR;
 			css.href = '{$this->jsIncludesPath}/jquery/ui/ui.daterangepicker.css';
 			head.appendChild(css);
 		</script>
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"></script>
 
 STR;
 		}	
@@ -1731,7 +1716,6 @@ STR;
 			css.href = '{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css';
 			head.appendChild(css);
 		</script>
-		<script type="text/javascript" src="{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js"></script>
 
 STR;
 		}
@@ -1787,17 +1771,13 @@ STR;
 				$session_param = "&session_name=$session_name";
 
 			$str .= <<<STR
+		<script type="text/javascript" src="{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param"></script>
 		<script type="text/javascript">
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
 			css.href = '{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param';
 			head.appendChild(css);
-
-			var script = document.createElement('script');
-			script.type = 'text/javascript';
-			script.src = '{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param';
-			head.appendChild(script);
 		</script>
 
 STR;
@@ -2320,6 +2300,147 @@ STR;
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
+			if(!empty($form->jqueryDateRangeIDArr)) {
+				$str .= <<<STR
+function loadDateRangePicker_{$this->attributes["id"]}() {
+
+STR;
+				$dateRangeKeys = array_keys($form->jqueryDateRangeIDArr);
+				$dateRangeSize = sizeof($form->jqueryDateRangeIDArr);
+				for($d = 0; $d < $dateRangeSize; ++$d) {
+					$dateRange = $form->jqueryDateRangeIDArr[$dateRangeKeys[$d]];
+
+					$jqueryDateFormat = $dateRange->jqueryOptions["dateFormat"];
+					unset($dateRange->jqueryOptions["dateFormat"]);
+
+					$jqueryOptionStr = "";
+					foreach($dateRange->jqueryOptions as $key => $val) {
+						if(!empty($jqueryOptionStr))
+							$jqueryOptionStr .= ", ";
+						$jqueryOptionStr .= $key . ': ';
+						if(is_string($val) && substr($val, 0, 3) == "js:")
+							$jqueryOptionStr .= substr($val, 3);
+						else
+							$jqueryOptionStr .= var_export($val, true);
+					}
+
+					$str .= <<<STR
+	jQuery("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr } });
+
+STR;
+				}	
+				$str .= <<<STR
+}
+
+STR;
+			}
+
+			//For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.
+			if(!empty($form->jqueryStarRatingIDArr)) {
+				$str .= <<<STR
+function loadStarRating_{$this->attributes["id"]}() {
+
+STR;
+				$ratingKeys = array_keys($form->jqueryStarRatingIDArr);
+				$ratingSize = sizeof($form->jqueryStarRatingIDArr);
+				for($r = 0; $r < $ratingSize; ++$r) {
+					$rating = $form->jqueryStarRatingIDArr[$ratingKeys[$r]];
+
+					$jqueryOptionStr = "";
+					foreach($rating->jqueryOptions as $key => $val) {
+						if(!empty($jqueryOptionStr))
+							$jqueryOptionStr .= ", ";
+						$jqueryOptionStr .= $key . ': ';
+						if(is_string($val) && substr($val, 0, 3) == "js:")
+							$jqueryOptionStr .= substr($val, 3);
+						else
+							$jqueryOptionStr .= var_export($val, true);
+					}
+
+					$str .= <<<STR
+	jQuery("#{$ratingKeys[$r]}").stars({ $jqueryOptionStr });
+
+STR;
+				}	
+				$str .= <<<STR
+}
+
+STR;
+			}
+
+			//For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.
+			if(!empty($form->jqueryColorIDArr)) {
+				$str .= <<<STR
+function loadColorPicker_{$this->attributes["id"]}() {
+
+STR;
+				$colorSize = sizeof($form->jqueryColorIDArr);
+				for($c = 0; $c < $colorSize; ++$c) {
+					$str .= <<<STR
+	jQuery("#{$form->jqueryColorIDArr[$c]}").ColorPicker({	
+		onSubmit: function(hsb, hex, rgb, el) { 
+			jQuery(el).val(hex); 
+			jQuery(el).ColorPickerHide(); 
+		}, 
+		onBeforeShow: function() { 
+			if(this.value != "Click to Select Color..." && this.value != "") 
+				jQuery(this).ColorPickerSetColor(this.value); 
+		} 
+	}).bind("keyup", function(){ 
+		jQuery(this).ColorPickerSetColor(this.value); 
+	});
+
+STR;
+				}	
+				$str .= <<<STR
+}
+
+STR;
+			}
+
+			//For more information on qtip, visit http://craigsworks.com/projects/qtip/.
+			if(!empty($form->tooltipIDArr)) {
+				$str .= <<<STR
+function loadTooltip_{$this->attributes["id"]}() {
+
+STR;
+				$tooltipKeys = array_keys($form->tooltipIDArr);
+				$tooltipSize = sizeof($tooltipKeys);
+				for($t = 0; $t < $tooltipSize; ++$t) {
+					$tooltipEle = $form->tooltipIDArr[$tooltipKeys[$t]];
+					$tooltipContent = str_replace('"', '\"', $tooltipEle->tooltip);
+					$str .= <<<STR
+	jQuery("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
+STR;
+					if(!empty($form->tooltipBorderColor)) {
+						if($form->tooltipBorderColor[0] != "#")
+							$form->tooltipBorderColor = "#" . $form->tooltipBorderColor;
+						$str .= <<<STR
+, color: "{$form->tooltipBorderColor}"
+STR;
+					}	
+					$str .= <<<STR
+} 
+STR;
+					if(!empty($tooltipEle->tooltipWidth)) {
+						if(substr($tooltipEle->tooltipWidth, -2) == "px")
+							$tooltipEle->tooltipWidth = substr($tooltipEle->tooltipWidth, 0, -2);
+						$str .= <<<STR
+, width: {$tooltipEle->tooltipWidth}
+STR;
+					}
+
+					$str .= <<<STR
+}, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });
+
+STR;
+				}	
+				$str .= <<<STR
+}
+
+STR;
+			}
+
 			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr) || !empty($form->jqueryUIButtonExists)) {
 				$str .= <<<STR
 jQuery(function() {
@@ -2349,74 +2470,12 @@ STR;
 					}	
 				}
 
-				if(!empty($form->jqueryDateRangeIDArr)) {
-					$dateRangeKeys = array_keys($form->jqueryDateRangeIDArr);
-					$dateRangeSize = sizeof($form->jqueryDateRangeIDArr);
-					for($d = 0; $d < $dateRangeSize; ++$d) {
-						$dateRange = $form->jqueryDateRangeIDArr[$dateRangeKeys[$d]];
-
-						$jqueryDateFormat = $dateRange->jqueryOptions["dateFormat"];
-						unset($dateRange->jqueryOptions["dateFormat"]);
-
-						$jqueryOptionStr = "";
-						foreach($dateRange->jqueryOptions as $key => $val) {
-							if(!empty($jqueryOptionStr))
-								$jqueryOptionStr .= ", ";
-							$jqueryOptionStr .= $key . ': ';
-                            if(is_string($val) && substr($val, 0, 3) == "js:")
-                                $jqueryOptionStr .= substr($val, 3);
-                            else
-                                $jqueryOptionStr .= var_export($val, true);
-						}
-
-						$str .= <<<STR
-	jQuery("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr } });
-
-STR;
-					}	
-				}
-
 				if(!empty($form->jquerySortIDArr)) {
 					$sortSize = sizeof($form->jquerySortIDArr);
 					for($s = 0; $s < $sortSize; ++$s) {
 						$str .= <<<STR
 	jQuery("#{$form->jquerySortIDArr[$s]}").sortable({ axis: "y" });
 	jQuery("#{$form->jquerySortIDArr[$s]}").disableSelection();
-
-STR;
-					}	
-				}
-
-				//For more information on qtip, visit http://craigsworks.com/projects/qtip/.
-				if(!empty($form->tooltipIDArr)) {
-					$tooltipKeys = array_keys($form->tooltipIDArr);
-					$tooltipSize = sizeof($tooltipKeys);
-					for($t = 0; $t < $tooltipSize; ++$t) {
-						$tooltipEle = $form->tooltipIDArr[$tooltipKeys[$t]];
-						$tooltipContent = str_replace('"', '\"', $tooltipEle->tooltip);
-						$str .= <<<STR
-	jQuery("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
-STR;
-						if(!empty($form->tooltipBorderColor)) {
-							if($form->tooltipBorderColor[0] != "#")
-								$form->tooltipBorderColor = "#" . $form->tooltipBorderColor;
-							$str .= <<<STR
-, color: "{$form->tooltipBorderColor}"
-STR;
-						}	
-						$str .= <<<STR
-} 
-STR;
-						if(!empty($tooltipEle->tooltipWidth)) {
-							if(substr($tooltipEle->tooltipWidth, -2) == "px")
-								$tooltipEle->tooltipWidth = substr($tooltipEle->tooltipWidth, 0, -2);
-							$str .= <<<STR
-, width: {$tooltipEle->tooltipWidth}
-STR;
-						}
-
-						$str .= <<<STR
-}, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });
 
 STR;
 					}	
@@ -2495,51 +2554,74 @@ STR;
 					}
 				}
 
-				//For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.
-				if(!empty($form->jqueryStarRatingIDArr)) {
-					$ratingKeys = array_keys($form->jqueryStarRatingIDArr);
-					$ratingSize = sizeof($form->jqueryStarRatingIDArr);
-					for($r = 0; $r < $ratingSize; ++$r) {
-						$rating = $form->jqueryStarRatingIDArr[$ratingKeys[$r]];
-
-						$jqueryOptionStr = "";
-						foreach($rating->jqueryOptions as $key => $val) {
-							if(!empty($jqueryOptionStr))
-								$jqueryOptionStr .= ", ";
-							$jqueryOptionStr .= $key . ': ';
-                            if(is_string($val) && substr($val, 0, 3) == "js:")
-                                $jqueryOptionStr .= substr($val, 3);
-                            else
-                                $jqueryOptionStr .= var_export($val, true);
-						}
-
-						$str .= <<<STR
-	jQuery("#{$ratingKeys[$r]}").stars({ $jqueryOptionStr });
+				if(!empty($form->jqueryDateRangeIDArr)) {
+					$str .= <<<STR
+	if(jQuery.inArray("daterangepicker", pfbc_jsincludes) == -1) {
+		jQuery.ajax({
+			async: false,
+			url: "{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js",
+			dataType: "script",
+			success: loadDateRangePicker_{$this->attributes["id"]}
+		});
+		pfbc_jsincludes.push("daterangepicker");
+	}	
+	else
+		loadDateRangePicker_{$this->attributes["id"]}();
 
 STR;
-					}	
+				}
+
+				if(!empty($form->jqueryStarRatingIDArr)) {
+					$str .= <<<STR
+	if(jQuery.inArray("starrating", pfbc_jsincludes) == -1) {
+		jQuery.ajax({
+			async: false,
+			url: "{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js",
+			dataType: "script",
+			success: loadStarRating_{$this->attributes["id"]}
+		});
+		pfbc_jsincludes.push("starrating");
+	}	
+	else
+		loadStarRating_{$this->attributes["id"]}();
+
+STR;
+				}
+
+				//For more information on qtip, visit http://craigsworks.com/projects/qtip/.
+				if(!empty($form->tooltipIDArr)) {
+					$str .= <<<STR
+	if(jQuery.inArray("qtip", pfbc_jsincludes) == -1) {
+		jQuery.ajax({
+			async: false,
+			url: "{$form->jsIncludesPath}/jquery/plugins/qtip/jquery.qtip.js",
+			dataType: "script",
+			success: loadTooltip_{$this->attributes["id"]}
+		});
+		pfbc_jsincludes.push("qtip");
+	}	
+	else
+		loadTooltip_{$this->attributes["id"]}();
+
+STR;
 				}
 
 				//For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.
 				if(!empty($form->jqueryColorIDArr)) {
-					$colorSize = sizeof($form->jqueryColorIDArr);
-					for($c = 0; $c < $colorSize; ++$c) {
-						$str .= <<<STR
-	jQuery("#{$form->jqueryColorIDArr[$c]}").ColorPicker({	
-		onSubmit: function(hsb, hex, rgb, el) { 
-			jQuery(el).val(hex); 
-			jQuery(el).ColorPickerHide(); 
-		}, 
-		onBeforeShow: function() { 
-			if(this.value != "Click to Select Color..." && this.value != "") 
-				jQuery(this).ColorPickerSetColor(this.value); 
-		} 
-	}).bind("keyup", function(){ 
-		jQuery(this).ColorPickerSetColor(this.value); 
-	});
+					$str .= <<<STR
+	if(jQuery.inArray("colorpicker", pfbc_jsincludes) == -1) {
+		jQuery.ajax({
+			async: false,
+			url: "{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js",
+			dataType: "script",
+			success: loadColorPicker_{$this->attributes["id"]}
+		});
+		pfbc_jsincludes.push("colorpicker");
+	}	
+	else
+		loadColorPicker_{$this->attributes["id"]}();
 
 STR;
-					}	
 				}
 
 				if(!empty($form->jqueryUIButtonExists)) {
