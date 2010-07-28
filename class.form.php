@@ -1671,6 +1671,7 @@ class form extends pfbc {
 		$str .= <<<STR
 
 	<div class="pfbc-script">
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 		<script type="text/javascript">
 			var head = document.getElementsByTagName("head")[0];
 
@@ -1679,25 +1680,20 @@ class form extends pfbc {
 			css.type = 'text/css';
 			css.href = '$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$this->jqueryUITheme}/jquery-ui.css';
 			head.appendChild(css);
+
+			google.load("jquery", "1.4.2");
+
+STR;
+		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists)) {
+			$str .= <<<STR
+			google.load("jqueryui", "1.8.2");
+
+STR;
+		}
+		$str .= <<<STR
 		</script>
 
 STR;
-		//Unless prevented, jQuery will be loaded with each form that is built using this class.
-		if(empty($this->preventJQueryLoad)) {
-			$str .= <<<STR
-		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-
-STR;
-		}
-
-		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists)) {
-			if(empty($this->preventJQueryUILoad)) {
-				$str .= <<<STR
-		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"></script>
-
-STR;
-			}	
-		}
 
 		if(!empty($this->tooltipIDArr) && empty($this->preventQTipLoad)) {
 			$str .= <<<STR
