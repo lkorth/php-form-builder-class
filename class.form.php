@@ -1668,99 +1668,8 @@ class form extends pfbc {
 		$str .= <<<STR
 
 	<div class="pfbc-script">
-		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-		<script type="text/javascript">
-			var head = document.getElementsByTagName("head")[0];
-			if(typeof pfbc_jsincludes == "undefined")
-				var pfbc_jsincludes = new Array;
-
-			var css = document.createElement('link');
-			css.rel = 'stylesheet';
-			css.type = 'text/css';
-			css.href = '$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$this->jqueryUITheme}/jquery-ui.css';
-			head.appendChild(css);
-
-			google.load("jquery", "1.4.2");
 
 STR;
-		if(!empty($this->jqueryDateIDArr) || !empty($this->jqueryDateRangeIDArr) || !empty($this->jquerySortIDArr) || !empty($this->jquerySliderIDArr) || !empty($this->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists)) {
-			$str .= <<<STR
-			google.load("jqueryui", "1.8.2");
-
-STR;
-		}
-		$str .= <<<STR
-		</script>
-
-STR;
-
-		if(!empty($this->jqueryDateRangeIDArr)) {
-			$str .= <<<STR
-		<script type="text/javascript">
-			var css = document.createElement('link');
-			css.rel = 'stylesheet';
-			css.type = 'text/css';
-			css.href = '{$this->jsIncludesPath}/jquery/ui/ui.daterangepicker.css';
-			head.appendChild(css);
-		</script>
-
-STR;
-		}	
-
-		if(!empty($this->jqueryColorIDArr)) {
-			$str .= <<<STR
-		<script type="text/javascript">
-			var css = document.createElement('link');
-			css.rel = 'stylesheet';
-			css.type = 'text/css';
-			css.href = '{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css';
-			head.appendChild(css);
-		</script>
-
-STR;
-		}
-
-		if(!empty($this->latlngIDArr)) {
-			if(empty($this->preventGoogleMapsLoad)) {
-				$str .= <<<STR
-		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-
-STR;
-			}	
-		}
-
-		if(!empty($this->tinymceIDArr)) {
-			if(empty($this->preventTinyMCELoad)) {
-				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
-
-STR;
-			}	
-
-		}
-
-		if(!empty($this->ckeditorIDArr)) {
-			if(empty($this->preventCKEditorLoad)) {
-				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
-
-STR;
-			}	
-		}	
-
-		if(!empty($this->captchaID)) {
-			if(empty($this->preventCaptchaLoad)) {
-				if($this->https)
-					$captchaDomain = "https://api-secure.recaptcha.net";
-				else	
-					$captchaDomain = "http://api.recaptcha.net";
-				$str .= <<<STR
-		<script type="text/javascript" src="$captchaDomain/js/recaptcha_ajax.js"></script>
-
-STR;
-			}	
-		}
-
 		//Serialize the form and store it in a session array.  This variable will be unserialized and used within js/css.php and the validate() method.
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
@@ -1771,14 +1680,37 @@ STR;
 				$session_param = "&session_name=$session_name";
 
 			$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param"></script>
 		<script type="text/javascript">
+			var head = document.getElementsByTagName("head")[0];
 			var css = document.createElement('link');
 			css.rel = 'stylesheet';
 			css.type = 'text/css';
 			css.href = '{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param';
 			head.appendChild(css);
 		</script>
+
+STR;
+
+		if(!empty($this->tinymceIDArr)) {
+            if(empty($this->preventTinyMCELoad)) {
+                $str .= <<<STR
+        <script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
+
+STR;
+            }
+
+        }
+
+        if(!empty($this->ckeditorIDArr)) {
+            if(empty($this->preventCKEditorLoad)) {
+                $str .= <<<STR
+        <script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
+
+STR;
+            }
+        }
+			$str .= <<<STR
+		<script type="text/javascript" src="{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param"></script>
 
 STR;
 		}
@@ -2300,150 +2232,35 @@ STR;
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-			if(!empty($form->jqueryDateRangeIDArr)) {
-				$str .= <<<STR
-function loadDateRangePicker_{$this->attributes["id"]}() {
+			if($form->https)
+				$prefix = "https";
+			else
+				$prefix = "http";
 
-STR;
-				$dateRangeKeys = array_keys($form->jqueryDateRangeIDArr);
-				$dateRangeSize = sizeof($form->jqueryDateRangeIDArr);
-				for($d = 0; $d < $dateRangeSize; ++$d) {
-					$dateRange = $form->jqueryDateRangeIDArr[$dateRangeKeys[$d]];
-
-					$jqueryDateFormat = $dateRange->jqueryOptions["dateFormat"];
-					unset($dateRange->jqueryOptions["dateFormat"]);
-
-					$jqueryOptionStr = "";
-					foreach($dateRange->jqueryOptions as $key => $val) {
-						if(!empty($jqueryOptionStr))
-							$jqueryOptionStr .= ", ";
-						$jqueryOptionStr .= $key . ': ';
-						if(is_string($val) && substr($val, 0, 3) == "js:")
-							$jqueryOptionStr .= substr($val, 3);
-						else
-							$jqueryOptionStr .= var_export($val, true);
-					}
-
-					$str .= <<<STR
-	jQuery("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr } });
-
-STR;
-				}	
-				$str .= <<<STR
-}
-
-STR;
+			$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js");
+			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists))
+				$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js");
+			if(!empty($form->tooltipIDArr))
+				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/qtip/jquery.qtip.js");
+			if(!empty($form->jqueryStarRatingIDArr))
+				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js");
+			if(!empty($form->jqueryDateRangeIDArr))
+				$str .= str_replace(array(), array(), file_get_contents("{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"));
+			if(!empty($form->jqueryColorIDArr))
+				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
+			if(!empty($form->latlngIDArr))
+				$str .= file_get_contents("http://maps.google.com/maps/api/js?sensor=false");
+			if(!empty($form->captchaID)) {
+				if($form->https)
+					$captchaDomain = "https://api-secure.recaptcha.net";
+				else
+					$captchaDomain = "http://api.recaptcha.net";
+				$str .= file_get_contents($captchaDomain . "/js/recaptcha_ajax.js");
 			}
-
-			//For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.
-			if(!empty($form->jqueryStarRatingIDArr)) {
-				$str .= <<<STR
-function loadStarRating_{$this->attributes["id"]}() {
-
-STR;
-				$ratingKeys = array_keys($form->jqueryStarRatingIDArr);
-				$ratingSize = sizeof($form->jqueryStarRatingIDArr);
-				for($r = 0; $r < $ratingSize; ++$r) {
-					$rating = $form->jqueryStarRatingIDArr[$ratingKeys[$r]];
-
-					$jqueryOptionStr = "";
-					foreach($rating->jqueryOptions as $key => $val) {
-						if(!empty($jqueryOptionStr))
-							$jqueryOptionStr .= ", ";
-						$jqueryOptionStr .= $key . ': ';
-						if(is_string($val) && substr($val, 0, 3) == "js:")
-							$jqueryOptionStr .= substr($val, 3);
-						else
-							$jqueryOptionStr .= var_export($val, true);
-					}
-
-					$str .= <<<STR
-	jQuery("#{$ratingKeys[$r]}").stars({ $jqueryOptionStr });
-
-STR;
-				}	
-				$str .= <<<STR
-}
-
-STR;
-			}
-
-			//For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.
-			if(!empty($form->jqueryColorIDArr)) {
-				$str .= <<<STR
-function loadColorPicker_{$this->attributes["id"]}() {
-
-STR;
-				$colorSize = sizeof($form->jqueryColorIDArr);
-				for($c = 0; $c < $colorSize; ++$c) {
-					$str .= <<<STR
-	jQuery("#{$form->jqueryColorIDArr[$c]}").ColorPicker({	
-		onSubmit: function(hsb, hex, rgb, el) { 
-			jQuery(el).val(hex); 
-			jQuery(el).ColorPickerHide(); 
-		}, 
-		onBeforeShow: function() { 
-			if(this.value != "Click to Select Color..." && this.value != "") 
-				jQuery(this).ColorPickerSetColor(this.value); 
-		} 
-	}).bind("keyup", function(){ 
-		jQuery(this).ColorPickerSetColor(this.value); 
-	});
-
-STR;
-				}	
-				$str .= <<<STR
-}
-
-STR;
-			}
-
-			//For more information on qtip, visit http://craigsworks.com/projects/qtip/.
-			if(!empty($form->tooltipIDArr)) {
-				$str .= <<<STR
-function loadTooltip_{$this->attributes["id"]}() {
-
-STR;
-				$tooltipKeys = array_keys($form->tooltipIDArr);
-				$tooltipSize = sizeof($tooltipKeys);
-				for($t = 0; $t < $tooltipSize; ++$t) {
-					$tooltipEle = $form->tooltipIDArr[$tooltipKeys[$t]];
-					$tooltipContent = str_replace('"', '\"', $tooltipEle->tooltip);
-					$str .= <<<STR
-	jQuery("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
-STR;
-					if(!empty($form->tooltipBorderColor)) {
-						if($form->tooltipBorderColor[0] != "#")
-							$form->tooltipBorderColor = "#" . $form->tooltipBorderColor;
-						$str .= <<<STR
-, color: "{$form->tooltipBorderColor}"
-STR;
-					}	
-					$str .= <<<STR
-} 
-STR;
-					if(!empty($tooltipEle->tooltipWidth)) {
-						if(substr($tooltipEle->tooltipWidth, -2) == "px")
-							$tooltipEle->tooltipWidth = substr($tooltipEle->tooltipWidth, 0, -2);
-						$str .= <<<STR
-, width: {$tooltipEle->tooltipWidth}
-STR;
-					}
-
-					$str .= <<<STR
-}, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });
-
-STR;
-				}	
-				$str .= <<<STR
-}
-
-STR;
-			}
-
+				
 			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr) || !empty($form->jqueryUIButtonExists)) {
 				$str .= <<<STR
-jQuery(function() {
+$(function() {
 
 STR;
 				if(!empty($form->jqueryDateIDArr)) {
@@ -2464,7 +2281,34 @@ STR;
 						}
 
 						$str .= <<<STR
-	jQuery("#{$dateKeys[$d]}").datepicker({ $jqueryOptionStr });
+	$("#{$dateKeys[$d]}").datepicker({ $jqueryOptionStr });
+
+STR;
+					}	
+				}
+
+				if(!empty($form->jqueryDateRangeIDArr)) {
+					$dateRangeKeys = array_keys($form->jqueryDateRangeIDArr);
+					$dateRangeSize = sizeof($form->jqueryDateRangeIDArr);
+					for($d = 0; $d < $dateRangeSize; ++$d) {
+						$dateRange = $form->jqueryDateRangeIDArr[$dateRangeKeys[$d]];
+
+						$jqueryDateFormat = $dateRange->jqueryOptions["dateFormat"];
+						unset($dateRange->jqueryOptions["dateFormat"]);
+
+						$jqueryOptionStr = "";
+						foreach($dateRange->jqueryOptions as $key => $val) {
+							if(!empty($jqueryOptionStr))
+								$jqueryOptionStr .= ", ";
+							$jqueryOptionStr .= $key . ': ';
+                            if(is_string($val) && substr($val, 0, 3) == "js:")
+                                $jqueryOptionStr .= substr($val, 3);
+                            else
+                                $jqueryOptionStr .= var_export($val, true);
+						}
+
+						$str .= <<<STR
+	$("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr } });
 
 STR;
 					}	
@@ -2474,8 +2318,43 @@ STR;
 					$sortSize = sizeof($form->jquerySortIDArr);
 					for($s = 0; $s < $sortSize; ++$s) {
 						$str .= <<<STR
-	jQuery("#{$form->jquerySortIDArr[$s]}").sortable({ axis: "y" });
-	jQuery("#{$form->jquerySortIDArr[$s]}").disableSelection();
+	$("#{$form->jquerySortIDArr[$s]}").sortable({ axis: "y" });
+	$("#{$form->jquerySortIDArr[$s]}").disableSelection();
+
+STR;
+					}	
+				}
+
+				//For more information on qtip, visit http://craigsworks.com/projects/qtip/.
+				if(!empty($form->tooltipIDArr)) {
+					$tooltipKeys = array_keys($form->tooltipIDArr);
+					$tooltipSize = sizeof($tooltipKeys);
+					for($t = 0; $t < $tooltipSize; ++$t) {
+						$tooltipEle = $form->tooltipIDArr[$tooltipKeys[$t]];
+						$tooltipContent = str_replace('"', '\"', $tooltipEle->tooltip);
+						$str .= <<<STR
+	$("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
+STR;
+						if(!empty($form->tooltipBorderColor)) {
+							if($form->tooltipBorderColor[0] != "#")
+								$form->tooltipBorderColor = "#" . $form->tooltipBorderColor;
+							$str .= <<<STR
+, color: "{$form->tooltipBorderColor}"
+STR;
+						}	
+						$str .= <<<STR
+} 
+STR;
+						if(!empty($tooltipEle->tooltipWidth)) {
+							if(substr($tooltipEle->tooltipWidth, -2) == "px")
+								$tooltipEle->tooltipWidth = substr($tooltipEle->tooltipWidth, 0, -2);
+							$str .= <<<STR
+, width: {$tooltipEle->tooltipWidth}
+STR;
+						}
+
+						$str .= <<<STR
+}, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });
 
 STR;
 					}	
@@ -2510,7 +2389,7 @@ STR;
                         }
 
 						$str .= <<<STR
-	jQuery("#{$sliderKeys[$s]}").slider({ $jqueryOptionStr
+	$("#{$sliderKeys[$s]}").slider({ $jqueryOptionStr
 
 STR;
 						if(is_array($slider->attributes["value"])) {
@@ -2520,7 +2399,7 @@ STR;
 STR;
 							if(empty($slider->hideDisplay)) {
 								$str .= <<<STR
-			jQuery("#{$sliderKeys[$s]}_display").text("{$slider->prefix}" + ui.values[0] + "{$slider->suffix} - {$slider->prefix}" + ui.values[1] + "{$slider->suffix}");
+			$("#{$sliderKeys[$s]}_display").text("{$slider->prefix}" + ui.values[0] + "{$slider->suffix} - {$slider->prefix}" + ui.values[1] + "{$slider->suffix}");
 
 STR;
 							}	
@@ -2537,7 +2416,7 @@ STR;
 STR;
 							if(empty($slider->hideDisplay)) {
 								$str .= <<<STR
-			jQuery("#{$slider->attributes["id"]}_display").text("{$slider->prefix}" + ui.value + "{$slider->suffix}");
+			$("#{$slider->attributes["id"]}_display").text("{$slider->prefix}" + ui.value + "{$slider->suffix}");
 
 STR;
 							}	
@@ -2554,79 +2433,56 @@ STR;
 					}
 				}
 
-				if(!empty($form->jqueryDateRangeIDArr)) {
-					$str .= <<<STR
-	if(jQuery.inArray("daterangepicker", pfbc_jsincludes) == -1) {
-		jQuery.ajax({
-			async: false,
-			url: "{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js",
-			dataType: "script",
-			success: loadDateRangePicker_{$this->attributes["id"]}
-		});
-		pfbc_jsincludes.push("daterangepicker");
-	}	
-	else
-		loadDateRangePicker_{$this->attributes["id"]}();
-
-STR;
-				}
-
+				//For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.
 				if(!empty($form->jqueryStarRatingIDArr)) {
-					$str .= <<<STR
-	if(jQuery.inArray("starrating", pfbc_jsincludes) == -1) {
-		jQuery.ajax({
-			async: false,
-			url: "{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js",
-			dataType: "script",
-			success: loadStarRating_{$this->attributes["id"]}
-		});
-		pfbc_jsincludes.push("starrating");
-	}	
-	else
-		loadStarRating_{$this->attributes["id"]}();
+					$ratingKeys = array_keys($form->jqueryStarRatingIDArr);
+					$ratingSize = sizeof($form->jqueryStarRatingIDArr);
+					for($r = 0; $r < $ratingSize; ++$r) {
+						$rating = $form->jqueryStarRatingIDArr[$ratingKeys[$r]];
+
+						$jqueryOptionStr = "";
+						foreach($rating->jqueryOptions as $key => $val) {
+							if(!empty($jqueryOptionStr))
+								$jqueryOptionStr .= ", ";
+							$jqueryOptionStr .= $key . ': ';
+                            if(is_string($val) && substr($val, 0, 3) == "js:")
+                                $jqueryOptionStr .= substr($val, 3);
+                            else
+                                $jqueryOptionStr .= var_export($val, true);
+						}
+
+						$str .= <<<STR
+	$("#{$ratingKeys[$r]}").stars({ $jqueryOptionStr });
 
 STR;
-				}
-
-				//For more information on qtip, visit http://craigsworks.com/projects/qtip/.
-				if(!empty($form->tooltipIDArr)) {
-					$str .= <<<STR
-	if(jQuery.inArray("qtip", pfbc_jsincludes) == -1) {
-		jQuery.ajax({
-			async: false,
-			url: "{$form->jsIncludesPath}/jquery/plugins/qtip/jquery.qtip.js",
-			dataType: "script",
-			success: loadTooltip_{$this->attributes["id"]}
-		});
-		pfbc_jsincludes.push("qtip");
-	}	
-	else
-		loadTooltip_{$this->attributes["id"]}();
-
-STR;
+					}	
 				}
 
 				//For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.
 				if(!empty($form->jqueryColorIDArr)) {
-					$str .= <<<STR
-	if(jQuery.inArray("colorpicker", pfbc_jsincludes) == -1) {
-		jQuery.ajax({
-			async: false,
-			url: "{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js",
-			dataType: "script",
-			success: loadColorPicker_{$this->attributes["id"]}
-		});
-		pfbc_jsincludes.push("colorpicker");
-	}	
-	else
-		loadColorPicker_{$this->attributes["id"]}();
+					$colorSize = sizeof($form->jqueryColorIDArr);
+					for($c = 0; $c < $colorSize; ++$c) {
+						$str .= <<<STR
+	$("#{$form->jqueryColorIDArr[$c]}").ColorPicker({	
+		onSubmit: function(hsb, hex, rgb, el) { 
+			$(el).val(hex); 
+			$(el).ColorPickerHide(); 
+		}, 
+		onBeforeShow: function() { 
+			if(this.value != "Click to Select Color..." && this.value != "") 
+				$(this).ColorPickerSetColor(this.value); 
+		} 
+	}).bind("keyup", function(){ 
+		$(this).ColorPickerSetColor(this.value); 
+	});
 
 STR;
+					}	
 				}
 
 				if(!empty($form->jqueryUIButtonExists)) {
 					$str .= <<<STR
-	jQuery(".jqueryui-button").button();
+	$(".jqueryui-button").button();
 
 STR;
 				}
@@ -2977,6 +2833,17 @@ STR;
 		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+
+			if($form->https)
+				$prefix = "https";
+			else
+				$prefix = "http";
+
+			$str .= str_replace("images/", "{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
+			if(!empty($form->jqueryDateRangeIDArr))
+				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
+			if(!empty($form->jqueryColorIDArr))
+				$str .= str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css"));
 
 			if(empty($form->preventDefaultCSS)) {
 				$id = "#" . $this->attributes["id"];
