@@ -69,6 +69,9 @@ class form extends pfbc {
 	protected $map;
 	protected $mapMargin;
 	protected $noAutoFocus;
+	protected $preventJQueryLoad;
+	protected $preventJQueryUILoad;
+	protected $preventQTipLoad;
 	protected $preventGoogleMapsLoad;
 	protected $preventTinyMCELoad;	
 	protected $preventTinyMCEInitLoad;
@@ -2237,10 +2240,11 @@ STR;
 			else
 				$prefix = "http";
 
-			$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js");
-			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists))
+			if(empty($form->preventJQueryLoad))
+				$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js");
+			if(empty($form->preventJQueryUILoad) && (!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists)))
 				$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js");
-			if(!empty($form->tooltipIDArr))
+			if(empty($form->preventQTipLoad) && !empty($form->tooltipIDArr))
 				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/qtip/jquery.qtip.js");
 			if(!empty($form->jqueryStarRatingIDArr))
 				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js");
@@ -2248,9 +2252,9 @@ STR;
 				$str .= str_replace(array(), array(), file_get_contents("{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"));
 			if(!empty($form->jqueryColorIDArr))
 				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
-			if(!empty($form->latlngIDArr))
+			if(empty($form->preventGoogleMapsLoad) && !empty($form->latlngIDArr))
 				$str .= file_get_contents("http://maps.google.com/maps/api/js?sensor=false");
-			if(!empty($form->captchaID)) {
+			if(empty($form->preventCaptchaLoad) && !empty($form->captchaID)) {
 				if($form->https)
 					$captchaDomain = "https://api-secure.recaptcha.net";
 				else
