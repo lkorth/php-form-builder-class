@@ -38,8 +38,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			</div>
 
 			<div id="pfbc_content">
-				<p><b>Tooltips</b> - Tooltips can be added to your form element titles using a jQuery plugin called qTip which can be found at http://craigsworks.com/projects/qtip/.  To activate a tooltip for a field element, simply include the <i>tooltip</i> element attribute.  This parameter can contain plain text and/or rich, html content.  
-				You can customize the tooltip's border and icon with the <i>tooltipBorderColor</i> and <i>tooltipIcon</i> form attributes respectively.</p>
+				<p><b>Tooltips</b> - Tooltips can be added to your form element titles using a jQuery plugin called Poshy Tip which can be found at http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/.  To activate a tooltip for a field element, simply include the <i>tooltip</i> element attribute.  This parameter can contain plain text and/or rich, html content.  
+				You can customize the tooltip's icon with the <i>tooltipIcon</i> form attribute.</p>
 
 				<?php
 				$form = new form("tooltip");

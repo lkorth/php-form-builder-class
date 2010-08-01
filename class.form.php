@@ -71,7 +71,6 @@ class form extends pfbc {
 	protected $noAutoFocus;
 	protected $preventJQueryLoad;
 	protected $preventJQueryUILoad;
-	protected $preventQTipLoad;
 	protected $preventGoogleMapsLoad;
 	protected $preventTinyMCELoad;	
 	protected $preventTinyMCEInitLoad;
@@ -80,7 +79,6 @@ class form extends pfbc {
 	protected $preventDefaultCSS;
 	protected $preventXHTMLStrict;
 	protected $tooltipIcon;
-	protected $tooltipBorderColor;
 
 	private $allowedFields;
 	private $bindRules;
@@ -987,7 +985,7 @@ class form extends pfbc {
 			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesPath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.\n\nPath specified:\n' . $this->includesPath . '\n\nEXTRA INFORMATION:\nPHP Path Used:\n' . $this->phpIncludesPath . '\n\nJavascript Path Used:\n' . $this->jsIncludesPath . '");</script>';
 
 		if(empty($this->tooltipIcon))
-			$this->tooltipIcon = $this->jsIncludesPath . "/jquery/plugins/qtip/tooltip-icon.gif";
+			$this->tooltipIcon = $this->jsIncludesPath . "/jquery/plugins/poshytip/tooltip-icon.gif";
 
 		if(empty($this->noAutoFocus))
 			$focus = true;
@@ -2244,8 +2242,8 @@ STR;
 				$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js");
 			if(empty($form->preventJQueryUILoad) && (!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists)))
 				$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js");
-			if(empty($form->preventQTipLoad) && !empty($form->tooltipIDArr))
-				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/qtip/jquery.qtip.js");
+			if(!empty($form->tooltipIDArr))
+				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
 			if(!empty($form->jqueryStarRatingIDArr))
 				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js");
 			if(!empty($form->jqueryDateRangeIDArr))
@@ -2329,7 +2327,7 @@ STR;
 					}	
 				}
 
-				//For more information on qtip, visit http://craigsworks.com/projects/qtip/.
+				//For more information on poshytip, visit http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/.
 				if(!empty($form->tooltipIDArr)) {
 					$tooltipKeys = array_keys($form->tooltipIDArr);
 					$tooltipSize = sizeof($tooltipKeys);
@@ -2337,28 +2335,7 @@ STR;
 						$tooltipEle = $form->tooltipIDArr[$tooltipKeys[$t]];
 						$tooltipContent = str_replace('"', '\"', $tooltipEle->tooltip);
 						$str .= <<<STR
-	$("#{$tooltipKeys[$t]}").qtip({ content: "$tooltipContent", style: { name: "light", tip: { corner: "bottomLeft", size: { x: 10, y: 8 } }, border: { radius: 3, width: 3
-STR;
-						if(!empty($form->tooltipBorderColor)) {
-							if($form->tooltipBorderColor[0] != "#")
-								$form->tooltipBorderColor = "#" . $form->tooltipBorderColor;
-							$str .= <<<STR
-, color: "{$form->tooltipBorderColor}"
-STR;
-						}	
-						$str .= <<<STR
-} 
-STR;
-						if(!empty($tooltipEle->tooltipWidth)) {
-							if(substr($tooltipEle->tooltipWidth, -2) == "px")
-								$tooltipEle->tooltipWidth = substr($tooltipEle->tooltipWidth, 0, -2);
-							$str .= <<<STR
-, width: {$tooltipEle->tooltipWidth}
-STR;
-						}
-
-						$str .= <<<STR
-}, position: { corner: { target: "topRight", tooltip: "bottomLeft" } } });
+	$("#{$tooltipKeys[$t]}").poshytip({ content: "$tooltipContent", className: "tip-yellow" });
 
 STR;
 					}	
@@ -2848,6 +2825,8 @@ STR;
 				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
 			if(!empty($form->jqueryColorIDArr))
 				$str .= str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css"));
+			if(!empty($form->tooltipIDArr))
+				$str .= str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css"));
 
 			if(empty($form->preventDefaultCSS)) {
 				$id = "#" . $this->attributes["id"];
@@ -3426,7 +3405,6 @@ class element extends pfbc {
 	public $snapIncrement;
 	public $suffix;
 	public $tooltip;
-	public $tooltipWidth;
 	public $tooltipID;
 	public $width;
 	public $zoom;

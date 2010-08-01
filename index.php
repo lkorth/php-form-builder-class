@@ -36,7 +36,7 @@
 					<li>File Upload Support</li>
 					<li>Email Address Validation</li>
 					<li>Two Wysiwyg Web Editors (<a href="http://tinymce.moxiecode.com/">TinyMCE</a>, <a href="http://ckeditor.com/">CKEditor</a>)</li>
-					<li>Tooltips (<a href="http://craigsworks.com/projects/qtip/">jQuery qTip Plugin</a>)</li>
+					<li>Tooltips (<a href="http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/">jQuery Poshy Tip Plugin</a>)</li>
 					<li>Captcha (<a href="http://recaptcha.net">reCAPTCHA</a>)</li>
 					<li>Flexible Div Layout</li>
 					<li>XHTML 1.0 Strict Compliant</li>
