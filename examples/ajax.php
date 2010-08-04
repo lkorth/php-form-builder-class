@@ -17,8 +17,9 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "signup")
 }
 elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "loading")
 {
-	if(!empty($_POST["Email"]))
-		echo "Your email address, " . $_POST["Email"] . ", has been successfully added to our mailing list.";
+        $sane_email = filter_var($_POST["Email"], FILTER_SANITIZE_EMAIL);
+        if(filter_var($sane_email, FILTER_VALIDATE_EMAIL))
+		echo "Your email address, " . $sane_email . ", has been successfully added to our mailing list.";
 	else	
 		echo "To join our mailing list, please submit a valid email address in the form provided below.";
 	exit();
@@ -26,8 +27,10 @@ elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "loading")
 elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "manual")
 {
 	echo "Selected Option(s): ";
-	if(!empty($_POST["Options"]))
-		echo implode(", ", $_POST["Options"]);
+	if(!empty($_POST["Options"])){
+		$option = implode(", ", $_POST["Options"]);
+                echo filter_var($option , FILTER_SANITIZE_SPECIAL_CHARS);
+        }
 	else
 		echo "None";
 	exit();
