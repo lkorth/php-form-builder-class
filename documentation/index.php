@@ -185,7 +185,7 @@ $form->addTextbox("My Required Textbox", "MyRequiredTextbox", "", array("require
 					<tr>
 						<td>additionalParams</td>
 						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the textbox.  The third example seen above 
-						demonstrates how this parameter can be used to apply the required setting.  See the <a href="#Additional-Parameters">additionalParams</a> section for all available options
+						demonstrates how this parameter can be used to apply the required setting.  See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings
 						that can be passed in this array.</td>
 					</tr>
 				</table>
@@ -201,8 +201,8 @@ echo '<pre>', highlight_string('<?php
 $form->addTextbox("My Textbox w/additionalParams", "MyTextbox", "", array("required" => 1, "class" => "myclass"));
 ?>', true), '</pre>';
 				?>
-				<p>Many of the available options that can be passed to the additionalParams parameter directly correspond with html attributes, like "class" seen 
-				in the code snippet above.  Others are custom settings with functionality built into this project, like "required".  All the available options that can
+				<p>Many of the available settings that can be passed to the additionalParams parameter directly correspond with html attributes, like "class" seen 
+				in the code snippet above.  Others are custom settings with functionality built into this project, like "required".  All the available settings that can
 				passed to the additionalParams paramter are provided below for your reference.</p>
 
 				<table cellpadding="0" cellspacing="0" border="0">
@@ -232,7 +232,7 @@ $form->addWebEditor("My Web Editor", "WebEditor", "", array("basic" => 1));
 						<td>Controls the height of the Google Map and jQuery slider (when orientation has been set to vertical).  When using the addLatLng function, the container housing the 
 						Google Map will be set to 200px by default; however, you can override this setting by making use of the height option.  When using the addSlider function, the height option
 						can be used in combination with the orientation jqueryOption to control the slider's height.  In both functions, numbers passed with no suffix - "px", "%", etc - will be 
-						interpreted in pixels.  This means that "80" will be rewritten as "80px".
+						interpreted in pixels.
 
 						<?php						
 echo '<pre>', highlight_string('<?php
@@ -302,6 +302,171 @@ $form->addDate("Schedule Appointment Date:", "AppointmentDate", "", array(
 ?>', true), '</pre>';
 						?>
 
+						</td>
+					</tr>
+					<tr>
+						<td>labelPaddingRight</td>
+						<td>All execpt addButton and addHTMLExternal</td>
+						<td>Controls the amount of padding applied to the right side of the label when both the labelWidth and labelRightAlign form/element attributes are being used to render the label and the form element side-by-side.  
+						This setting, as well as the labelWidth and labelRightAlign attributes, can be applied either in the form's setAttributes function or in an individual add element function.  If these settings are applied in the
+						form's setAttributes function, they will affect each element in the form.  The labelPaddingRight attribute is set to "4px" by default.  Numbers passed with no suffix - "px", "%", etc - will be interpreted in pixels.
+						See the 4th form in the <a href="../examples/layout.php">Layout example</a> file for reference.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->setAttributes(array(
+	"width" => 400,
+	"labelWidth" => 200,
+	"labelRightAlign" => 1
+));
+$form->addTextbox("My Textbox", "Textbox", "", array("labelPaddingRight" => 5));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>labelRightAlign</td>
+						<td>All execpt addButton and addHTMLExternal</td>
+						<td>Forces the element's label to be right aligned when both the labelWidth form/element attribute is being used to render the label and the form element side-by-side.  
+						This setting, as well as the labelWidth attribute, can be applied either in the form's setAttributes function or in an individual add element function.  If these settings are applied in the
+						form's setAttributes function, they will affect each element in the form.  See the 4th form in the <a href="../examples/layout.php">Layout example</a> file for reference.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->setAttributes(array(
+	"width" => 400,
+	"labelWidth" => 200,
+));
+$form->addTextbox("My Textbox", "Textbox", "", array("labelRightAlign" => 1));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>labelWidth</td>
+						<td>All execpt addButton and addHTMLExternal</td>
+						<td>Forces the label to be displayed side-by-side with the form element.  This feature overrides the default behavior that displays labels above form elements.
+						This setting can be applied either in the form's setAttributes function or in an individual add element function.  If this setting is applied in the
+						form's setAttributes function, it will affect each element in the form.  See the 2nd, 3rd, and 4th form in the <a href="../examples/layout.php">Layout example</a> file for reference.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->setAttributes(array(
+	"width" => 400
+));
+$form->addTextbox("My Textbox", "Textbox", "", array("labelWidth" => 200));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>	
+					<tr>
+						<td>noBreak</td>
+						<td>addCheckbox, addRadio, addYesNo, addTrueFalse, addCheckSort</td>
+						<td>Displays the radio buttons or checkboxes in a horizontal list.  This setting will be automatically set for the yesno and truefalse form elements.  The other elements - checkbox, radio, and checksort -
+						will be listed vertically by default.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addCheckbox("My Checkboxes", "Checkbox[]", "", array("Option #1", "Option #2", "Option #3"), array("noBreak" => 1));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>prefix</td>
+						<td>addSlider</td>
+						<td>Prepends the slider's selected value with a specified prefix.  See the 3rd slider in the <a href="../examples/jquery.php">jQuery example</a> file for reference.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addSlider("My Slider", "Slider", array(25, 75), array("prefix" => "$", "jqueryOptions" => array("step" => 5)));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>preHTML</td>
+						<td>All execpt addButton and addHTMLExternal</td>
+						<td>Used to display text or html content before an element's label.  The addHTMLExternal function can also be used to insert text/html between form elements.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addTextbox("My Textbox", "Textbox", "", array("preHTML" => "This is my preHTML"));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>postHTML</td>
+						<td>All execpt addButton and addHTMLExternal</td>
+						<td>Used to display text or html content after an element. See the <a href="../examples/conditional-scenarios.php">Conditional Scenarios example</a> file for reference. The addHTMLExternal function can also be used to insert text/html between form elements.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addTextbox("My Textbox", "Textbox", "", array("postHTML" => "This is my postHTML"));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>required</td>
+						<td>All execpt addButton, addHTMLExternal, addHTML, and addSort</td>
+						<td>Activates javascript validation to ensure the element has been filled out.  This attribute will also trigger php validation when the validate function is invoked after the form's data has been submitted.
+						See the <a href="../examples/js-validation.php">Javascript Validation</a> and <a href="../examples/php-validation.php">PHP Validation</a> example files for reference.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addTextbox("My Textbox", "Textbox", "", array("required" => 1));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>suffix</td>
+						<td>addSlider</td>
+						<td>Appends the slider's selected value with a specified suffix.  See the 2nd slider in the <a href="../examples/jquery.php">jQuery example</a> file for reference.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addSlider("My Slider", "Slider", "", array("suffix" => "%"));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>tooltip</td>
+						<td>All execpt addButton, addHTML, and addHTMLExternal</td>
+						<td>Actives tooltip icon beside the element's label, which displays text/html when hovered over.  Tooltips within this project leverage a jQuery plugin called <a href="http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/">Poshy Tip</a>.  See the <a href="../examples/tooltips.php">Tooltip example</a> file for reference.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addTextbox("My Textbox", "Textbox", "", array("tooltip" => "This is my tooltip"));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>zoom</td>
+						<td>addLatLng</td>
+						<td>Controls the zoom level of the Google Map.  This setting can range from 0 to 21, with 0 representing the farthest zoom level where the entire world can be seen on one map, and 21 being the closest zoom level where individual buildings can be seen.
+						This attribute will be set to 9 by default.  See the <a href="../examples/google-maps.php">Google Maps</a> file for reference.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addLatLng("My Latitude/Longitude", "LatLng", "", array("zoom" => 14));
+?>', true), '</pre>';
+						?>
+						
 						</td>
 					</tr>
 				</table>
