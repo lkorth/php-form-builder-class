@@ -65,9 +65,9 @@ $form->render();
 				<p>The first thing you'll notice is that class.form.php is included with...</p>
 
 				<?php
-echo '<pre>', htmlentities('
+echo '<pre>', highlight_string('<?php
 include("php-form-builder-class/class.form.php");
-'), '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>This file can be found within the php-form-builder-class directory, and must be included in each script that makes use of this project.</p>
@@ -75,9 +75,9 @@ include("php-form-builder-class/class.form.php");
 				<p>Next, a new form object is created with...</p>	
 
 				<?php
-echo '<pre>', htmlentities('
+echo '<pre>', highlight_string('<?php
 $form = new form("HelloWorld");
-'), '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>An identifier, "HelloWorld" in this case, is included.  If this identifier is not provided, "myform" will be used; however,
@@ -87,11 +87,11 @@ $form = new form("HelloWorld");
 				<p>Once the form object is created, the setAttributes() function is invoked...</p>
 
 				<?php
-echo '<pre>', htmlentities('
+echo '<pre>', highlight_string('<?php
 $form->setAttributes(array(
 	"width" => 400
 ));
-'), '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>The setAttributes() function accepts an associative array of key/value pairs, and is used to assign various attributes to 
@@ -101,9 +101,9 @@ $form->setAttributes(array(
 				<p>Now, we're ready to add our form elements.  In our "Hello World" example, there's only one element - a textbox.</p>
 
 				<?php
-echo '<pre>', htmlentities('
+echo '<pre>', highlight_string('<?php
 $form->addTextbox("My Textbox:", "MyTextbox", "Hello World");
-'), '</pre>';
+?>', true), '</pre>';
 				?>
 				
 				<p>More information on how to work with textboxes and all the other form elements can be found 
@@ -113,9 +113,9 @@ $form->addTextbox("My Textbox:", "MyTextbox", "Hello World");
 				<p>A button is attached to the form with...</p>
 
 				<?php
-echo '<pre>', htmlentities('
+echo '<pre>', highlight_string('<?php
 $form->addButton();
-'), '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>The addButton() function has optional parameters for customizing the appearance and behavior of your buttons.  With no paramaters 
@@ -124,9 +124,9 @@ $form->addButton();
 				<p>The final function called is render()...</p>
 
 				<?php
-echo '<pre>', htmlentities('
+echo '<pre>', highlight_string('<?php
 $form->render();
-'), '</pre>';
+?>', true), '</pre>';
 				?>
 
 				<p>The render() function is responsible for a variety of tasks including building the form's html markup, including the appropriate
@@ -167,7 +167,11 @@ $form->addTextbox("My Required Textbox", "MyRequiredTextbox", "", array("require
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150">label</td>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
 						<td>Controls the content rendered inside &lt;label&gt; tags before the textbox.</td>
 					</tr>
 					<tr>
@@ -203,11 +207,24 @@ $form->addTextbox("My Textbox w/additionalParams", "MyTextbox", "", array("requi
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150">basic</td>
-						<td width="200">addCKEditor, addWebEditor</td>
+						<td width="150"><b>Option</b></td>
+						<td width="225"><b>Applicable Element Functions</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>basic</td>
+						<td>addCKEditor, addWebEditor</td>
 						<td>Triggers web editor's simplified control panel.  Both of the web editors integrated into this project - TinyMCE and CKEditor - have two
 						control panels that can be used.  By default, the web editor will be displayed with a full-featured set of controls; however, you can use the basic option
-						to display a reduced set of controls including only bold, italics, ordered/unordered lists, and a few others.  Both control panels can be seen in the <a href="../examples/web-editors.php">Web Editors example</a>.</td>
+						to display a reduced set of controls including only bold, italics, ordered/unordered lists, and a few others.  Both control panels can be seen in the <a href="../examples/web-editors.php">Web Editors example</a>.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addWebEditor("My Web Editor", "WebEditor", "", array("basic" => 1));
+?>', true), '</pre>';
+						?>
+
+						</td>
 					</tr>
 					<tr>
 						<td>height</td>
@@ -215,14 +232,77 @@ $form->addTextbox("My Textbox w/additionalParams", "MyTextbox", "", array("requi
 						<td>Controls the height of the Google Map and jQuery slider (when orientation has been set to vertical).  When using the addLatLng function, the container housing the 
 						Google Map will be set to 200px by default; however, you can override this setting by making use of the height option.  When using the addSlider function, the height option
 						can be used in combination with the orientation jqueryOption to control the slider's height.  In both functions, numbers passed with no suffix - "px", "%", etc - will be 
-						interpreted in pixels.  This means that "80" will be rewritten as "80px".</td>
+						interpreted in pixels.  This means that "80" will be rewritten as "80px".
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addLatLng("My Latitude/Longitude", "LatLng", "", array("height" => 300));
+?>', true), '</pre>';
+						?>
+						
+						</td>
 					</tr>
 					<tr>
 						<td>hint</td>
 						<td>addTextbox, addTextarea, addDate, addDateRange, addColorPicker, addLatLng, addEmail</td>
 						<td>Prefills elements with a temporary value that is cleared with an onclick javascript function when engaged.  Several functions including addDate, addDateRange, addColorPicker, and addLatLng
 						have this option set by default.  For instance, the addDate function has a hint set to "Click to Select Date...".  Hints are ignored for required fields during javascript validation.  Also, the form's
-						built in onsubmit javascript function will remove hints before the data is submitted.</td>
+						built in onsubmit javascript function will remove hints before the data is submitted.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addTextbox("My Textbox", "Textbox", "", array("hint" => "My hint..."));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>hideDisplay</td>
+						<td>addSlider</td>
+						<td>Prevents the selected value from being displayed below the slider element.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addSlider("My Slider", "Slider", "", array("hideDisplay" => 1));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>hideJump</td>
+						<td>addLatLng</td>
+						<td>Prevents the location jump textbox from being rendered below the Google Map.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addLatLng("My Latitude/Longitude", "LatLng", "", array("hideJump" => 1));
+?>', true), '</pre>';
+						?>
+						
+						</td>
+					</tr>
+					<tr>
+						<td>jqueryOptions</td>
+						<td>addDate, addDateRange, addSlider, addRating</td>
+						<td>Allows jQuery options to be applied to various form elements that leverage jQuery plugins/UI.  This option needs to be passed as an associative array of key/value pairs where the key corresponds to the jQuery option's
+						name.  If the jQuery option's value is javascript code, "js:" will need to prepended in order to distinguish itself from a string.  Use the example below for reference.
+
+						<?php
+echo '<pre>', highlight_string('<?php
+$form->addDate("Schedule Appointment Date:", "AppointmentDate", "", array(
+	"jqueryOptions" => array(
+		"dateFormat" => "yy-mm-dd",
+		"changeMonth" => false,
+		"changeYear" => false,
+		"numberOfMonths" => "js:[2, 3]"
+	)
+));
+?>', true), '</pre>';
+						?>
+
+						</td>
 					</tr>
 				</table>
 			</div>	

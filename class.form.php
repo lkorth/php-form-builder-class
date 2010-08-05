@@ -3388,6 +3388,7 @@ class element extends pfbc {
 	public $hideCaption;
 	public $hideDisplay;
 	public $hideJump;
+	public $jqueryOptions;
 	public $label;
 	public $labelPaddingRight;
 	public $labelRightAlign;
@@ -3408,7 +3409,6 @@ class element extends pfbc {
 	public $tooltipID;
 	public $width;
 	public $zoom;
-	public $jqueryOptions;
 
 	public function __construct() {
 		$this->attributes = array(
