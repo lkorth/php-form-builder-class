@@ -28,6 +28,7 @@ include("../class.form.php");
 						<ul>
 							<li><a href="#Form-Elements-Textbox">Textbox</a></li>
 							<li><a href="#Form-Elements-Selectbox">Selectbox</a></li>
+							<li><a href="#Form-Elements-Checkbox">Checkbox</a></li>
 						</ul>	
 					</li>	
 					<li><a href="#Additional-Parameters">additionalParams</a>
@@ -154,13 +155,13 @@ $form->render();
 
 				<?php
 echo '<pre>', highlight_string('<?php
-/* addTextbox() Function Declaration
+/* addTextbox Function Declaration
 public function addTextbox($label, $name, $value="", $additionalParams="") {}
 */
 
 $form->addTextbox("My Textbox", "Textbox");
-$form->addTextbox("My Prefilled Textbox", "PrefilledTextbox", "This is my default value.");
-$form->addTextbox("My Required Textbox", "RequiredTextbox", "", array("required" => 1));
+$form->addTextbox("My Prefilled Textbox", "Textbox", "This is my default value.");
+$form->addTextbox("My Required Textbox", "Textbox", "", array("required" => 1));
 ?>', true), '</pre>';
 				?>
 				
@@ -194,33 +195,33 @@ $form->addTextbox("My Required Textbox", "RequiredTextbox", "", array("required"
 
 				<a name="Form-Elements-Selectbox"></a>
 				<h4>Selectbox:</h4><p>Selectboxes are added to your forms via the addSelect function.  This function is very similar to addTextbox; however, there is one additional parameter - options -
-				that is used to populate the selectbox's &lt;option&gt; tags.  This parameter can be passed as either a one dimensional array or as an associtive array of key/value pairs.  The first and second example
+				that is used to populate the selectbox's &lt;option&gt; tags.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second example
 				provided below illustrate how the options paramter affects the value and displayed text of each &lt;option&gt; tag.</p>
 
 				<?php
 echo '<pre>', highlight_string('<?php
-/* addSelect() Function Declaration
+/* addSelect Function Declaration
 public function addSelect($label, $name, $value="", $options="", $additionalParams="") {}
 */
 
-$form->addTextbox("My Selectbox", "Selectbox", "", array("Option #1", "Option #2", "Option #3"));
+$form->addSelect("My Selectbox", "Selectbox", "", array("Option #1", "Option #2", "Option #3"));
 /*
 <option value="Option #1">Option #1</option>
 <option value="Option #2">Option #2</option>
 <option value="Option #3">Option #3</option>
 */
 
-$form->addTextbox("My Selectbox", "AssociativeSelectbox", "", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+$form->addSelect("My Selectbox", "Selectbox", "", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
 /*
 <option value="1">Option #1</option>
 <option value="2">Option #2</option>
 <option value="3">Option #3</option>
 */
 
-$form->addTextbox("My Prefilled Selectbox", "PrefilledSelectbox", "Option #2", array("Option #1", "Option #2", "Option #3"));
-$form->addTextbox("My Prefilled Selectbox", "PrefilledSelectbox", "1", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
-
-$form->addTextbox("My Multiple Selectbox", "MultipleSelectbox", "", array("Option #1", "Option #2", "Option #3"), array("multiple" => "multiple"));
+$form->addSelect("My Prefilled Selectbox", "Selectbox", "Option #2", array("Option #1", "Option #2", "Option #3"));
+$form->addSelect("My Prefilled Selectbox", "Selectbox", "1", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+$form->addSelect("My Multiple Selectbox", "Selectbox", "", array("Option #1", "Option #2", "Option #3"), array("multiple" => "multiple"));
+$form->addSelect("My Prefilled/Multiple Selectbox", "Selectbox", array("Option #1", "Option #2"), array("Option #1", "Option #2", "Option #3"), array("multiple" => "multiple"));
 ?>', true), '</pre>';
 				?>
 				
@@ -237,12 +238,14 @@ $form->addTextbox("My Multiple Selectbox", "MultipleSelectbox", "", array("Optio
 					</tr>
 					<tr>
 						<td>name</td>
-						<td>Corresponds to the name attribute of the &lt;select&gt; tag.</td>
+						<td>Corresponds to the name attribute of the &lt;select&gt; tag.  If you are using the multiple setting and do not append "[]" to the end this parameter, it
+						will by appended for you automatically.</td>
 					</tr>
 					<tr>
 						<td>value</td>
 						<td>Corresponds to the value attribute of an &lt;option&gt; tag.  This can be used to set the selectbox's default value.  If the options parameter contains an associative array,
-						the value will need to correspond with a key of that array.  See the third and fourth examples above for reference.</td>
+						the value will need to correspond with a key of that array.  This parameter can also contain an array of vales if the multiple setting is also being used.
+						See the third, fourth, and sixth examples above for reference.</td>
 					</tr>
 					<tr>
 						<td>options</td>
@@ -255,6 +258,71 @@ $form->addTextbox("My Multiple Selectbox", "MultipleSelectbox", "", array("Optio
 						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the selectbox.  The fifth example seen above 
 						demonstrates how this parameter can be used to apply the multiple setting.  See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings
 						that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-Checkbox"></a>
+				<h4>Checkbox:</h4><p>Checkboxes are added to your forms via the addCheckbox function.  This function is used to generate a group of checkboxes, not just one.  Similar to the addSelect function, there is an options parameter
+				that is used to populate each checkbox's value and displayed text.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second example
+				provided below illustrate how the options paramter affects each checkbox in the group.
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addCheckbox Function Declaration
+public function addCheckbox($label, $name, $value="", $options="", $additionalParams="") {}
+*/
+
+$form->addCheckbox("My Checkboxes", "Checkbox", "", array("Option #1", "Option #2", "Option #3"));
+/*
+<input type="checkbox" name="Checkbox[]" id="Checkbox-0" value="Option #1"/><label for="Checkbox-0">Option #1</label>
+<input type="checkbox" name="Checkbox[]" id="Checkbox-1" value="Option #2"/><label for="Checkbox-1">Option #2</label>
+<input type="checkbox" name="Checkbox[]" id="Checkbox-2" value="Option #3"/><label for="Checkbox-2">Option #3</label>
+*/
+
+$form->addCheckbox("My Checkboxes", "Checkbox", "", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+/*
+<input type="checkbox" name="Checkbox[]" id="Checkbox-0" value="1"/><label for="Checkbox-0">Option #1</label>
+<input type="checkbox" name="Checkbox[]" id="Checkbox-1" value="2"/><label for="Checkbox-0">Option #2</label>
+<input type="checkbox" name="Checkbox[]" id="Checkbox-2" value="3"/><label for="Checkbox-0">Option #3</label>
+*/
+
+$form->addCheckbox("My Selected Checkboxes", "Checkbox", "Option #2", array("Option #1", "Option #2", "Option #3"));
+$form->addCheckbox("My Selected Checkboxes", "Checkbox", "1", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+$form->addCheckbox("My Selected Checkboxes", "Checkbox", array("1", "3"), array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has five available parameters: label, name, value, options, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the group of checkboxes.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute for each &lt;input&gt; tag in the checkbox group. If you do not append "[]" to the end this parameter, it
+						will by appended for you automatically.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Corresponds to the value attribute of each &lt;input&gt; tag in the checkbox group.  This can be used to check one or more of the checkboxes by default.  If the options parameter contains an associative array,
+						the value will need to correspond with a key of that array.  This parameter can be a single value or an array of values.  See the third, fourth, and fifth examples above for reference.</td>
+					</tr>
+					<tr>
+						<td>options</td>
+						<td>Used to generate each &lt;input&gt; tag in the checkbox group.  This parameter can either by passed as a one dimensional array, or as an associative array.  If a one dimensional array supplied,
+						each checkbox's value and displayed text will be set to the appropriate array's value.  If an associative array is supplied, the array's keys will be used for the checkbox's values and the array's
+						values will be used for its displayed text.  See the first and second examples above for reference.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the checkbox group.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
 					</tr>
 				</table>
 			</div>	
