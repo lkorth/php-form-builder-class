@@ -29,9 +29,12 @@ include("../class.form.php");
 							<li><a href="#Form-Elements-Textbox">Textbox</a></li>
 							<li><a href="#Form-Elements-Selectbox">Selectbox</a></li>
 							<li><a href="#Form-Elements-Checkbox">Checkbox</a></li>
+							<li><a href="#Form-Elements-Radio-Button">Radio Button</a></li>
+							<li><a href="#Form-Elements-Hidden">Hidden</a></li>
+							<li><a href="#Form-Elements-File">File</a></li>
 						</ul>	
 					</li>	
-					<li><a href="#Additional-Parameters">additionalParams</a>
+					<li><a href="#Additional-Parameters">additionalParams Element Parameter</a>
 				</ul>
 			</div>
 
@@ -195,7 +198,7 @@ $form->addTextbox("My Required Textbox", "Textbox", "", array("required" => 1));
 
 				<a name="Form-Elements-Selectbox"></a>
 				<h4>Selectbox:</h4><p>Selectboxes are added to your forms via the addSelect function.  This function is very similar to addTextbox; however, there is one additional parameter - options -
-				that is used to populate the selectbox's &lt;option&gt; tags.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second example
+				that is used to populate the selectbox's &lt;option&gt; tags.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second examples
 				provided below illustrate how the options paramter affects the value and displayed text of each &lt;option&gt; tag.</p>
 
 				<?php
@@ -263,7 +266,7 @@ $form->addSelect("My Prefilled/Multiple Selectbox", "Selectbox", array("Option #
 
 				<a name="Form-Elements-Checkbox"></a>
 				<h4>Checkbox:</h4><p>Checkboxes are added to your forms via the addCheckbox function.  This function is used to generate a group of checkboxes, not just one.  Similar to the addSelect function, there is an options parameter
-				that is used to populate each checkbox's value and displayed text.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second example
+				that is used to populate each checkbox's value and displayed text.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second examples
 				provided below illustrate how the options paramter affects each checkbox in the group.
 
 				<?php
@@ -322,6 +325,181 @@ $form->addCheckbox("My Selected Checkboxes", "Checkbox", array("1", "3"), array(
 					<tr>
 						<td>additionalParams</td>
 						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the checkbox group.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-Radio-Button"></a>
+				<h4>Radio Button:</h4><p>Radio buttons are added to your forms via the addRadio function.  This function is used to generate a group of radio buttons, not just one.  There is an options parameter
+				that is used to populate each radio button's value and displayed text.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second examples
+				provided below illustrate how the options paramter affects each radio button in the group.
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addRadio Function Declaration
+public function addRadio($label, $name, $value="", $options="", $additionalParams="") {}
+*/
+
+$form->addRadio("My Radio Buttons", "Radio", "", array("Option #1", "Option #2", "Option #3"));
+/*
+<input type="radio" name="Radio" id="Radio-0" value="Option #1"/><label for="Radio-0">Option #1</label>
+<input type="radio" name="Radio" id="Radio-1" value="Option #2"/><label for="Radio-1">Option #2</label>
+<input type="radio" name="Radio" id="Radio-2" value="Option #3"/><label for="Radio-2">Option #3</label>
+*/
+
+$form->addRadio("My Radio Buttons", "Radio", "", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+/*
+<input type="radio" name="Radio" id="Radio-0" value="1"/><label for="Radio-0">Option #1</label>
+<input type="radio" name="Radio" id="Radio-1" value="2"/><label for="Radio-0">Option #2</label>
+<input type="radio" name="Radio" id="Radio-2" value="3"/><label for="Radio-0">Option #3</label>
+*/
+
+$form->addRadio("My Selected Radio Buttons", "Radio", "Option #2", array("Option #1", "Option #2", "Option #3"));
+$form->addRadio("My Selected Radio Buttons", "Radio", "1", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has five available parameters: label, name, value, options, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the group of radio buttons.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute for each &lt;input&gt; tag in the radio button group.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Corresponds to the value attribute of each &lt;input&gt; tag in the radio group.  This can be used to check one radio button by default.  If the options parameter contains an associative array,
+						the value will need to correspond with a key of that array.  See the third and fourth examples above for reference.</td>
+					</tr>
+					<tr>
+						<td>options</td>
+						<td>Used to generate each &lt;input&gt; tag in the radio button group.  This parameter can either by passed as a one dimensional array, or as an associative array.  If a one dimensional array supplied,
+						each radio button's value and displayed text will be set to the appropriate array's value.  If an associative array is supplied, the array's keys will be used for the radio button's values and the array's
+						values will be used for its displayed text.  See the first and second examples above for reference.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the radio button group.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-Textarea"></a>
+				<h4>Textarea:</h4><p>Textboxes are added to forms by invoking the addTextarea function, which is nearly identical to the addTextbox function.</p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addTextarea Function Declaration
+public function addTextarea($label, $name, $value="", $additionalParams="") {}
+*/
+
+$form->addTextarea("My Textarea", "Textarea");
+$form->addTextarea("My Prefilled Textarea", "Textarea", "This is my default value.");
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has four available parameters: label, name, value, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the textarea.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;textarea&gt; tag.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Optional - Corresponds to the value attribute of the &lt;textarea&gt; tag.  This can be used to set the textarea's default value.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the textarea.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-Hidden"></a>
+				<h4>Hidden:</h4><p>Hidden inputs are added to forms by invoking the addHidden function.  The label parameter is not included in this function because hidden inputs do not make use
+				of labels.
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addTextarea Function Declaration
+public function addHidden($name, $value="", $additionalParams="") {}
+*/
+
+$form->addHidden("Hidden", "MyHiddenValue");
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has three available parameters: name, value, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;input&gt; tag.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Optional - Corresponds to the value attribute of the &lt;input&gt; tag.  This can be used to set the hidden input's default value.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the hidden input.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-File"></a>
+				<h4>File:</h4><p>File inputs are added to forms by invoking the addFile function.  The &lt;form&gt; tag's enctype attribute will be automatically set to "multipart/form-data" if this function
+				is used on a form to attach a file element type.  There is no need for the value parameter, so it is omitted from the function's declaration.</p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addTextarea Function Declaration
+public function addFile($label, $name, $additionalParams="") {}
+*/
+
+$form->addFile("My File", "File");
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has three available parameters: label, name, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the file input.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;input&gt; tag.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the file input.
 						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
 					</tr>
 				</table>
