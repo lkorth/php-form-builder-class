@@ -1250,6 +1250,9 @@ class form extends pfbc {
 						$ele->attributes["class"] .= " pfbc-select";
 					else
 						$ele->attributes["class"] = "pfbc-select";
+					
+					if(!empty($ele->attributes["multiple"]) && substr($ele->attributes["name"], -2) != "[]")
+							$ele->attributes["name"] .= "[]";
 
 					if($eleType == "rating")
 						$str .= '<table cellpadding="0" cellspacing="0" border="0"><tr><td valign="middle"><div id="' . $ele->ratingID . '">';

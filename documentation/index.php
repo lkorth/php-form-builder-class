@@ -27,8 +27,10 @@ include("../class.form.php");
 					<li><a href="#Form-Elements">Supported Form Elements</a>
 						<ul>
 							<li><a href="#Form-Elements-Textbox">Textbox</a></li>
+							<li><a href="#Form-Elements-Selectbox">Selectbox</a></li>
 						</ul>	
 					</li>	
+					<li><a href="#Additional-Parameters">additionalParams</a>
 				</ul>
 			</div>
 
@@ -141,14 +143,14 @@ $form->render();
 			<div class="pfbc_doc_section">
 				<a name="Form-Elements"></a>
 				<h3>Form Elements</h3>
-				<p>The latest release of this project, version <?php echo(file_get_contents('../version'));?>, contains support for 26 form element types.  These 
+				<p>The latest release of this project - version <?php echo(file_get_contents('../version'));?> - contains support for 26 form element types.  These 
 				include button, captcha, checkbox, checksort, ckeditor, colorpicker, country, date, daterange, email, file, hidden, html, htmlexternal, latlng, 
 				password, radio, rating, select, sort, state, textarea, textbox, truefalse, webeditor, and yesno.  Let's take a closer look at how each of these form element
 				types can be used in your development.</p>
 
 				<a name="Form-Elements-Textbox"></a>
 				<h4>Textbox:</h4><p>I chose to begin with textboxes because they're arguably the most frequently used form element on the web.  Chances are, the first form you build with this
-				project will contain a textbox - so, let's get started.  Textboxes are added to your forms through the addTextbox() function.  See the code snippet provided below.</p>
+				project will contain a textbox - so, let's get started.  Textboxes are added to your forms through the addTextbox function.  See the code snippet provided below.</p>
 
 				<?php
 echo '<pre>', highlight_string('<?php
@@ -156,9 +158,9 @@ echo '<pre>', highlight_string('<?php
 public function addTextbox($label, $name, $value="", $additionalParams="") {}
 */
 
-$form->addTextbox("My Textbox", "MyTextbox");
-$form->addTextbox("My Prefilled Textbox", "MyPrefilledTextbox", "This is my default value.");
-$form->addTextbox("My Required Textbox", "MyRequiredTextbox", "", array("required" => 1));
+$form->addTextbox("My Textbox", "Textbox");
+$form->addTextbox("My Prefilled Textbox", "PrefilledTextbox", "This is my default value.");
+$form->addTextbox("My Required Textbox", "RequiredTextbox", "", array("required" => 1));
 ?>', true), '</pre>';
 				?>
 				
@@ -189,6 +191,72 @@ $form->addTextbox("My Required Textbox", "MyRequiredTextbox", "", array("require
 						that can be passed in this array.</td>
 					</tr>
 				</table>
+
+				<a name="Form-Elements-Selectbox"></a>
+				<h4>Selectbox:</h4><p>Selectboxes are added to your forms via the addSelect function.  This function is very similar to addTextbox; however, there is one additional parameter - options -
+				that is used to populate the selectbox's &lt;option&gt; tags.  This parameter can be passed as either a one dimensional array or as an associtive array of key/value pairs.  The first and second example
+				provided below illustrate how the options paramter affects the value and displayed text of each &lt;option&gt; tag.</p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addSelect() Function Declaration
+public function addSelect($label, $name, $value="", $options="", $additionalParams="") {}
+*/
+
+$form->addTextbox("My Selectbox", "Selectbox", "", array("Option #1", "Option #2", "Option #3"));
+/*
+<option value="Option #1">Option #1</option>
+<option value="Option #2">Option #2</option>
+<option value="Option #3">Option #3</option>
+*/
+
+$form->addTextbox("My Selectbox", "AssociativeSelectbox", "", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+/*
+<option value="1">Option #1</option>
+<option value="2">Option #2</option>
+<option value="3">Option #3</option>
+*/
+
+$form->addTextbox("My Prefilled Selectbox", "PrefilledSelectbox", "Option #2", array("Option #1", "Option #2", "Option #3"));
+$form->addTextbox("My Prefilled Selectbox", "PrefilledSelectbox", "1", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+
+$form->addTextbox("My Multiple Selectbox", "MultipleSelectbox", "", array("Option #1", "Option #2", "Option #3"), array("multiple" => "multiple"));
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has five available parameters: label, name, value, options, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the selectbox.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;select&gt; tag.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Corresponds to the value attribute of an &lt;option&gt; tag.  This can be used to set the selectbox's default value.  If the options parameter contains an associative array,
+						the value will need to correspond with a key of that array.  See the third and fourth examples above for reference.</td>
+					</tr>
+					<tr>
+						<td>options</td>
+						<td>Used to populate the selectbox's options.  This parameter can either by passed as a one dimensional array, or as an associative array.  If a one dimensional array supplied,
+						each option's value and displayed text will be set to the appropriate array's value.  If an associative array is supplied, the array's keys will be used for the option's values and the array's
+						values will be used for the option's displayed text.  See the first and second examples above for reference.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the selectbox.  The fifth example seen above 
+						demonstrates how this parameter can be used to apply the multiple setting.  See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings
+						that can be passed in this array.</td>
+					</tr>
+				</table>
 			</div>	
 
 			<div class="pfbc_doc_section">
@@ -198,12 +266,13 @@ $form->addTextbox("My Required Textbox", "MyRequiredTextbox", "", array("require
 				to form elements through an associative array of key/value pairs.  An example is provided below to demonstrate how this can be done.</p>
 				<?php
 echo '<pre>', highlight_string('<?php
-$form->addTextbox("My Textbox w/additionalParams", "MyTextbox", "", array("required" => 1, "class" => "myclass"));
+$form->addTextbox("My Textbox w/additionalParams", "MyTextbox", "", array("required" => 1, "class" => "myclass", "onkeyup" => "filterTextbox(this.value);"));
 ?>', true), '</pre>';
 				?>
-				<p>Many of the available settings that can be passed to the additionalParams parameter directly correspond with html attributes, like "class" seen 
-				in the code snippet above.  Others are custom settings with functionality built into this project, like "required".  All the available settings that can
-				passed to the additionalParams paramter are provided below for your reference.</p>
+				<p>Many of the available settings that can be passed to the additionalParams parameter directly correspond with html attributes, like "class" and "onkeyup" as seen 
+				in the code snippet above.  If you're unfamiliar with these supported html attributes, use <a href="http://www.w3schools.com/tags/tag_input.asp">this page from w3schools.com</a> as a reference.  
+				Others available settings are custom functionality built into this project, like "required" - which triggers javascript validation.  All of these custom settings that can
+				be passed to the additionalParams paramter are provided below for your reference.</p>
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
@@ -215,7 +284,7 @@ $form->addTextbox("My Textbox w/additionalParams", "MyTextbox", "", array("requi
 						<td>basic</td>
 						<td>addCKEditor, addWebEditor</td>
 						<td>Triggers web editor's simplified control panel.  Both of the web editors integrated into this project - TinyMCE and CKEditor - have two
-						control panels that can be used.  By default, the web editor will be displayed with a full-featured set of controls; however, you can use the basic option
+						control panels that can be used.  By default, the web editor will be displayed with a fully-featured set of controls; however, you can use the basic option
 						to display a reduced set of controls including only bold, italics, ordered/unordered lists, and a few others.  Both control panels can be seen in the <a href="../examples/web-editors.php">Web Editors example</a>.
 
 						<?php						
@@ -229,8 +298,8 @@ $form->addWebEditor("My Web Editor", "WebEditor", "", array("basic" => 1));
 					<tr>
 						<td>height</td>
 						<td>addLatLng, addSlider</td>
-						<td>Controls the height of the Google Map and jQuery slider (when orientation has been set to vertical).  When using the addLatLng function, the container housing the 
-						Google Map will be set to 200px by default; however, you can override this setting by making use of the height option.  When using the addSlider function, the height option
+						<td>Controls the height of the Google Map and jQuery slider (when orientation has been set to vertical).  When using the addLatLng function, the height of the container housing the 
+						Google Map will be set to 200px by default; however, you can override this setting by making use of the height setting.  When using the addSlider function, the height setting
 						can be used in combination with the orientation jqueryOption to control the slider's height.  In both functions, numbers passed with no suffix - "px", "%", etc - will be 
 						interpreted in pixels.
 
