@@ -34,6 +34,9 @@ include("../class.form.php");
 							<li><a href="#Form-Elements-File">File</a></li>
 							<li><a href="#Form-Elements-State">State</a></li>
 							<li><a href="#Form-Elements-Country">Country</a></li>
+							<li><a href="#Form-Elements-YesNo">Yes/No</a></li>
+							<li><a href="#Form-Elements-TrueFalse">True/False</a></li>
+							<li><a href="#Form-Elements-Email">Email</a></li>
 						</ul>	
 					</li>	
 					<li><a href="#Additional-Parameters">additionalParams Element Parameter</a>
@@ -589,6 +592,130 @@ $form->addCountry("My Country", "Country");
 						<td>additionalParams</td>
 						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the selectbox.
 						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-YesNo"></a>
+				<h4>Yes/No:</h4><p>The addYesNo function is a shortcut for adding a radio button group with options for "Yes" and "No".  
+				The values for these options are set to "1" and "0" respectively.  Because the options are pre-determined, the options parameter is omitted from the function's declaration.</p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addYesNo Function Declaration
+public function addYesNo($label, $name, $value="", $additionalParams="") {}
+*/
+
+$form->addYesNo("My Yes/No", "YesNo");
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has four available parameters: label, name, value, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the radio button group.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of each radio button's &lt;input&gt; tag in the group.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Corresponds to the value attribute of each radio button's &lt;input&gt; tag in the group.  This can be used to set the elements default value - "1" for "Yes", "0" for "No".</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the element.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-TrueFalse"></a>
+				<h4>True/False:</h4><p>The addTrueFalse function is a shortcut for adding a radio button group with options for "True" and "False".  
+				The values for these options are set to "1" and "0" respectively.  Because the options are pre-determined, the options parameter is omitted from the function's declaration.</p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addTrueFalse Function Declaration
+public function addTrueFalse($label, $name, $value="", $additionalParams="") {}
+*/
+
+$form->addTrueFalse("My True/False", "TrueFalse");
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has four available parameters: label, name, value, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the radio button group.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of each radio button's &lt;input&gt; tag in the group.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Corresponds to the value attribute of each radio button's &lt;input&gt; tag in the group.  This can be used to set the elements default value - "1" for "True", "0" for "False".</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the element.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-Email"></a>
+				<h4>Email:</h4><p>The email element type is essentially a textbox with built-in javascript/php email validation.  Javascript validation is triggered in the form's pre-defined onsubmit function.
+				If the element's value is not empty, an AJAX call is made to validate the element's content.  If the textbox does not contain a valid email address, an appropriate error message will be dispalyed.  
+				PHP validation is triggered by making use of the validate function after the form's data has been submitted.  Both javascript and php validation make use of an open source project found at 
+				http://code.google.com/p/php-email-address-validation/.  See the <a href="../examples/email-validation.php">Email Validation example</a> file for reference.</p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addEmail Function Declaration
+public function addEmail($label, $name, $value="", $additionalParams="") {}
+*/
+
+$form->addEmail("My Textbox w/Email Validation", "Email");
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has four available parameters: label, name, value, and additionalParams.  Many of the functions responsible for adding form elements follow this same pattern.
+				The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the textbox.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;input&gt; tag.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Optional - Corresponds to the value attribute of the &lt;input&gt; tag.  This can be used to set the textbox's default value.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the textbox.  The third example seen above 
+						demonstrates how this parameter can be used to apply the required setting.  See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings
+						that can be passed in this array.</td>
 					</tr>
 				</table>
 			</div>	
