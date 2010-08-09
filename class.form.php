@@ -177,7 +177,7 @@ class form extends pfbc {
 
 			if(empty($this->stateArr)) {
 				$this->stateArr = array(
-					array("value" => "", "text" => "--Select a State/Province--"),
+					array("value" => "", "text" => "--Select a State/Province/Territory--"),
 					array("value" => "AL", "text" => "Alabama"),
 					array("value" => "AK", "text" => "Alaska"),
 					array("value" => "AZ", "text" => "Arizona"),
@@ -230,7 +230,7 @@ class form extends pfbc {
 					array("value" => "WI", "text" => "Wisconsin"),
 					array("value" => "WY", "text" => "Wyoming"),
 					array("value" => "", "text" => ""),
-					array("value" => "", "text" => "-- Canadian Province--"),
+					array("value" => "", "text" => "-- Canadian Provinces/Territories --"),
 					array("value" => "AB", "text" => "Alberta"),
 					array("value" => "BC", "text" => "British Columbia"),
 					array("value" => "MB", "text" => "Manitoba"),
@@ -245,7 +245,7 @@ class form extends pfbc {
 					array("value" => "SK", "text" => "Saskatchewan"),
 					array("value" => "YT", "text" => "Yukon"),
 					array("value" => "", "text" => ""),
-					array("value" => "", "text" => "-- US Territories--"),
+					array("value" => "", "text" => "-- U.S. Territories--"),
 					array("value" => "AS", "text" => "American Samoa"),
 					array("value" => "FM", "text" => "Federated States of Micronesia"),
 					array("value" => "GU", "text" => "Guam"),

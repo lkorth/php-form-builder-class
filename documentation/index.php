@@ -32,6 +32,8 @@ include("../class.form.php");
 							<li><a href="#Form-Elements-Radio-Button">Radio Button</a></li>
 							<li><a href="#Form-Elements-Hidden">Hidden</a></li>
 							<li><a href="#Form-Elements-File">File</a></li>
+							<li><a href="#Form-Elements-State">State</a></li>
+							<li><a href="#Form-Elements-Country">Country</a></li>
 						</ul>	
 					</li>	
 					<li><a href="#Additional-Parameters">additionalParams Element Parameter</a>
@@ -224,7 +226,11 @@ $form->addSelect("My Selectbox", "Selectbox", "", array("1" => "Option #1", "2" 
 $form->addSelect("My Prefilled Selectbox", "Selectbox", "Option #2", array("Option #1", "Option #2", "Option #3"));
 $form->addSelect("My Prefilled Selectbox", "Selectbox", "1", array("1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
 $form->addSelect("My Multiple Selectbox", "Selectbox", "", array("Option #1", "Option #2", "Option #3"), array("multiple" => "multiple"));
-$form->addSelect("My Prefilled/Multiple Selectbox", "Selectbox", array("Option #1", "Option #2"), array("Option #1", "Option #2", "Option #3"), array("multiple" => "multiple"));
+$form->addSelect("My Prefilled/Multiple Selectbox", "Selectbox", 
+	array("Option #1", "Option #2"), 
+	array("Option #1", "Option #2", "Option #3"), 
+	array("multiple" => "multiple")
+);
 ?>', true), '</pre>';
 				?>
 				
@@ -438,7 +444,7 @@ $form->addTextarea("My Prefilled Textarea", "Textarea", "This is my default valu
 
 				<?php
 echo '<pre>', highlight_string('<?php
-/* addTextarea Function Declaration
+/* addHidden Function Declaration
 public function addHidden($name, $value="", $additionalParams="") {}
 */
 
@@ -474,7 +480,7 @@ $form->addHidden("Hidden", "MyHiddenValue");
 
 				<?php
 echo '<pre>', highlight_string('<?php
-/* addTextarea Function Declaration
+/* addFile Function Declaration
 public function addFile($label, $name, $additionalParams="") {}
 */
 
@@ -503,6 +509,88 @@ $form->addFile("My File", "File");
 						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
 					</tr>
 				</table>
+
+				<a name="Form-Elements-State"></a>
+				<h4>State:</h4><p>The state element type is a shortcut for adding a selectbox with options for each of the 50 U.S. states, 13 Canadian provinces/territories, and 7 U.S. territories.  
+				The values for these options are set to their appropriate two character code.  Because the options are pre-determined, the options parameter is omitted from the function's declaration.</p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addState Function Declaration
+public function addState($label, $name, $value="", $additionalParams="") {}
+*/
+
+$form->addState("My State", "State");
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has four available parameters: label, name, value, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the selectbox.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;select&gt; tag.  If you are using the multiple setting and do not append "[]" to the end this parameter, it
+						will by appended for you automatically.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Corresponds to the value attribute of an &lt;option&gt; tag.  This can be used to set the selectbox's default value.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the selectbox.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-Country"></a>
+				<h4>Country:</h4><p>Like the state element type, the addCountry function is a shortcut for adding a selectbox with options for countries throughout the world.  
+				The values for these options are set to their appropriate two character code.  Because the options are pre-determined, the options parameter is omitted from the function's declaration.</p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addCountry Function Declaration
+public function addCountry($label, $name, $value="", $additionalParams="") {}
+*/
+
+$form->addCountry("My Country", "Country");
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has four available parameters: label, name, value, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the selectbox.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;select&gt; tag.  If you are using the multiple setting and do not append "[]" to the end this parameter, it
+						will by appended for you automatically.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Corresponds to the value attribute of an &lt;option&gt; tag.  This can be used to set the selectbox's default value.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the selectbox.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
 			</div>	
 
 			<div class="pfbc_doc_section">
@@ -512,7 +600,11 @@ $form->addFile("My File", "File");
 				to form elements through an associative array of key/value pairs.  An example is provided below to demonstrate how this can be done.</p>
 				<?php
 echo '<pre>', highlight_string('<?php
-$form->addTextbox("My Textbox w/additionalParams", "MyTextbox", "", array("required" => 1, "class" => "myclass", "onkeyup" => "filterTextbox(this.value);"));
+$form->addTextbox("My Textbox w/additionalParams", "MyTextbox", "", array(
+	"required" => 1, 
+	"class" => "myclass", 
+	"onkeyup" => "filterTextbox(this.value);"
+));
 ?>', true), '</pre>';
 				?>
 				<p>Many of the available settings that can be passed to the additionalParams parameter directly correspond with html attributes, like "class" and "onkeyup" as seen 
