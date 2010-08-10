@@ -30,6 +30,7 @@ include("../class.form.php");
 							<li><a href="#Form-Elements-Selectbox">Selectbox</a></li>
 							<li><a href="#Form-Elements-Checkbox">Checkbox</a></li>
 							<li><a href="#Form-Elements-Radio-Button">Radio Button</a></li>
+							<li><a href="#Form-Elements-Textarea">Textarea</a></li>
 							<li><a href="#Form-Elements-Hidden">Hidden</a></li>
 							<li><a href="#Form-Elements-File">File</a></li>
 							<li><a href="#Form-Elements-State">State</a></li>
@@ -37,6 +38,7 @@ include("../class.form.php");
 							<li><a href="#Form-Elements-YesNo">Yes/No</a></li>
 							<li><a href="#Form-Elements-TrueFalse">True/False</a></li>
 							<li><a href="#Form-Elements-Email">Email</a></li>
+							<li><a href="#Form-Elements-Date">Date</a></li>
 						</ul>	
 					</li>	
 					<li><a href="#Additional-Parameters">additionalParams Element Parameter</a>
@@ -688,6 +690,65 @@ public function addEmail($label, $name, $value="", $additionalParams="") {}
 */
 
 $form->addEmail("My Textbox w/Email Validation", "Email");
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has four available parameters: label, name, value, and additionalParams.  Many of the functions responsible for adding form elements follow this same pattern.
+				The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the textbox.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;input&gt; tag.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Optional - Corresponds to the value attribute of the &lt;input&gt; tag.  This can be used to set the textbox's default value.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the textbox.  The third example seen above 
+						demonstrates how this parameter can be used to apply the required setting.  See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings
+						that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-Date"></a>
+				<h4>Date:</h4><p>The date element type makes use of jQueryUI's datepicker functionality to allow a single date to be selected from a calendar.  The calendar is triggered from a pre-defined
+				onclick javascript event.  By default, this element will have a hint set to "Click to Select Date..."; however, this can be modified by applying the hint element attribute as seen in the third
+				example provided below.</p><p>The formatting of the date returned from the calendar will be set to "MM d, yy" by default,  which is equivalent to "F j, Y" using  php's date function.  If you want to modify this
+				formatting, you can include the "dateFormat" option in the jqueryOption element attribute.  The fourth example below shows how to change the date's formatting to a MySQL friendly format.  
+				Use <a href="http://docs.jquery.com/UI/Datepicker/formatDate">http://docs.jquery.com/UI/Datepicker/formatDate</a> for a guide to using jQuery's date formatting options.</p>
+
+				<p>jQueryUI's datepicker has many options you can use to tailor the functionality to fit to your specific needs.  To apply these options, make use of the jqueryOptions element attribute.  We've already
+				seen how this attribute can be used to change the formatting of the date returned.  Now, let's look at example five below and see how we can display multiple months on the calendar as well as restrict the date range to plus or minus
+				30 days.  See <a href="http://jqueryui.com/demos/datepicker/">http://jqueryui.com/demos/datepicker/</a> for more information on jQueryUI's datepicker plugin and all the available options that can be applied via the jqueryOptions
+				element attribute.  Keep in mind that if you are setting a jQuery option to a piece of javascript code via the jqueryOptions attribute, you will need to prepend your string with "js:" for it to be handled correctly.
+				
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addDate Function Declaration
+public function addDate($label, $name, $value="", $additionalParams="") {}
+*/
+
+$form->addDate("My Date", "Date");
+$form->addDate("My Prefilled Date", "Date", date("F j, Y"));
+$form->addDate("My Date w/Custom Hint", "Date", "", array("hint" => "To select a date, click here..."));
+$form->addDate("My Date w/MySQL Formatting", "Date", "", array("jqueryOptions" => array(
+	"dateFormat" => "yy-mm-dd"
+)));
+$form->addDate("My Date w/Multiple Months & Restricted Range", "Date", "", array("jqueryOptions" => array(
+	"numberOfMonths" => 2, 
+	"minDate" => "-30",
+	"maxDate" => "+30"
 ?>', true), '</pre>';
 				?>
 				
