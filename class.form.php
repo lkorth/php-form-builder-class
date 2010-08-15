@@ -112,7 +112,7 @@ class form extends pfbc {
 
 	public function __construct($id = "myform") {
 		//Non alpha-numeric characters are replaced with underscores to prevent invalid javascript function names.
-		$id = preg_replace("/[^a-zA-Z0-9]/", "_", $id);
+		$id = preg_replace("/\W/", "_", $id);
 		$this->attributes = array(
 			"id" => $id,
 			"method" => "post",

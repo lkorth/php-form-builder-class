@@ -35,13 +35,14 @@ include("../class.form.php");
 							<li><a href="#Form-Elements-File">File</a></li>
 							<li><a href="#Form-Elements-State">State</a></li>
 							<li><a href="#Form-Elements-Country">Country</a></li>
-							<li><a href="#Form-Elements-YesNo">Yes/No</a></li>
-							<li><a href="#Form-Elements-TrueFalse">True/False</a></li>
+							<li><a href="#Form-Elements-Yes-No">Yes/No</a></li>
+							<li><a href="#Form-Elements-True-False">True/False</a></li>
 							<li><a href="#Form-Elements-Email">Email</a></li>
 							<li><a href="#Form-Elements-Date">Date</a></li>
+							<li><a href="#Form-Elements-Date-Range">Date Range</a></li>
 						</ul>	
 					</li>	
-					<li><a href="#Additional-Parameters">additionalParams Element Parameter</a>
+					<li><a href="#Additional-Parameters">additionalParams Element Parameter</a></li>
 				</ul>
 			</div>
 
@@ -597,7 +598,7 @@ $form->addCountry("My Country", "Country");
 					</tr>
 				</table>
 
-				<a name="Form-Elements-YesNo"></a>
+				<a name="Form-Elements-Yes-No"></a>
 				<h4>Yes/No:</h4><p>The addYesNo function is a shortcut for adding a radio button group with options for "Yes" and "No".  
 				The values for these options are set to "1" and "0" respectively.  Because the options are pre-determined, the options parameter is omitted from the function's declaration.</p>
 
@@ -637,7 +638,7 @@ $form->addYesNo("My Yes/No", "YesNo");
 					</tr>
 				</table>
 
-				<a name="Form-Elements-TrueFalse"></a>
+				<a name="Form-Elements-True-False"></a>
 				<h4>True/False:</h4><p>The addTrueFalse function is a shortcut for adding a radio button group with options for "True" and "False".  
 				The values for these options are set to "1" and "0" respectively.  Because the options are pre-determined, the options parameter is omitted from the function's declaration.</p>
 
@@ -724,9 +725,14 @@ $form->addEmail("My Textbox w/Email Validation", "Email");
 				<a name="Form-Elements-Date"></a>
 				<h4>Date:</h4><p>The date element type makes use of jQueryUI's datepicker functionality to allow a single date to be selected from a calendar.  The calendar is triggered from a pre-defined
 				onclick javascript event.  By default, this element will have a hint set to "Click to Select Date..."; however, this can be modified by applying the hint element attribute as seen in the third
-				example provided below.</p><p>The formatting of the date returned from the calendar will be set to "MM d, yy" by default,  which is equivalent to "F j, Y" using  php's date function.  If you want to modify this
+				example provided below.</p>
+				
+				<p>The formatting of the date returned from the calendar will be set to "MM d, yy" by default,  which is equivalent to "F j, Y" using  php's date function.  If you want to modify this
 				formatting, you can include the "dateFormat" option in the jqueryOption element attribute.  The fourth example below shows how to change the date's formatting to a MySQL friendly format.  
 				Use <a href="http://docs.jquery.com/UI/Datepicker/formatDate">http://docs.jquery.com/UI/Datepicker/formatDate</a> for a guide to using jQuery's date formatting options.</p>
+
+				<p>When setting this element's default value via the function's value parameter, remember that the string passed to the function must match the date format that is being used.  See the second 
+				example below for reference.</p>
 
 				<p>jQueryUI's datepicker has many options you can use to tailor the functionality to fit to your specific needs.  To apply these options, make use of the jqueryOptions element attribute.  We've already
 				seen how this attribute can be used to change the formatting of the date returned.  Now, let's look at example five below and see how we can display multiple months on the calendar as well as restrict the date range to plus or minus
@@ -749,6 +755,72 @@ $form->addDate("My Date w/Multiple Months & Restricted Range", "Date", "", array
 	"numberOfMonths" => 2, 
 	"minDate" => "-30",
 	"maxDate" => "+30"
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has four available parameters: label, name, value, and additionalParams.  Many of the functions responsible for adding form elements follow this same pattern.
+				The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the textbox.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;input&gt; tag.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Optional - Corresponds to the value attribute of the &lt;input&gt; tag.  This can be used to set the textbox's default value.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the textbox.  The third example seen above 
+						demonstrates how this parameter can be used to apply the required setting.  See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings
+						that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-Date-Range"></a>
+				<h4>Date Range:</h4><p>Like the date element, the addDateRange function makes use of jQueryUI's datepicker functionality; however, it allows a date range or single date to be selected from pre-defined list
+				or a calendar - not just a single date.  To facilitate this, a jQuery plugin developed by filament group is used.  More information about this plugin can be found at 
+				<a href="http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/">http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/</a>.  
+				The list/calendar is triggered from a onclick javascript event which is automatically applied to the textbox.  By default, this element will have a hint set 
+				to "Click to Select Date Range..."; however, this can be modified by applying the hint element attribute as seen in the third
+				example provided below.</p>
+				
+				<p>The formatting of the dates returned from the calendar will be set to "MM d, yy" by default,  which is equivalent to "F j, Y" using  php's date function.  If you want to modify this
+				formatting, you can include the "dateFormat" option in the jqueryOption element attribute.  The fourth example below shows how to change the date's formatting to a MySQL friendly format.  
+				Use <a href="http://docs.jquery.com/UI/Datepicker/formatDate">http://docs.jquery.com/UI/Datepicker/formatDate</a> for a guide to using jQuery's date formatting options.</p>
+
+				<p>When setting this element's default value via the function's value parameter, remember that the string passed to the function must match the date format that is being used.  See the second 
+				example below for reference.</p>
+
+				<p>jQueryUI's datepicker has many options you can use to tailor the functionality to fit to your specific needs.  To apply these options, make use of the jqueryOptions element attribute.  We've already
+				seen how this attribute can be used to change the formatting of the date returned.  Now, let's look at example five below and see how we can restrict the date range to plus or minus
+				60 days.  The same jQuery options that can can be applied to the date element type can also by applied in the addDateRange function.  See <a href="http://jqueryui.com/demos/datepicker/">http://jqueryui.com/demos/datepicker/</a> for more information on jQueryUI's datepicker plugin and all the available options that can be applied via the jqueryOptions
+				element attribute.  Keep in mind that if you are setting a jQuery option to a piece of javascript code via the jqueryOptions attribute, you will need to prepend your string with "js:" for it to be handled correctly.
+				
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addDateRange Function Declaration
+public function addDateRange($label, $name, $value="", $additionalParams="") {}
+*/
+
+$form->addDateRange("My Date Range", "DateRange");
+$form->addDateRange("My Prefilled Date Range", "DateRange", date("F j, Y", strtotime("-1 month")) . " - " . date("F j, Y"));
+$form->addDateRange("My Date Range w/Custom Hint", "DateRange", "", array("hint" => "To select a date range, click here..."));
+$form->addDateRange("My Date Range w/MySQL Formatting", "DateRange", "", array("jqueryOptions" => array(
+	"dateFormat" => "yy-mm-dd"
+)));
+$form->addDateRange("My Date Range w/Multiple Months & Restricted Range", "DateRange", "", array("jqueryOptions" => array(
+	"minDate" => "-60",
+	"maxDate" => "+60"
 ?>', true), '</pre>';
 				?>
 				

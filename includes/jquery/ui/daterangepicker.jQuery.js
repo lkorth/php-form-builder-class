@@ -28,20 +28,20 @@ jQuery.fn.daterangepicker = function(settings){
 			{text: 'Month to date', dateStart: function(){ return Date.parse('today').moveToFirstDayOfMonth();  }, dateEnd: 'today' },
 			{text: 'Year to date', dateStart: function(){ var x= Date.parse('today'); x.setMonth(0); x.setDate(1); return x; }, dateEnd: 'today' },
 			//extras:
-			{text: 'The previous Month', dateStart: function(){ return Date.parse('1 month ago').moveToFirstDayOfMonth();  }, dateEnd: function(){ return Date.parse('1 month ago').moveToLastDayOfMonth();  } }
+			{text: 'Last month', dateStart: function(){ return Date.parse('1 month ago').moveToFirstDayOfMonth();  }, dateEnd: function(){ return Date.parse('1 month ago').moveToLastDayOfMonth();  } },
+			{text: 'Last 30 days', dateStart: 'Today-30', dateEnd: 'Today' }
 			//{text: 'Tomorrow', dateStart: 'Tomorrow', dateEnd: 'Tomorrow' },
 			//{text: 'Ad Campaign', dateStart: '03/07/08', dateEnd: 'Today' },
-			//{text: 'Last 30 Days', dateStart: 'Today-30', dateEnd: 'Today' },
 			//{text: 'Next 30 Days', dateStart: 'Today', dateEnd: 'Today+30' },
 			//{text: 'Our Ad Campaign', dateStart: '03/07/08', dateEnd: '07/08/08' }
 		], 
 		//presetRanges: array of objects for each menu preset. 
 		//Each obj must have text, dateStart, dateEnd. dateStart, dateEnd accept date.js string or a function which returns a date object
 		presets: {
-			specificDate: 'Specific Date', 
-			allDatesBefore: 'All Dates Before', 
-			allDatesAfter: 'All Dates After', 
-			dateRange: 'Date Range'
+			specificDate: 'Select specific date', 
+			allDatesBefore: 'All dates before...', 
+			allDatesAfter: 'All dates after...', 
+			dateRange: 'Select date dange'
 		},
 		rangeStartTitle: 'Date Range',
 		rangeEndTitle: '&nbsp;',
