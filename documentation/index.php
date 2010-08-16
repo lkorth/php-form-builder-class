@@ -40,6 +40,8 @@ include("../class.form.php");
 							<li><a href="#Form-Elements-Email">Email</a></li>
 							<li><a href="#Form-Elements-Date">Date</a></li>
 							<li><a href="#Form-Elements-Date-Range">Date Range</a></li>
+							<li><a href="#Form-Elements-TinyMCE">TinyMCE Web Editor</a></li>
+							<li><a href="#Form-Elements-CKEditor">CKEditor</a></li>
 						</ul>	
 					</li>	
 					<li><a href="#Additional-Parameters">additionalParams Element Parameter</a></li>
@@ -435,7 +437,7 @@ $form->addTextarea("My Prefilled Textarea", "Textarea", "This is my default valu
 					</tr>
 					<tr>
 						<td>value</td>
-						<td>Optional - Corresponds to the value attribute of the &lt;textarea&gt; tag.  This can be used to set the textarea's default value.</td>
+						<td>Optional - Corresponds to the content between the opening and closing &lt;textarea&gt; tags.  This can be used to set the textarea's default value.</td>
 					</tr>
 					<tr>
 						<td>additionalParams</td>
@@ -849,6 +851,92 @@ $form->addDateRange("My Date Range w/Multiple Months & Restricted Range", "DateR
 						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the textbox.  The third example seen above 
 						demonstrates how this parameter can be used to apply the required setting.  See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings
 						that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-TinyMCE"></a>
+				<h4>TinyMCE Web Editor:</h4><p>TinyMCE's javascript WYSIWYG editor can be added with the addWebEditor function.  For more information on TinyMCE, see
+				<a href="http://tinymce.moxiecode.com/">http://tinymce.moxiecode.com/</a>.  Like the CKEditor web editor, a simplified toolbare can be triggered by
+				including the basic element attribute.</p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addWebEditor Function Declaration
+public function addWebEditor($label, $name, $value="", $additionalParams="") {}
+*/
+
+$form->addWebEditor("My TinyMCE Web Editor", "TinyMCE");
+$form->addWebEditor("My Prefilled TinyMCE Editor", "TinyMCE", "This is my default value.");
+$form->addWebEditor("My Basic TinyMCE Editor", "TinyMCE", "", array("basic" => 1));
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has four available parameters: label, name, value, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the textarea.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;textarea&gt; tag.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Optional - Corresponds to the content between the opening and closing &lt;textarea&gt; tags.  This can be used to set the textarea's default value.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the textarea.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-CKEditor"></a>
+				<h4>CKEditor:</h4><p>CKEditor's WYSIWYG editor can be added with the addCKEditor function.  For more information on CKEditor, see
+				<a href="http://ckeditor.com/">http://ckeditor.com/</a>.  Like the TinyMCE web editor, a simplified toolbar can be triggered by
+				including the basic element attribute.</p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addCKEditor Function Declaration
+public function addCKEditor($label, $name, $value="", $additionalParams="") {}
+*/
+
+$form->addCKEditor("My TinyMCE Web Editor", "TinyMCE");
+$form->addCKEditor("My Prefilled TinyMCE Editor", "TinyMCE", "This is my default value.");
+$form->addCKEditor("My Basic TinyMCE Editor", "TinyMCE", "", array("basic" => 1));
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has four available parameters: label, name, value, and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="150"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Controls the content rendered inside &lt;label&gt; tags before the textarea.</td>
+					</tr>
+					<tr>
+						<td>name</td>
+						<td>Corresponds to the name attribute of the &lt;textarea&gt; tag.</td>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>Optional - Corresponds to the content between the opening and closing &lt;textarea&gt; tags.  This can be used to set the textarea's default value.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the textarea.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
 					</tr>
 				</table>
 			</div>	

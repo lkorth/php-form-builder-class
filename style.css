@@ -8,6 +8,12 @@ body, #pfbc_banner h2, #pfbc_banner h5 {
 	margin: 0; 
 }	
 
+.pfbc-textbox, .pfbc-textarea {
+	padding: 5px;
+	border: 1px solid #ccc;
+	font-size: 14px;
+}
+
 #pfbc_links {
 	text-align: right;
 	padding: 5px;

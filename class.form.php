@@ -101,6 +101,7 @@ class form extends pfbc {
 	private $jqueryStarRatingIDArr;
 	private $jqueryUIButtonExists;
 	private $jsIncludesPath;
+	private $labelWidthExists;
 	private $latlngIDArr;
 	private $phpIncludesPath;
 	private $referenceValues;
@@ -797,6 +798,9 @@ class form extends pfbc {
 		}
 		else
 			unset($ele->hint);
+		
+		if(!empty($this->labelWidth) || !empty($ele->labelWidth))
+			$this->labelWidthExists = true;
 
 		$this->elements[] = $ele;
 	}
@@ -1677,24 +1681,72 @@ STR;
 		//Serialize the form and store it in a session array.  This variable will be unserialized and used within js/css.php and the validate() method.
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
+		$str .= <<<STR
+		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+
+STR;
+
 		if(empty($this->preventXHTMLStrict)) {
 			$session_param = "";
 			$session_name = session_name();
 			if($session_name != "PHPSESSID")
 				$session_param = "&session_name=$session_name";
 
+			if($this->https)
+				$prefix = "https";
+			else
+				$prefix = "http";
+
 			$str .= <<<STR
 		<script type="text/javascript">
-			var head = document.getElementsByTagName("head")[0];
-			var css = document.createElement('link');
-			css.rel = 'stylesheet';
-			css.type = 'text/css';
-			css.href = '{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param';
-			head.appendChild(css);
+			//<![CDATA[
+			jQuery(document).ready(function() {
+				jQuery.get('{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param', function(cssText) {
+					jQuery("head").append('<style type="text/css">' + cssText + '</style>');
+					jQuery("#{$this->attributes["id"]} .pfbc-textbox").each(function () { 
+						jQuery(this).width(jQuery(this).width() - (jQuery(this).outerWidth() - jQuery(this).width())); 
+					});
+					jQuery("#{$this->attributes["id"]} .pfbc-textarea").each(function () { 
+						jQuery(this).width(jQuery(this).width() - (jQuery(this).outerWidth() - jQuery(this).width())); 
+					});
+				});
+				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param");
+
+STR;
+			$str .= <<<STR
+			});
+			//]]>
 		</script>
 
 STR;
+			if(!empty($this->tinymceIDArr)) {
+				if(empty($this->preventTinyMCELoad)) {
+					$str .= <<<STR
+		<script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
 
+STR;
+				}
+
+			}
+
+			if(!empty($this->ckeditorIDArr)) {
+				if(empty($this->preventCKEditorLoad)) {
+					$str .= <<<STR
+		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
+
+STR;
+				}
+			}
+		}
+		else {
+			$str .= <<<STR
+		<style type="text/css">
+
+STR;
+			$str .= $this->renderCSS(true);
+			$str .= <<<STR
+		</style>	
+STR;
 		if(!empty($this->tinymceIDArr)) {
             if(empty($this->preventTinyMCELoad)) {
                 $str .= <<<STR
@@ -1713,24 +1765,19 @@ STR;
 STR;
             }
         }
-			$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param"></script>
 
-STR;
-		}
-		else {
-			$str .= <<<STR
-		<style type="text/css">
-
-STR;
-			$str .= $this->renderCSS(true);
-			$str .= <<<STR
-		</style>	
+		$str .= <<<STR
 		<script type="text/javascript">
 
 STR;
 			$str .= $this->renderJS(true);
 			$str .= <<<STR
+			jQuery("#{$this->attributes["id"]} .pfbc-textbox").each(function () { 
+				jQuery(this).width(jQuery(this).width() - (jQuery(this).outerWidth() - jQuery(this).width())); 
+			});
+			jQuery("#{$this->attributes["id"]} .pfbc-textarea").each(function () { 
+				jQuery(this).width(jQuery(this).width() - (jQuery(this).outerWidth() - jQuery(this).width())); 
+			});
 		</script>
 
 STR;
@@ -2186,7 +2233,7 @@ STR;
 			if($eleType == "email") {
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint") {
-		$.ajax({
+		jQuery.ajax({
 			async: false,
 			type: "post",
 			url: "{$this->jsIncludesPath}/php-email-address-validation/ajax-handler.php",
@@ -2241,10 +2288,8 @@ STR;
 			else
 				$prefix = "http";
 
-			if(empty($form->preventJQueryLoad))
-				$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js");
-			if(empty($form->preventJQueryUILoad) && (!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($this->jqueryUIButtonExists)))
-				$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js");
+			if(empty($form->preventJQueryUILoad) && (!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryUIButtonExists)))
+				$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js");
 			if(!empty($form->tooltipIDArr))
 				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
 			if(!empty($form->jqueryStarRatingIDArr))
@@ -2253,8 +2298,6 @@ STR;
 				$str .= str_replace(array(), array(), file_get_contents("{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"));
 			if(!empty($form->jqueryColorIDArr))
 				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
-			if(empty($form->preventGoogleMapsLoad) && !empty($form->latlngIDArr))
-				$str .= file_get_contents("http://maps.google.com/maps/api/js?sensor=false");
 			if(empty($form->preventCaptchaLoad) && !empty($form->captchaID)) {
 				if($form->https)
 					$captchaDomain = "https://api-secure.recaptcha.net";
@@ -2262,220 +2305,209 @@ STR;
 					$captchaDomain = "http://api.recaptcha.net";
 				$str .= file_get_contents($captchaDomain . "/js/recaptcha_ajax.js");
 			}
-				
-			if(!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->tooltipIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryColorIDArr) || !empty($form->jqueryUIButtonExists)) {
-				$str .= <<<STR
-$(function() {
 
-STR;
-				if(!empty($form->jqueryDateIDArr)) {
-					$dateKeys = array_keys($form->jqueryDateIDArr);
-					$dateSize = sizeof($form->jqueryDateIDArr);
-					for($d = 0; $d < $dateSize; ++$d) {
-						$date = $form->jqueryDateIDArr[$dateKeys[$d]];
+			if(!empty($form->jqueryDateIDArr)) {
+				$dateKeys = array_keys($form->jqueryDateIDArr);
+				$dateSize = sizeof($form->jqueryDateIDArr);
+				for($d = 0; $d < $dateSize; ++$d) {
+					$date = $form->jqueryDateIDArr[$dateKeys[$d]];
 
-						$jqueryOptionStr = "";
-						foreach($date->jqueryOptions as $key => $val) {
-							if(!empty($jqueryOptionStr))
-								$jqueryOptionStr .= ", ";
-							$jqueryOptionStr .= $key . ': ';
-                            if(is_string($val) && substr($val, 0, 3) == "js:")
-                                $jqueryOptionStr .= substr($val, 3);
-                            else
-                                $jqueryOptionStr .= var_export($val, true);
-						}
-
-						$str .= <<<STR
-	$("#{$dateKeys[$d]}").datepicker({ $jqueryOptionStr });
-
-STR;
-					}	
-				}
-
-				if(!empty($form->jqueryDateRangeIDArr)) {
-					$dateRangeKeys = array_keys($form->jqueryDateRangeIDArr);
-					$dateRangeSize = sizeof($form->jqueryDateRangeIDArr);
-					for($d = 0; $d < $dateRangeSize; ++$d) {
-						$dateRange = $form->jqueryDateRangeIDArr[$dateRangeKeys[$d]];
-
-						$jqueryDateFormat = $dateRange->jqueryOptions["dateFormat"];
-						unset($dateRange->jqueryOptions["dateFormat"]);
-
-						$jqueryOptionStr = "";
-						foreach($dateRange->jqueryOptions as $key => $val) {
-							if(!empty($jqueryOptionStr))
-								$jqueryOptionStr .= ", ";
-							$jqueryOptionStr .= $key . ': ';
-                            if(is_string($val) && substr($val, 0, 3) == "js:")
-                                $jqueryOptionStr .= substr($val, 3);
-                            else
-                                $jqueryOptionStr .= var_export($val, true);
-						}
-
-						$str .= <<<STR
-	$("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr } });
-
-STR;
-					}	
-				}
-
-				if(!empty($form->jquerySortIDArr)) {
-					$sortSize = sizeof($form->jquerySortIDArr);
-					for($s = 0; $s < $sortSize; ++$s) {
-						$str .= <<<STR
-	$("#{$form->jquerySortIDArr[$s]}").sortable({ axis: "y" });
-	$("#{$form->jquerySortIDArr[$s]}").disableSelection();
-
-STR;
-					}	
-				}
-
-				//For more information on poshytip, visit http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/.
-				if(!empty($form->tooltipIDArr)) {
-					$tooltipKeys = array_keys($form->tooltipIDArr);
-					$tooltipSize = sizeof($tooltipKeys);
-					for($t = 0; $t < $tooltipSize; ++$t) {
-						$tooltipEle = $form->tooltipIDArr[$tooltipKeys[$t]];
-						$tooltipContent = str_replace('"', '\"', $tooltipEle->tooltip);
-						$str .= <<<STR
-	$("#{$tooltipKeys[$t]}").poshytip({ content: "$tooltipContent", className: "tip-yellow" });
-
-STR;
-					}	
-				}
-
-				//For more information on the jQuery UI slider, visit http://jqueryui.com/demos/slider/.
-				if(!empty($form->jquerySliderIDArr)) {
-					$sliderKeys = array_keys($form->jquerySliderIDArr);
-					$sliderSize = sizeof($form->jquerySliderIDArr);
-					for($s = 0; $s < $sliderSize; ++$s) {
-						$slider = $form->jquerySliderIDArr[$sliderKeys[$s]];
-						$sliderName = str_replace('"', '&quot;', $slider->attributes["name"]);
-
-						if(is_array($slider->attributes["value"])) {
-							$slider->jqueryOptions["range"] = true;
-							$slider->jqueryOptions["values"] = "js:[" . $slider->attributes["value"][0] . ", " . $slider->attributes["value"][1] . "]";
-						}
-						else {
-							$slider->jqueryOptions["range"] = "min";
-							$slider->jqueryOptions["value"] = $slider->attributes["value"];
-
-						}
-
-						$jqueryOptionStr = "";
-                        foreach($slider->jqueryOptions as $key => $val) {
-                            $jqueryOptionStr .= $key . ': ';
-                            if(is_string($val) && substr($val, 0, 3) == "js:")
-                                $jqueryOptionStr .= substr($val, 3);
-                            else
-                                $jqueryOptionStr .= var_export($val, true);
+					$jqueryOptionStr = "";
+					foreach($date->jqueryOptions as $key => $val) {
+						if(!empty($jqueryOptionStr))
 							$jqueryOptionStr .= ", ";
-                        }
-
-						$str .= <<<STR
-	$("#{$sliderKeys[$s]}").slider({ $jqueryOptionStr
-
-STR;
-						if(is_array($slider->attributes["value"])) {
-							$str .= <<<STR
-		slide: function(event, ui) {
-
-STR;
-							if(empty($slider->hideDisplay)) {
-								$str .= <<<STR
-			$("#{$sliderKeys[$s]}_display").text("{$slider->prefix}" + ui.values[0] + "{$slider->suffix} - {$slider->prefix}" + ui.values[1] + "{$slider->suffix}");
-
-STR;
-							}	
-							$str .= <<<STR
-			document.getElementById("{$this->attributes["id"]}").elements["$sliderName"][0].value = ui.values[0]; document.getElementById("{$this->attributes["id"]}").elements["$sliderName"][1].value = ui.values[1];
-		}	
-
-STR;
-						}	
-						else {
-							$str .= <<<STR
-		slide: function(event, ui) {
-
-STR;
-							if(empty($slider->hideDisplay)) {
-								$str .= <<<STR
-			$("#{$slider->attributes["id"]}_display").text("{$slider->prefix}" + ui.value + "{$slider->suffix}");
-
-STR;
-							}	
-							$str .= <<<STR
-			document.getElementById("{$this->attributes["id"]}").elements["$sliderName"].value = ui.value;
-		}
-
-STR;
-						}	
-						$str .= <<<STR
-	});
-
-STR;
+						$jqueryOptionStr .= $key . ': ';
+						if(is_string($val) && substr($val, 0, 3) == "js:")
+							$jqueryOptionStr .= substr($val, 3);
+						else
+							$jqueryOptionStr .= var_export($val, true);
 					}
-				}
 
-				//For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.
-				if(!empty($form->jqueryStarRatingIDArr)) {
-					$ratingKeys = array_keys($form->jqueryStarRatingIDArr);
-					$ratingSize = sizeof($form->jqueryStarRatingIDArr);
-					for($r = 0; $r < $ratingSize; ++$r) {
-						$rating = $form->jqueryStarRatingIDArr[$ratingKeys[$r]];
-
-						$jqueryOptionStr = "";
-						foreach($rating->jqueryOptions as $key => $val) {
-							if(!empty($jqueryOptionStr))
-								$jqueryOptionStr .= ", ";
-							$jqueryOptionStr .= $key . ': ';
-                            if(is_string($val) && substr($val, 0, 3) == "js:")
-                                $jqueryOptionStr .= substr($val, 3);
-                            else
-                                $jqueryOptionStr .= var_export($val, true);
-						}
-
-						$str .= <<<STR
-	$("#{$ratingKeys[$r]}").stars({ $jqueryOptionStr });
-
-STR;
-					}	
-				}
-
-				//For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.
-				if(!empty($form->jqueryColorIDArr)) {
-					$colorSize = sizeof($form->jqueryColorIDArr);
-					for($c = 0; $c < $colorSize; ++$c) {
-						$str .= <<<STR
-	$("#{$form->jqueryColorIDArr[$c]}").ColorPicker({	
-		onSubmit: function(hsb, hex, rgb, el) { 
-			$(el).val(hex); 
-			$(el).ColorPickerHide(); 
-		}, 
-		onBeforeShow: function() { 
-			if(this.value != "Click to Select Color..." && this.value != "") 
-				$(this).ColorPickerSetColor(this.value); 
-		} 
-	}).bind("keyup", function(){ 
-		$(this).ColorPickerSetColor(this.value); 
-	});
-
-STR;
-					}	
-				}
-
-				if(!empty($form->jqueryUIButtonExists)) {
 					$str .= <<<STR
-	$(".jqueryui-button").button();
+jQuery("#{$dateKeys[$d]}").datepicker({ $jqueryOptionStr });
 
 STR;
-				}
+				}	
+			}
 
-				$str .= <<<STR
+			if(!empty($form->jqueryDateRangeIDArr)) {
+				$dateRangeKeys = array_keys($form->jqueryDateRangeIDArr);
+				$dateRangeSize = sizeof($form->jqueryDateRangeIDArr);
+				for($d = 0; $d < $dateRangeSize; ++$d) {
+					$dateRange = $form->jqueryDateRangeIDArr[$dateRangeKeys[$d]];
+
+					$jqueryDateFormat = $dateRange->jqueryOptions["dateFormat"];
+					unset($dateRange->jqueryOptions["dateFormat"]);
+
+					$jqueryOptionStr = "";
+					foreach($dateRange->jqueryOptions as $key => $val) {
+						if(!empty($jqueryOptionStr))
+							$jqueryOptionStr .= ", ";
+						$jqueryOptionStr .= $key . ': ';
+						if(is_string($val) && substr($val, 0, 3) == "js:")
+							$jqueryOptionStr .= substr($val, 3);
+						else
+							$jqueryOptionStr .= var_export($val, true);
+					}
+
+					$str .= <<<STR
+jQuery("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr } });
+
+STR;
+				}	
+			}
+
+			if(!empty($form->jquerySortIDArr)) {
+				$sortSize = sizeof($form->jquerySortIDArr);
+				for($s = 0; $s < $sortSize; ++$s) {
+					$str .= <<<STR
+jQuery("#{$form->jquerySortIDArr[$s]}").sortable({ axis: "y" });
+jQuery("#{$form->jquerySortIDArr[$s]}").disableSelection();
+
+STR;
+				}	
+			}
+
+			//For more information on poshytip, visit http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/.
+			if(!empty($form->tooltipIDArr)) {
+				$tooltipKeys = array_keys($form->tooltipIDArr);
+				$tooltipSize = sizeof($tooltipKeys);
+				for($t = 0; $t < $tooltipSize; ++$t) {
+					$tooltipEle = $form->tooltipIDArr[$tooltipKeys[$t]];
+					$tooltipContent = str_replace('"', '\"', $tooltipEle->tooltip);
+					$str .= <<<STR
+jQuery("#{$tooltipKeys[$t]}").poshytip({ content: "$tooltipContent", className: "tip-yellow" });
+
+STR;
+				}	
+			}
+
+			//For more information on the jQuery UI slider, visit http://jqueryui.com/demos/slider/.
+			if(!empty($form->jquerySliderIDArr)) {
+				$sliderKeys = array_keys($form->jquerySliderIDArr);
+				$sliderSize = sizeof($form->jquerySliderIDArr);
+				for($s = 0; $s < $sliderSize; ++$s) {
+					$slider = $form->jquerySliderIDArr[$sliderKeys[$s]];
+					$sliderName = str_replace('"', '&quot;', $slider->attributes["name"]);
+
+					if(is_array($slider->attributes["value"])) {
+						$slider->jqueryOptions["range"] = true;
+						$slider->jqueryOptions["values"] = "js:[" . $slider->attributes["value"][0] . ", " . $slider->attributes["value"][1] . "]";
+					}
+					else {
+						$slider->jqueryOptions["range"] = "min";
+						$slider->jqueryOptions["value"] = $slider->attributes["value"];
+
+					}
+
+					$jqueryOptionStr = "";
+					foreach($slider->jqueryOptions as $key => $val) {
+						$jqueryOptionStr .= $key . ': ';
+						if(is_string($val) && substr($val, 0, 3) == "js:")
+							$jqueryOptionStr .= substr($val, 3);
+						else
+							$jqueryOptionStr .= var_export($val, true);
+						$jqueryOptionStr .= ", ";
+					}
+
+					$str .= <<<STR
+jQuery("#{$sliderKeys[$s]}").slider({ $jqueryOptionStr
+
+STR;
+					if(is_array($slider->attributes["value"])) {
+						$str .= <<<STR
+	slide: function(event, ui) {
+
+STR;
+						if(empty($slider->hideDisplay)) {
+							$str .= <<<STR
+		jQuery("#{$sliderKeys[$s]}_display").text("{$slider->prefix}" + ui.values[0] + "{$slider->suffix} - {$slider->prefix}" + ui.values[1] + "{$slider->suffix}");
+
+STR;
+						}	
+						$str .= <<<STR
+		document.getElementById("{$this->attributes["id"]}").elements["$sliderName"][0].value = ui.values[0]; document.getElementById("{$this->attributes["id"]}").elements["$sliderName"][1].value = ui.values[1];
+	}	
+
+STR;
+					}	
+					else {
+						$str .= <<<STR
+	slide: function(event, ui) {
+
+STR;
+						if(empty($slider->hideDisplay)) {
+							$str .= <<<STR
+		jQuery("#{$slider->attributes["id"]}_display").text("{$slider->prefix}" + ui.value + "{$slider->suffix}");
+
+STR;
+						}	
+						$str .= <<<STR
+		document.getElementById("{$this->attributes["id"]}").elements["$sliderName"].value = ui.value;
+	}
+
+STR;
+					}	
+					$str .= <<<STR
 });
 
 STR;
-			}	
+				}
+			}
+
+			//For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.
+			if(!empty($form->jqueryStarRatingIDArr)) {
+				$ratingKeys = array_keys($form->jqueryStarRatingIDArr);
+				$ratingSize = sizeof($form->jqueryStarRatingIDArr);
+				for($r = 0; $r < $ratingSize; ++$r) {
+					$rating = $form->jqueryStarRatingIDArr[$ratingKeys[$r]];
+
+					$jqueryOptionStr = "";
+					foreach($rating->jqueryOptions as $key => $val) {
+						if(!empty($jqueryOptionStr))
+							$jqueryOptionStr .= ", ";
+						$jqueryOptionStr .= $key . ': ';
+						if(is_string($val) && substr($val, 0, 3) == "js:")
+							$jqueryOptionStr .= substr($val, 3);
+						else
+							$jqueryOptionStr .= var_export($val, true);
+					}
+
+					$str .= <<<STR
+jQuery("#{$ratingKeys[$r]}").stars({ $jqueryOptionStr });
+
+STR;
+				}	
+			}
+
+			//For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.
+			if(!empty($form->jqueryColorIDArr)) {
+				$colorSize = sizeof($form->jqueryColorIDArr);
+				for($c = 0; $c < $colorSize; ++$c) {
+					$str .= <<<STR
+jQuery("#{$form->jqueryColorIDArr[$c]}").ColorPicker({	
+	onSubmit: function(hsb, hex, rgb, el) { 
+		jQuery(el).val(hex); 
+		jQuery(el).ColorPickerHide(); 
+	}, 
+	onBeforeShow: function() { 
+		if(this.value != "Click to Select Color..." && this.value != "") 
+			jQuery(this).ColorPickerSetColor(this.value); 
+	} 
+}).bind("keyup", function(){ 
+	jQuery(this).ColorPickerSetColor(this.value); 
+});
+
+STR;
+				}	
+			}
+
+			if(!empty($form->jqueryUIButtonExists)) {
+				$str .= <<<STR
+jQuery(".jqueryui-button").button();
+
+STR;
+			}
 
 			if(!empty($form->latlngIDArr)) {
 				if(empty($form->latlngDefaultLocation))
@@ -2568,9 +2600,14 @@ function clearLatLng_{$this->attributes["id"]}(latlngID, latlngHint) {
 	document.getElementById(latlngID).value = latlngHint
 	document.getElementById(latlngID + "_clearDiv").style.display = "none";
 }
-setTimeout("initializeLatLng_{$this->attributes["id"]}();", 250);
 
 STR;
+				if(empty($form->preventGoogleMapsLoad)) {
+					$str .= <<<STR
+jQuery.getScript("http://maps.google.com/maps/api/js?sensor=false&callback=initializeLatLng_{$this->attributes["id"]}");
+
+STR;
+				}
 			}
 
 			if(!empty($form->jqueryCheckSort)) {
@@ -2730,7 +2767,7 @@ STR;
 					if(!empty($form->ajax)) {
 						$str .= <<<STR
 	form_data = form_data.substring(1, form_data.length);
-	$.ajax({
+	jQuery.ajax({
 		type: "{$form->ajaxType}",
 		url: "{$form->ajaxUrl}",
 
@@ -2847,9 +2884,6 @@ $id .pfbc-clear:after {
 	height: 0;
 	content: ":)";
 }	
-$id .pfbc-label {
-	display: block;
-}
 $id .pfbc-buttons {
 	text-align: right;
 	padding-bottom: 5px;
@@ -2885,44 +2919,28 @@ STR;
 				}
 				else
 					$formWidthSuffix = "%";
-
+				
+				//This section is seperated b/c it is used with and without labelWidths.
 				if(!empty($form->map)) {
 					$mapVals = array_values(array_unique($form->map));
 					$mapValSize = sizeof($mapVals);
 					$elementWidthMap = array();
 					for($m = 0; $m < $mapValSize; ++$m) {  
 						if($formWidthSuffix == "px") {
-							$elementWidth = number_format((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
+							$elementWidth = floor((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]));
 							$elementWidthMap[$mapVals[$m]] = $elementWidth;
-							$textboxWidth = $elementWidth - 6;
-							$textareaWidth = $elementWidth - 6;
-							$selectWidth = $elementWidth;
 						} 
-						else {
-							$elementWidth = number_format(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]), 2, ".", "");
-							$textboxWidth = 98;
-							$textareaWidth = 98;
-							$selectWidth = 98;
-						}
+						else
+							$elementWidth = floor(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]));
 
 						$str .= <<<STR
 $id .pfbc-map-columns-{$mapVals[$m]} {
 	float: left; 
 	width: {$elementWidth}$formWidthSuffix;
 }
-$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textbox {
-	width: {$textboxWidth}$formWidthSuffix;
-}
-$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textarea {
-	width: {$textboxWidth}$formWidthSuffix;
-	padding: 2px;
-}
-$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
-	width: {$selectWidth}$formWidthSuffix;
-}
 
 STR;
-					}                                
+					}	
 
 					$str .= <<<STR
 $id .pfbc-map-element-first {
@@ -2941,31 +2959,325 @@ $id .pfbc-element {
 
 STR;
 				}
-				else {
-					if($formWidthSuffix == "px") {
-						$textboxWidth = $formWidth - 6;
-						$textareaWidth = $formWidth - 6;
-						$selectWidth = $formWidth;
-					}
-					else {
-						$textboxWidth = 98;
-						$textareaWidth = 98;
-						$selectWidth = 98;
-					}
+
+				if(empty($form->labelWidthExists)) {
 					$str .= <<<STR
-$id .pfbc-textbox {
-	width: {$textboxWidth}$formWidthSuffix;
-}
-$id .pfbc-textarea {
-	width: {$textareaWidth}$formWidthSuffix;
-	padding: 2px;
-}
-$id .pfbc-select {
-	width: {$selectWidth}$formWidthSuffix;
+$id .pfbc-label {
+	display: block;
 }
 
 STR;
+					if(!empty($form->map)) {
+						for($m = 0; $m < $mapValSize; ++$m) {  
+							if($formWidthSuffix == "px")
+								$elementWidth = $elementWidthMap[$mapVals[$m]];
+							else
+								$elementWidth = floor(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]));
+
+							$str .= <<<STR
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textbox {
+	width: {$elementWidth}$formWidthSuffix;
+}
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textarea {
+	width: {$elementWidth}$formWidthSuffix;
+}
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
+	width: {$elementWidth}$formWidthSuffix;
+}
+
+STR;
+						}                                
+
+					}
+					else {
+						if($formWidthSuffix == "px")
+							$elementWidth = $formWidth;
+						else
+							$elementWidth = 98;
+						$str .= <<<STR
+$id .pfbc-textbox {
+	width: {$elementWidth}$formWidthSuffix;
+}
+$id .pfbc-textarea {
+	width: {$elementWidth}$formWidthSuffix;
+}
+$id .pfbc-select {
+	width: {$elementWidth}$formWidthSuffix;
+}
+
+STR;
+					}
 				}
+
+				$elementSize = sizeof($form->elements);
+				$id = str_replace("#", "", $id);
+				$nonHiddenInternalElementCount = 0;
+				if(!empty($form->map)) {
+					$mapIndex = 0;
+					$mapCount = 0;
+				}
+
+				for($e = 0; $e < $elementSize; ++$e) {
+					$ele = $form->elements[$e];
+					if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
+
+						//If the noBreak attribute is set, handle appropriately.
+						if(!empty($ele->noBreak)) {
+							if($ele->attributes["type"] == "radio") {
+								$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio {
+	float: left;
+	margin-left: 5px;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-first {
+	margin: 0 !important;
+}
+
+STR;
+							}
+							elseif(in_array($ele->attributes["type"], array("checkbox", "checksort"))) {
+								$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox {
+	float: left;
+	margin-left: 5px;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox-first {
+	margin: 0 !important;
+}
+
+STR;
+							}
+						}
+
+						//If the labelWidth attribute is set, handle appropriately.
+						if(!empty($form->labelWidthExists)) {
+							$labelWidth = "";
+							if(!empty($ele->labelWidth))
+								$labelWidth = $ele->labelWidth;
+							elseif(!empty($form->labelWidth))
+								$labelWidth = $form->labelWidth;
+
+							if(!empty($labelWidth)) {
+								$labelRightAlign = false;
+								if(!empty($ele->labelRightAlign))
+									$labelRightAlign = true;
+								elseif(!empty($form->labelRightAlign))
+									$labelRightAlign = true;
+								
+								if($labelRightAlign) {
+									$labelPaddingRight = $form->labelPaddingRight;
+									if(!empty($ele->labelPaddingRight))
+										$labelPaddingRight = $ele->labelPaddingRight;
+								}	
+
+								if(substr($labelWidth, -1) == "%") {
+									$labelWidth = substr($labelWidth, 0, -1);
+									$labelWidthSuffix = "%";
+								}	
+								elseif(substr($labelWidth, -2) == "px") {
+									$labelWidth = substr($labelWidth, 0, -2);
+									$labelWidthSuffix = "px";
+								}	
+								else
+									$labelWidthSuffix = "px";
+
+								if($labelWidthSuffix == $formWidthSuffix) {
+									if(!empty($form->map)) {
+										if($formWidthSuffix == "px")
+											$elementWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth;
+										else
+											$elementWidth = 98 - $labelWidth;
+									} 
+									else {
+										if($formWidthSuffix == "px")
+											$elementWidth = $formWidth - $labelWidth;
+										else
+											$elementWidth = 98 - $labelWidth;
+									}
+
+									$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
+	float: left;
+
+STR;
+									if(!empty($labelRightAlign)) {
+										$str .= <<<STR
+	text-align: right;
+
+STR;
+									}
+
+									if(!empty($labelPaddingRight)) {
+										if(substr($labelPaddingRight, -1) == "%")
+											$labelPaddingRight = substr($labelPaddingRight, 0, -1);
+										elseif(substr($labelPaddingRight, -2) == "px")
+											$labelPaddingRight = substr($labelPaddingRight, 0, -2);
+										$labelWidth -= $labelPaddingRight;
+										$str .= <<<STR
+	padding-right: {$labelPaddingRight}$labelWidthSuffix;
+
+STR;
+									}
+
+									$str .= <<<STR
+	width: {$labelWidth}$labelWidthSuffix;
+}
+
+STR;
+									if(in_array($ele->attributes["type"], array("text", "password", "email", "date", "daterange", "colorpicker"))) {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif(in_array($ele->attributes["type"], array("textarea", "webeditor", "ckeditor"))) {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									if(in_array($ele->attributes["type"], array("select", "rating"))) {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "radio") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "checkbox") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "checksort") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "sort") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "latlng") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-latlng {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "captcha") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-captcha {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "slider") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-slider {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+								}
+							}
+
+							if(empty($labelWidth) || $labelWidthSuffix != $formWidthSuffix) {
+								$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
+	display: block;
+}	
+
+STR;
+								if(!empty($form->map)) {
+									if($formWidthSuffix == "px")
+										$elementWidth = $elementWidthMap[$form->map[$mapIndex]];
+									else
+										$elementWidth = 98;
+								} 
+								else {
+									if($formWidthSuffix == "px")
+										$elementWidth = $formWidth;
+									else
+										$elementWidth = 98;
+								}
+
+								$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
+	width: {$elementWidth}$formWidthSuffix;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
+	width: {$elementWidth}$formWidthSuffix;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
+	width: {$elementWidth}$formWidthSuffix;
+}
+
+STR;
+							}
+						}
+
+						if(!empty($form->map)) {
+							if(array_key_exists($mapIndex, $form->map) && $form->map[$mapIndex] > 1) {
+								if(($mapCount + 1) == $form->map[$mapIndex]) {
+									$mapCount = 0;
+									++$mapIndex;
+								}
+								else
+									++$mapCount;
+							}
+							else {
+								++$mapIndex;
+								$mapCount = 0;
+							}	
+						}
+
+						++$nonHiddenInternalElementCount;
+					}
+				}	
 			}
                         
 			if(!empty($form->jqueryDateIDArr)) {
@@ -3035,248 +3347,6 @@ STR;
 
 STR;
 			}
-                        
-			$elementSize = sizeof($form->elements);
-			$id = str_replace("#", "", $id);
-			$nonHiddenInternalElementCount = 0;
-			if(!empty($form->map)) {
-				$mapIndex = 0;
-				$mapCount = 0;
-			}
-
-			for($e = 0; $e < $elementSize; ++$e) {
-				$ele = $form->elements[$e];
-				if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
-
-					//If the noBreak attribute is set, handle appropriately.
-					if(!empty($ele->noBreak)) {
-						if($ele->attributes["type"] == "radio") {
-							$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio {
-	float: left;
-	margin-left: 5px;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-first {
-	margin: 0 !important;
-}
-
-STR;
-						}
-						elseif(in_array($ele->attributes["type"], array("checkbox", "checksort"))) {
-							$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox {
-	float: left;
-	margin-left: 5px;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox-first {
-	margin: 0 !important;
-}
-
-STR;
-						}
-					}
-
-					//If the labelWidth attribute is set, handle appropriately.
-					$labelWidth = "";
-					if(!empty($ele->labelWidth))
-						$labelWidth = $ele->labelWidth;
-					elseif(!empty($form->labelWidth))
-						$labelWidth = $form->labelWidth;
-
-					if(!empty($labelWidth)) {
-						$labelRightAlign = false;
-						if(!empty($ele->labelRightAlign))
-							$labelRightAlign = true;
-						elseif(!empty($form->labelRightAlign))
-							$labelRightAlign = true;
-						
-						if($labelRightAlign) {
-							$labelPaddingRight = $form->labelPaddingRight;
-							if(!empty($ele->labelPaddingRight))
-								$labelPaddingRight = $ele->labelPaddingRight;
-						}	
-
-						if(substr($labelWidth, -1) == "%") {
-							$labelWidth = substr($labelWidth, 0, -1);
-							$labelWidthSuffix = "%";
-						}	
-						elseif(substr($labelWidth, -2) == "px") {
-							$labelWidth = substr($labelWidth, 0, -2);
-							$labelWidthSuffix = "px";
-						}	
-						else
-							$labelWidthSuffix = "px";
-
-						if($labelWidthSuffix == $formWidthSuffix) {
-							if(!empty($form->map)) {
-								if($formWidthSuffix == "px") {
-									$elementWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth;
-									$textboxTextareaWidth = $elementWidth - 6;
-								}	
-								else {
-									$elementWidth = 98 - $labelWidth;
-									$textboxTextareaWidth = $elementWidth;
-								}	
-							} 
-							else {
-								if($formWidthSuffix == "px") {
-									$elementWidth = $formWidth - $labelWidth;
-									$textboxTextareaWidth = $elementWidth - 6;
-								} 
-								else {
-									$elementWidth = 98 - $labelWidth;
-									$textboxTextareaWidth = $elementWidth;
-								}
-							}
-
-							$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
-	float: left !important;
-
-STR;
-							if(!empty($labelRightAlign)) {
-								$str .= <<<STR
-	text-align: right;
-
-STR;
-							}
-
-							if(!empty($labelPaddingRight)) {
-								if(substr($labelPaddingRight, -1) == "%")
-									$labelPaddingRight = substr($labelPaddingRight, 0, -1);
-								elseif(substr($labelPaddingRight, -2) == "px")
-									$labelPaddingRight = substr($labelPaddingRight, 0, -2);
-								$labelWidth -= $labelPaddingRight;
-								$str .= <<<STR
-	padding-right: {$labelPaddingRight}$labelWidthSuffix;
-
-STR;
-							}
-
-							$str .= <<<STR
-	width: {$labelWidth}$labelWidthSuffix !important;
-}
-
-STR;
-							if(in_array($ele->attributes["type"], array("text", "password", "email", "date", "daterange", "colorpicker"))) {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
-	width: {$textboxTextareaWidth}$labelWidthSuffix !important;
-	float: right;
-}
-
-STR;
-							}
-							elseif(in_array($ele->attributes["type"], array("textarea", "webeditor", "ckeditor"))) {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
-	width: {$textboxTextareaWidth}$labelWidthSuffix !important;
-	float: right;
-}
-
-STR;
-							}
-							if(in_array($ele->attributes["type"], array("select", "rating"))) {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
-	width: {$elementWidth}$labelWidthSuffix !important;
-	float: right;
-}
-
-STR;
-							}
-							elseif($ele->attributes["type"] == "radio") {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
-	width: {$elementWidth}$labelWidthSuffix !important;
-	float: right;
-}
-
-STR;
-							}
-							elseif($ele->attributes["type"] == "checkbox") {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
-	width: {$elementWidth}$labelWidthSuffix !important;
-	float: right;
-}
-
-STR;
-							}
-							elseif($ele->attributes["type"] == "checksort") {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
-	width: {$elementWidth}$labelWidthSuffix !important;
-	float: right;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
-	width: {$elementWidth}$labelWidthSuffix !important;
-	float: right;
-}
-
-STR;
-							}
-							elseif($ele->attributes["type"] == "sort") {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
-	width: {$elementWidth}$labelWidthSuffix !important;
-	float: right;
-}
-
-STR;
-							}
-							elseif($ele->attributes["type"] == "latlng") {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-latlng {
-	width: {$elementWidth}$labelWidthSuffix !important;
-	float: right;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
-	width: {$textboxTextareaWidth}$labelWidthSuffix !important;
-	float: right;
-}
-
-STR;
-							}
-							elseif($ele->attributes["type"] == "captcha") {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-captcha {
-	width: {$elementWidth}$labelWidthSuffix !important;
-	float: right;
-}
-
-STR;
-							}
-							elseif($ele->attributes["type"] == "slider") {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-slider {
-	width: {$elementWidth}$labelWidthSuffix !important;
-	float: right;
-}
-
-STR;
-							}
-						}
-					}
-
-					if(!empty($form->map)) {
-						if(array_key_exists($mapIndex, $form->map) && $form->map[$mapIndex] > 1) {
-							if(($mapCount + 1) == $form->map[$mapIndex]) {
-								$mapCount = 0;
-								++$mapIndex;
-							}
-							else
-								++$mapCount;
-						}
-						else {
-							++$mapIndex;
-							$mapCount = 0;
-						}	
-					}
-
-					++$nonHiddenInternalElementCount;
-				}
-			}	
 		}	
 
 		if(!$returnString)
