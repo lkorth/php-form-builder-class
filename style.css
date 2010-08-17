@@ -1,5 +1,8 @@
 body, td, pre {
 	font: 12px Arial, Helvetica, sans-serif; 
+}
+
+p, li, pre, td {
 	line-height: 18px;
 }
 

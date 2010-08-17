@@ -2886,13 +2886,13 @@ $id .pfbc-clear:after {
 }	
 $id .pfbc-buttons {
 	text-align: right;
-	padding-bottom: 5px;
+	padding-bottom: 1em;
 }
 $id .pfbc-required {
 	color: #990000; 
 }
 $id .pfbc-element {
-	padding-bottom: 5px;
+	padding-bottom: 1em;
 }
 
 STR;
@@ -2964,6 +2964,7 @@ STR;
 					$str .= <<<STR
 $id .pfbc-label {
 	display: block;
+	padding-bottom: .25em;
 }
 
 STR;
