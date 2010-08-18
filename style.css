@@ -12,9 +12,20 @@ body, #pfbc_banner h2, #pfbc_banner h5 {
 }	
 
 .pfbc-textbox, .pfbc-textarea {
-	padding: 5px;
+	padding: 0.5em;
+	font-family: "American Typewriter";
 	border: 1px solid #ccc;
 	font-size: 14px;
+}
+
+.pfbc-main {
+	font-family: "American Typewriter";
+	font-size: 14px;
+	border: 1px solid #cccccc; 
+	background-color: #f5f4f4; 
+	padding: 10px; 
+	-moz-border-radius: 8px; 
+	-webkit-border-radius: 8px;
 }
 
 #pfbc_links {

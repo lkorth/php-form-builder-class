@@ -1683,6 +1683,7 @@ STR;
 
 		$str .= <<<STR
 		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
 
 STR;
 
@@ -1703,11 +1704,11 @@ STR;
 			jQuery(document).ready(function() {
 				jQuery.get('{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param', function(cssText) {
 					jQuery("head").append('<style type="text/css">' + cssText + '</style>');
-					jQuery("#{$this->attributes["id"]} .pfbc-textbox").each(function () { 
-						jQuery(this).width(jQuery(this).width() - (jQuery(this).outerWidth() - jQuery(this).width())); 
-					});
-					jQuery("#{$this->attributes["id"]} .pfbc-textarea").each(function () { 
-						jQuery(this).width(jQuery(this).width() - (jQuery(this).outerWidth() - jQuery(this).width())); 
+					jQuery("#{$this->attributes["id"]} .pfbc-textbox, #{$this->attributes["id"]} .pfbc-textarea").each(function () { 
+						if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
+							jQuery(this).width(jQuery(this).width());
+						else	
+							jQuery(this).outerWidth(jQuery(this).width()); 
 					});
 				});
 				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param");
@@ -1733,6 +1734,7 @@ STR;
 				if(empty($this->preventCKEditorLoad)) {
 					$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/adapters/jquery.js"></script>
 
 STR;
 				}
@@ -1761,6 +1763,7 @@ STR;
             if(empty($this->preventCKEditorLoad)) {
                 $str .= <<<STR
         <script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/adapters/jquery.js"></script>
 
 STR;
             }
@@ -2288,8 +2291,6 @@ STR;
 			else
 				$prefix = "http";
 
-			if(empty($form->preventJQueryUILoad) && (!empty($form->jqueryDateIDArr) || !empty($form->jqueryDateRangeIDArr) || !empty($form->jquerySortIDArr) || !empty($form->jquerySliderIDArr) || !empty($form->jqueryStarRatingIDArr) || !empty($form->jqueryUIButtonExists)))
-				$str .= file_get_contents($prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js");
 			if(!empty($form->tooltipIDArr))
 				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
 			if(!empty($form->jqueryStarRatingIDArr))
@@ -2673,7 +2674,7 @@ STR;
 					if(!empty($form->ckeditorLang))
 						$ckeditorParamArr[] = 'language: "' . $form->ckeditorLang . '"';
 					$str .= <<<STR
-CKEDITOR.replace("$ckeditorID"
+jQuery("#$ckeditorID").ckeditor( function() {  jQuery("#cke_{$ckeditorID}").outerWidth(jQuery("#cke_{$ckeditorID}").width()); }
 STR;
 					if(!empty($ckeditorParamArr)) {
 						$ckeditorParamStr = implode(", ", $ckeditorParamArr);

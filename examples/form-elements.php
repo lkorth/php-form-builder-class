@@ -58,7 +58,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				$form->addSlider("Slider:", "field20");
 				$form->addRating("Rating:", "field21", "", range(1, 10));
 				$form->addHTML("HTML:");
-				$form->addColorPicker("Color Picker", "field22");
+				$form->addColorPicker("Color Picker:", "field22");
 				$form->addEmail("Email:", "field23");
 				$form->addButton();
 				$form->render();
@@ -93,7 +93,7 @@ $form->addCaptcha("Captcha:");
 $form->addSlider("Slider:", "field20");
 $form->addRating("Rating:", "field21", "", range(1, 10));
 $form->addHTML("HTML:");
-$form->addColorPicker("Color Picker", "field22");
+$form->addColorPicker("Color Picker:", "field22");
 $form->addEmail("Email:", "field23");
 $form->addButton();
 $form->render();
