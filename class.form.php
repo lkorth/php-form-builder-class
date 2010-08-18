@@ -1017,7 +1017,7 @@ class form extends pfbc {
 			$str .= ">";
 		}
 
-		$str .= "\n" . '<div class="pfbc-main">';
+		$str .= "\n" . '<div class="pfbc-main" style="visibility: hidden;">';
 
 		if(!empty($this->errorMsg)) {
 			$str .= '
@@ -1704,6 +1704,7 @@ STR;
 			jQuery(document).ready(function() {
 				jQuery.get('{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param', function(cssText) {
 					jQuery("head").append('<style type="text/css">' + cssText + '</style>');
+					jQuery("#{$this->attributes["id"]} .pfbc-main").css({ visibility: "visible" });
 					jQuery("#{$this->attributes["id"]} .pfbc-textbox, #{$this->attributes["id"]} .pfbc-textarea").each(function () { 
 						if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
 							jQuery(this).width(jQuery(this).width());
@@ -1775,11 +1776,12 @@ STR;
 STR;
 			$str .= $this->renderJS(true);
 			$str .= <<<STR
-			jQuery("#{$this->attributes["id"]} .pfbc-textbox").each(function () { 
-				jQuery(this).width(jQuery(this).width() - (jQuery(this).outerWidth() - jQuery(this).width())); 
-			});
-			jQuery("#{$this->attributes["id"]} .pfbc-textarea").each(function () { 
-				jQuery(this).width(jQuery(this).width() - (jQuery(this).outerWidth() - jQuery(this).width())); 
+			jQuery("#{$this->attributes["id"]} .pfbc-main").css({ visibility: "visible" });
+			jQuery("#{$this->attributes["id"]} .pfbc-textbox, #{$this->attributes["id"]} .pfbc-textarea").each(function () { 
+				if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
+					jQuery(this).width(jQuery(this).width());
+				else	
+					jQuery(this).outerWidth(jQuery(this).width()); 
 			});
 		</script>
 
