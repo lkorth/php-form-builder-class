@@ -1000,6 +1000,10 @@ class form extends pfbc {
 			$str .= "\n" . '<div id="' . $this->attributes["id"] . '">';
 		else {
 			$str .= "\n<form";
+			if(!empty($this->attributes["class"]))
+				$this->attributes["class"] .= " pfbc-form";
+			else	
+				$this->attributes["class"] = "pfbc-form";
 			if(!empty($this->attributes) && is_array($this->attributes)) {
 				/*This syntax will be used throughout the render() and elementsToString() functions ensuring that attributes added to various HTML tags
 				are allowed and valid.  If you find that an attribute is not being included in your HTML tag definition, please reference $this->allowedFields.*/
@@ -1709,10 +1713,12 @@ STR;
 						if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
 							jQuery(this).width(jQuery(this).width());
 						else	
-							jQuery(this).outerWidth(jQuery(this).width()); 
+							jQuery(this).outerWidth(jQuery(this).width());
 					});
 				});
-				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param");
+				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param", function() {
+					setTimeout("pfbc_focus_{$this->attributes["id"]}();", 250);
+				});	
 
 STR;
 			$str .= <<<STR
@@ -2816,32 +2822,38 @@ STR;
 STR;
 				}
 
+				$str .= <<<STR
+function pfbc_focus_{$form->attributes["id"]}() {
+STR;
 				//This javascript section sets the focus of the first field in the form.  This default behavior can be overwritten by setting the noAutoFocus parameter.
 				if(empty($form->noAutoFocus) && !empty($form->focusElement)) {
 					//The webeditor and ckeditor fields are a special case.
 					if(!empty($form->tinymceIDArr) && is_array($form->tinymceIDArr) && in_array($form->focusElement, $form->tinymceIDArr)) {
 						$str .= <<<STR
-setTimeout("if(tinyMCE.get(\"{$form->focusElement}\")) tinyMCE.get(\"{$form->focusElement}\").focus();", 1000);
+	setTimeout("if(tinyMCE.get(\"{$form->focusElement}\")) tinyMCE.get(\"{$form->focusElement}\").focus();", 1000);
 
 STR;
 					}	
 					elseif(!empty($form->ckeditorIDArr) && is_array($form->ckeditorIDArr) && array_key_exists($form->focusElement, $form->ckeditorIDArr)) {
 						$str .= <<<STR
-setTimeout("CKEDITOR.instances.{$form->focusElement}.focus();", 1000);
+	setTimeout("CKEDITOR.instances.{$form->focusElement}.focus();", 1000);
 
 STR;
 					}	
 					else {
 						//Any fields with multiple options such as radio button, checkboxes, etc. are handled accordingly.
 						$str .= <<<STR
-if(document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-one" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-multiple" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].length)
-	document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"][0].focus();
-else
-	document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].focus();
+	if(document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-one" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-multiple" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].length)
+		document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"][0].focus();
+	else
+		document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].focus();
 
 STR;
 					}		
 				}
+				$str .= <<<STR
+}				
+STR;
 			}	
 		}	
 
