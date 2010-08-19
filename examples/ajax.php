@@ -177,7 +177,7 @@ $form->render();
 				));
 				$form->addHidden("cmd", "loading");
 				$form->addEmail("Email Address:", "Email");
-				$form->addHTML('<div id="ajaxLoadingDiv" style="display: none; text-align: center;"><small>Your information is being submitted...</small><br/><img src="images/ajax-loader.gif" alt=""/></div>');
+				$form->addHTMLExternal('<div id="ajaxLoadingDiv" style="display: none; text-align: center;"><small>Your information is being submitted...</small><br/><img src="images/ajax-loader.gif" alt=""/></div>');
 				$form->addButton("Submit", "submit", array("id" => "ajaxLoadingButton"));
 				$form->render();
 				?>
@@ -211,7 +211,7 @@ $form->setAttributes(array(
 ));
 $form->addHidden("cmd", "loading");
 $form->addEmail("Email Address:", "Email");
-$form->addHTML(\'<div id="ajaxLoadingDiv" style="display: none; text-align: center;"><small>Your information is being submitted...</small><br/><img src="images/ajax-loader.gif" border="0" alt=""/></div>\');
+$form->addHTMLExternal(\'<div id="ajaxLoadingDiv" style="display: none; text-align: center;"><small>Your information is being submitted...</small><br/><img src="images/ajax-loader.gif" border="0" alt=""/></div>\');
 $form->addButton("Submit", "submit", array("id" => "ajaxLoadingButton"));
 $form->render();
 ?>

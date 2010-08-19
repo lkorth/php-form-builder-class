@@ -1096,8 +1096,12 @@ class form extends pfbc {
 			if($ele->attributes["type"] == "htmlexternal")
 				$str .= "\n\t" . $ele->attributes["value"];
 			elseif($ele->attributes["type"] == "button") {
-				if($i == 0 || $nonHiddenElements[($i - 1)]->attributes["type"] != "button")
-					$str .= "\n\t" . '<div class="pfbc-buttons">';
+				if($i == 0 || $nonHiddenElements[($i - 1)]->attributes["type"] != "button") {
+					$str .= "\n\t" . '<div class="pfbc-buttons';
+					if($nonHiddenInternalElementCount == $nonHiddenInternalElementSize)
+						$str .= ' pfbc-nopaddingbottom';
+					$str .= '">';
+				}	
 				$str .= $ele->attributes["value"];
 				if(($i + 1) == $elementSize || $nonHiddenElements[($i + 1)]->attributes["type"] != "button")
 					$str .= "\n\t" . '</div>';
@@ -1148,6 +1152,8 @@ class form extends pfbc {
 				}
 				if(!empty($this->labelWidth) || !empty($ele->labelWidth))
 					$str .= ' pfbc-clear';
+				if((empty($this->map) && ($i + 1) == $elementSize) || (!empty($this->map) && ($i + ($this->map[$mapIndex] - $mapCount)) == $elementSize))
+					$str .= ' pfbc-nopaddingbottom';
 				$str .= '">';
 
 				if(!empty($ele->preHTML))
@@ -1789,6 +1795,7 @@ STR;
 				else	
 					jQuery(this).outerWidth(jQuery(this).width()); 
 			});
+			pfbc_focus_{$this->attributes["id"]}();
 		</script>
 
 STR;
@@ -2909,6 +2916,9 @@ $id .pfbc-required {
 $id .pfbc-element {
 	padding-bottom: 1em;
 }
+$id .pfbc-nopaddingbottom {
+	padding-bottom: 0 !important;
+}	
 
 STR;
 

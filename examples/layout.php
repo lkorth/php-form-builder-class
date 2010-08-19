@@ -74,7 +74,7 @@ $form->render();
 				<?php
 				$form = new form("login");
 				$form->setAttributes(array(
-					"width" => 500,
+					"width" => 400,
 					"includesPath" => "../includes",
 					"noAutoFocus" => 1,
 					"preventJqueryLoad" => 1,
@@ -90,7 +90,7 @@ $form->render();
 echo '<pre>', highlight_string('<?php
 $form = new form("login");
 $form->setAttributes(array(
-	"width" => 300,
+	"width" => 400,
 	"includesPath" => "../includes",
 	"noAutoFocus" => 1,
 	"labelWidth" => 100
@@ -108,11 +108,11 @@ $form->render();
 				<?php
 				$form = new form("signup");
 				$form->setAttributes(array(
-					"width" => 700,
+					"width" => 800,
 					"includesPath" => "../includes",
 					"noAutoFocus" => 1,
 					"preventJqueryLoad" => 1,
-					"labelWidth" => 100,
+					"labelWidth" => 125,
 					"labelRightAlign" => 1,
 					"map" => array(2, 2, 1, 3)
 				));
@@ -131,7 +131,7 @@ $form->render();
 echo '<pre>', highlight_string('<?php
 $form = new form("signup");
 $form->setAttributes(array(
-	"width" => 700,
+	"width" => 800,
 	"includesPath" => "../includes",
 	"noAutoFocus" => 1,
 	"labelWidth" => 100,
@@ -153,7 +153,9 @@ $form->render();
 
 				?>
 				<p>Using pixels when building your forms will give you more accurate alignment; however, you can defines widths in percentages if desired.
-				Please note that percentages and pixels should not be mixed together in the same form.</p>
+				Please note that percentages and pixels should not be mixed together in the same form.  The form tag's style attribute is set to block in this
+				example b/c the stylehseet used for all the example forms set the form tag's display style to inline-block.  Depending on your environment, you may
+				not need to include that line in your setAttributes function call as the form tag is display block by default.</p>
 				<?php
 				$form = new form("percentages");
 				$form->setAttributes(array(
@@ -163,7 +165,8 @@ $form->render();
 					"preventJqueryLoad" => 1,
 					"labelWidth" => "30%",
 					"labelRightAlign" => 1,
-					"labelPaddingRight" => "1%"
+					"labelPaddingRight" => "1%",
+					"style" => "display: block;"
 				));
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("First Name:", "FName", "", array("required" => 1));
@@ -185,7 +188,8 @@ $form->setAttributes(array(
 	"noAutoFocus" => 1,
 	"labelWidth" => "30%",
 	"labelRightAlign" => 1,
-	"labelPaddingRight" => "1%"
+	"labelPaddingRight" => "1%",
+	"style" => "display: block;"
 ));
 $form->addHidden("cmd", "submit");
 $form->addTextbox("First Name:", "FName", "", array("required" => 1));
