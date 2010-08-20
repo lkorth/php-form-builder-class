@@ -69,15 +69,11 @@ class form extends pfbc {
 	protected $map;
 	protected $mapMargin;
 	protected $noAutoFocus;
-	protected $preventJQueryLoad;
-	protected $preventJQueryUILoad;
-	protected $preventGoogleMapsLoad;
 	protected $preventTinyMCELoad;	
 	protected $preventTinyMCEInitLoad;
 	protected $preventCaptchaLoad;
 	protected $preventCKEditorLoad;
 	protected $preventDefaultCSS;
-	protected $preventXHTMLStrict;
 	protected $tooltipIcon;
 
 	private $allowedFields;
@@ -1021,7 +1017,7 @@ class form extends pfbc {
 			$str .= ">";
 		}
 
-		$str .= "\n" . '<div class="pfbc-main" style="visibility: hidden;">';
+		$str .= "\n" . '<div class="pfbc-main">';
 
 		if(!empty($this->errorMsg)) {
 			$str .= '
@@ -1678,10 +1674,6 @@ class form extends pfbc {
 			}
 		}
 
-		if($this->https)
-			$prefix = "https";
-		else
-			$prefix = "http";
 		//This javascript section loads all required js and css files needed for a specific form.  CSS files are loaded into the <head> tag with javascript.
 		$str .= <<<STR
 
@@ -1692,115 +1684,69 @@ STR;
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
 		$str .= <<<STR
-		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript">
+			google.load("jquery", "1.4.2");
+			google.load("jqueryui", "1.8.4");
+		</script>
 
 STR;
 
-		if(empty($this->preventXHTMLStrict)) {
-			$session_param = "";
-			$session_name = session_name();
-			if($session_name != "PHPSESSID")
-				$session_param = "&session_name=$session_name";
+		$session_param = "";
+		$session_name = session_name();
+		if($session_name != "PHPSESSID")
+			$session_param = "&session_name=$session_name";
 
-			if($this->https)
-				$prefix = "https";
-			else
-				$prefix = "http";
-
-			$str .= <<<STR
+		$str .= <<<STR
 		<script type="text/javascript">
 			//<![CDATA[
 			jQuery(document).ready(function() {
 				jQuery.get('{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param', function(cssText) {
 					jQuery("head").append('<style type="text/css">' + cssText + '</style>');
-					jQuery("#{$this->attributes["id"]} .pfbc-main").css({ visibility: "visible" });
-					jQuery("#{$this->attributes["id"]} .pfbc-textbox, #{$this->attributes["id"]} .pfbc-textarea").each(function () { 
-						if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
-							jQuery(this).width(jQuery(this).width());
-						else	
-							jQuery(this).outerWidth(jQuery(this).width());
+					jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea").each(function () { 
+						if(!jQuery(this).hasClass("pfbc-adjusted")) {
+							if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
+								jQuery(this).width(jQuery(this).width());
+							else	
+								jQuery(this).outerWidth(jQuery(this).width());
+							jQuery(this).addClass("pfbc-adjusted");	
+						}
 					});
 				});
 				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param", function() {
-					setTimeout("pfbc_focus_{$this->attributes["id"]}();", 250);
-				});	
 
 STR;
+		if(!empty($this->hasFormTag)) {
 			$str .= <<<STR
+					setTimeout("pfbc_focus_{$this->attributes["id"]}();", 250);
+
+STR;
+		}
+		$str .= <<<STR
+				});	
 			});
 			//]]>
 		</script>
 
 STR;
-			if(!empty($this->tinymceIDArr)) {
-				if(empty($this->preventTinyMCELoad)) {
-					$str .= <<<STR
+		if(!empty($this->tinymceIDArr)) {
+			if(empty($this->preventTinyMCELoad)) {
+				$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
 
 STR;
-				}
-
 			}
+		}
 
-			if(!empty($this->ckeditorIDArr)) {
-				if(empty($this->preventCKEditorLoad)) {
-					$str .= <<<STR
+		if(!empty($this->ckeditorIDArr)) {
+			if(empty($this->preventCKEditorLoad)) {
+				$str .= <<<STR
 		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
 		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/adapters/jquery.js"></script>
 
 STR;
-				}
 			}
 		}
-		else {
-			$str .= <<<STR
-		<style type="text/css">
-
-STR;
-			$str .= $this->renderCSS(true);
-			$str .= <<<STR
-		</style>	
-STR;
-		if(!empty($this->tinymceIDArr)) {
-            if(empty($this->preventTinyMCELoad)) {
-                $str .= <<<STR
-        <script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
-
-STR;
-            }
-
-        }
-
-        if(!empty($this->ckeditorIDArr)) {
-            if(empty($this->preventCKEditorLoad)) {
-                $str .= <<<STR
-        <script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
-		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/adapters/jquery.js"></script>
-
-STR;
-            }
-        }
-
-		$str .= <<<STR
-		<script type="text/javascript">
-
-STR;
-			$str .= $this->renderJS(true);
-			$str .= <<<STR
-			jQuery("#{$this->attributes["id"]} .pfbc-main").css({ visibility: "visible" });
-			jQuery("#{$this->attributes["id"]} .pfbc-textbox, #{$this->attributes["id"]} .pfbc-textarea").each(function () { 
-				if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
-					jQuery(this).width(jQuery(this).width());
-				else	
-					jQuery(this).outerWidth(jQuery(this).width()); 
-			});
-			pfbc_focus_{$this->attributes["id"]}();
-		</script>
-
-STR;
-		}
-
 		$str .= <<<STR
 	</div>	
 
@@ -2301,11 +2247,6 @@ STR;
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-			if($form->https)
-				$prefix = "https";
-			else
-				$prefix = "http";
-
 			if(!empty($form->tooltipIDArr))
 				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
 			if(!empty($form->jqueryStarRatingIDArr))
@@ -2620,7 +2561,7 @@ function clearLatLng_{$this->attributes["id"]}(latlngID, latlngHint) {
 STR;
 				if(empty($form->preventGoogleMapsLoad)) {
 					$str .= <<<STR
-jQuery.getScript("http://maps.google.com/maps/api/js?sensor=false&callback=initializeLatLng_{$this->attributes["id"]}");
+google.load("maps", "3", { other_params: "sensor=false", callback: "initializeLatLng_{$this->attributes["id"]}" });
 
 STR;
 				}
@@ -2740,7 +2681,7 @@ function pfbc_error_{$form->attributes["id"]}(errorMsg) {
 	var error = document.createElement('div');
 	error.className = 'ui-widget';
 	error.id = 'pfbc-{$form->attributes["id"]}-error';
-	error.style.cssText = 'margin: 7px 0;';
+	error.style.cssText = 'margin: 7px 0; font-size: 1em;';
 	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
 	jQuery("#{$form->attributes["id"]} .pfbc-main:first").prepend(error);
 	jQuery('html, body').animate({ scrollTop: jQuery("#{$form->attributes["id"]}").offset().top }, 500);
