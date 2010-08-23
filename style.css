@@ -11,11 +11,19 @@ body, #pfbc_banner h2, #pfbc_banner h5 {
 	margin: 0; 
 }	
 
-.pfbc-textbox, .pfbc-textarea {
-	padding: 0.5em;
+.pfbc-textbox, .pfbc-textarea, .pfbc-select {
+	padding: 8px;
 	font-family: "American Typewriter";
 	border: 1px solid #ccc;
 	font-size: 14px;
+}
+
+.pfbc-textbox {
+	height: 16px;
+}	
+
+.pfbc-select {
+	height: 34px;
 }
 
 .pfbc-form {
