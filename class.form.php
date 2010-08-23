@@ -1700,18 +1700,25 @@ STR;
 		$str .= <<<STR
 		<script type="text/javascript">
 			//<![CDATA[
+			function pfbc_adjust_{$this->attributes["id"]}() {
+				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea").each(function () { 
+					if(!jQuery(this).hasClass("pfbc-adjusted")) {
+						if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
+							jQuery(this).width(jQuery(this).width());
+						else	
+							jQuery(this).outerWidth(jQuery(this).width());
+						jQuery(this).addClass("pfbc-adjusted");	
+					}
+				});
+			}
+
 			jQuery(document).ready(function() {
 				jQuery.get('{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param', function(cssText) {
 					jQuery("head").append('<style type="text/css">' + cssText + '</style>');
-					jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea").each(function () { 
-						if(!jQuery(this).hasClass("pfbc-adjusted")) {
-							if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
-								jQuery(this).width(jQuery(this).width());
-							else	
-								jQuery(this).outerWidth(jQuery(this).width());
-							jQuery(this).addClass("pfbc-adjusted");	
-						}
-					});
+					if(jQuery("#{$this->attributes["id"]}").parent().is(":hidden"))
+						jQuery.swap(jQuery("#{$this->attributes["id"]}").parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, pfbc_adjust_{$this->attributes["id"]});
+					else
+						pfbc_adjust_{$this->attributes["id"]}();
 				});
 				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param", function() {
 
