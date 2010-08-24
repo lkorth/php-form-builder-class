@@ -17,6 +17,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 			<title>PHP Form Builder Class | Examples | Conditional Scenarios</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
+			<link href="style.css" rel="stylesheet" type="text/css"/>
 			<script type="text/javascript"> 
 				function toggleShipping(val)
 				{

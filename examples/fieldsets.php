@@ -17,6 +17,19 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 			<title>PHP Form Builder Class | Examples | Fieldsets</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
+			<link href="style.css" rel="stylesheet" type="text/css"/>
+			<style type="text/css">
+				.pfbc-fieldset {
+					margin: 0;
+					padding: 10px;
+					border: 1px solid #ccc;
+					-moz-border-radius: 8px; 
+					-webkit-border-radius: 8px;
+				}
+				.pfbc-form {
+					width: 322px;
+				}
+			</style>
 		</head>
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>

@@ -17,6 +17,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 			<title>PHP Form Builder Class | Examples | Tooltips</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
+			<link href="style.css" rel="stylesheet" type="text/css"/>
 			<style type="text/css">
 				.tooltipTitle {
 					font-weight: bold;
