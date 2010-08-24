@@ -1,0 +1,25 @@
+.pfbc-form {
+	font-family: "American Typewriter";
+	font-size: 14px;
+	border: 1px solid #cccccc; 
+	background-color: #f5f4f4; 
+	padding: 10px !important; 
+	display: inline-block;
+	-moz-border-radius: 8px; 
+	-webkit-border-radius: 8px;
+}
+.pfbc-textbox, .pfbc-textarea, .pfbc-select {
+	padding: 8px;
+	font-family: "American Typewriter";
+	border: 1px solid #ccc;
+	font-size: 14px;
+}
+.pfbc-textbox {
+	height: 16px;
+}	
+.pfbc-select {
+	height: 34px;
+	padding: 6px;
+}
+
+

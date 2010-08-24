@@ -1673,7 +1673,10 @@ class form extends pfbc {
 						$str .= "\n\t</div>";
 					}	
 				}
-				$focus = false;
+
+				if($focus && $ele->attributes["type"] != "html")
+					$focus = false;
+
 				++$nonHiddenInternalElementCount;
 			}
 		}
@@ -2813,6 +2816,7 @@ STR;
 				}
 				$str .= <<<STR
 }				
+
 STR;
 			}	
 		}	
