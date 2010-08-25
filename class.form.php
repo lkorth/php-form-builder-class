@@ -2707,7 +2707,6 @@ function pfbc_error_{$form->attributes["id"]}(errorMsg , ele ) {
 }
 function pfbc_scroll_top () {
            jQuery('html, body').animate({ scrollTop: jQuery("#{$form->attributes["id"]}").offset().top }, 500 );
-           console.log('animating');
 }
 
 function pfbc_onsubmit_{$form->attributes["id"]}(formObj) {
