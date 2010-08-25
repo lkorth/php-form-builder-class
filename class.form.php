@@ -1875,6 +1875,7 @@ STR;
 	private function jsCycleElements($elements) {
 		$str = "";
 		$elementSize = sizeof($elements);
+                $nonHiddenInternalElementCount = 0;
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = $elements[$i];
 			$eleType = $ele->attributes["type"];
@@ -1895,8 +1896,8 @@ STR;
 					$eleLabel = substr($eleLabel, 0, -1);
 			}	
 			else
-				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->attributes["name"]));
-			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '");';
+				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->attributes["name"]));                       
+			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "pfbc-' . $this->attributes["id"] . '-element-' . $nonHiddenInternalElementCount  .'" );';
 
 			if($eleType == "html")
 				continue;
@@ -1937,7 +1938,7 @@ STR;
 					$str .= <<<STR
 		if(!is_checked) {
 			$alertMsg
-			return false;
+			foundError = 1;
 		}
 
 STR;
@@ -1958,7 +1959,7 @@ STR;
 					$str .= <<<STR
 		if(!formObj.elements["$eleName"].checked) {
 			$alertMsg
-			return false;
+			foundError = 1;
 		}
 
 STR;
@@ -2006,7 +2007,7 @@ STR;
 					$str .= <<<STR
 		if(!is_checked) {
 			$alertMsg
-			return false;
+			foundError = 1;
 		}
 
 STR;
@@ -2027,7 +2028,7 @@ STR;
 					$str .= <<<STR
 		if(!formObj.elements["$eleName"].checked) {
 			$alertMsg
-			return false;
+			foundError = 1;
 		}
 
 STR;
@@ -2051,7 +2052,7 @@ STR;
 	if(formObj.elements["$eleName"].value == "$eleHint") {
 		$alertMsg
 		formObj.elements["$eleName"].focus();
-		return false;
+		foundError = 1;
 	}
 
 STR;
@@ -2069,7 +2070,7 @@ STR;
 	if(formObj.elements["$eleName"].value == "") {
 		$alertMsg
 		formObj.elements["$eleName"].focus();
-		return false;
+		foundError = 1;
 	}
 
 STR;
@@ -2087,7 +2088,7 @@ STR;
 					$str .= <<<STR
 	if(formObj.elements["$eleName"].value == "") {
 		$alertMsg
-		return false;
+		foundError = 1;
 	}
 
 STR;
@@ -2112,7 +2113,7 @@ STR;
 	if(formObj.elements["recaptcha_response_field"].value == "") {		
 		$alertMsg
 		formObj.elements["recaptcha_response_field"].focus();
-		return false;
+		foundError = 1;
 	}	
 
 STR;
@@ -2137,7 +2138,7 @@ STR;
 	if(tinyMCE.get("$eleId").getContent() == "") {
 		$alertMsg
 		tinyMCE.get("$eleId").focus();
-		return false;
+		foundError = 1;
 	}
 
 STR;
@@ -2155,7 +2156,7 @@ STR;
 	if( CKEDITOR.instances.$eleId.getData() == "") {
 		$alertMsg
 		CKEDITOR.instances.$eleId.focus();
-		return false;
+		foundError = 1;
 	}
 
 STR;
@@ -2184,7 +2185,7 @@ STR;
 					$str .= <<<STR
 	if(!formObj.elements["$eleName"]) {
 		$alertMsg
-		return false;
+		foundError = 1;
 	}	
 
 STR;
@@ -2231,12 +2232,17 @@ STR;
 
 		if(!validemail_{$this->attributes["id"]}) {
 			formObj.elements["$eleName"].focus();
-			return false;
+			foundError = 1;
 		}
 	}
 
 STR;
 			}
+
+                        if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
+				++$nonHiddenInternalElementCount;
+			}
+
 		}	
 
 		//Remove hints if they remain as form element values.
@@ -2692,17 +2698,21 @@ var validemail_{$this->attributes["id"]};
 STR;
 					}	
 					$str .= <<<STR
-function pfbc_error_{$form->attributes["id"]}(errorMsg) {
+function pfbc_error_{$form->attributes["id"]}(errorMsg , ele ) {
 	var error = document.createElement('div');
-	error.className = 'ui-widget';
-	error.id = 'pfbc-{$form->attributes["id"]}-error';
+	error.className = "ui-widget pfbc-{$form->attributes["id"]}-error";
 	error.style.cssText = 'margin: 7px 0; font-size: 1em;';
 	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
-	jQuery("#{$form->attributes["id"]} .pfbc-main:first").prepend(error);
-	jQuery('html, body').animate({ scrollTop: jQuery("#{$form->attributes["id"]}").offset().top }, 500);
+	jQuery('#' + ele ).prepend(error);
 }
+function pfbc_scroll_top () {
+           jQuery('html, body').animate({ scrollTop: jQuery("#{$form->attributes["id"]}").offset().top }, 500 );
+           console.log('animating');
+}
+
 function pfbc_onsubmit_{$form->attributes["id"]}(formObj) {
-	jQuery("#pfbc-{$form->attributes["id"]}-error").remove();
+	jQuery(".pfbc-{$form->attributes["id"]}-error").remove();
+        var foundError = 0;
 
 STR;
 					/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
@@ -2775,7 +2785,12 @@ STR;
 					}	
 					else {
 						$str .= <<<STR
-	return true;
+        if( foundError == 1 ) {
+                pfbc_scroll_top();
+                return false;
+        } else {
+                return true
+        }
 
 STR;
 					}	
