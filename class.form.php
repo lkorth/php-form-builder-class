@@ -2705,8 +2705,8 @@ function pfbc_error_{$form->attributes["id"]}(errorMsg , ele ) {
 	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
 	jQuery('#' + ele ).prepend(error);
 }
-function pfbc_scroll_top () {
-           jQuery('html, body').animate({ scrollTop: jQuery("#{$form->attributes["id"]}").offset().top }, 500 );
+function pfbc_scroll_top ( formid ) {
+           jQuery('html, body').animate({ scrollTop: jQuery('#' + formid ).offset().top }, 500 );
 }
 
 function pfbc_onsubmit_{$form->attributes["id"]}(formObj) {
@@ -2785,7 +2785,7 @@ STR;
 					else {
 						$str .= <<<STR
         if( foundError == 1 ) {
-                pfbc_scroll_top();
+                pfbc_scroll_top( "{$form->attributes["id"]}" );
                 return false;
         } else {
                 return true
