@@ -1872,7 +1872,7 @@ STR;
 		}
 	}
 
-	private function jsCycleElements($elements) {
+	private function jsCycleElements($elements, $alternateFormID="") {
 		$str = "";
 		$elementSize = sizeof($elements);
 		$nonHiddenInternalElementCount = -1;
@@ -1901,8 +1901,12 @@ STR;
 			else
 				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->attributes["name"]));                       
 
-			//$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "pfbc-' . $this->attributes["id"] . '-element-' . $nonHiddenInternalElementCount  .'" );';
-			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "' . $nonHiddenInternalElementCount . '");';
+			if(empty($alternateFormID))
+				$divid = "pfbc-" . $this->attributes["id"] . "-element-" . $nonHiddenInternalElementCount;
+			else
+				$divid = "pfbc-" . $alternateFormID . "-element-" . $nonHiddenInternalElementCount;
+
+			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "' . $divid . '");';
 
 			if($eleType == "html")
 				continue;
@@ -2232,7 +2236,7 @@ STR;
 			success: function(responseMsg, textStatus) {
 				if(responseMsg != "") {
 					validemail_{$this->attributes["id"]} = false;
-					{$this->jsErrorFunction}(responseMsg, $nonHiddenInternalElementCount);
+					{$this->jsErrorFunction}(responseMsg, "$divid");
 				}
 				else
 					validemail_{$this->attributes["id"]} = true;
@@ -2693,6 +2697,20 @@ function hintblur_{$this->attributes["id"]}(eleObj, hint) {
 STR;
 			}
 
+			$str .= <<<STR
+function pfbc_error_{$this->attributes["id"]}(errorMsg, divIdentifier) {
+	var error = document.createElement('div');
+	error.className = "ui-widget pfbc-{$this->attributes["id"]}-error";
+	error.style.cssText = 'margin: 7px 0; font-size: 1em;';
+	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
+	if(divIdentifier != undefined)
+		jQuery('#' + divIdentifier).prepend(error);
+	else	
+		jQuery("#{$this->attributes["id"]} .pfbc-main:first").prepend(error);
+}
+
+STR;
+
 			if(!empty($form->hasFormTag)) {
 				/*If there are any required fields in the form or if this form is setup to utilize ajax, build a javascript 
 				function for performing form validation before submission and/or for building and submitting a data string through ajax.*/
@@ -2704,22 +2722,12 @@ var validemail_{$this->attributes["id"]};
 STR;
 					}	
 					$str .= <<<STR
-function pfbc_error_{$form->attributes["id"]}(errorMsg, eleIndex) {
-	var error = document.createElement('div');
-	error.className = "ui-widget pfbc-{$form->attributes["id"]}-error";
-	error.style.cssText = 'margin: 7px 0; font-size: 1em;';
-	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
-	if(eleIndex != undefined)
-		jQuery('#pfbc-{$form->attributes["id"]}-element-' + eleIndex).prepend(error);
-	else	
-		jQuery("#{$form->attributes["id"]} .pfbc-main:first").prepend(error);
-}
-function pfbc_scroll_{$form->attributes["id"]}() {
-   jQuery('html, body').animate({ scrollTop: jQuery('#{$form->attributes["id"]}').offset().top }, 500 );
+function pfbc_scroll_{$this->attributes["id"]}() {
+   jQuery('html, body').animate({ scrollTop: jQuery('#{$this->attributes["id"]}').offset().top }, 500 );
 }
 
-function pfbc_onsubmit_{$form->attributes["id"]}(formObj) {
-	jQuery(".pfbc-{$form->attributes["id"]}-error").remove();
+function pfbc_onsubmit_{$this->attributes["id"]}(formObj) {
+	jQuery(".pfbc-{$this->attributes["id"]}-error").remove();
         var found_error = false;
 
 STR;
@@ -2743,7 +2751,7 @@ STR;
 	if({$form->bindRules[$bindRuleKeys[$b]][1]}) {
 STR;
 								}	
-								$str .= $form->jsCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements);
+								$str .= $form->jsCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements, $bindRuleKeys[$b]);
 								if(!empty($form->bindRules[$bindRuleKeys[$b]][1])) {
 									$str .= <<<STR
 	}
