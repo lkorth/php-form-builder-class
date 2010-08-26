@@ -30,7 +30,7 @@ elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "manual")
 	if(!empty($_POST["Options"])){
 		$option = implode(", ", $_POST["Options"]);
                 echo filter_var($option , FILTER_SANITIZE_SPECIAL_CHARS);
-        }
+	}
 	else
 		echo "None";
 	exit();
@@ -122,11 +122,8 @@ $form->render();
 				$form->render();
 				?>
 				<script type="text/javascript">
-					function loginHandler(msg)
-					{
-						var response = msg.getElementsByTagName("response")[0];
-						document.getElementById("messageDiv").innerHTML = response.getElementsByTagName("status")[0].firstChild.data + ": " + response.getElementsByTagName("message")[0].firstChild.data;
-						document.getElementById("messageDiv").style.display = "block";
+					function loginHandler(jsonResp) {
+						pfbc_error_login(jsonResp.status + ": " + jsonResp.message);
 					}
 				</script>
 				<?php
@@ -150,11 +147,8 @@ $form->addButton();
 $form->render();
 ?>
 <script type="text/javascript">
-	function loginHandler(msg)
-	{
-		var response = msg.getElementsByTagName("response")[0];
-		document.getElementById("messageDiv").innerHTML = response.getElementsByTagName("status")[0].firstChild.data + ": " + response.getElementsByTagName("message")[0].firstChild.data;
-		document.getElementById("messageDiv").style.display = "block";
+	function loginHandler(jsonResp) {
+		pfbc_error_login(jsonResp.status + ": " + jsonResp.message);
 	}
 </script>
 ', true), '</pre>';

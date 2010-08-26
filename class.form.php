@@ -1938,7 +1938,7 @@ STR;
 					$str .= <<<STR
 		if(!is_checked) {
 			$alertMsg
-			foundError = 1;
+			found_error = true;
 		}
 
 STR;
@@ -1959,7 +1959,7 @@ STR;
 					$str .= <<<STR
 		if(!formObj.elements["$eleName"].checked) {
 			$alertMsg
-			foundError = 1;
+			found_error = true;
 		}
 
 STR;
@@ -2007,7 +2007,7 @@ STR;
 					$str .= <<<STR
 		if(!is_checked) {
 			$alertMsg
-			foundError = 1;
+			found_error = true;
 		}
 
 STR;
@@ -2028,7 +2028,7 @@ STR;
 					$str .= <<<STR
 		if(!formObj.elements["$eleName"].checked) {
 			$alertMsg
-			foundError = 1;
+			found_error = true;
 		}
 
 STR;
@@ -2049,10 +2049,11 @@ STR;
 				}	
 				if(!empty($ele->required)) {
 					$str .= <<<STR
-	if(formObj.elements["$eleName"].value == "$eleHint") {
+	if(formObj.elements["$eleName"].value == "$eleHint" || formObj.elements["$eleName"].value == "") {
 		$alertMsg
-		formObj.elements["$eleName"].focus();
-		foundError = 1;
+		if(!found_error)
+			formObj.elements["$eleName"].focus();
+		found_error = true;
 	}
 
 STR;
@@ -2069,8 +2070,9 @@ STR;
 					$str .= <<<STR
 	if(formObj.elements["$eleName"].value == "") {
 		$alertMsg
-		formObj.elements["$eleName"].focus();
-		foundError = 1;
+		if(!found_error)
+			formObj.elements["$eleName"].focus();
+		found_error = true;
 	}
 
 STR;
@@ -2088,7 +2090,7 @@ STR;
 					$str .= <<<STR
 	if(formObj.elements["$eleName"].value == "") {
 		$alertMsg
-		foundError = 1;
+		found_error = true;
 	}
 
 STR;
@@ -2112,8 +2114,9 @@ STR;
 					$str .= <<<STR
 	if(formObj.elements["recaptcha_response_field"].value == "") {		
 		$alertMsg
-		formObj.elements["recaptcha_response_field"].focus();
-		foundError = 1;
+		if(!found_error)
+			formObj.elements["recaptcha_response_field"].focus();
+		found_error = true;
 	}	
 
 STR;
@@ -2137,8 +2140,9 @@ STR;
 					$str .= <<<STR
 	if(tinyMCE.get("$eleId").getContent() == "") {
 		$alertMsg
-		tinyMCE.get("$eleId").focus();
-		foundError = 1;
+		if(!found_error)
+			tinyMCE.get("$eleId").focus();
+		found_error = true;
 	}
 
 STR;
@@ -2155,8 +2159,9 @@ STR;
 					$str .= <<<STR
 	if( CKEDITOR.instances.$eleId.getData() == "") {
 		$alertMsg
-		CKEDITOR.instances.$eleId.focus();
-		foundError = 1;
+		if(!found_error)
+			CKEDITOR.instances.$eleId.focus();
+		found_error = true;
 	}
 
 STR;
@@ -2185,7 +2190,7 @@ STR;
 					$str .= <<<STR
 	if(!formObj.elements["$eleName"]) {
 		$alertMsg
-		foundError = 1;
+		found_error = true;
 	}	
 
 STR;
@@ -2231,8 +2236,9 @@ STR;
 		});
 
 		if(!validemail_{$this->attributes["id"]}) {
-			formObj.elements["$eleName"].focus();
-			foundError = 1;
+			if(!found_error)
+				formObj.elements["$eleName"].focus();
+			found_error = true;
 		}
 	}
 
@@ -2705,13 +2711,13 @@ function pfbc_error_{$form->attributes["id"]}(errorMsg , ele ) {
 	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
 	jQuery('#' + ele ).prepend(error);
 }
-function pfbc_scroll_top ( formid ) {
-           jQuery('html, body').animate({ scrollTop: jQuery('#' + formid ).offset().top }, 500 );
+function pfbc_scroll_{$form->attributes["id"]}() {
+   jQuery('html, body').animate({ scrollTop: jQuery('#{$form->attributes["id"]}').offset().top }, 500 );
 }
 
 function pfbc_onsubmit_{$form->attributes["id"]}(formObj) {
 	jQuery(".pfbc-{$form->attributes["id"]}-error").remove();
-        var foundError = 0;
+        var found_error = false;
 
 STR;
 					/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
@@ -2744,6 +2750,14 @@ STR;
 							}
 						}
 					}
+
+					$str .= <<<STR
+	if(found_error) {
+			pfbc_scroll_{$form->attributes["id"]}();
+			return false;
+	}
+
+STR;
 						
 					if(!empty($form->ajax)) {
 						$str .= <<<STR
@@ -2784,15 +2798,10 @@ STR;
 					}	
 					else {
 						$str .= <<<STR
-        if( foundError == 1 ) {
-                pfbc_scroll_top( "{$form->attributes["id"]}" );
-                return false;
-        } else {
-                return true
-        }
+	return true;					
 
 STR;
-					}	
+					}
 					$str .= <<<STR
 }
 
