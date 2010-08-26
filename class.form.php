@@ -1875,8 +1875,11 @@ STR;
 	private function jsCycleElements($elements) {
 		$str = "";
 		$elementSize = sizeof($elements);
-                $nonHiddenInternalElementCount = 0;
+		$nonHiddenInternalElementCount = -1;
 		for($i = 0; $i < $elementSize; ++$i) {
+			if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button")))
+				++$nonHiddenInternalElementCount;
+
 			$ele = $elements[$i];
 			$eleType = $ele->attributes["type"];
 			$eleName = str_replace('"', '&quot;', $ele->attributes["name"]);
@@ -1897,7 +1900,9 @@ STR;
 			}	
 			else
 				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->attributes["name"]));                       
-			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "pfbc-' . $this->attributes["id"] . '-element-' . $nonHiddenInternalElementCount  .'" );';
+
+			//$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "pfbc-' . $this->attributes["id"] . '-element-' . $nonHiddenInternalElementCount  .'" );';
+			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "' . $nonHiddenInternalElementCount . '");';
 
 			if($eleType == "html")
 				continue;
@@ -2227,7 +2232,7 @@ STR;
 			success: function(responseMsg, textStatus) {
 				if(responseMsg != "") {
 					validemail_{$this->attributes["id"]} = false;
-					{$this->jsErrorFunction}(responseMsg);
+					{$this->jsErrorFunction}(responseMsg, $nonHiddenInternalElementCount);
 				}
 				else
 					validemail_{$this->attributes["id"]} = true;
@@ -2244,11 +2249,6 @@ STR;
 
 STR;
 			}
-
-                        if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
-				++$nonHiddenInternalElementCount;
-			}
-
 		}	
 
 		//Remove hints if they remain as form element values.
@@ -2704,12 +2704,15 @@ var validemail_{$this->attributes["id"]};
 STR;
 					}	
 					$str .= <<<STR
-function pfbc_error_{$form->attributes["id"]}(errorMsg , ele ) {
+function pfbc_error_{$form->attributes["id"]}(errorMsg, eleIndex) {
 	var error = document.createElement('div');
 	error.className = "ui-widget pfbc-{$form->attributes["id"]}-error";
 	error.style.cssText = 'margin: 7px 0; font-size: 1em;';
 	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
-	jQuery('#' + ele ).prepend(error);
+	if(eleIndex != undefined)
+		jQuery('#pfbc-{$form->attributes["id"]}-element-' + eleIndex).prepend(error);
+	else	
+		jQuery("#{$form->attributes["id"]} .pfbc-main:first").prepend(error);
 }
 function pfbc_scroll_{$form->attributes["id"]}() {
    jQuery('html, body').animate({ scrollTop: jQuery('#{$form->attributes["id"]}').offset().top }, 500 );
