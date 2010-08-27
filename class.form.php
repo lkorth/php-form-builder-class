@@ -104,7 +104,6 @@ class form extends pfbc {
 	private $stateArr;
 	private $tinymceIDArr;
 	private $tooltipIDArr;
-        private $generateInlineResources;
 
 	public $errorMsg;
 
@@ -994,17 +993,17 @@ class form extends pfbc {
 			$focus = false;
 
 		if(empty($this->hasFormTag))
-			$str .= "\n" . '<div id="' . $this->attributes["id"] . '" >';
+			$str .= "\n" . '<div id="' . $this->attributes["id"] . '" style="visibility: hidden;">';
 		else {
 			$str .= "\n<form";
 			if(!empty($this->attributes["class"]))
 				$this->attributes["class"] .= " pfbc-form";
 			else	
 				$this->attributes["class"] = "pfbc-form";
-			/*if(!empty($this->attributes["style"]))
+			if(!empty($this->attributes["style"]))
 				$this->attributes["style"] .= " visibility: hidden;";
 			else	
-				$this->attributes["style"] = "visibility: hidden;";*/
+				$this->attributes["style"] = "visibility: hidden;";
 			if(!empty($this->attributes) && is_array($this->attributes)) {
 				/*This syntax will be used throughout the render() and elementsToString() functions ensuring that attributes added to various HTML tags
 				are allowed and valid.  If you find that an attribute is not being included in your HTML tag definition, please reference $this->allowedFields.*/
@@ -1692,27 +1691,14 @@ STR;
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
 		$str .= <<<STR
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-                <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript">
+			google.load("jquery", "1.4.2");
+			google.load("jqueryui", "1.8.4");
+		</script>
 
 STR;
 
-                if(!empty($this->tinymceIDArr) && empty($this->preventTinyMCELoad)) {
-				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
-
-STR;
-		}
-
-		if(!empty($this->ckeditorIDArr) && empty($this->preventCKEditorLoad)) {
-				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
-		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/adapters/jquery.js"></script>
-
-STR;
-		}
-
-if(empty($this->generateInlineResources) || $this->generateInlineResources == False) {
 		$session_param = "";
 		$session_name = session_name();
 		if($session_name != "PHPSESSID")
@@ -1758,31 +1744,24 @@ STR;
 		</script>
 
 STR;
+		if(!empty($this->tinymceIDArr)) {
+			if(empty($this->preventTinyMCELoad)) {
+				$str .= <<<STR
+		<script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
 
-} else {
-
-    			if(!empty($this->tooltipIDArr))
-                                $str .= "<script type='text/javascript' src='{$this->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js'></script>";
-			if(!empty($this->jqueryStarRatingIDArr))
-                                $str .= "<script type='text/javascript' src='{$this->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js'></script>";
-			if(!empty($this->jqueryDateRangeIDArr))
-                                $str .= "<script type='text/javascript' src='{$this->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js'></script>";
-			if(!empty($this->jqueryColorIDArr))
-                                $str .= "<script type='text/javascript' src='{$this->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js'></script>";
-			if(empty($this->preventCaptchaLoad) && !empty($this->captchaID))
-                                $str .= "<script type='text/javascript' src='https://www.google.com/recaptcha/api/js/recaptcha_ajax.js'></script>";
-
-    $str .= <<<STR
-
-    <script type="text/javascript">
-        //<![CDATA[
-        {$this->renderJS(true)}
-        //]]>
-    </script>
 STR;
+			}
+		}
 
-}
+		if(!empty($this->ckeditorIDArr)) {
+			if(empty($this->preventCKEditorLoad)) {
+				$str .= <<<STR
+		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
+		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/adapters/jquery.js"></script>
 
+STR;
+			}
+		}
 		$str .= <<<STR
 	</div>	
 
@@ -1802,40 +1781,19 @@ STR;
 		$this->addElement("", "", "htmlexternal", '<fieldset class="pfbc-fieldset"><legend>' . $legend . "</legend>");
 	}
 
-        public function headData(){
-                    $this->generateInlineResources = True;
-                    $str = "<link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$this->jqueryUITheme}/jquery-ui.css' rel='stylesheet' type='text/css'/>";
-                    if(!empty($form->jqueryDateRangeIDArr))
-                        $str .= '<link href="' . $form->jsIncludesPath . '/jquery/ui/ui.daterangepicker.css" rel="stylesheet" type="text/css"/>';
-                    if(!empty($form->jqueryColorIDArr))
-                        $str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css' rel='stylesheet' type='text/css'/>";
-                    if(!empty($form->tooltipIDArr))
-                        $str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css' rel='stylesheet' type='text/css'/>";
-
-                    $str .= '<style type="text/css">';
-                    $str .= $this->renderCSS(true);
-                    $str .= "</style>";
-                    return $str;
-        }
-
-        public function bodyData(){
-                    $this->generateInlineResources = True;
-                    return $this->render(TRUE);
-        }
-
 	public function render($returnString=false) {
 		$this->hasFormTag = 1;
+		ob_start();
 
-                if(empty($this->generateInlineResources)){
-                        $this->generateInlineResources = False;
-                }
+		echo $this->elementsToString();
 
-                $content = $this->elementsToString();
+		$content = ob_get_contents();
+		ob_end_clean();
 
-                if(!$returnString)
-                	echo($content);
-                else
-                	return $content;
+		if(!$returnString)
+			echo($content);
+		else
+			return $content;
 	}
 
 	//This function is identical to setValues() and is included for backwards compatibility.
@@ -1919,12 +1877,10 @@ STR;
 		$elementSize = sizeof($elements);
 		$nonHiddenInternalElementCount = -1;
 		for($i = 0; $i < $elementSize; ++$i) {
-                        $ele = $elements[$i];
-
 			if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button")))
 				++$nonHiddenInternalElementCount;
 
-			
+			$ele = $elements[$i];
 			$eleType = $ele->attributes["type"];
 			$eleName = str_replace('"', '&quot;', $ele->attributes["name"]);
 			if(!empty($ele->hint))
@@ -2321,6 +2277,22 @@ STR;
 		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+
+			if(!empty($form->tooltipIDArr))
+				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
+			if(!empty($form->jqueryStarRatingIDArr))
+				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js");
+			if(!empty($form->jqueryDateRangeIDArr))
+				$str .= str_replace(array(), array(), file_get_contents("{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"));
+			if(!empty($form->jqueryColorIDArr))
+				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
+			if(empty($form->preventCaptchaLoad) && !empty($form->captchaID)) {
+				if($form->https)
+					$captchaDomain = "https://api-secure.recaptcha.net";
+				else
+					$captchaDomain = "http://api.recaptcha.net";
+				$str .= file_get_contents($captchaDomain . "/js/recaptcha_ajax.js");
+			}
 
 			if(!empty($form->jqueryDateIDArr)) {
 				$dateKeys = array_keys($form->jqueryDateIDArr);
@@ -2730,7 +2702,7 @@ function pfbc_error_{$this->attributes["id"]}(errorMsg, divIdentifier) {
 	var error = document.createElement('div');
 	error.className = "ui-widget pfbc-{$this->attributes["id"]}-error";
 	error.style.cssText = 'margin: 7px 0; font-size: 1em;';
-	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '<\/div>';
+	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
 	if(divIdentifier != undefined)
 		jQuery('#' + divIdentifier).prepend(error);
 	else	
@@ -2896,12 +2868,26 @@ STR;
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
+			if($form->https)
+				$prefix = "https";
+			else
+				$prefix = "http";
+
+			$str .= str_replace("images/", "{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
+			if(!empty($form->jqueryDateRangeIDArr))
+				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
+			if(!empty($form->jqueryColorIDArr))
+				$str .= str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css"));
+			if(!empty($form->tooltipIDArr))
+				$str .= str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css"));
+
 			if(empty($form->preventDefaultCSS)) {
 				$id = "#" . $this->attributes["id"];
 				$str .= <<<STR
 $id {
 	margin: 0;
 	padding: 0;
+	visibility: hidden;
 }
 $id .pfbc-clear:after {
 	clear: both;
