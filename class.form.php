@@ -797,7 +797,7 @@ class form extends pfbc {
 		
 		if(!empty($this->labelWidth) || !empty($ele->labelWidth))
 			$this->labelWidthExists = true;
-
+		
 		$this->elements[] = $ele;
 	}
 
@@ -1023,14 +1023,8 @@ class form extends pfbc {
 
 		$str .= "\n" . '<div class="pfbc-main">';
 
-		if(!empty($this->errorMsg)) {
-			$str .= '
-	<div style="margin: 7px 0pt;" id="pfbc-' . $this->attributes["id"] . '-error" class="ui-widget">
-		<div class="ui-state-error ui-corner-all" style="padding: 7px;">
-			' . $this->errorMsg . '
-		</div>
-	</div>';
-		}
+		if(!empty($this->errorMsg))
+			$str .= '<div class="pfbc-error ui-state-error ui-corner-all">' . $this->errorMsg . '</div>';
 
 		if(!empty($this->map)) {
 			$mapIndex = 0;
@@ -1136,7 +1130,9 @@ class form extends pfbc {
 				if(!empty($this->map))
 					$str .= "\t";
 
-				$str .= '<div id="pfbc-' . $this->attributes["id"] . '-element-' . $nonHiddenInternalElementCount . '" class="pfbc-element';
+				$ele->container = "pfbc-" . $this->attributes["id"] . "-element-" . $nonHiddenInternalElementCount;
+				$str .= '<div id="' . $ele->container . '" class="pfbc-element';
+				$ele->container = "#" . $ele->container;
 
 				if($map_element_first && $map_element_last)
 					$str .= ' pfbc-map-element-single';
@@ -1872,14 +1868,10 @@ STR;
 		}
 	}
 
-	private function jsCycleElements($elements, $alternateFormID="") {
+	private function jsCycleElements($elements) {
 		$str = "";
 		$elementSize = sizeof($elements);
-		$nonHiddenInternalElementCount = -1;
 		for($i = 0; $i < $elementSize; ++$i) {
-			if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button")))
-				++$nonHiddenInternalElementCount;
-
 			$ele = $elements[$i];
 			$eleType = $ele->attributes["type"];
 			$eleName = str_replace('"', '&quot;', $ele->attributes["name"]);
@@ -1901,12 +1893,7 @@ STR;
 			else
 				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->attributes["name"]));                       
 
-			if(empty($alternateFormID))
-				$divid = "pfbc-" . $this->attributes["id"] . "-element-" . $nonHiddenInternalElementCount;
-			else
-				$divid = "pfbc-" . $alternateFormID . "-element-" . $nonHiddenInternalElementCount;
-
-			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "' . $divid . '");';
+			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "' . $ele->container . '");';
 
 			if($eleType == "html")
 				continue;
@@ -2236,7 +2223,7 @@ STR;
 			success: function(responseMsg, textStatus) {
 				if(responseMsg != "") {
 					validemail_{$this->attributes["id"]} = false;
-					{$this->jsErrorFunction}(responseMsg, "$divid");
+					{$this->jsErrorFunction}(responseMsg, "{$ele->container}");
 				}
 				else
 					validemail_{$this->attributes["id"]} = true;
@@ -2698,13 +2685,10 @@ STR;
 			}
 
 			$str .= <<<STR
-function pfbc_error_{$this->attributes["id"]}(errorMsg, divIdentifier) {
-	var error = document.createElement('div');
-	error.className = "ui-widget pfbc-{$this->attributes["id"]}-error";
-	error.style.cssText = 'margin: 7px 0; font-size: 1em;';
-	error.innerHTML = '<div class="ui-state-error ui-corner-all" style="padding: 7px;">' + errorMsg + '</div>';
-	if(divIdentifier != undefined)
-		jQuery('#' + divIdentifier).prepend(error);
+function pfbc_error_{$this->attributes["id"]}(errorMsg, container) {
+	var error = '<div class="pfbc-error ui-state-error ui-corner-all">' + errorMsg + '</div>';
+	if(container != undefined)
+		jQuery(container).prepend(error);
 	else	
 		jQuery("#{$this->attributes["id"]} .pfbc-main:first").prepend(error);
 }
@@ -2725,9 +2709,8 @@ STR;
 function pfbc_scroll_{$this->attributes["id"]}() {
    jQuery('html, body').animate({ scrollTop: jQuery('#{$this->attributes["id"]}').offset().top }, 500 );
 }
-
 function pfbc_onsubmit_{$this->attributes["id"]}(formObj) {
-	jQuery(".pfbc-{$this->attributes["id"]}-error").remove();
+	jQuery("#{$this->attributes["id"]} .pfbc-error").remove();
         var found_error = false;
 
 STR;
@@ -2751,7 +2734,7 @@ STR;
 	if({$form->bindRules[$bindRuleKeys[$b]][1]}) {
 STR;
 								}	
-								$str .= $form->jsCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements, $bindRuleKeys[$b]);
+								$str .= $form->jsCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements);
 								if(!empty($form->bindRules[$bindRuleKeys[$b]][1])) {
 									$str .= <<<STR
 	}
@@ -2898,6 +2881,10 @@ $id .pfbc-clear:after {
 	height: 0;
 	content: ":)";
 }	
+$id .pfbc-error {
+	padding: 0.5em;
+	margin-bottom: 0.5em;
+}
 $id .pfbc-buttons {
 	text-align: right;
 	padding-bottom: 1em;
@@ -3473,6 +3460,7 @@ STR;
 class element extends pfbc {
 	public $attributes;
 	public $basic;
+	public $container;
 	public $height;
 	public $hint;
 	public $hideCancel;
