@@ -183,7 +183,7 @@ $form->addTextbox("My Required Textbox", "Textbox", "", array("required" => 1));
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -246,7 +246,7 @@ $form->addSelect("My Prefilled/Multiple Selectbox", "Selectbox",
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -281,7 +281,7 @@ $form->addSelect("My Prefilled/Multiple Selectbox", "Selectbox",
 				<a name="Form-Elements-Checkbox"></a>
 				<h4>Checkbox:</h4><p>Checkboxes are added to your forms via the addCheckbox function.  This function is used to generate a group of checkboxes, not just one.  Similar to the addSelect function, there is an options parameter
 				that is used to populate each checkbox's value and displayed text.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second examples
-				provided below illustrate how the options paramter affects each checkbox in the group.
+				provided below illustrate how the options paramter affects each checkbox in the group.</p>
 
 				<?php
 echo '<pre>', highlight_string('<?php
@@ -313,7 +313,7 @@ $form->addCheckbox("My Selected Checkboxes", "Checkbox", array("1", "3"), array(
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -346,7 +346,7 @@ $form->addCheckbox("My Selected Checkboxes", "Checkbox", array("1", "3"), array(
 				<a name="Form-Elements-Radio-Button"></a>
 				<h4>Radio Button:</h4><p>Radio buttons are added to your forms via the addRadio function.  This function is used to generate a group of radio buttons, not just one.  There is an options parameter
 				that is used to populate each radio button's value and displayed text.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second examples
-				provided below illustrate how the options paramter affects each radio button in the group.
+				provided below illustrate how the options paramter affects each radio button in the group.</p>
 
 				<?php
 echo '<pre>', highlight_string('<?php
@@ -377,7 +377,7 @@ $form->addRadio("My Selected Radio Buttons", "Radio", "1", array("1" => "Option 
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -424,7 +424,7 @@ $form->addTextarea("My Prefilled Textarea", "Textarea", "This is my default valu
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -448,7 +448,7 @@ $form->addTextarea("My Prefilled Textarea", "Textarea", "This is my default valu
 
 				<a name="Form-Elements-Hidden"></a>
 				<h4>Hidden:</h4><p>Hidden inputs are added to forms by invoking the addHidden function.  The label parameter is not included in this function because hidden inputs do not make use
-				of labels.
+				of labels.</p>
 
 				<?php
 echo '<pre>', highlight_string('<?php
@@ -464,7 +464,7 @@ $form->addHidden("Hidden", "MyHiddenValue");
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -500,7 +500,7 @@ $form->addFile("My File", "File");
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -536,7 +536,7 @@ $form->addState("My State", "State");
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -577,7 +577,7 @@ $form->addCountry("My Country", "Country");
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -618,7 +618,7 @@ $form->addYesNo("My Yes/No", "YesNo");
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -658,7 +658,7 @@ $form->addTrueFalse("My True/False", "TrueFalse");
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -684,7 +684,7 @@ $form->addTrueFalse("My True/False", "TrueFalse");
 				<h4>Email:</h4><p>The email element type is essentially a textbox with built-in javascript/php email validation.  Javascript validation is triggered in the form's pre-defined onsubmit function.
 				If the element's value is not empty, an AJAX call is made to validate the element's content.  If the textbox does not contain a valid email address, an appropriate error message will be dispalyed.  
 				PHP validation is triggered by making use of the validate function after the form's data has been submitted.  Both javascript and php validation make use of an open source project found at 
-				http://code.google.com/p/php-email-address-validation/.  See the <a href="../examples/email-validation.php">Email Validation example</a> file for reference.</p>
+				<a href="http://code.google.com/p/php-email-address-validation/">http://code.google.com/p/php-email-address-validation/</a>.  See the <a href="../examples/email-validation.php">Email Validation example</a> file for reference.</p>
 
 				<?php
 echo '<pre>', highlight_string('<?php
@@ -701,7 +701,7 @@ $form->addEmail("My Textbox w/Email Validation", "Email");
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -739,7 +739,7 @@ $form->addEmail("My Textbox w/Email Validation", "Email");
 				<p>jQueryUI's datepicker has many options you can use to tailor the functionality to fit to your specific needs.  To apply these options, make use of the jqueryOptions element attribute.  We've already
 				seen how this attribute can be used to change the formatting of the date returned.  Now, let's look at example five below and see how we can display multiple months on the calendar as well as restrict the date range to plus or minus
 				30 days.  See <a href="http://jqueryui.com/demos/datepicker/">http://jqueryui.com/demos/datepicker/</a> for more information on jQueryUI's datepicker plugin and all the available options that can be applied via the jqueryOptions
-				element attribute.  Keep in mind that if you are setting a jQuery option to a piece of javascript code via the jqueryOptions attribute, you will need to prepend your string with "js:" for it to be handled correctly.
+				element attribute.  Keep in mind that if you are setting a jQuery option to a piece of javascript code via the jqueryOptions attribute, you will need to prepend your string with "js:" for it to be handled correctly.</p>
 				
 				<?php
 echo '<pre>', highlight_string('<?php
@@ -765,7 +765,7 @@ $form->addDate("My Date w/Multiple Months & Restricted Range", "Date", "", array
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -806,7 +806,7 @@ $form->addDate("My Date w/Multiple Months & Restricted Range", "Date", "", array
 				<p>jQueryUI's datepicker has many options you can use to tailor the functionality to fit to your specific needs.  To apply these options, make use of the jqueryOptions element attribute.  We've already
 				seen how this attribute can be used to change the formatting of the date returned.  Now, let's look at example five below and see how we can restrict the date range to plus or minus
 				60 days.  The same jQuery options that can can be applied to the date element type can also by applied in the addDateRange function.  See <a href="http://jqueryui.com/demos/datepicker/">http://jqueryui.com/demos/datepicker/</a> for more information on jQueryUI's datepicker plugin and all the available options that can be applied via the jqueryOptions
-				element attribute.  Keep in mind that if you are setting a jQuery option to a piece of javascript code via the jqueryOptions attribute, you will need to prepend your string with "js:" for it to be handled correctly.
+				element attribute.  Keep in mind that if you are setting a jQuery option to a piece of javascript code via the jqueryOptions attribute, you will need to prepend your string with "js:" for it to be handled correctly.</p>
 				
 				<?php
 echo '<pre>', highlight_string('<?php
@@ -831,7 +831,7 @@ $form->addDateRange("My Date Range w/Multiple Months & Restricted Range", "DateR
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -856,7 +856,7 @@ $form->addDateRange("My Date Range w/Multiple Months & Restricted Range", "DateR
 
 				<a name="Form-Elements-TinyMCE"></a>
 				<h4>TinyMCE Web Editor:</h4><p>TinyMCE's javascript WYSIWYG editor can be added with the addWebEditor function.  For more information on TinyMCE, see
-				<a href="http://tinymce.moxiecode.com/">http://tinymce.moxiecode.com/</a>.  Like the CKEditor web editor, a simplified toolbare can be triggered by
+				<a href="http://tinymce.moxiecode.com/">http://tinymce.moxiecode.com/</a>.  Like the CKEditor web editor, a simplified toolbar can be triggered by
 				including the basic element attribute.</p>
 
 				<?php
@@ -875,7 +875,7 @@ $form->addWebEditor("My Basic TinyMCE Editor", "TinyMCE", "", array("basic" => 1
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -918,7 +918,7 @@ $form->addCKEditor("My Basic TinyMCE Editor", "TinyMCE", "", array("basic" => 1)
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Parameter</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
@@ -962,8 +962,8 @@ $form->addTextbox("My Textbox w/additionalParams", "MyTextbox", "", array(
 
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-						<td width="150"><b>Option</b></td>
-						<td width="225"><b>Applicable Element Functions</b></td>
+						<td style="width: 150px;"><b>Parameter</b></td>
+						<td style="width: 225px;"><b>Applicable Element Functions</b></td>
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
