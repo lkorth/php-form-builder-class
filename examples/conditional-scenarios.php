@@ -3,13 +3,11 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
-{
+if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
 	echo "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
 	exit();
 }
-elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
-{
+elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	?>
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -19,16 +17,14 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
 			<link href="style.css" rel="stylesheet" type="text/css"/>
 			<script type="text/javascript"> 
-				function toggleShipping(val)
-				{
+				function toggleShipping(val) {
 					if(val == "1")
 						document.getElementById("shipping_section").style.display = "none";
 					else
 						document.getElementById("shipping_section").style.display = "block";
 				}	
 
-				function toggleLocationOptions(val)
-				{
+				function toggleLocationOptions(val) {
 					document.getElementById("MapDiv").style.display = "none";
 					document.getElementById("AddressDiv").style.display = "none";
 					document.getElementById(val + "Div").style.display = "block";
@@ -132,8 +128,7 @@ $billing_form->render();
 ?>
 
 <script type="text/javascript">
-	function toggleShipping(val)
-	{
+	function toggleShipping(val) {
 		if(val == "1")
 			document.getElementById("shipping_section").style.display = "none";
 		else
@@ -219,8 +214,7 @@ $location_form->render();
 ?>
 
 <script type="text/javascript">
-	function toggleLocationOptions(val)
-	{
+	function toggleLocationOptions(val) {
 		document.getElementById("MapDiv").style.display = "none";
 		document.getElementById("AddressDiv").style.display = "none";
 		document.getElementById(val + "Div").style.display = "block";

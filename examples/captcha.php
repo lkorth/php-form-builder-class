@@ -3,8 +3,7 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
-{
+if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
 	$form = new form("captcha");
 	if($form->validate())
 		$msg = "Congratulations! The information you enter passed the form's validation.";
@@ -14,8 +13,7 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
 	header("Location: captcha.php?error_message=" . urlencode($msg));
 	exit();
 }
-elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
-{
+elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	?>
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">

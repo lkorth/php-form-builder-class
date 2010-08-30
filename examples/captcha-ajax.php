@@ -3,21 +3,18 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
-{
+if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
 	$form = new form("ajax_captcha");
 
 	header("Content-type: text/xml");
 	echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 	echo "<response>";
 
-	if($form->validate())
-	{
+	if($form->validate()) {
 		echo "<status>Success</status>";
 		echo "<message>reCAPTCHA Answered Correctly</message>";
 	}	
-	else
-	{
+	else {
 		echo "<status>Error</status>";
 		echo "<message>reCAPTCHA Answered Incorrectly - Error: ", $form->errorMsg, ".\n\nA new reCAPTCHA challenge phrase will be provided.  Please retry.</message>";
 	}
@@ -25,8 +22,7 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
 	echo "</response>";
 	exit();
 }
-elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
-{
+elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	?>
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -65,8 +61,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 				?>
 
 				<script type="text/javascript">
-					function reCAPTCHAHandler(msg)
-					{
+					function reCAPTCHAHandler(msg) {
 						var response = msg.getElementsByTagName("response")[0];
 						alert(response.getElementsByTagName("message")[0].firstChild.data);
 
@@ -96,8 +91,7 @@ $form->render();
 ?>
 
 <script type="text/javascript">
-	function reCAPTCHAHandler(msg)
-	{
+	function reCAPTCHAHandler(msg) {
 		var response = msg.getElementsByTagName("response")[0];
 		alert(response.getElementsByTagName("message")[0].firstChild.data);
 

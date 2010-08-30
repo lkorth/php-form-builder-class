@@ -3,8 +3,7 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "signup")
-{
+if(isset($_POST["cmd"]) && $_POST["cmd"] == "signup") {
 	if($_POST["Username"] == "formbuilder")
 		echo 'Error: Username "', $_POST["Username"], '" already exists in the system.  Please enter a new Username.';
 	elseif(strlen($_POST["Password"]) <= 5)
@@ -15,28 +14,25 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "signup")
 		echo "Success: You're Signed Up";
 	exit();
 }
-elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "loading")
-{
-        $sane_email = filter_var($_POST["Email"], FILTER_SANITIZE_EMAIL);
-        if(filter_var($sane_email, FILTER_VALIDATE_EMAIL))
+elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "loading") {
+	$sane_email = filter_var($_POST["Email"], FILTER_SANITIZE_EMAIL);
+	if(filter_var($sane_email, FILTER_VALIDATE_EMAIL))
 		echo "Your email address, " . $sane_email . ", has been successfully added to our mailing list.";
 	else	
 		echo "To join our mailing list, please submit a valid email address in the form provided below.";
 	exit();
 }
-elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "manual")
-{
+elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "manual") {
 	echo "Selected Option(s): ";
-	if(!empty($_POST["Options"])){
+	if(!empty($_POST["Options"])) {
 		$option = implode(", ", $_POST["Options"]);
-                echo filter_var($option , FILTER_SANITIZE_SPECIAL_CHARS);
+		echo filter_var($option , FILTER_SANITIZE_SPECIAL_CHARS);
 	}
 	else
 		echo "None";
 	exit();
 }
-elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
-{
+elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	?>
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -177,14 +173,12 @@ $form->render();
 				$form->render();
 				?>
 				<script type="text/javascript">
-					function beginAjaxLoading()
-					{
+					function beginAjaxLoading() {
 						document.getElementById("ajaxLoadingDiv").style.display = "block";
 						document.getElementById("ajaxLoadingButton").disabled = true;
 					}
 
-					function endAjaxLoading(responseMsg)
-					{
+					function endAjaxLoading(responseMsg) {
 						alert(responseMsg);
 						document.getElementById("ajaxLoadingDiv").style.display = "none";
 						document.getElementById("ajaxLoadingButton").disabled = false;
@@ -211,14 +205,12 @@ $form->addButton("Submit", "submit", array("id" => "ajaxLoadingButton"));
 $form->render();
 ?>
 <script type="text/javascript">
-	function beginAjaxLoading()
-	{
+	function beginAjaxLoading() {
 		document.getElementById("ajaxLoadingDiv").style.display = "block";
 		document.getElementById("ajaxLoadingButton").disabled = true;
 	}
 
-	function endAjaxLoading(responseMsg)
-	{
+	function endAjaxLoading(responseMsg) {
 		alert(responseMsg);
 		document.getElementById("ajaxLoadingDiv").style.display = "none";
 		document.getElementById("ajaxLoadingButton").disabled = false;

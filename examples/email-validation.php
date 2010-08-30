@@ -3,8 +3,7 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
-{
+if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
 	$form = new form("email_validation");
 	if($form->validate())
 		$msg = "Congratulations! The information you enter passed the form's validation.";
@@ -15,8 +14,7 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit")
 	exit();
 }
 
-if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
-{
+if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	?>
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -34,12 +32,6 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 			</div>
 
 			<div id="pfbc_content">
-
-			<?php
-			if(!empty($_GET["error_message"]))
-				echo("<div style='text-align: center; font-weight: bold; color: #990000;'>" . htmlentities(stripslashes($_GET["error_message"])) . "</div>");
-			?>
-
 				<p><b>Email Validation</b> - When an email form element type is added, javascript will automatically validate the email address via an ajax call within the form's onsubmit function.  You can also validate the email address through the validate() function after the form has been submitted.
 				If you do not apply the <i>required</i> element attribute, a blank value will not be checked.</p>
 
@@ -50,6 +42,10 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"]))
 					"enableSessionAutoFill" => 1,
 					"width" => 400
 				));
+
+				if(!empty($_GET["error_message"]))
+					$form->errorMsg = "<b>Error:</b> " . filter_var(stripslashes($_GET["error_message"]) , FILTER_SANITIZE_SPECIAL_CHARS);
+
 				$form->addHidden("cmd", "submit");
 				$form->addEmail("Email Address:", "Email", "", array("required" => 1));
 				$form->addButton();
@@ -62,6 +58,10 @@ $form->setAttributes(array(
 	"enableSessionAutoFill" => 1,
 	"width" => 400
 ));
+
+if(!empty($_GET["error_message"]))
+	$form->errorMsg = "<b>Error:</b> " . filter_var(stripslashes($_GET["error_message"]) , FILTER_SANITIZE_SPECIAL_CHARS);
+
 $form->addHidden("cmd", "submit");
 $form->addEmail("Email Address:", "Email", "", array("required" => 1));
 $form->addButton();
