@@ -42,6 +42,7 @@ include("../class.form.php");
 							<li><a href="#Form-Elements-Date-Range">Date Range</a></li>
 							<li><a href="#Form-Elements-TinyMCE">TinyMCE Web Editor</a></li>
 							<li><a href="#Form-Elements-CKEditor">CKEditor</a></li>
+							<li><a href="#Form-Elements-Captcha">Captcha</a></li>
 						</ul>	
 					</li>	
 					<li><a href="#Additional-Parameters">additionalParams Element Parameter</a></li>
@@ -936,6 +937,40 @@ $form->addCKEditor("My Basic TinyMCE Editor", "TinyMCE", "", array("basic" => 1)
 					<tr>
 						<td>additionalParams</td>
 						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the textarea.
+						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
+					</tr>
+				</table>
+
+				<a name="Form-Elements-Captcha"></a>
+				<h4>Captcha:</h4><p>This project leverages reCAPTCHA's anti-bot services to help prevent non-human activity by requiring the end-user to interpret and solve a challenge phrase.  See <a href="http://www.google.com/recaptcha">http://www.google.com/recaptcha</a> for more information about reCAPTCHA.
+				The captcha form element is different in several ways from the other elements included in this project.  The first different is that there can only be one catpcha </p>
+
+				<?php
+echo '<pre>', highlight_string('<?php
+/* addCaptcha Function Declaration
+public function addCaptcha($label="", $additionalParams="") {}
+*/
+
+$form->addCaptcha();
+$form->addCaptcha("My Captcha");
+$form->addCKEditor("My Required Captcha", array("required" => 1));
+?>', true), '</pre>';
+				?>
+				
+				<p>This function has two available parameters: label and additionalParams.  The table provided below describes each of these parameters.</p>
+
+				<table cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td style="width: 150px;"><b>Parameter</b></td>
+						<td><b>Description</b></td>
+					</tr>
+					<tr>
+						<td>label</td>
+						<td>Optional - Controls the content rendered inside &lt;label&gt; tags before the captcha.</td>
+					</tr>
+					<tr>
+						<td>additionalParams</td>
+						<td>Optional - Associative array of key/value pairs allowing a variety of settings to be applied to the captcha.
 						See the <a href="#Additional-Parameters">additionalParams</a> section for all available settings that can be passed in this array.</td>
 					</tr>
 				</table>

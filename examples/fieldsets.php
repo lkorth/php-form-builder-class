@@ -24,8 +24,11 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 					-moz-border-radius: 8px; 
 					-webkit-border-radius: 8px;
 				}
-				.pfbc-form {
+				#fieldsets {
 					width: 322px;
+				}
+				#fieldsets_mapping {
+					width: 522px;
 				}
 			</style>
 		</head>

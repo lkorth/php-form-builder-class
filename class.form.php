@@ -58,6 +58,7 @@ class form extends pfbc {
 	protected $emailErrorMsgFormat;
 	protected $errorMsgFormat;
 	protected $includesPath;
+	protected $integerErrorMsgFormat;
 	protected $jqueryDateFormat;
 	protected $jqueryUIButtons;
 	protected $jqueryUITheme;
@@ -130,6 +131,7 @@ class form extends pfbc {
 		else	
 			$this->https = false;
 		$this->includesPath = "php-form-builder-class/includes";
+		$this->integerErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers are allowed.";
 		$this->jqueryDateFormat = "MM d, yy";
 		$this->jqueryUITheme = "smoothness";
 		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
@@ -1185,6 +1187,9 @@ class form extends pfbc {
 						$ele->attributes["class"] .= " pfbc-textbox";
 					else	
 						$ele->attributes["class"] = "pfbc-textbox";
+					
+					if(!empty($ele->integer))
+						$ele->attributes["class"] .= " pfbc-integer";
 						
 					$str .= "<input";
 					if(!empty($ele->attributes) && is_array($ele->attributes)) {
@@ -1686,8 +1691,13 @@ STR;
 		//Serialize the form and store it in a session array.  This variable will be unserialized and used within js/css.php and the validate() method.
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
+		if($this->https)
+			$prefix = "https";
+		else
+			$prefix = "http";
+
 		$str .= <<<STR
-		<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+		<script type="text/javascript" src="$prefix://www.google.com/jsapi"></script>
 		<script type="text/javascript">
 			google.load("jquery", "1.4.2");
 			google.load("jqueryui", "1.8.4");
@@ -2240,6 +2250,20 @@ STR;
 
 STR;
 			}
+
+			if(!empty($ele->integer)) {
+				$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->integerErrorMsgFormat) . '" , "' . $ele->container . '");';
+				$str .= <<<STR
+	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
+		if(!formObj.elements["$eleName"].value.match(/^\d+$/)) {
+			$alertMsg
+			found_error = true;
+		}	
+	}
+
+STR;
+				
+			}
 		}	
 
 		//Remove hints if they remain as form element values.
@@ -2280,6 +2304,28 @@ STR;
 					$captchaDomain = "http://api.recaptcha.net";
 				$str .= file_get_contents($captchaDomain . "/js/recaptcha_ajax.js");
 			}
+
+
+			$str .= <<<STR
+jQuery("#{$this->attributes["id"]} .pfbc-integer").bind("keydown", function(event) {
+	if(!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57)
+		|| (event.keyCode >= 96 && event.keyCode <= 105)
+		|| (event.keyCode == 8) 
+		|| (event.keyCode == 9)
+		|| (event.keyCode == 12)
+		|| (event.keyCode == 27)
+		|| (event.keyCode == 37)
+		|| (event.keyCode == 39)
+		|| (event.keyCode == 46))
+		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))
+		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))
+	)
+		return true;
+	else
+		return false;
+});	
+
+STR;
 
 			if(!empty($form->jqueryDateIDArr)) {
 				$dateKeys = array_keys($form->jqueryDateIDArr);
@@ -3452,6 +3498,11 @@ STR;
 					return false;
 				}	
 			}
+
+			if(!empty($ele->integer) && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^\d+$/", $referenceValues[$ele->attributes["name"]])) {
+				$this->errorMsg = str_replace("[LABEL]", $eleLabel, $form->integerErrorMsgFormat);
+				return false;
+			}
 		}
 		return true;
 	}	
@@ -3467,6 +3518,7 @@ class element extends pfbc {
 	public $hideCaption;
 	public $hideDisplay;
 	public $hideJump;
+	public $integer;
 	public $jqueryOptions;
 	public $label;
 	public $labelPaddingRight;
