@@ -1,0 +1,104 @@
+<?php
+
+error_reporting(E_ALL);
+
+session_start();
+include("../class.form.php");
+
+//////////////////////////
+//start form
+//////////////////////////
+
+$cmd = (isset($_POST['cmd'])) ? $_POST['cmd'] : FALSE;
+
+$form = new form("form_elements");
+
+if($cmd == 'submit') {
+
+    $body = "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
+
+} else {
+
+    $form->setAttributes(array(
+            "includesPath" => "../includes",
+            "width" => 400
+    ));
+
+    				$form->addHidden("cmd", "submit");
+				$form->addTextbox("Textbox:", "field0");
+				$form->addTextarea("Textarea:", "field1");
+				$form->addWebEditor("Web Editor - TinyMCE:", "field2");
+				$form->addCKEditor("Web Editor - CKEditor:", "field3");
+				$form->addPassword("Password:", "field4");
+				$form->addFile("File:", "field5");
+				$form->addDate("Date:", "field6");
+				$form->addDateRange("Date Range:", "field9");
+				$form->addState("State:", "field10");
+				$form->addCountry("Country:", "field11");
+				$form->addYesNo("Yes/No:", "field12");
+				$form->addTrueFalse("True/False:", "field13");
+				$form->addSelect("Select Box:", "field14", "", array("Option #0", "Option #1", "Option #2"));
+				$form->addRadio("Radio Buttons:", "field15", "", array("Option #0", "Option #1", "Option #2"));
+				$form->addCheckbox("Checkboxes:", "field16", "", array("Option #0", "Option #1", "Option #2"));
+				$form->addLatLng("Latitude/Longitude:", "field17");
+				$form->addSort("Sort:", "field18", array("Option #0", "Option #1", "Option #2"));
+				$form->addCheckSort("Checksort:", "field19", "", array("Option #0", "Option #1", "Option #2"));
+				$form->addCaptcha("Captcha:");
+				$form->addSlider("Slider:", "field20");
+				$form->addRating("Rating:", "field21", "", range(1, 10));
+				$form->addHTML("HTML:");
+				$form->addColorPicker("Color Picker:", "field22");
+				$form->addEmail("Email:", "field23");
+				$form->addButton();
+
+
+    $head = $form->headData();
+    $body = $form->bodyData();
+
+}
+
+echo template($head,$body);
+
+
+function template($head,$body){
+
+    $version = file_get_contents('../version');
+    $released = file_get_contents('../release');
+
+$html = <<<HTML
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+		<head>
+			<title>PHP Form Builder Class | Examples | PHP Validation</title>
+			<link href="../style.css" rel="stylesheet" type="text/css"/>
+                        <link href="style.css" rel="stylesheet" type="text/css"/>
+                        $head
+		</head>
+		<body>
+			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onmousedown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onmousedown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onmousedown="this.target='<>';">Download Version $version</a></div>
+			<div id="pfbc_banner">
+				<h2><a href="../index.php">PHP Form Builder Class</a> / <a href="index.php">Examples</a> / PHP Validation</h2>
+				<h5><span>Version: $version</span><span style="padding-left: 10px;">Released: $released</span></h5>
+			</div>
+
+			<div id="pfbc_content">
+				<p><b>PHP Validation</b> - After the form has been submitted, the validate() function can be used to verify that all required fields have been properly filled in and that
+				the captcha solution is correct, if applicable.</p>
+
+				<p>This functionality requires that a session be started on the page where the form is being built and validated.  Simply call session_start() at the top of your page and
+				you will be all set.</p>
+
+				<p>Also, if you look in the php souce code of this example, you will notice that I'm passing a unique identifier when creating a new instance of the form class.  That line
+				looks like this - \$form = new form("php_validation");.  After the form is submitted, you will see the exact same line before the validate() function is used.  These
+				identifiers must match exactly for the validation to function properly.</p>
+
+                                $body
+			</div>
+		</body>
+	</html>
+HTML;
+
+return $html;
+}
+
+?>

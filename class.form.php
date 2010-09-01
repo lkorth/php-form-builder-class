@@ -958,31 +958,37 @@ class form extends pfbc {
 	}
 
 
+        private function getFilePaths(){
+                if( !isset($this->jsIncludesPath) || !isset($this->phpIncludesPath) ){
+                        //If windows normalize backslashes to forward slashes.
+                        if( PHP_OS == 'WINNT' )
+                                $this->includesPath = str_replace( "\\" , "/" , $this->includesPath );
+
+                        //Check if includesPath is absolute or not, then create js/php specific variables.
+                        if($this->includesPath[0] != '/') {
+                                $this->jsIncludesPath = $this->includesPath;
+                                $this->phpIncludesPath = $this->includesPath;
+                        }
+                        else {
+                                if(strpos($this->includesPath , $_SERVER['DOCUMENT_ROOT']) === 0) {
+                                        $this->jsIncludesPath = substr($this->includesPath , strlen($_SERVER['DOCUMENT_ROOT']));
+                                        $this->phpIncludesPath = $this->includesPath;
+                                }
+                                else {
+                                        $this->jsIncludesPath = $this->includesPath;
+                                        $this->phpIncludesPath = $_SERVER['DOCUMENT_ROOT'] . $this->includesPath;
+                                }
+                        }
+                }
+        }
+
 	public function elementsToString() {
 		$str = "";
 
+                $this->getFilePaths();
+
 		if(empty($this->referenceValues) && !empty($_SESSION["pfbc-values"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-values"]))
 			$this->setValues($_SESSION["pfbc-values"][$this->attributes["id"]]);
-
-		//If windows normalize backslashes to forward slashes.
-		if( PHP_OS == 'WINNT' )
-			$this->includesPath = str_replace( "\\" , "/" , $this->includesPath );
-
-		//Check if includesPath is absolute or not, then create js/php specific variables.
-		if($this->includesPath[0] != '/') {
-			$this->jsIncludesPath = $this->includesPath;
-			$this->phpIncludesPath = $this->includesPath;
-		}
-		else {
-			if(strpos($this->includesPath , $_SERVER['DOCUMENT_ROOT']) === 0) {
-				$this->jsIncludesPath = substr($this->includesPath , strlen($_SERVER['DOCUMENT_ROOT']));
-				$this->phpIncludesPath = $this->includesPath;
-			}
-			else {
-				$this->jsIncludesPath = $this->includesPath;
-				$this->phpIncludesPath = $_SERVER['DOCUMENT_ROOT'] . $this->includesPath;
-			}
-		}
 
 		if(empty($this->phpIncludesPath) || !is_dir($this->phpIncludesPath))
 			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid includes Directory Path\n\nUse the includesPath form attribute to identify the location of the inclues directory included within the php-form-builder-class folder.\n\nPath specified:\n' . $this->includesPath . '\n\nEXTRA INFORMATION:\nPHP Path Used:\n' . $this->phpIncludesPath . '\n\nJavascript Path Used:\n' . $this->jsIncludesPath . '");</script>';
@@ -1836,7 +1842,7 @@ STR;
 
                 $links = array();
 
-                $links[] = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$this->jqueryUITheme}/jquery-ui.css";
+                $links[] = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css";
                 if(!empty($form->jqueryDateRangeIDArr))
                         $links[] = $form->jsIncludesPath . '/jquery/ui/ui.daterangepicker.css';
                 if(!empty($form->jqueryColorIDArr))
@@ -1854,8 +1860,9 @@ STR;
                     $this->generateInlineResources = True;
                     $str = '';
 
-                    $csslinks = $this->cssScriptIncludes( $this );
-                    foreach ($csslinks as $link){
+                    $this->getFilePaths();
+                    $links = $this->cssScriptIncludes( $this );
+                    foreach ($links as $link){
                         $str .= "<link href='$link' rel='stylesheet' type='text/css'/>";
                     }
                     $str .= '<style type="text/css">';
