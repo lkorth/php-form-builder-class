@@ -1723,42 +1723,6 @@ if(empty($this->generateInlineResources) || $this->generateInlineResources == Fa
 			$session_param = "&session_name=$session_name";
 
 		$str .= <<<STR
-                <script type="text/javascript">
-// Replace the normal jQuery getScript function with one that supports
-// debugging and which references the script files as external resources
-// rather than inline.
-jQuery.extend({
-   getScript: function(url, callback) {
-      var head = document.getElementsByTagName("head")[0];
-      var script = document.createElement("script");
-      script.src = url;
-
-      // Handle Script loading
-      {
-         var done = false;
-
-         // Attach handlers for all browsers
-         script.onload = script.onreadystatechange = function(){
-            if ( !done && (!this.readyState ||
-                  this.readyState == "loaded" || this.readyState == "complete") ) {
-               done = true;
-               if (callback)
-                  callback();
-
-               // Handle memory leak in IE
-               script.onload = script.onreadystatechange = null;
-            }
-         };
-      }
-
-      head.appendChild(script);
-
-      // We handle everything using the script element injection
-      return undefined;
-   },
-});
-</script>
-
 		<script type="text/javascript">
 			//<![CDATA[
 			function pfbc_adjust_{$this->attributes["id"]}() {
@@ -2991,15 +2955,23 @@ STR;
 		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
 
                         if($returnString == False){
-                        //Unserialize the appropriate form instance stored in the session array.
-			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+                                //Unserialize the appropriate form instance stored in the session array.
+                                $form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-                        $csslinks = $form->cssScriptIncludes( $form );
-                        foreach ($csslinks as $link){
-                            echo file_get_contents($link);
-                        }
+                                $csslinks = $form->cssScriptIncludes( $form );
+                                foreach ($csslinks as $link){
+                                        if(strpos($link , 'jquery-ui.css')){
+                                                echo str_replace("images/", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents($link));
+                                        } else if(strpos($link , 'colorpicker')){
+                                                echo str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents($link));
+                                        } else if(strpos($link , 'tip-yellow')){
+                                                echo str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents($link));
+                                        } else {
+                                                echo file_get_contents($link);
+                                        }
+                                }
                         } else {
-                            $form = $this;
+                                $form = $this;
                         }
 
 			if(empty($form->preventDefaultCSS)) {
