@@ -1002,17 +1002,17 @@ class form extends pfbc {
 			$focus = false;
 
 		if(empty($this->hasFormTag))
-			$str .= "\n" . '<div id="' . $this->attributes["id"] . '" >';
+			$str .= "\n" . '<div id="' . $this->attributes["id"] . '" style="visibility: hidden;" >';
 		else {
 			$str .= "\n<form";
 			if(!empty($this->attributes["class"]))
 				$this->attributes["class"] .= " pfbc-form";
 			else
 				$this->attributes["class"] = "pfbc-form";
-			/*if(!empty($this->attributes["style"]))
+			if(!empty($this->attributes["style"]))
 				$this->attributes["style"] .= " visibility: hidden;";
 			else
-				$this->attributes["style"] = "visibility: hidden;";*/
+				$this->attributes["style"] = "visibility: hidden;";
 			if(!empty($this->attributes) && is_array($this->attributes)) {
 				/*This syntax will be used throughout the render() and elementsToString() functions ensuring that attributes added to various HTML tags
 				are allowed and valid.  If you find that an attribute is not being included in your HTML tag definition, please reference $this->allowedFields.*/
@@ -1700,9 +1700,11 @@ STR;
 		$str .= <<<STR
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
                 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
-                <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
 STR;
+
+                if(empty($this->preventGoogleMapsLoad) && !empty($this->latlngIDArr))
+                        $str .= '<script type="text/javascript" src="http://www.google.com/jsapi"></script>';
 
                 if(!empty($this->tinymceIDArr) && empty($this->preventTinyMCELoad)) {
 				$str .= "<script type='text/javascript' src='{$this->jsIncludesPath}/tiny_mce/tiny_mce.js'></script>";
@@ -1764,6 +1766,35 @@ STR;
 STR;
 
 } else {
+$str .= <<<STR
+        
+        <script type="text/javascript">
+			//<![CDATA[
+			function pfbc_adjust_{$this->attributes["id"]}() {
+				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea").each(function () {
+					if(!jQuery(this).hasClass("pfbc-adjusted")) {
+						if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
+							jQuery(this).width(jQuery(this).width());
+						else
+							jQuery(this).outerWidth(jQuery(this).width());
+						jQuery(this).addClass("pfbc-adjusted");
+					}
+				});
+			}
+
+			jQuery(document).ready(function() {
+
+					if(jQuery("#{$this->attributes["id"]}").parent().is(":hidden"))
+						jQuery.swap(jQuery("#{$this->attributes["id"]}").parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, pfbc_adjust_{$this->attributes["id"]});
+					else
+						pfbc_adjust_{$this->attributes["id"]}();
+					jQuery("#{$this->attributes["id"]}").css("visibility", "visible");
+				
+			});
+			//]]>
+		</script>
+
+STR;
 
         $str .= $this->renderJS(true);
 }
@@ -2657,7 +2688,7 @@ function clearLatLng_{$this->attributes["id"]}(latlngID, latlngHint) {
 }
 
 STR;
-				if(empty($form->preventGoogleMapsLoad)) {
+				if(empty($form->preventGoogleMapsLoad) && !empty($form->latlngIDArr)){
 					$str .= <<<STR
 google.load("maps", "3", { other_params: "sensor=false", callback: "initializeLatLng_{$this->attributes["id"]}" });
 
@@ -2980,6 +3011,7 @@ STR;
 $id {
 	margin: 0;
 	padding: 0;
+        visibility: hidden;
 }
 $id .pfbc-clear:after {
 	clear: both;
