@@ -1725,7 +1725,7 @@ STR;
 			$str .= <<<STR
 			jQuery(document).ready(function() {
 				jQuery.get('{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param', function(cssText) {
-					jQuery("head").append('<style type="text/css">' + cssText + '</style>');
+					jQuery("head").append('<style type="text/css">' + cssText + '<\/style>');
 					if(jQuery("#{$this->attributes["id"]}").parent().is(":hidden"))
 						jQuery.swap(jQuery("#{$this->attributes["id"]}").parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, pfbc_adjust_{$this->attributes["id"]});
 					else
@@ -1744,12 +1744,11 @@ STR;
 			$str .= <<<STR
 				});	
 			});
-			//]]>
 
 STR;
 		}
 		$str .= <<<STR
-
+			//]]>
 		</script>
 
 STR;
@@ -1811,11 +1810,8 @@ STR;
 			$this->generateInlineResources = 1;
 		}
 		$str = $this->render(true);
-		$str .= "\n" . '<script type="text/javascript">'; 
-		$str .= "\npfbc_adjust_" . $this->attributes["id"] . "();";
+
 		$str .= "\n" . $this->renderJS(true);
-		$str .= "\n" . 'setTimeout("pfbc_focus_' . $this->attributes["id"] . '();", 250);';
-		$str .= "\n</script>\n";
 
 		if(!$returnString)
 			echo($str);
@@ -1828,7 +1824,7 @@ STR;
 			$this->setIncludePaths();
 			$this->generateInlineResources = 1;
 		}
-		$str = "\n" . '<style type="text/css">' . "\n" . $this->renderCSS(true) . "</style>\n";
+		$str = $this->renderCSS(true);
 
 		if(!$returnString)
 			echo($str);
@@ -2336,20 +2332,37 @@ STR;
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-			if(!empty($form->tooltipIDArr))
-				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
-			if(!empty($form->jqueryStarRatingIDArr))
-				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js");
-			if(!empty($form->jqueryDateRangeIDArr))
-				$str .= str_replace(array(), array(), file_get_contents("{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"));
-			if(!empty($form->jqueryColorIDArr))
-				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
-			if(empty($form->preventCaptchaLoad) && !empty($form->captchaID)) {
-				if($form->https)
-					$captchaDomain = "https://api-secure.recaptcha.net";
-				else
-					$captchaDomain = "http://api.recaptcha.net";
-				$str .= file_get_contents($captchaDomain . "/js/recaptcha_ajax.js");
+			if(!$form->generateInlineResources){
+				if(!empty($form->tooltipIDArr))
+					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
+				if(!empty($form->jqueryStarRatingIDArr))
+					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js");
+				if(!empty($form->jqueryDateRangeIDArr))
+					$str .= str_replace(array(), array(), file_get_contents("{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"));
+				if(!empty($form->jqueryColorIDArr))
+					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
+				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID)) {
+					if($form->https)
+						$captchaDomain = "https://api-secure.recaptcha.net";
+					else
+						$captchaDomain = "http://api.recaptcha.net";
+					$str .= file_get_contents($captchaDomain . "/js/recaptcha_ajax.js");
+				}
+			} else {
+				if(!empty($form->tooltipIDArr))
+					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js'></script>";
+				if(!empty($form->jqueryStarRatingIDArr))
+					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js'></script>";
+				if(!empty($form->jqueryDateRangeIDArr))
+					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js'></script>";
+				if(!empty($form->jqueryColorIDArr))
+					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js'></script>";
+				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID)) {
+					$str .= "<script type='text/javascript' src='https://www.google.com/recaptcha/api/js/recaptcha_ajax.js'></script>";
+				}
+				$str .= "\n" . '<script type="text/javascript">';
+				$str .= "//<![CDATA[";
+				$str .= "\npfbc_adjust_" . $this->attributes["id"] . "();";
 			}
 
 
@@ -2784,7 +2797,7 @@ STR;
 
 			$str .= <<<STR
 function pfbc_error_{$this->attributes["id"]}(errorMsg, container) {
-	var error = '<div class="pfbc-error ui-state-error ui-corner-all">' + errorMsg + '</div>';
+	var error = '<div class="pfbc-error ui-state-error ui-corner-all">' + errorMsg + '<\/div>';
 	if(container != undefined)
 		jQuery(container).prepend(error);
 	else	
@@ -2936,6 +2949,12 @@ STR;
 			}	
 		}	
 
+		if($form->generateInlineResources){
+			$str .= "\n" . 'setTimeout("pfbc_focus_' . $this->attributes["id"] . '();", 250);';
+			$str .= "//]]>";
+			$str .= "</script>\n";
+		}
+
 		if(!$returnString)
 			echo($str);
 		else
@@ -2959,14 +2978,25 @@ STR;
 				$prefix = "https";
 			else
 				$prefix = "http";
-			
-			$str .= str_replace("images/", "{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
-			if(!empty($form->jqueryDateRangeIDArr))
-				$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
-			if(!empty($form->jqueryColorIDArr))
-				$str .= str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css"));
-			if(!empty($form->tooltipIDArr))
-				$str .= str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css"));
+
+			if(!$form->generateInlineResources) {
+				$str .= str_replace("images/", "{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
+				if(!empty($form->jqueryDateRangeIDArr))
+					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
+				if(!empty($form->jqueryColorIDArr))
+					$str .= str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css"));
+				if(!empty($form->tooltipIDArr))
+					$str .= str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css"));
+			} else  {
+				$str .= "<link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css' rel='stylesheet' type='text/css'/>";
+				if(!empty($form->jqueryDateRangeIDArr))
+					$str .= "<link href='{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css' rel='stylesheet' type='text/css'/>";
+				if(!empty($form->jqueryColorIDArr))
+					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css' rel='stylesheet' type='text/css'/>";
+				if(!empty($form->tooltipIDArr))
+					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css' rel='stylesheet' type='text/css'/>";
+				$str .= '<style type="text/css">';
+			}
 
 			if(empty($form->preventDefaultCSS)) {
 				$id = "#" . $this->attributes["id"];
@@ -3455,7 +3485,11 @@ STR;
 
 STR;
 			}
-		}	
+		}
+
+		if($form->generateInlineResources){
+			 $str .= "</style>\n";
+		}
 
 		if(!$returnString)
 			echo($str);
