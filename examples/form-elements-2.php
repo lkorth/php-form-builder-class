@@ -1,4 +1,5 @@
 <?php
+
 error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
@@ -11,16 +12,14 @@ $cmd = (isset($_POST['cmd'])) ? $_POST['cmd'] : FALSE;
 
 $form = new form("form_elements");
 
-if($cmd == 'submit') {
-
-    $body = "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
-
+if ($cmd == 'submit') {
+	$body = "<pre>" . htmlentities(print_r($_POST, true)) . "</pre>";
 } else {
 
-    $form->setAttributes(array(
-            "includesPath" => "../includes",
-            "width" => 400
-    ));
+	$form->setAttributes(array(
+		"includesPath" => "../includes",
+		"width" => 400
+	));
 
 	$form->addHidden("cmd", "submit");
 	$form->addTextbox("Textbox:", "field0");
@@ -49,27 +48,25 @@ if($cmd == 'submit') {
 	$form->addEmail("Email:", "field23");
 	$form->addButton();
 
-    $head = $form->renderHead(true);
-    $body = $form->renderBody(true);
-
+	$head = $form->renderHead(true);
+	$body = $form->renderBody(true);
 }
 
-echo template($head,$body);
+echo template($head, $body);
 
+function template($head, $body) {
 
-function template($head,$body){
+	$version = file_get_contents('../version');
+	$released = file_get_contents('../release');
 
-    $version = file_get_contents('../version');
-    $released = file_get_contents('../release');
-
-$html = <<<HTML
+	$html = <<<HTML
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 		<head>
 			<title>PHP Form Builder Class | Examples | All Supported Form Elements</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
             <link href="style.css" rel="stylesheet" type="text/css"/>
-				$head
+			$head
 		</head>
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onmousedown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onmousedown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onmousedown="this.target='<>';">Download Version $version</a></div>
@@ -80,15 +77,13 @@ $html = <<<HTML
 
 			<div id="pfbc_content">
 				<p><b>All Supported Form Elements</b> - This example demonstrates all supported form element types.</p>
-
-
 				$body
 			</div>
 		</body>
 	</html>
 HTML;
 
-return $html;
+	return $html;
 }
 
 ?>
