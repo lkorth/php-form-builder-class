@@ -29,8 +29,8 @@ if($cmd == 'submit' && $form->validate()) {
     $form->addWebEditor("Required Web Editor:", "field2", "", array("required" => 1));
     $form->addCaptcha("Captcha:");
     $form->addButton();
-    $head = $form->headData();
-    $body = $form->bodyData();
+    $head = $form->renderHead(true);
+    $body = $form->renderBody(true);
 
 }
 
