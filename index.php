@@ -78,6 +78,7 @@
 					<li><a href="examples/jquery.php">jQuery</a></li>
 					<li><a href="examples/php-validation.php">PHP Validation</a></li>
 					<li><a href="examples/email-validation.php">Email Validation</a></li>
+					<li><a href="examples/textbox-validation.php">Textbox Validation</a></li>
 					<li><a href="examples/js-validation.php">Javascript Validation</a></li>
 					<li><a href="examples/google-maps.php">Google Maps</a></li>
 					<li><a href="examples/layout.php">Layout</a></li>

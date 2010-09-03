@@ -10,7 +10,7 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
 	else
 		$msg = "Oops! The information you entered did not pass the form's validation.  Please review the following error message and re-try - " . $form->errorMsg;
 
-	header("Location: email-validation.php?error_message=" . urlencode($msg));
+	header("Location: email-validation.php?errorMsg=" . urlencode($msg));
 	exit();
 }
 
@@ -39,12 +39,11 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				$form = new form("email_validation");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
-					"enableSessionAutoFill" => 1,
 					"width" => 400
 				));
 
-				if(!empty($_GET["error_message"]))
-					$form->errorMsg = "<b>Error:</b> " . filter_var(stripslashes($_GET["error_message"]) , FILTER_SANITIZE_SPECIAL_CHARS);
+				if(!empty($_GET["errorMsg"]))
+					$form->errorMsg = "<b>Error:</b> " . filter_var(stripslashes($_GET["errorMsg"]) , FILTER_SANITIZE_SPECIAL_CHARS);
 
 				$form->addHidden("cmd", "submit");
 				$form->addEmail("Email Address:", "Email", "", array("required" => 1));
@@ -55,12 +54,11 @@ echo '<pre>', highlight_string('<?php
 $form = new form("email_validation");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
-	"enableSessionAutoFill" => 1,
 	"width" => 400
 ));
 
-if(!empty($_GET["error_message"]))
-	$form->errorMsg = "<b>Error:</b> " . filter_var(stripslashes($_GET["error_message"]) , FILTER_SANITIZE_SPECIAL_CHARS);
+if(!empty($_GET["errorMsg"]))
+	$form->errorMsg = "<b>Error:</b> " . filter_var(stripslashes($_GET["errorMsg"]) , FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit");
 $form->addEmail("Email Address:", "Email", "", array("required" => 1));

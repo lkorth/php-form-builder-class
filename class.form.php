@@ -79,6 +79,7 @@ class form extends pfbc {
 	protected $tooltipIcon;
 
 	private $allowedFields;
+	private $alphanumbericExists;
 	private $bindRules;
 	private $captchaExists;
 	private $checkform;
@@ -90,6 +91,7 @@ class form extends pfbc {
 	private $hasFormTag;
 	private $hintExists;
 	private $https;
+	private $integerExists;
 	private $jqueryAllowedParams;
 	private $jqueryCheckSort;
 	private $jqueryColorIDArr;
@@ -121,7 +123,7 @@ class form extends pfbc {
 		$this->ajaxCallback = "alert";
 		$this->ajaxType = "post";
 		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
-		$this->alphanumericErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only letter and/or numbers are allowed.";
+		$this->alphanumericErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only letters and/or numbers are allowed.";
 		$this->captchaLang = "en";
 		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
 		$this->captchaPublicKey = "6LcazwoAAAAAADamFkwqj5KN1Gla7l4fpMMbdZfi";
@@ -803,6 +805,12 @@ class form extends pfbc {
 		if(!empty($this->labelWidth) || !empty($ele->labelWidth))
 			$this->labelWidthExists = true;
 		
+		if(!empty($ele->integer) && empty($this->integerExists))
+			$this->integerExists = 1;
+		
+		if(!empty($ele->alphanumeric) && empty($this->alphanumericExists))
+			$this->alphanumericExists = 1;
+
 		$this->elements[] = $ele;
 	}
 
@@ -1004,13 +1012,13 @@ class form extends pfbc {
 				$tmpAllowFieldArr = $this->allowedFields["form"];
 				foreach($this->attributes as $key => $value) {
 					//Skip any user-defined onsubmit function if one or more of the following conditions is met.
-					if($key == "onsubmit" && (!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists)))
+					if($key == "onsubmit" && (!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists) || !empty($this->integerExists) || !empty($this->alphanumericExists)))
 						continue;
 					if(in_array($key, $tmpAllowFieldArr))
 						$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 				}	
 			}
-			if(!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists))	
+			if(!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists) || !empty($this->integerExists) || !empty($this->alphanumericExists))	
 				$str .= ' onsubmit="return pfbc_onsubmit_' . $this->attributes["id"] . '(this);"';
 			$str .= ">";
 		}
@@ -2332,7 +2340,7 @@ STR;
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-			if(!$form->generateInlineResources){
+			if(empty($form->generateInlineResources)) {
 				if(!empty($form->tooltipIDArr))
 					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
 				if(!empty($form->jqueryStarRatingIDArr))
@@ -2366,10 +2374,17 @@ STR;
 			}
 
 
+			if(!empty($form->integerExists) || !empty($form->alphanumericExists)) {
 			$str .= <<<STR
-var allowed_keys = [8, 13, 37, 39, 46];			
+var pfbc_allowed_keys = [8, 13, 37, 39, 46];			
+
+STR;
+			}
+
+			if(!empty($form->integerExists)) {
+				$str .= <<<STR
 jQuery("#{$this->attributes["id"]} .pfbc-integer").bind("keydown", function(event) {
-	if(jQuery.inArray(event.keyCode, allowed_keys) != -1				//Backspace, Enter, Arrow Left, Arrow Right, Delete
+	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1			//Backspace, Enter, Arrow Left, Arrow Right, Delete
 		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))	//Copy
 		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))	//Paste
 		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))		//Numbers
@@ -2378,8 +2393,14 @@ jQuery("#{$this->attributes["id"]} .pfbc-integer").bind("keydown", function(even
 	else
 		return false;
 });
+
+STR;
+			}
+
+			if(!empty($form->alphanumericExists)) {
+				$str .= <<<STR
 jQuery("#{$this->attributes["id"]} .pfbc-alphanumeric").bind("keydown", function(event) {
-	if(jQuery.inArray(event.keyCode, allowed_keys) != -1				//Backspace, Enter, Arrow Left, Arrow Right, Delete
+	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1			//Backspace, Enter, Arrow Left, Arrow Right, Delete
 		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))	//Copy
 		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))	//Paste
 		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))		//Numbers
@@ -2391,6 +2412,7 @@ jQuery("#{$this->attributes["id"]} .pfbc-alphanumeric").bind("keydown", function
 });
 
 STR;
+			}
 
 			if(!empty($form->jqueryDateIDArr)) {
 				$dateKeys = array_keys($form->jqueryDateIDArr);
@@ -2809,7 +2831,7 @@ STR;
 			if(!empty($form->hasFormTag)) {
 				/*If there are any required fields in the form or if this form is setup to utilize ajax, build a javascript 
 				function for performing form validation before submission and/or for building and submitting a data string through ajax.*/
-				if(!empty($form->checkform) || !empty($form->ajax) || !empty($form->captchaExists) || !empty($form->hintExists) || !empty($form->emailExists)) {
+				if(!empty($form->checkform) || !empty($form->ajax) || !empty($form->captchaExists) || !empty($form->hintExists) || !empty($form->emailExists) || !empty($form->integerExists) || !empty($form->alphanumericExists)) {
 					if(!empty($form->emailExists)) {
 						$str .= <<<STR
 var validemail_{$this->attributes["id"]};
@@ -2949,7 +2971,7 @@ STR;
 			}	
 		}	
 
-		if($form->generateInlineResources){
+		if(!empty($form->generateInlineResources)) {
 			$str .= "\n" . 'setTimeout("pfbc_focus_' . $this->attributes["id"] . '();", 250);';
 			$str .= "//]]>";
 			$str .= "</script>\n";
@@ -2979,7 +3001,7 @@ STR;
 			else
 				$prefix = "http";
 
-			if(!$form->generateInlineResources) {
+			if(empty($form->generateInlineResources)) {
 				$str .= str_replace("images/", "{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
 				if(!empty($form->jqueryDateRangeIDArr))
 					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
@@ -3487,7 +3509,7 @@ STR;
 			}
 		}
 
-		if($form->generateInlineResources){
+		if(!empty($form->generateInlineResources)) {
 			 $str .= "</style>\n";
 		}
 

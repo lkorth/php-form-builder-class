@@ -10,7 +10,7 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
 	else
 		$msg = "Oops! The information you entered did not pass the form's validation.  Please review the following error message and re-try - " . $form->errorMsg;
 
-	header("Location: captcha.php?error_message=" . urlencode($msg));
+	header("Location: captcha.php?errorMsg=" . urlencode($msg));
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
@@ -52,8 +52,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				<p>The <i>captchaLang</i> attribute allows the language of reCAPTCHA to be cumstomized.  By default, English will be used - <a href="http://recaptcha.net/apidocs/captcha/client.html">View reCAPTCHA's Supported Languages</a>.</p>
 
 				<?php
-				if(!empty($_GET["error_message"]))
-					echo("<div style='text-align: center; font-weight: bold; color: #990000;'>" . htmlentities(stripslashes($_GET["error_message"])) . "</div>");
+				if(!empty($_GET["errorMsg"]))
+					echo("<div style='text-align: center; font-weight: bold; color: #990000;'>" . htmlentities(stripslashes($_GET["errorMsg"])) . "</div>");
 				
 				$captchaTheme = "white";
 				if(!empty($_GET["theme"]))
