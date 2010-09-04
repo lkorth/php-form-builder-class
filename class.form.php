@@ -71,6 +71,8 @@ class form extends pfbc {
 	protected $map;
 	protected $mapMargin;
 	protected $noAutoFocus;
+	protected $preventJQueryLoad;
+	protected $preventJQueryUILoad;
 	protected $preventTinyMCELoad;	
 	protected $preventTinyMCEInitLoad;
 	protected $preventCaptchaLoad;
@@ -1698,14 +1700,19 @@ STR;
 		else
 			$prefix = "http";
 
-		$str .= <<<STR
-		<script type="text/javascript" src="$prefix://www.google.com/jsapi"></script>
-		<script type="text/javascript">
-			google.load("jquery", "1.4.2");
-			google.load("jqueryui", "1.8.4");
-		</script>
+		if(empty($this->preventJQueryLoad)) {
+			$str .= <<<STR
+		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 
 STR;
+		}
+
+		if(empty($this->preventJQueryUILoad)) {
+			$str .= <<<STR
+		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
+
+STR;
+		}
 
 		$session_param = "";
 		$session_name = session_name();
@@ -2340,6 +2347,11 @@ STR;
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
+			if($form->https)
+				$prefix = "https";
+			else
+				$prefix = "http";
+
 			if(empty($form->generateInlineResources)) {
 				if(!empty($form->tooltipIDArr))
 					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
@@ -2349,13 +2361,10 @@ STR;
 					$str .= str_replace(array(), array(), file_get_contents("{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"));
 				if(!empty($form->jqueryColorIDArr))
 					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
-				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID)) {
-					if($form->https)
-						$captchaDomain = "https://api-secure.recaptcha.net";
-					else
-						$captchaDomain = "http://api.recaptcha.net";
-					$str .= file_get_contents($captchaDomain . "/js/recaptcha_ajax.js");
-				}
+				if(empty($form->preventGoogleMapsLoad) && !empty($form->latlngIDArr))
+					$str .= file_get_contents("http://maps.google.com/maps/api/js?callback=myfunction&sensor=false");
+				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID))
+					$str .= file_get_contents("$prefix://www.google.com/recaptcha/api/js/recaptcha_ajax.js");
 			} else {
 				if(!empty($form->tooltipIDArr))
 					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js'></script>";
@@ -2365,9 +2374,10 @@ STR;
 					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js'></script>";
 				if(!empty($form->jqueryColorIDArr))
 					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js'></script>";
-				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID)) {
-					$str .= "<script type='text/javascript' src='https://www.google.com/recaptcha/api/js/recaptcha_ajax.js'></script>";
-				}
+				if(empty($form->preventGoogleMapsLoad) && !empty($form->latlngIDArr))
+					$str .= "<script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>";
+				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID))
+					$str .= "<script type='text/javascript' src='$prefix://www.google.com/recaptcha/api/js/recaptcha_ajax.js'></script>";
 				$str .= "\n" . '<script type="text/javascript">';
 				$str .= "//<![CDATA[";
 				$str .= "\npfbc_adjust_" . $this->attributes["id"] . "();";
@@ -2712,7 +2722,7 @@ function clearLatLng_{$this->attributes["id"]}(latlngID, latlngHint) {
 STR;
 				if(empty($form->preventGoogleMapsLoad)) {
 					$str .= <<<STR
-google.load("maps", "3", { other_params: "sensor=false", callback: "initializeLatLng_{$this->attributes["id"]}" });
+setTimeout("initializeLatLng_{$this->attributes["id"]}();", 250);
 
 STR;
 				}
@@ -3002,7 +3012,7 @@ STR;
 				$prefix = "http";
 
 			if(empty($form->generateInlineResources)) {
-				$str .= str_replace("images/", "{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("{$prefix}://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
+				$str .= str_replace("images/", "$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
 				if(!empty($form->jqueryDateRangeIDArr))
 					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
 				if(!empty($form->jqueryColorIDArr))
@@ -3010,7 +3020,7 @@ STR;
 				if(!empty($form->tooltipIDArr))
 					$str .= str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css"));
 			} else  {
-				$str .= "<link href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css' rel='stylesheet' type='text/css'/>";
+				$str .= "<link href='$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css' rel='stylesheet' type='text/css'/>";
 				if(!empty($form->jqueryDateRangeIDArr))
 					$str .= "<link href='{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css' rel='stylesheet' type='text/css'/>";
 				if(!empty($form->jqueryColorIDArr))
