@@ -1002,6 +1002,23 @@ $form->addTextbox("My Textbox w/additionalParams", "MyTextbox", "", array(
 						<td><b>Description</b></td>
 					</tr>
 					<tr>
+						<td>alphanumeric</td>
+						<td>addTextbox</td>
+						<td>Limits the characters that can be typed into textboxes to letters and/or numbers.
+						One important thing to note is that copy-and-paste is allowed, which provides the opportunity
+						for invalid characters to make their way into the textbox's value.  Because of this, textboxes
+						with the alphanumeric attribute will be validated by an onsubmit javascript function.  PHP validation
+						can also be applied by invoking the validate function after the form's data has been submitted.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addTextbox("My Textbox", "Textbox", "", array("alphanumeric" => 1));
+?>', true), '</pre>';
+						?>
+
+						</td>
+					</tr>
+					<tr>
 						<td>basic</td>
 						<td>addCKEditor, addWebEditor</td>
 						<td>Triggers web editor's simplified control panel.  Both of the web editors integrated into this project - TinyMCE and CKEditor - have two
@@ -1071,6 +1088,23 @@ $form->addLatLng("My Latitude/Longitude", "LatLng", "", array("hideJump" => 1));
 ?>', true), '</pre>';
 						?>
 						
+						</td>
+					</tr>
+					<tr>
+						<td>integer</td>
+						<td>addTextbox</td>
+						<td>Limits the characters that can be typed into textboxes to numbers.
+						One important thing to note is that copy-and-paste is allowed, which provides the opportunity
+						for invalid characters to make their way into the textbox's value.  Because of this, textboxes
+						with the integer attribute will be validated by an onsubmit javascript function.  PHP validation
+						can also be applied by invoking the validate function after the form's data has been submitted.
+
+						<?php						
+echo '<pre>', highlight_string('<?php
+$form->addTextbox("My Textbox", "Textbox", "", array("integer" => 1));
+?>', true), '</pre>';
+						?>
+
 						</td>
 					</tr>
 					<tr>

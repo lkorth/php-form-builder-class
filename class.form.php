@@ -1885,20 +1885,24 @@ STR;
 			}	
 
 			//Cycle through the form's required elements to ensure they are valid.
-			if(!$this->phpCycleElements($form->elements, $referenceValues, $form))
-				return false;
+			$_SESSION["pfbc-errors"][$form->attributes["id"]] = array();
+			$this->phpCycleElements($form->elements, $referenceValues, $form);
 			if(!empty($form->bindRules)) {
 				$bindRuleKeys = array_keys($form->bindRules);
 				$bindRuleSize = sizeof($bindRuleKeys);
 				for($b = 0; $b < $bindRuleSize; ++$b) {
 					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))) {
-							if(!$this->phpCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements, $referenceValues, $form))
-								return false;
-						}	
+						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
+							$this->phpCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements, $referenceValues, $form);
 					}
 				}
 			}
+			if(!empty($_SESSION["pfbc-errors"][$form->attributes["id"]]))
+				return false;
+			
+			//Unset the session array(s) containing the form's errors.
+			if(!empty($_SESSION["pfbc-errors"][$form->attributes["id"]]))
+				unset($_SESSION["pfbc-errors"][$form->attributes["id"]]);
 
 			//Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.
 			if(!empty($_SESSION["pfbc-values"][$form->attributes["id"]]))
@@ -2369,13 +2373,13 @@ STR;
 				if(!empty($form->tooltipIDArr))
 					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js'></script>";
 				if(!empty($form->jqueryStarRatingIDArr))
-					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js'></script>";
+					$str .= "\n<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js'></script>";
 				if(!empty($form->jqueryDateRangeIDArr))
-					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js'></script>";
+					$str .= "\n<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js'></script>";
 				if(!empty($form->jqueryColorIDArr))
-					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js'></script>";
+					$str .= "\n<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js'></script>";
 				if(empty($form->preventGoogleMapsLoad) && !empty($form->latlngIDArr))
-					$str .= "<script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>";
+					$str .= "\n<script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>";
 				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID))
 					$str .= "<script type='text/javascript' src='$prefix://www.google.com/recaptcha/api/js/recaptcha_ajax.js'></script>";
 				$str .= "\n" . '<script type="text/javascript">';
@@ -2837,6 +2841,19 @@ function pfbc_error_{$this->attributes["id"]}(errorMsg, container) {
 }
 
 STR;
+
+			//Apply error message created within the validate function if appropriate.
+			if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
+				$errorKeys = array_keys($_SESSION["pfbc-errors"][$this->attributes["id"]]);
+				$errorKeySize = sizeof($errorKeys);
+				for($e = 0; $e < $errorKeySize; ++$e) {
+					$errorMsg = str_replace('"', '&quot;', $_SESSION["pfbc-errors"][$this->attributes["id"]][$errorKeys[$e]]);
+					$str .= <<<STR
+pfbc_error_{$this->attributes["id"]}("$errorMsg", "{$errorKeys[$e]}");
+
+STR;
+				}
+			}
 
 			if(!empty($form->hasFormTag)) {
 				/*If there are any required fields in the form or if this form is setup to utilize ajax, build a javascript 
@@ -3584,54 +3601,44 @@ STR;
 				$recaptchaResp = recaptcha_check_answer($form->captchaPrivateKey, $_SERVER["REMOTE_ADDR"], $referenceValues["recaptcha_challenge_field"], $referenceValues["recaptcha_response_field"]);
 				if(!$recaptchaResp->is_valid) {
 					if($recaptchaResp->error == "invalid-site-public-key")
-						$this->errorMsg = "The reCAPTCHA public key could not be verified.";
+						$errorMsg = "The reCAPTCHA public key could not be verified.";
 					elseif($recaptchaResp->error == "invalid-site-private-key")
-						$this->errorMsg = "The reCAPTCHA private key could not be verified.";
+						$errorMsg = "The reCAPTCHA private key could not be verified.";
 					elseif($recaptchaResp->error == "invalid-request-cookie")
-						$this->errorMsg = "The reCAPTCHA challenge parameter of the verify script was incorrect.";
+						$errorMsg = "The reCAPTCHA challenge parameter of the verify script was incorrect.";
 					elseif($recaptchaResp->error == "incorrect-captcha-sol")
-						$this->errorMsg = "The reCATPCHA solution entered was incorrect.";
+						$errorMsg = "The reCATPCHA solution entered was incorrect.";
 					elseif($recaptchaResp->error == "verify-params-incorrect")
-						$this->errorMsg = "The reCAPTCHA parameters passed to the verification script were incorrect, make sure you are passing all the required parameters.";
+						$errorMsg = "The reCAPTCHA parameters passed to the verification script were incorrect, make sure you are passing all the required parameters.";
 					elseif($recaptchaResp->error == "invalid-referrer")
-						$this->errorMsg = "The reCAPTCHA API public/private keys are tied to a specific domain name for security reasons.";
+						$errorMsg = "The reCAPTCHA API public/private keys are tied to a specific domain name for security reasons.";
 					else
-						$this->errorMsg = "An unknown reCAPTCHA error has occurred.";
-					return false;
+						$errorMsg = "An unknown reCAPTCHA error has occurred.";
+
+					$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = $errorMsg;
 				}
 			}
 			elseif(!empty($ele->required)) {
 				if($ele->attributes["type"] == "checkbox" || $ele->attributes["type"] == "radio" || $ele->attributes["type"] == "checksort" || $ele->attributes["type"] == "rating") {
-					if(!isset($referenceValues[$ele->attributes["name"]])) {
-						$this->errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
-						return false;
-					}
+					if(!isset($referenceValues[$ele->attributes["name"]]))
+						$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
 				}
-				elseif($referenceValues[$ele->attributes["name"]] === "") {
-					$this->errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
-					return false;
-				}	
+				elseif($referenceValues[$ele->attributes["name"]] === $ele->hint || $referenceValues[$ele->attributes["name"]] === "")
+					$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
 			}
 
-			if($ele->attributes["type"] == "email" && $referenceValues[$ele->attributes["name"]] !== "") {
+			if($ele->attributes["type"] == "email" && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "") {
 				require_once($form->phpIncludesPath . "/php-email-address-validation/EmailAddressValidator.php");
 				$emailObj = new EmailAddressValidator;
-				if(!$emailObj->check_email_address($referenceValues[$ele->attributes["name"]])) {
-					$this->errorMsg = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
-					return false;
-				}	
+				if(!$emailObj->check_email_address($referenceValues[$ele->attributes["name"]]))
+					$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
 			}
 
-			if(!empty($ele->integer) && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^\d+$/", $referenceValues[$ele->attributes["name"]])) {
-				$this->errorMsg = str_replace("[LABEL]", $eleLabel, $form->integerErrorMsgFormat);
-				return false;
-			}
-			elseif(!empty($ele->alphanumeric) && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^[0-9a-zA-Z]+$/", $referenceValues[$ele->attributes["name"]])) {
-				$this->errorMsg = str_replace("[LABEL]", $eleLabel, $form->alphanumericErrorMsgFormat);
-				return false;
-			}
+			if(!empty($ele->integer) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^\d+$/", $referenceValues[$ele->attributes["name"]]))
+				$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = str_replace("[LABEL]", $eleLabel, $form->integerErrorMsgFormat);
+			elseif(!empty($ele->alphanumeric) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^[0-9a-zA-Z]+$/", $referenceValues[$ele->attributes["name"]]))
+				$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = str_replace("[LABEL]", $eleLabel, $form->alphanumericErrorMsgFormat);
 		}
-		return true;
 	}	
 
 	private function setIncludePaths() {

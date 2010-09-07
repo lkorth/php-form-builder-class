@@ -13,15 +13,12 @@ $cmd = (isset($_POST['cmd'])) ? $_POST['cmd'] : FALSE;
 $form = new form("php_validation");
 
 if($cmd == 'submit' && $form->validate()) {
-
     $head = '';
     $body = 'Your form has been successfully submitted!';
-
 } else {
-
     $form->setAttributes(array(
-            "includesPath" => "../includes",
-            "width" => 400
+		"includesPath" => "../includes",
+		"width" => 400
     ));
     $form->addHidden("cmd", "submit");
     $form->addTextbox("Required Textbox:", "field0", "", array("required" => 1));
@@ -31,25 +28,22 @@ if($cmd == 'submit' && $form->validate()) {
     $form->addButton();
     $head = $form->renderHead(true);
     $body = $form->renderBody(true);
-
 }
 
 echo template($head,$body);
 
-
-function template($head,$body){
-
+function template($head,$body) {
     $version = file_get_contents('../version');
     $released = file_get_contents('../release');
 
-$html = <<<HTML
+	$html = <<<HTML
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 		<head>
 			<title>PHP Form Builder Class | Examples | PHP Validation</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
-                        <link href="style.css" rel="stylesheet" type="text/css"/>
-                        $head
+			<link href="style.css" rel="stylesheet" type="text/css"/>
+			$head
 		</head>
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/" onmousedown="this.target='<>';">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/" onmousedown="this.target='<>';">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip" onmousedown="this.target='<>';">Download Version $version</a></div>
@@ -69,13 +63,12 @@ $html = <<<HTML
 				looks like this - \$form = new form("php_validation");.  After the form is submitted, you will see the exact same line before the validate() function is used.  These
 				identifiers must match exactly for the validation to function properly.</p>
 
-                                $body
+				$body
 			</div>
 		</body>
 	</html>
 HTML;
 
-return $html;
+	return $html;
 }
-
 ?>
