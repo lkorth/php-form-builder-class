@@ -73,6 +73,7 @@ class form extends pfbc {
 	protected $noAutoFocus;
 	protected $preventJQueryLoad;
 	protected $preventJQueryUILoad;
+	protected $preventJSValidation;
 	protected $preventTinyMCELoad;	
 	protected $preventTinyMCEInitLoad;
 	protected $preventCaptchaLoad;
@@ -1952,7 +1953,11 @@ STR;
 			else
 				$eleLabel = str_replace('"', '&quot;', strip_tags($ele->attributes["name"]));                       
 
-			$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "' . $ele->container . '");';
+			$isRequired = false;
+			if(empty($this->preventJSValidation) && !empty($ele->required)) {
+				$isRequired = true;
+				$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "' . $ele->container . '");';
+			}
 
 			if($eleType == "html")
 				continue;
@@ -1962,7 +1967,7 @@ STR;
 	if(formObj.elements["$eleName"].length) {
 
 STR;
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 		var is_checked = false;
 
@@ -1979,7 +1984,7 @@ STR;
 
 STR;
 				}	
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 				is_checked = true;
 
@@ -1989,7 +1994,7 @@ STR;
 			}
 		}
 STR;
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 		if(!is_checked) {
 			$alertMsg
@@ -2010,7 +2015,7 @@ STR;
 
 STR;
 				}	
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 		if(!formObj.elements["$eleName"].checked) {
 			$alertMsg
@@ -2029,7 +2034,7 @@ STR;
 	if(formObj.elements["$eleName"].length) {
 
 STR;
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 		var is_checked = false;
 
@@ -2047,7 +2052,7 @@ STR;
 
 STR;
 				}	
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 				is_checked = true;
 
@@ -2058,7 +2063,7 @@ STR;
 		}		
 
 STR;
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 		if(!is_checked) {
 			$alertMsg
@@ -2079,7 +2084,7 @@ STR;
 
 STR;
 				}	
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 		if(!formObj.elements["$eleName"].checked) {
 			$alertMsg
@@ -2102,7 +2107,7 @@ STR;
 
 STR;
 				}	
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 	if(formObj.elements["$eleName"].value == "$eleHint" || formObj.elements["$eleName"].value == "") {
 		$alertMsg
@@ -2121,7 +2126,7 @@ STR;
 
 STR;
 				}	
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 	if(formObj.elements["$eleName"].value == "") {
 		$alertMsg
@@ -2141,7 +2146,7 @@ STR;
 
 STR;
 				}	
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 	if(formObj.elements["$eleName"].value == "") {
 		$alertMsg
@@ -2165,7 +2170,7 @@ STR;
 				}	
 			}
 			elseif($eleType == "captcha") {
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 	if(formObj.elements["recaptcha_response_field"].value == "") {		
 		$alertMsg
@@ -2191,7 +2196,7 @@ STR;
 
 STR;
 				}	
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 	if(tinyMCE.get("$eleId").getContent() == "") {
 		$alertMsg
@@ -2210,7 +2215,7 @@ STR;
 
 STR;
 				}	
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 	if( CKEDITOR.instances.$eleId.getData() == "") {
 		$alertMsg
@@ -2241,7 +2246,7 @@ STR;
 
 STR;
 				}
-				if(!empty($ele->required)) {
+				if($isRequired) {
 					$str .= <<<STR
 	if(!formObj.elements["$eleName"]) {
 		$alertMsg
@@ -2270,7 +2275,7 @@ STR;
 STR;
 			}
 				
-			if($eleType == "email") {
+			if(empty($this->preventJSValidation) && $eleType == "email") {
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint") {
 		jQuery.ajax({
@@ -2300,7 +2305,7 @@ STR;
 STR;
 			}
 
-			if(!empty($ele->integer)) {
+			if(empty($this->preventJSValidation) && !empty($ele->integer)) {
 				$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->integerErrorMsgFormat) . '" , "' . $ele->container . '");';
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
@@ -2313,7 +2318,7 @@ STR;
 STR;
 				
 			}
-			elseif(!empty($ele->alphanumeric)) {
+			elseif(empty($this->preventJSValidation) && !empty($ele->alphanumeric)) {
 				$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->alphanumericErrorMsgFormat) . '" , "' . $ele->container . '");';
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
@@ -2859,7 +2864,7 @@ STR;
 				/*If there are any required fields in the form or if this form is setup to utilize ajax, build a javascript 
 				function for performing form validation before submission and/or for building and submitting a data string through ajax.*/
 				if(!empty($form->checkform) || !empty($form->ajax) || !empty($form->captchaExists) || !empty($form->hintExists) || !empty($form->emailExists) || !empty($form->integerExists) || !empty($form->alphanumericExists)) {
-					if(!empty($form->emailExists)) {
+					if(empty($form->preventJSValidation) && !empty($form->emailExists)) {
 						$str .= <<<STR
 var validemail_{$this->attributes["id"]};
 
@@ -2871,9 +2876,15 @@ function pfbc_scroll_{$this->attributes["id"]}() {
 }
 function pfbc_onsubmit_{$this->attributes["id"]}(formObj) {
 	jQuery("#{$this->attributes["id"]} .pfbc-error").remove();
+
+STR;
+					if(empty($form->preventJSValidation)) {
+						$str .= <<<STR
         var found_error = false;
 
 STR;
+					}
+
 					/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
 					key/value pair and acts as the GET or POST string.*/
 					if(!empty($form->ajax)) {
@@ -2905,13 +2916,15 @@ STR;
 						}
 					}
 
-					$str .= <<<STR
+					if(empty($form->preventJSValidation)) {
+						$str .= <<<STR
 	if(found_error) {
 			pfbc_scroll_{$form->attributes["id"]}();
 			return false;
 	}
 
 STR;
+					}
 						
 					if(!empty($form->ajax)) {
 						$str .= <<<STR

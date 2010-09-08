@@ -47,11 +47,9 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				$form = new form("php_validation");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
+					"preventJSValidation" => 1,
 					"width" => 400
 				));
-
-				if(!empty($_GET["errorMsg"]))
-					$form->errorMsg = "<b>Error:</b> " . filter_var(stripslashes($_GET["errorMsg"]) , FILTER_SANITIZE_SPECIAL_CHARS);
 
 				$form->addHidden("cmd", "submit");
 				$form->addTextbox("Required Textbox:", "field0", "", array("required" => 1));
@@ -65,11 +63,9 @@ echo '<pre>', highlight_string('<?php
 $form = new form("php_validation");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
+	"preventJSValidation" => 1,
 	"width" => 400
 ));
-
-if(!empty($_GET["errorMsg"]))
-	$form->errorMsg = "<b>Error:</b> " . filter_var(stripslashes($_GET["errorMsg"]) , FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Required Textbox:", "field0", "", array("required" => 1));
