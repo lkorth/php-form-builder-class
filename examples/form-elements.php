@@ -4,7 +4,11 @@ session_start();
 include("../class.form.php");
 
 if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
-	echo "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
+	$form = new form("form_elements");
+	if($form->validate())
+		echo "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
+	else
+		header("Location: form-elements.php");
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
@@ -25,7 +29,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 			</div>
 
 			<div id="pfbc_content">
-				<p><b>All Supported Form Elements</b> - This example demonstrates all supported form element types.</p>
+				<p><b>All Supported Form Elements</b> - This example demonstrates all 27 supported form element types: hidden, textbox, textarea, webeditor, password, file, date, daterange, state, country, yesno, truefalse, select, radio, checkbox, latlng,
+				sort, checksort, captcha, slider, rating, html, colorpicker, email, htmlexternal, button.  More information on each of these form elements can be found in the <a href="../documentation/index.php#Form-Elements">Supported Form Elements section of the documentation</a>.</p>
 
 				<?php
 				$form = new form("form_elements");
@@ -35,30 +40,31 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				));	
 
 				$form->addHidden("cmd", "submit");
-				$form->addTextbox("Textbox:", "field0");
-				$form->addTextarea("Textarea:", "field1");
-				$form->addWebEditor("Web Editor - TinyMCE:", "field2");
-				$form->addCKEditor("Web Editor - CKEditor:", "field3");
-				$form->addPassword("Password:", "field4");
-				$form->addFile("File:", "field5");
-				$form->addDate("Date:", "field6");
-				$form->addDateRange("Date Range:", "field9");
-				$form->addState("State:", "field10");
-				$form->addCountry("Country:", "field11");
-				$form->addYesNo("Yes/No:", "field12");
-				$form->addTrueFalse("True/False:", "field13");
-				$form->addSelect("Select Box:", "field14", "", array("Option #0", "Option #1", "Option #2"));
-				$form->addRadio("Radio Buttons:", "field15", "", array("Option #0", "Option #1", "Option #2"));
-				$form->addCheckbox("Checkboxes:", "field16", "", array("Option #0", "Option #1", "Option #2"));
-				$form->addLatLng("Latitude/Longitude:", "field17");
-				$form->addSort("Sort:", "field18", array("Option #0", "Option #1", "Option #2"));
-				$form->addCheckSort("Checksort:", "field19", "", array("Option #0", "Option #1", "Option #2"));
+				$form->addTextbox("Textbox:", "MyTextbox");
+				$form->addTextarea("Textarea:", "MyTextarea");
+				$form->addWebEditor("Web Editor - TinyMCE:", "MyWebEditor");
+				$form->addCKEditor("Web Editor - CKEditor:", "MyCKEditor");
+				$form->addPassword("Password:", "MyPassword");
+				$form->addFile("File:", "MyFile");
+				$form->addDate("Date:", "MyDate");
+				$form->addDateRange("Date Range:", "MyDateRange");
+				$form->addState("State:", "MyState");
+				$form->addCountry("Country:", "MyCountry");
+				$form->addYesNo("Yes/No:", "MyYesNo");
+				$form->addTrueFalse("True/False:", "MyTrueFalse");
+				$form->addSelect("Select Box:", "MySelect", "", array("Option #0", "Option #1", "Option #2"));
+				$form->addRadio("Radio Buttons:", "MyRadio", "", array("Option #0", "Option #1", "Option #2"));
+				$form->addCheckbox("Checkboxes:", "MyCheckbox", "", array("Option #0", "Option #1", "Option #2"));
+				$form->addLatLng("Latitude/Longitude:", "MyLatitudeLongitude");
+				$form->addSort("Sort:", "MySort", array("Option #0", "Option #1", "Option #2"));
+				$form->addCheckSort("Checksort:", "MyChecksort", "", array("Option #0", "Option #1", "Option #2"));
 				$form->addCaptcha("Captcha:");
-				$form->addSlider("Slider:", "field20");
-				$form->addRating("Rating:", "field21", "", range(1, 10));
+				$form->addSlider("Slider:", "MySlider");
+				$form->addRating("Rating:", "MyRating", "", range(1, 10));
 				$form->addHTML("HTML:");
-				$form->addColorPicker("Color Picker:", "field22");
-				$form->addEmail("Email:", "field23");
+				$form->addColorPicker("Color Picker:", "MyColorPicker");
+				$form->addEmail("Email:", "MyEmail");
+				$form->addHTMLExternal("External HTML:");
 				$form->addButton();
 				$form->render();
 
@@ -70,30 +76,31 @@ $form->setAttributes(array(
 ));	
 
 $form->addHidden("cmd", "submit");
-$form->addTextbox("Textbox:", "field0");
-$form->addTextarea("Textarea:", "field1");
-$form->addWebEditor("Web Editor - TinyMCE:", "field2");
-$form->addCKEditor("Web Editor - CKEditor:", "field3");
-$form->addPassword("Password:", "field4");
-$form->addFile("File:", "field5");
-$form->addDate("Date:", "field6");
-$form->addDateRange("Date Range:", "field9");
-$form->addState("State:", "field10");
-$form->addCountry("Country:", "field11");
-$form->addYesNo("Yes/No:", "field12");
-$form->addTrueFalse("True/False:", "field13");
-$form->addSelect("Select Box:", "field14", "", array("Option #0", "Option #1", "Option #2"));
-$form->addRadio("Radio Buttons:", "field15", "", array("Option #0", "Option #1", "Option #2"));
-$form->addCheckbox("Checkboxes:", "field16", "", array("Option #0", "Option #1", "Option #2"));
-$form->addLatLng("Latitude/Longitude:", "field17");
-$form->addSort("Sort:", "field18", array("Option #0", "Option #1", "Option #2"));
-$form->addCheckSort("Checksort:", "field19", "", array("Option #0", "Option #1", "Option #2"));
+$form->addTextbox("Textbox:", "MyTextbox");
+$form->addTextarea("Textarea:", "MyTextarea");
+$form->addWebEditor("Web Editor - TinyMCE:", "MyWebEditor");
+$form->addCKEditor("Web Editor - CKEditor:", "MyCKEditor");
+$form->addPassword("Password:", "MyPassword");
+$form->addFile("File:", "MyFile");
+$form->addDate("Date:", "MyDate");
+$form->addDateRange("Date Range:", "MyDateRange");
+$form->addState("State:", "MyState");
+$form->addCountry("Country:", "MyCountry");
+$form->addYesNo("Yes/No:", "MyYesNo");
+$form->addTrueFalse("True/False:", "MyTrueFalse");
+$form->addSelect("Select Box:", "MySelect", "", array("Option #0", "Option #1", "Option #2"));
+$form->addRadio("Radio Buttons:", "MyRadio", "", array("Option #0", "Option #1", "Option #2"));
+$form->addCheckbox("Checkboxes:", "MyCheckbox", "", array("Option #0", "Option #1", "Option #2"));
+$form->addLatLng("Latitude/Longitude:", "MyLatitudeLongitude");
+$form->addSort("Sort:", "MySort", array("Option #0", "Option #1", "Option #2"));
+$form->addCheckSort("Checksort:", "MyChecksort", "", array("Option #0", "Option #1", "Option #2"));
 $form->addCaptcha("Captcha:");
-$form->addSlider("Slider:", "field20");
-$form->addRating("Rating:", "field21", "", range(1, 10));
+$form->addSlider("Slider:", "MySlider");
+$form->addRating("Rating:", "MyRating", "", range(1, 10));
 $form->addHTML("HTML:");
-$form->addColorPicker("Color Picker:", "field22");
-$form->addEmail("Email:", "field23");
+$form->addColorPicker("Color Picker:", "MyColorPicker");
+$form->addEmail("Email:", "MyEmail");
+$form->addHTMLExternal("External HTML:");
 $form->addButton();
 $form->render();
 ?>', true), '</pre>';

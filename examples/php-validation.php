@@ -13,7 +13,6 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
 		errors, this session array will be used to display the error messages above the appropriate fields.*/
 		header("Location: php-validation.php");
 	}	
-	
 	exit();
 }
 

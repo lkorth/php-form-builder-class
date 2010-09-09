@@ -4,32 +4,14 @@ session_start();
 include("../class.form.php");
 
 if(isset($_POST["cmd"]) && $_POST["cmd"] == "signup") {
-	if($_POST["Username"] == "formbuilder")
-		echo 'Error: Username "', $_POST["Username"], '" already exists in the system.  Please enter a new Username.';
-	elseif(strlen($_POST["Password"]) <= 5)
-		echo "Error: All password must be at least 6 characters in length.  Please enter a new Password.";
-	elseif($_POST["Password"] != $_POST["Password2"])
-		echo "Error: Password fields do not match.";
+	$form = new form("signup");
+	if($form->validate())
+		if($_POST["Password"] == $_POST["Password2"])
+			echo "Success: You're Signed Up";
+		else
+			echo "Error: Password fields do not match.";
 	else
-		echo "Success: You're Signed Up";
-	exit();
-}
-elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "loading") {
-	$sane_email = filter_var($_POST["Email"], FILTER_SANITIZE_EMAIL);
-	if(filter_var($sane_email, FILTER_VALIDATE_EMAIL))
-		echo "Your email address, " . $sane_email . ", has been successfully added to our mailing list.";
-	else	
-		echo "To join our mailing list, please submit a valid email address in the form provided below.";
-	exit();
-}
-elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "manual") {
-	echo "Selected Option(s): ";
-	if(!empty($_POST["Options"])) {
-		$option = implode(", ", $_POST["Options"]);
-		echo filter_var($option , FILTER_SANITIZE_SPECIAL_CHARS);
-	}
-	else
-		echo "None";
+		$form->renderAjaxErrorResponse();
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
@@ -54,206 +36,33 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				<i>ajaxType</i> which allows you to specify if you want to submit the form using POST or GET (defaults to POST), <i>ajaxUrl</i> which controls where the form submits data (defaults to current script), 
 				<i>ajaxDataType</i> which specifies the server response format (defaults to an intelligent guess based on MIME type), and <i>ajaxCallback</i> which gives you control over what events happen once the form have successfully submitted.</p>
 
-				<p><b>Example 1: Sign Up Form</b> - Below you will find a typical signup form with a field for a entering a username, password, and confirmation password.  In the processing section, which is viewable in this php source code, you will see that if
-				the user enters "formbuilder" in the Username field, an error message will be displayed explaining that username "formbuilder" already exists in the system.  Also, if the Password field is not greater than 5 characters or the two password fields do not match, an appropriate error message will be displayed via javascript alerts.</p>
 				<?php
 				$form = new form("signup");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
-					"width" => "300",
-					"ajax" => 1
+					"width" => "500",
+					"ajax" => 1,
+					"jqueryUIButtons" => 1,
+					"preventJSValidation" => 1,
+					"map" => array(1, 2, 2, 2, 1, 3)
 				));
+
 				$form->addHidden("cmd", "signup");
 				$form->addTextbox("Username:", "Username", "", array("required" => 1));
-				$form->addPassword("Password:", "Password", "", array("required" => 1, "postHTML" => '<div style="font-size: 11px;">Must By Greater Than 5 Characters</div>'));
-				$form->addPassword("Re-Enter Password:", "Password2", "", array("required" => 1));
-				$form->addButton();
-				$form->render();
-
-echo '<pre>', highlight_string('<?php
-$form = new form("signup");
-$form->setAttributes(array(
-	"includesPath" => "../includes",
-	"width" => 300,
-	"ajax" => 1
-));
-$form->addHidden("cmd", "signup");
-$form->addTextbox("Username:", "Username", "", array("required" => 1));
-$form->addPassword("Password:", "Password", "", array("required" => 1, "postHTML" => \'<div style="font-size: 11px;">Must By Greater Than 5 Characters</div>\'));
-$form->addPassword("Re-Enter Password:", "Password2", "", array("required" => 1));
-$form->addButton();
-$form->render();
-?>', true), '</pre>';
-
-				?>
-				<p><b>Example 2: Login Form</b> - This sample login form uses four ajax specific paramters, each of which are described below.</p>
-				<ul>
-					<li><i>ajaxType</i> - controls submission method - GET or POST.  By default, this parameter is set to POST; however, it is set to GET in the form below.</li>
-					<li><i>ajaxCallback</i> - triggers javascript function after the form has submitted.  Notice that the function is set as a string without parenthesis.  
-					Also, a parameter, msg in this case, is automatically passed to this callback function which includes any response sent back from the web server.</li>  
-					<li><i>ajaxPreCallback</i> - triggers javascript function before the form has submitted.</li>
-					<li><i>ajaxUrl</i> - controls where form submits.  By default, this parameter is set to the current script; however, it is set to ajaxSubmission.php in the form below.</li>
-					<li><i>ajaxDataType</i> - specifies the data format for any server responses.  Options include xml, html, script, json, jsonp, and text.  By default, this parameter is set based on MIME type.</li>
-				</ul>
-				
-				<p>Use "formbuilder" as the Username and "password" as the Password to login with the form below.  Any other parameters will display an error message above the form.</p>
-
-				<div id="messageDiv" style="color: #990000; font-weight: bold; width: 300px; text-align: center; display: none;"></div>
-				<?php
-				$form = new form("login");
-				$form->setAttributes(array(
-					"includesPath" => "../includes",
-					"preventJQueryLoad" => 1,
-					"width" => 300,
-					"noAutoFocus" => 1,
-					"ajax" => 1,
-					"ajaxType" => "GET",
-					"ajaxCallback" => "loginHandler",
-					"ajaxUrl" => "ajax-submission.php"
-				));
-				$form->addHidden("cmd", "login");
-				$form->addTextbox("Username:", "Username", "", array("required" => 1));
 				$form->addPassword("Password:", "Password", "", array("required" => 1));
-				$form->addButton();
-				$form->render();
-				?>
-				<script type="text/javascript">
-					function loginHandler(jsonResp) {
-						pfbc_error_login(jsonResp.status + ": " + jsonResp.message);
-					}
-				</script>
-				<?php
-
-echo '<pre>', highlight_string('<?php
-$form = new form("login");
-$form->setAttributes(array(
-	"includesPath" => "../includes",
-	"preventJQueryLoad" => 1,
-	"width" => 300,
-	"noAutoFocus" => 1,
-	"ajax" => 1,
-	"ajaxType" => "GET",
-	"ajaxCallback" => "loginHandler",
-	"ajaxUrl" => "ajax-submission.php"
-));
-$form->addHidden("cmd", "login");
-$form->addTextbox("Username:", "Username", "", array("required" => 1));
-$form->addPassword("Password:", "Password", "", array("required" => 1));
-$form->addButton();
-$form->render();
-?>
-<script type="text/javascript">
-	function loginHandler(jsonResp) {
-		pfbc_error_login(jsonResp.status + ": " + jsonResp.message);
-	}
-</script>
-', true), '</pre>';
-
-				?>
-				<p><b>Example 3: Ajax w/Loading Image &amp; Disabled Submit Button</b> - This sample demonstrates how the <i>ajaxCallback</i> and <i>ajaxPreCallback</i> form attributes can be used to display an animated loading image to give
-				users instant feedback that their data is being submitted.  The submit button will also be disabled while the form's data is being submitted.  Please note that this is just an example and your email is not being stored in 
-				an actual mailing list.</p>
-
-				<?php
-				$form = new form("loading");
-				$form->setAttributes(array(
-					"includesPath" => "../includes",
-					"preventJQueryLoad" => 1,
-					"width" => 300,
-					"noAutoFocus" => 1,
-					"ajax" => 1,
-					"ajaxPreCallback" => "beginAjaxLoading",
-					"ajaxCallback" => "endAjaxLoading",
-					"emailErrorMsgFormat" => "Invalid Email Address - Please ensure you are entering a valid email address in the form provided below."
-				));
-				$form->addHidden("cmd", "loading");
-				$form->addEmail("Email Address:", "Email");
-				$form->addHTMLExternal('<div id="ajaxLoadingDiv" style="display: none; text-align: center;"><small>Your information is being submitted...</small><br/><img src="images/ajax-loader.gif" alt=""/></div>');
-				$form->addButton("Submit", "submit", array("id" => "ajaxLoadingButton"));
-				$form->render();
-				?>
-				<script type="text/javascript">
-					function beginAjaxLoading() {
-						document.getElementById("ajaxLoadingDiv").style.display = "block";
-						document.getElementById("ajaxLoadingButton").disabled = true;
-					}
-
-					function endAjaxLoading(responseMsg) {
-						alert(responseMsg);
-						document.getElementById("ajaxLoadingDiv").style.display = "none";
-						document.getElementById("ajaxLoadingButton").disabled = false;
-					}
-				</script>
-				<?php
-
-echo '<pre>', highlight_string('<?php
-$form = new form("loading");
-$form->setAttributes(array(
-	"includesPath" => "../includes",
-	"preventJQueryLoad" => 1,
-	"width" => 300,
-	"noAutoFocus" => 1,
-	"ajax" => 1,
-	"ajaxPreCallback" => "beginAjaxLoading",
-	"ajaxCallback" => "endAjaxLoading",
-	"emailErrorMsgFormat" => "Invalid Email Address - Please ensure you are entering a valid email address in the form provided below."
-));
-$form->addHidden("cmd", "loading");
-$form->addEmail("Email Address:", "Email");
-$form->addHTMLExternal(\'<div id="ajaxLoadingDiv" style="display: none; text-align: center;"><small>Your information is being submitted...</small><br/><img src="images/ajax-loader.gif" border="0" alt=""/></div>\');
-$form->addButton("Submit", "submit", array("id" => "ajaxLoadingButton"));
-$form->render();
-?>
-<script type="text/javascript">
-	function beginAjaxLoading() {
-		document.getElementById("ajaxLoadingDiv").style.display = "block";
-		document.getElementById("ajaxLoadingButton").disabled = true;
-	}
-
-	function endAjaxLoading(responseMsg) {
-		alert(responseMsg);
-		document.getElementById("ajaxLoadingDiv").style.display = "none";
-		document.getElementById("ajaxLoadingButton").disabled = false;
-	}
-</script>
-', true), '</pre>';
-
-				?>
-				<p><b>Example 4: Manual Ajax Submission</b> - This sample demonstrates how you can manually call the form's existing function responsible for ajax submission and javascript validation. 
-				This onsubmit function will be named "pfbc_onsubmit_" + form's name. You will need to pass the form's object reference when this function is invoked.</p>  
-
-				<?php
-				$form = new form("manual");
-				$form->setAttributes(array(
-					"includesPath" => "../includes",
-					"preventJQueryLoad" => 1,
-					"width" => 300,
-					"noAutoFocus" => 1,
-					"ajax" => 1,
-				));
-				$form->addHidden("cmd", "manual");
-				$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "pfbc_onsubmit_manual(this.form);"));
+				$form->addPassword("Re-Enter Password:", "Password2", "", array("required" => 1));
+				$form->addTextbox("First Name:", "FName", "", array("required" => 1));
+				$form->addTextbox("Last Name:", "LName", "", array("required" => 1));
+				$form->addEmail("Email Address:", "Email", "", array("required" => 1));
+				$form->addTextbox("Phone Number:", "Phone");
+				$form->addTextbox("Address:", "Address");
+				$form->addTextbox("City:", "City");
+				$form->addState("State:", "State");
+				$form->addTextbox("Zip Code:", "Zip");
+				$form->addButton("Sign Up");
 				$form->render();
 
 echo '<pre>', highlight_string('<?php
-$form = new form("manual");
-$form->setAttributes(array(
-	"includesPath" => "../includes",
-	"preventJQueryLoad" => 1,
-	"width" => 300,
-	"noAutoFocus" => 1,
-	"ajax" => 1
-));
-$form->addHidden("cmd", "manual");
-$form->addCheckbox("Available Options:", "Options", "", array("Option #1", "Option #2", "Option #3"), array("onclick" => "pfbc_onsubmit_manual(this.form);"));
-$form->render();
-', true), '</pre>';
-
-				?>
-			</div>
-		</body>
-	</html>
-	<?php
+?>', true), '</pre>';
 }
 ?>
-

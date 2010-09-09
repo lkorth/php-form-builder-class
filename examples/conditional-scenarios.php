@@ -4,7 +4,11 @@ session_start();
 include("../class.form.php");
 
 if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
-	echo "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
+	$form = new form("billing");
+	if($form->validate())
+		echo "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
+	else
+		header("Location: conditional-scenarios.php");
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {

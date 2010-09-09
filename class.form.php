@@ -57,6 +57,7 @@ class form extends pfbc {
 	protected $ckeditorCustomConfig;
 	protected $ckeditorLang;
 	protected $emailErrorMsgFormat;
+	protected $errorDisplayOption;
 	protected $errorMsgFormat;
 	protected $includesPath;
 	protected $integerErrorMsgFormat;
@@ -123,7 +124,6 @@ class form extends pfbc {
 			"method" => "post",
 			"action" => basename($_SERVER["SCRIPT_NAME"]),
 		);
-		$this->ajaxCallback = "alert";
 		$this->ajaxType = "post";
 		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
 		$this->alphanumericErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only letters and/or numbers are allowed.";
@@ -970,6 +970,47 @@ class form extends pfbc {
 		$this->addElement("", "", "htmlexternal", '</fieldset>');
 	}
 
+	public function renderAjaxErrorResponse($returnString=false) {
+		$str = "";
+		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+			//Unserialize the appropriate form instance stored in the session array.
+			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+			if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
+				$errorMsg = array();
+				if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
+					$errors = $_SESSION["pfbc-errors"][$this->attributes["id"]];
+					if(!empty($errors["errormsg"])) {
+						$errorSize = sizeof($errors["errormsg"]);
+						for($e = 0; $e < $errorSize; ++$e) {
+							$error = $errors["errormsg"][$e];
+							if(!empty($error)) {
+								if(strpos($error, "Error: ") === 0)
+									$error = substr($error, 7);
+								$errorMsg[] = $error;
+							}
+						}
+					}
+				}	
+				if(!empty($errorMsg)) {
+					$errorSize = sizeof($errorMsg);
+					if($errorSize > 1)
+						$str .= "The following " . $errorSize . " errors were found:";
+					else	
+						$str .= "The following error was found:";
+					$str .= "<ul><li>" . implode("</li><li>", $errorMsg) . "</li></ul>";
+					$str = json_encode(array("container" => array(""), "errormsg" => array($str)));
+				}
+			}
+			else
+				$str = json_encode($_SESSION["pfbc-errors"][$this->attributes["id"]]);
+		}	
+		if(!$returnString) {
+			header("Content-type: application/json");
+			echo $str;
+		}	
+		else
+			return $str;
+	}
 
 	public function elementsToString() {
 		$str = "";
@@ -1956,7 +1997,7 @@ STR;
 			$isRequired = false;
 			if(empty($this->preventJSValidation) && !empty($ele->required)) {
 				$isRequired = true;
-				$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat) . '" , "' . $ele->container . '");';
+				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->errorMsgFormat);
 			}
 
 			if($eleType == "html")
@@ -1996,10 +2037,8 @@ STR;
 STR;
 				if($isRequired) {
 					$str .= <<<STR
-		if(!is_checked) {
-			$alertMsg
-			found_error = true;
-		}
+		if(!is_checked)
+			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 
 STR;
 				}
@@ -2017,10 +2056,8 @@ STR;
 				}	
 				if($isRequired) {
 					$str .= <<<STR
-		if(!formObj.elements["$eleName"].checked) {
-			$alertMsg
-			found_error = true;
-		}
+		if(!formObj.elements["$eleName"].checked)
+			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 
 STR;
 				}
@@ -2065,10 +2102,8 @@ STR;
 STR;
 				if($isRequired) {
 					$str .= <<<STR
-		if(!is_checked) {
-			$alertMsg
-			found_error = true;
-		}
+		if(!is_checked)
+			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 
 STR;
 				}
@@ -2086,10 +2121,8 @@ STR;
 				}	
 				if($isRequired) {
 					$str .= <<<STR
-		if(!formObj.elements["$eleName"].checked) {
-			$alertMsg
-			found_error = true;
-		}
+		if(!formObj.elements["$eleName"].checked)
+			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 
 STR;
 				}
@@ -2110,10 +2143,9 @@ STR;
 				if($isRequired) {
 					$str .= <<<STR
 	if(formObj.elements["$eleName"].value == "$eleHint" || formObj.elements["$eleName"].value == "") {
-		$alertMsg
-		if(!found_error)
+		js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+		if(js_errors_{$this->attributes["id"]}.length == 1)
 			formObj.elements["$eleName"].focus();
-		found_error = true;
 	}
 
 STR;
@@ -2129,10 +2161,9 @@ STR;
 				if($isRequired) {
 					$str .= <<<STR
 	if(formObj.elements["$eleName"].value == "") {
-		$alertMsg
-		if(!found_error)
+		js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+		if(js_errors_{$this->attributes["id"]}.length == 1)
 			formObj.elements["$eleName"].focus();
-		found_error = true;
 	}
 
 STR;
@@ -2148,10 +2179,8 @@ STR;
 				}	
 				if($isRequired) {
 					$str .= <<<STR
-	if(formObj.elements["$eleName"].value == "") {
-		$alertMsg
-		found_error = true;
-	}
+	if(formObj.elements["$eleName"].value == "")
+		js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 
 STR;
 				}
@@ -2173,10 +2202,9 @@ STR;
 				if($isRequired) {
 					$str .= <<<STR
 	if(formObj.elements["recaptcha_response_field"].value == "") {		
-		$alertMsg
-		if(!found_error)
+		js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+		if(js_errors_{$this->attributes["id"]}.length == 1)
 			formObj.elements["recaptcha_response_field"].focus();
-		found_error = true;
 	}	
 
 STR;
@@ -2199,10 +2227,9 @@ STR;
 				if($isRequired) {
 					$str .= <<<STR
 	if(tinyMCE.get("$eleId").getContent() == "") {
-		$alertMsg
-		if(!found_error)
+		js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+		if(js_errors_{$this->attributes["id"]}.length == 1)
 			tinyMCE.get("$eleId").focus();
-		found_error = true;
 	}
 
 STR;
@@ -2218,10 +2245,9 @@ STR;
 				if($isRequired) {
 					$str .= <<<STR
 	if( CKEDITOR.instances.$eleId.getData() == "") {
-		$alertMsg
-		if(!found_error)
+		js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+		if(js_errors_{$this->attributes["id"]}.length == 1)
 			CKEDITOR.instances.$eleId.focus();
-		found_error = true;
 	}
 
 STR;
@@ -2248,10 +2274,8 @@ STR;
 				}
 				if($isRequired) {
 					$str .= <<<STR
-	if(!formObj.elements["$eleName"]) {
-		$alertMsg
-		found_error = true;
-	}	
+	if(!formObj.elements["$eleName"])
+		js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 
 STR;
 				}	
@@ -2276,6 +2300,7 @@ STR;
 			}
 				
 			if(empty($this->preventJSValidation) && $eleType == "email") {
+				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->emailErrorMsgFormat);
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint") {
 		jQuery.ajax({
@@ -2283,22 +2308,21 @@ STR;
 			type: "post",
 			url: "{$this->jsIncludesPath}/php-email-address-validation/ajax-handler.php",
 			dataType: "text",
-			data: "email=" + escape(formObj.elements["$eleName"].value) + "&label=" + escape("$eleLabel") + "&format=" + escape("{$this->emailErrorMsgFormat}"),
-			success: function(responseMsg, textStatus) {
-				if(responseMsg != "") {
-					validemail_{$this->attributes["id"]} = false;
-					{$this->jsErrorFunction}(responseMsg, "{$ele->container}");
-				}
-				else
+			data: "email=" + escape(formObj.elements["$eleName"].value),
+			success: function(responseMsg) {
+				if(responseMsg == "valid")
 					validemail_{$this->attributes["id"]} = true;
+				else {
+					validemail_{$this->attributes["id"]} = false;
+					js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+				}
 			},
 			error: function(XMLHttpRequest, textStatus, errorThrown) { {$this->jsErrorFunction}(XMLHttpRequest.responseText); }
 		});
 
 		if(!validemail_{$this->attributes["id"]}) {
-			if(!found_error)
+			if(js_errors_{$this->attributes["id"]}.length == 1)
 				formObj.elements["$eleName"].focus();
-			found_error = true;
 		}
 	}
 
@@ -2306,26 +2330,28 @@ STR;
 			}
 
 			if(empty($this->preventJSValidation) && !empty($ele->integer)) {
-				$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->integerErrorMsgFormat) . '" , "' . $ele->container . '");';
+				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->integerErrorMsgFormat);
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
 		if(!formObj.elements["$eleName"].value.match(/^\d+$/)) {
-			$alertMsg
-			found_error = true;
-		}	
+			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+			if(js_errors_{$this->attributes["id"]}.length == 1)
+				formObj.elements["$eleName"].focus();
+		}		
 	}
 
 STR;
 				
 			}
 			elseif(empty($this->preventJSValidation) && !empty($ele->alphanumeric)) {
-				$alertMsg = $this->jsErrorFunction . '("' . str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->alphanumericErrorMsgFormat) . '" , "' . $ele->container . '");';
+				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->alphanumericErrorMsgFormat);
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
 		if(!formObj.elements["$eleName"].value.match(/^[0-9a-zA-Z]+$/)) {
-			$alertMsg
-			found_error = true;
-		}	
+			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+			if(js_errors_{$this->attributes["id"]}.length == 1)
+				formObj.elements["$eleName"].focus();
+		}		
 	}
 
 STR;
@@ -2839,7 +2865,7 @@ STR;
 			$str .= <<<STR
 function pfbc_error_{$this->attributes["id"]}(errorMsg, container) {
 	var error = '<div class="pfbc-error ui-state-error ui-corner-all">' + errorMsg + '<\/div>';
-	if(container != undefined)
+	if(container != undefined && container != "" && jQuery(container).length)
 		jQuery(container).prepend(error);
 	else	
 		jQuery("#{$this->attributes["id"]} .pfbc-main:first").prepend(error);
@@ -2849,14 +2875,32 @@ STR;
 
 			//Apply error message created within the validate function if appropriate.
 			if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
-				$errorKeys = array_keys($_SESSION["pfbc-errors"][$this->attributes["id"]]);
-				$errorKeySize = sizeof($errorKeys);
-				for($e = 0; $e < $errorKeySize; ++$e) {
-					$errorMsg = str_replace('"', '&quot;', $_SESSION["pfbc-errors"][$this->attributes["id"]][$errorKeys[$e]]);
-					$str .= <<<STR
-pfbc_error_{$this->attributes["id"]}("$errorMsg", "{$errorKeys[$e]}");
+				$errors = $_SESSION["pfbc-errors"][$this->attributes["id"]];
+				if(!empty($errors["container"]) && !empty($errors["errormsg"])) {
+					$errorSize = sizeof($errors["container"]);
+					if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
+						$errorMsg = "";
+						if($errorSize == 1)
+							$errorMsg = "The following error was found:";
+						else	
+							$errorMsg = "The following " . $errorSize . " errors were found:";
+						$errorMsg .= "<ul><li>" . implode("</li><li>", $errors["errormsg"]) . "</li></ul>";	
+						$str .= <<<STR
+	pfbc_error_{$this->attributes["id"]}("$errorMsg");
 
 STR;
+					}
+					else {
+						for($e = 0; $e < $errorSize; ++$e) {
+							if(!empty($errors["container"][$e]) && !empty($errors["errormsg"][$e])) {
+								$errorMsg = str_replace('"', '&quot;', $errors["errormsg"][$e]);
+								$str .= <<<STR
+	pfbc_error_{$this->attributes["id"]}("$errorMsg", "{$errors["container"][$e]}");
+
+STR;
+							}
+						}
+					}
 				}
 			}
 
@@ -2872,7 +2916,7 @@ STR;
 					}	
 					$str .= <<<STR
 function pfbc_scroll_{$this->attributes["id"]}() {
-   jQuery('html, body').animate({ scrollTop: jQuery('#{$this->attributes["id"]}').offset().top }, 500 );
+   jQuery("html, body").animate({ scrollTop: jQuery("#{$this->attributes["id"]}").offset().top }, 500 );
 }
 function pfbc_onsubmit_{$this->attributes["id"]}(formObj) {
 	jQuery("#{$this->attributes["id"]} .pfbc-error").remove();
@@ -2880,7 +2924,7 @@ function pfbc_onsubmit_{$this->attributes["id"]}(formObj) {
 STR;
 					if(empty($form->preventJSValidation)) {
 						$str .= <<<STR
-        var found_error = false;
+        var js_errors_{$this->attributes["id"]} = [];
 
 STR;
 					}
@@ -2918,9 +2962,37 @@ STR;
 
 					if(empty($form->preventJSValidation)) {
 						$str .= <<<STR
-	if(found_error) {
-			pfbc_scroll_{$form->attributes["id"]}();
-			return false;
+	if(js_errors_{$this->attributes["id"]}.length) {
+		var js_error_size_{$this->attributes["id"]} = js_errors_{$this->attributes["id"]}.length;
+
+STR;
+						if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
+							$str .= <<<STR
+		if(js_error_size_{$this->attributes["id"]} == 1)
+			var js_error_message{$this->attributes["id"]} = "The following error was found:";
+		else	
+			var js_error_message{$this->attributes["id"]} = "The following " + js_error_size_{$this->attributes["id"]} + " errors were found:";
+		
+		js_error_message{$this->attributes["id"]} += "<ul>";
+		for(e = 0; e < js_error_size_{$this->attributes["id"]}; ++e) {
+			js_error_message{$this->attributes["id"]} += "<li>" + js_errors_{$this->attributes["id"]}[e].errormsg + "</li>";
+		}
+		js_error_message{$this->attributes["id"]} += "</ul>";
+		pfbc_error_{$this->attributes["id"]}(js_error_message{$this->attributes["id"]});
+
+STR;
+						}
+						else {
+							$str .= <<<STR
+		for(e = 0; e < js_error_size_{$this->attributes["id"]}; ++e)
+			pfbc_error_{$this->attributes["id"]}(js_errors_{$this->attributes["id"]}[e].errormsg, js_errors_{$this->attributes["id"]}[e].container);
+
+STR;
+						}
+						$str .= <<<STR
+		pfbc_scroll_{$this->attributes["id"]}();
+		return false;
+						
 	}
 
 STR;
@@ -2954,8 +3026,22 @@ STR;
 						}
 						$str .= <<<STR
 		success: function(responseMsg) {
-			if("{$form->ajaxCallback}" != "alert" || (typeof responseMsg == "string" && responseMsg != ""))
-				{$form->ajaxCallback}(responseMsg);
+			if(responseMsg != "") {				
+				if(typeof responseMsg == "object" && responseMsg.container) {
+					for(e = 0; e < responseMsg.container.length; ++e)
+						pfbc_error_{$this->attributes["id"]}(responseMsg.errormsg[e], responseMsg.container[e]);
+					pfbc_scroll_{$this->attributes["id"]}();
+				}
+			}	
+
+STR;
+						if(!empty($form->ajaxCallback)) {
+							$str .= <<<STR
+			{$form->ajaxCallback}(responseMsg);
+
+STR;
+						}
+						$str .= <<<STR
 		},	
 		error: function(XMLHttpRequest, textStatus, errorThrown) { {$form->jsErrorFunction}(XMLHttpRequest.responseText); }
 	});
@@ -3079,6 +3165,11 @@ $id .pfbc-clear:after {
 $id .pfbc-error {
 	padding: 0.5em;
 	margin-bottom: 0.5em;
+}
+$id .pfbc-error ul {
+	padding-left: 1.75em;
+	margin: 0;
+	margin-top: 0.25em;
 }
 $id .pfbc-buttons {
 	text-align: right;
@@ -3605,6 +3696,8 @@ STR;
 			}	
 			else
 				$eleLabel = strip_tags($ele->attributes["name"]);
+			
+			$errorMsg = "";
 
 			//The html, sort, and hidden element types are ignored.
 			if($ele->attributes["type"] == "html" || $ele->attributes["type"] == "sort" || $ele->attributes["type"] == "hidden")
@@ -3628,29 +3721,33 @@ STR;
 					else
 						$errorMsg = "An unknown reCAPTCHA error has occurred.";
 
-					$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = $errorMsg;
 				}
 			}
 			elseif(!empty($ele->required)) {
 				if($ele->attributes["type"] == "checkbox" || $ele->attributes["type"] == "radio" || $ele->attributes["type"] == "checksort" || $ele->attributes["type"] == "rating") {
 					if(!isset($referenceValues[$ele->attributes["name"]]))
-						$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
+						$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
 				}
 				elseif($referenceValues[$ele->attributes["name"]] === $ele->hint || $referenceValues[$ele->attributes["name"]] === "")
-					$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
+					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
 			}
 
-			if($ele->attributes["type"] == "email" && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "") {
+			if(empty($errorMsg) && $ele->attributes["type"] == "email" && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "") {
 				require_once($form->phpIncludesPath . "/php-email-address-validation/EmailAddressValidator.php");
 				$emailObj = new EmailAddressValidator;
 				if(!$emailObj->check_email_address($referenceValues[$ele->attributes["name"]]))
-					$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
+					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
 			}
 
-			if(!empty($ele->integer) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^\d+$/", $referenceValues[$ele->attributes["name"]]))
-				$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = str_replace("[LABEL]", $eleLabel, $form->integerErrorMsgFormat);
-			elseif(!empty($ele->alphanumeric) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^[0-9a-zA-Z]+$/", $referenceValues[$ele->attributes["name"]]))
-				$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = str_replace("[LABEL]", $eleLabel, $form->alphanumericErrorMsgFormat);
+			if(empty($errorMsg) && !empty($ele->integer) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^\d+$/", $referenceValues[$ele->attributes["name"]]))
+				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->integerErrorMsgFormat);
+			elseif(empty($errorMsg) && !empty($ele->alphanumeric) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^[0-9a-zA-Z]+$/", $referenceValues[$ele->attributes["name"]]))
+				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->alphanumericErrorMsgFormat);
+
+			if(!empty($errorMsg)) {
+				$_SESSION["pfbc-errors"][$form->attributes["id"]]["container"][] = $ele->container;
+				$_SESSION["pfbc-errors"][$form->attributes["id"]]["errormsg"][] = $errorMsg;
+			}
 		}
 	}	
 
