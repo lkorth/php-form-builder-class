@@ -1764,14 +1764,27 @@ STR;
 		$str .= <<<STR
 		<script type="text/javascript">
 			//<![CDATA[
+			var jQueryElementObj;
 			function pfbc_adjust_{$this->attributes["id"]}() {
-				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea").each(function () { 
+				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea").each(function() { 
 					if(!jQuery(this).hasClass("pfbc-adjusted")) {
-						if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
-							jQuery(this).width(jQuery(this).width());
-						else	
-							jQuery(this).outerWidth(jQuery(this).width());
-						jQuery(this).addClass("pfbc-adjusted");	
+						if(jQuery(this).parent().parent().is(":hidden")) {
+							jQueryElementObj = jQuery(this);
+							jQuery.swap(jQueryElementObj.parent().parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
+								if(jQueryElementObj.hasClass("tiny_mce") || jQueryElementObj.hasClass("tiny_mce_simple"))
+									jQueryElementObj.width(jQueryElementObj.width());
+								else	
+									jQueryElementObj.outerWidth(jQueryElementObj.width());
+								jQueryElementObj.addClass("pfbc-adjusted");	
+							});
+						}	
+						else {
+							if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
+								jQuery(this).width(jQuery(this).width());
+							else	
+								jQuery(this).outerWidth(jQuery(this).width());
+							jQuery(this).addClass("pfbc-adjusted");	
+						}
 					}
 				});
 			}
@@ -1783,8 +1796,9 @@ STR;
 			jQuery(document).ready(function() {
 				jQuery.get('{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param', function(cssText) {
 					jQuery("head").append('<style type="text/css">' + cssText + '<\/style>');
-					if(jQuery("#{$this->attributes["id"]}").parent().is(":hidden"))
+					if(jQuery("#{$this->attributes["id"]}").parent().is(":hidden")) {
 						jQuery.swap(jQuery("#{$this->attributes["id"]}").parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, pfbc_adjust_{$this->attributes["id"]});
+					}	
 					else
 						pfbc_adjust_{$this->attributes["id"]}();
 					jQuery("#{$this->attributes["id"]}").css("visibility", "visible");	
@@ -3026,14 +3040,12 @@ STR;
 						}
 						$str .= <<<STR
 		success: function(responseMsg) {
-			if(responseMsg != "") {				
-				if(typeof responseMsg == "object" && responseMsg.container) {
-					for(e = 0; e < responseMsg.container.length; ++e)
-						pfbc_error_{$this->attributes["id"]}(responseMsg.errormsg[e], responseMsg.container[e]);
-					pfbc_scroll_{$this->attributes["id"]}();
-				}
-			}	
-
+			if(responseMsg != undefined && typeof responseMsg == "object" && responseMsg.container) {
+				for(e = 0; e < responseMsg.container.length; ++e)
+					pfbc_error_{$this->attributes["id"]}(responseMsg.errormsg[e], responseMsg.container[e]);
+				pfbc_scroll_{$this->attributes["id"]}();
+			}
+			else {
 STR;
 						if(!empty($form->ajaxCallback)) {
 							$str .= <<<STR
@@ -3041,7 +3053,17 @@ STR;
 
 STR;
 						}
+						else {
+							$str .= <<<STR
+			if(responseMsg != undefined && typeof responseMsg == "string") {
+				pfbc_error_{$this->attributes["id"]}(responseMsg);
+				pfbc_scroll_{$this->attributes["id"]}();
+			}	
+
+STR;
+						}
 						$str .= <<<STR
+			}			
 		},	
 		error: function(XMLHttpRequest, textStatus, errorThrown) { {$form->jsErrorFunction}(XMLHttpRequest.responseText); }
 	});

@@ -17,6 +17,7 @@
 			<div>
 				<ul style="margin-top: 0; padding-top: 0;">
 					<li><a href="form-elements.php">All Supported Form Elements</a></li>
+					<li><a href="validation.php">Validation</a></li>
 					<li><a href="ajax.php">Ajax</a></li>
 					<li><a href="jquery.php">jQuery</a></li>
 					<li><a href="php-validation.php">PHP Validation</a></li>
