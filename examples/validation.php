@@ -151,7 +151,7 @@ $form->render();
 				?>
 
 				<p><b>PHP Validation</b> - Unlike javascript, php validation needs to be manually triggered by using the validate
-				function.  Below, you will see a code snippet of how to properly implement php validate.</p>
+				function after the form's been submitted.  Below, you will see a code snippet of how to properly implement php validation.</p>
 
 				<?php
 echo '<pre>', highlight_string('<?php
@@ -172,13 +172,13 @@ else {
 
 				<p>After class.form.php is included, you'll notice that a new form object instance is created.  The identifier passed to the constructor
 				is used to associate the get/post data submitted by the user with the specific form you - the developer - created, so it is essential that
-				you pass the same unique identifier used when you initially created the form.  Next, we're ready to invoke the validate function.  The function
+				you pass the same unique identifier used when you initially created the form.  Next, we're ready to invoke the validate function.  This function
 				will return true or false depending on if the submitted data passed or failed validation respectively.  If true is returned, your script should
 				continue to process the data accordingly.  If false is returned, you will need to redirect the user back to the form so they can correct the 
 				validation errors that were found and re-submit.  The validate function stores the errors in a session array that will be automatically applied
 				when the user views the form again.</p>
 
-				<p>In the example below, the "preventJSValidation" form attribute is used to disable javascript validation.  This is applied only to help demonstrate
+				<p>In the example below, the "preventJSValidation" form attribute is used to disable/bypass javascript validation.  This is applied only to help demonstrate
 				php validation.  It is not recommended that you use this form attribute in your development.  I repeat, don't use it on your production forms!</p>
 
 				<?php
@@ -233,7 +233,8 @@ $form->render();
 				?>
 
 				<p><b>Validation w/Ajax</b> - When using the "ajax" form attribute to submit the form's data via AJAX, javascript validation is handled no differently
-				than without the "ajax" attribute; however, php validation differs slightly.  Review the code snippet below.</p>
+				than without the "ajax" attribute; however, php validation differs slightly.  Review the code snippet below.  Just to clarify, this code is to be applied
+				after the form's data has been submitted.</p>
 
 				<?php
 echo '<pre>', highlight_string('<?php
@@ -253,11 +254,11 @@ exit();
 ?>', true), '</pre>';
 				?>
 
-				<p>The only difference between this section and the code snippet provided in the previous example is that the renderAjaxErrorResponse is used instead of
+				<p>The only difference between this section and the code snippet provided in the previous example is that the renderAjaxErrorResponse function is used instead of
 				simply redirecting the user back to the form with the header function.</p>
 
-				<p>As stated previously, the example below uses the "preventJSValidation" form attribute to disable javascript validation.  This is applied only to help demonstrate
-				php validation.  It is not recommended that you use this form attribute in your development.  I repeat, don't use it on your production forms!</p>
+				<p>As stated previously, the example below uses the "preventJSValidation" form attribute to disable/bypass javascript validation.  This is applied only to help demonstrate
+				php validation.  It is not recommended that you use this form attribute in your development.  I repeat (again), don't use it on your production forms!</p>
 
 				<?php
 				$form = new form("validation_3");
@@ -281,7 +282,7 @@ exit();
 				$subform->addEmail("Alternate Email Address #2:", "MyAlternateEmail2");
 				$subform->addEmail("Alternate Email Address #3:", "MyAlternateEmail3");
 
-				$form->addHTMLExternal('<div id="alternateEmailAddressesDiv" style="display: none;">' . $subform->elementsToString() . '</div>');
+				$form->addHTMLExternal('<div id="alternateEmailAddressesDiv" style="display: none; padding-bottom: 1em;">' . $subform->elementsToString() . '</div>');
 				$form->bind($subform, 'document.getElementById("validation_3").MyYesNo[0].checked' , '!empty($_POST["MyYesNo"])');
 				$form->addButton();
 				$form->render();
@@ -315,7 +316,7 @@ $subform->addEmail("Alternate Email Address #1:", "MyAlternateEmail1");
 $subform->addEmail("Alternate Email Address #2:", "MyAlternateEmail2");
 $subform->addEmail("Alternate Email Address #3:", "MyAlternateEmail3");
 
-$form->addHTMLExternal(\'<div id="alternateEmailAddressesDiv" style="display: none;">\' . $subform->elementsToString() . \'</div>\');
+$form->addHTMLExternal(\'<div id="alternateEmailAddressesDiv" style="display: none; padding-bottom: 1em;">\' . $subform->elementsToString() . \'</div>\');
 $form->bind($subform, \'document.getElementById("validation_3").MyYesNo[0].checked\' , \'!empty($_POST["MyYesNo"])\');
 $form->addButton();
 $form->render();

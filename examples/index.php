@@ -20,10 +20,6 @@
 					<li><a href="validation.php">Validation</a></li>
 					<li><a href="ajax.php">Ajax</a></li>
 					<li><a href="jquery.php">jQuery</a></li>
-					<li><a href="php-validation.php">PHP Validation</a></li>
-					<li><a href="email-validation.php">Email Validation</a></li>
-					<li><a href="textbox-validation.php">Textbox Validation</a></li>
-					<li><a href="js-validation.php">Javascript Validation</a></li>
 					<li><a href="google-maps.php">Google Maps</a></li>
 					<li><a href="layout.php">Layout</a></li>
 					<li><a href="tooltips.php">Tooltips</a></li>
