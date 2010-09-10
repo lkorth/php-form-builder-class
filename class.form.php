@@ -44,10 +44,7 @@ abstract class pfbc {
 class form extends pfbc { 
 	protected $ajax;
 	protected $ajaxCallback;
-	protected $ajaxDataType;
 	protected $ajaxPreCallback;
-	protected $ajaxType;
-	protected $ajaxUrl;
 	protected $alphanumericErrorMsgFormat;
 	protected $attributes;
 	protected $captchaLang;
@@ -124,8 +121,6 @@ class form extends pfbc {
 			"method" => "post",
 			"action" => basename($_SERVER["SCRIPT_NAME"]),
 		);
-		$this->ajaxType = "post";
-		$this->ajaxUrl = basename($_SERVER["SCRIPT_NAME"]);
 		$this->alphanumericErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only letters and/or numbers are allowed.";
 		$this->captchaLang = "en";
 		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
@@ -3016,16 +3011,10 @@ STR;
 						$str .= <<<STR
 	form_data = form_data.substring(1, form_data.length);
 	jQuery.ajax({
-		type: "{$form->ajaxType}",
-		url: "{$form->ajaxUrl}",
+		type: "{$form->attributes["method"]}",
+		url: "{$form->attributes["action"]}",
 
 STR;
-						if(!empty($form->ajaxDataType)) {
-							$str .= <<<STR
-		dataType: "{$form->ajaxDataType}",
-
-STR;
-						}
 						$str .= <<<STR
 		data: form_data,
 
