@@ -3,10 +3,23 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
-	$form = new form("ajax");
+if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit_0") {
+	$form = new form("ajax_0");
 	if($form->validate())
-		echo "Congratulations! The information you enter passed the form's validation.";
+		if($_POST["Password"] != $_POST["Password2"])
+			echo "The Password and Re-Enter Password fields do not match.";
+		else
+			echo "Congratulations! The information you enter passed the form's validation.";
+	else
+		$form->renderAjaxErrorResponse();
+	exit();
+}
+elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "submit_1") {
+	$form = new form("ajax_1");
+	if($form->validate()) {
+		header("Content-type: application/json");
+		echo file_get_contents("http://maps.google.com/maps/api/geocode/json?address=" . urlencode($_POST["Address"]) . "&sensor=false");
+	}
 	else
 		$form->renderAjaxErrorResponse();
 	exit();
@@ -20,6 +33,21 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 			<title>PHP Form Builder Class | Examples | Ajax</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
 			<link href="style.css" rel="stylesheet" type="text/css"/>
+			<script type="text/javascript">
+				function parseJSONResponse(latlng) {
+					var formObj = document.getElementById("ajax_1");
+					if(latlng.status == "OK") {
+						var result = latlng.results[0];
+						formObj.RecognizedAddress.value = result.formatted_address;
+						formObj.LatitudeLongitude.value = result.geometry.location.lat + ', ' + result.geometry.location.lng;
+					}
+					else {
+						formObj.RecognizedAddress.value = "Address Unrecognized by Google's Geocoding API";
+						formObj.LatitudeLongitude.value = "N/A";
+					}	
+					document.getElementById("geocodingInfoDiv").style.display = "block";
+				}
+			</script>
 		</head>
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
@@ -42,7 +70,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				form attribute.</p>
 
 				<?php
-				$form = new form("ajax");
+				$form = new form("ajax_0");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
 					"width" => "500",
@@ -50,7 +78,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 					"ajax" => 1
 				));
 
-				$form->addHidden("cmd", "submit");
+				$form->addHidden("cmd", "submit_0");
 				$form->addTextbox("Username:", "Username", "", array("required" => 1));
 				$form->addPassword("Password:", "Password", "", array("required" => 1));
 				$form->addPassword("Re-Enter Password:", "Password2", "", array("required" => 1));
@@ -66,7 +94,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				$form->render();
 
 echo '<pre>', highlight_string('<?php
-$form = new form("ajax");
+$form = new form("ajax_0");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
 	"width" => "500",
@@ -74,7 +102,7 @@ $form->setAttributes(array(
 	"ajax" => 1
 ));
 
-$form->addHidden("cmd", "submit");
+$form->addHidden("cmd", "submit_0");
 $form->addTextbox("Username:", "Username", "", array("required" => 1));
 $form->addPassword("Password:", "Password", "", array("required" => 1));
 $form->addPassword("Re-Enter Password:", "Password2", "", array("required" => 1));
@@ -89,5 +117,52 @@ $form->addTextbox("Zip Code:", "Zip");
 $form->addButton("Sign Up");
 $form->render();
 ?>', true), '</pre>';
+				?>
+
+				<p>This example, displayed below, uses Google's Geocoding API combined with this project's AJAX functionality to provide users with a quick way
+				to convert an address into a latitude/longitude pair.  Also demonstrated here is the use of the "ajaxCallback" form attribute.</p>
+    
+				<?php
+				$form = new form("ajax_1");
+				$form->setAttributes(array(
+					"includesPath" => "../includes",
+					"width" => "400",
+					"ajaxCallback" => "parseJSONResponse",
+					"ajax" => 1
+				));
+
+				$form->addHidden("cmd", "submit_1");
+				$form->addTextbox("Enter your address below to view the geocoded latitude/longitude.", "Address", "", array("required" => 1));
+				$form->addHTMLExternal('<div id="geocodingInfoDiv" style="display: none;">');
+				$form->addTextbox("Recognized Address:", "RecognizedAddress", "", array("readonly" => "readonly"));
+				$form->addTextbox("Latitude/Longitude:", "LatitudeLongitude", "", array("readonly" => "readonly"));
+				$form->addHTMLExternal('</div>');
+				$form->addButton("Submit");
+				$form->render();
+
+echo '<pre>', highlight_string('<?php
+$form = new form("ajax_1");
+$form->setAttributes(array(
+	"includesPath" => "../includes",
+	"width" => "400",
+	"ajaxCallback" => "parseJSONResponse",
+	"ajax" => 1
+));
+
+$form->addHidden("cmd", "submit_1");
+$form->addTextbox("Enter your address below to view the geocoded latitude/longitude.", "Address", "", array("required" => 1));
+$form->addHTMLExternal(\'<div id="geocodingInfoDiv" style="display: none;">\');
+$form->addTextbox("Recognized Address:", "RecognizedAddress", "", array("readonly" => "readonly"));
+$form->addTextbox("Latitude/Longitude:", "LatitudeLongitude", "", array("readonly" => "readonly"));
+$form->addHTMLExternal("</div>");
+$form->addButton("Submit");
+$form->render();
+?>', true), '</pre>';
+				?>
+
+			</div>
+		</body>	
+	</html>	
+	<?php
 }
 ?>
