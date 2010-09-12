@@ -19,9 +19,9 @@
 					<li><a href="form-elements.php">All Supported Form Elements</a></li>
 					<li><a href="validation.php">Validation</a></li>
 					<li><a href="ajax.php">Ajax</a></li>
+					<li><a href="layout.php">Layout</a></li>
 					<li><a href="jquery.php">jQuery</a></li>
 					<li><a href="google-maps.php">Google Maps</a></li>
-					<li><a href="layout.php">Layout</a></li>
 					<li><a href="tooltips.php">Tooltips</a></li>
 					<li><a href="captcha.php">Captcha</a></li>
 					<li><a href="web-editors.php">Web Editors</a></li>

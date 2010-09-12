@@ -76,9 +76,9 @@
 					<li><a href="examples/form-elements.php">All Supported Form Elements</a></li>
 					<li><a href="examples/validation.php">Validation</a></li>
 					<li><a href="examples/ajax.php">Ajax</a></li>
+					<li><a href="examples/layout.php">Layout</a></li>
 					<li><a href="examples/jquery.php">jQuery</a></li>
 					<li><a href="examples/google-maps.php">Google Maps</a></li>
-					<li><a href="examples/layout.php">Layout</a></li>
 					<li><a href="examples/tooltips.php">Tooltips</a></li>
 					<li><a href="examples/captcha.php">Captcha</a></li>
 					<li><a href="examples/web-editors.php">Web Editors</a></li>
