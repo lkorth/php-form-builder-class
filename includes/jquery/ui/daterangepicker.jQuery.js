@@ -29,7 +29,9 @@ jQuery.fn.daterangepicker = function(settings){
 			{text: 'Year to date', dateStart: function(){ var x= Date.parse('today'); x.setMonth(0); x.setDate(1); return x; }, dateEnd: 'today' },
 			//extras:
 			{text: 'Last month', dateStart: function(){ return Date.parse('1 month ago').moveToFirstDayOfMonth();  }, dateEnd: function(){ return Date.parse('1 month ago').moveToLastDayOfMonth();  } },
-			{text: 'Last 30 days', dateStart: 'Today-30', dateEnd: 'Today' }
+			{text: 'Last 30 days', dateStart: 'Today-30', dateEnd: 'Today' },
+			{text: 'Last 60 days', dateStart: 'Today-60', dateEnd: 'Today' },
+			{text: 'Last 90 days', dateStart: 'Today-90', dateEnd: 'Today' }
 			//{text: 'Tomorrow', dateStart: 'Tomorrow', dateEnd: 'Tomorrow' },
 			//{text: 'Ad Campaign', dateStart: '03/07/08', dateEnd: 'Today' },
 			//{text: 'Next 30 Days', dateStart: 'Today', dateEnd: 'Today+30' },
@@ -38,9 +40,9 @@ jQuery.fn.daterangepicker = function(settings){
 		//presetRanges: array of objects for each menu preset. 
 		//Each obj must have text, dateStart, dateEnd. dateStart, dateEnd accept date.js string or a function which returns a date object
 		presets: {
-			specificDate: 'Select specific date', 
-			allDatesBefore: 'All dates before...', 
-			allDatesAfter: 'All dates after...', 
+			//specificDate: 'Select specific date', 
+			//allDatesBefore: 'All dates before...', 
+			//allDatesAfter: 'All dates after...', 
 			dateRange: 'Select date dange'
 		},
 		rangeStartTitle: 'Date Range',

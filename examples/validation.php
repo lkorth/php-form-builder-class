@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1", "submit_2"))) {
+if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1", "submit_2", "submit_4"))) {
 	$form = new form("validation_" . substr($_POST["cmd"], -1));
 	if($form->validate())
 		header("Location: validation.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
@@ -73,8 +73,8 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				$form->addHidden("cmd", "submit_0");
 				$form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
 				$form->addEmail("Email Address:", "MyEmail");
-				$form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1));
-				$form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1));
+				$form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
+				$form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
 				$form->addButton();
 				$form->render();
 
@@ -91,8 +91,8 @@ if(!empty($_GET["errormsg_0"]))
 $form->addHidden("cmd", "submit_0");
 $form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
 $form->addEmail("Email Address:", "MyEmail");
-$form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1));
-$form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1));
+$form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
+$form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
 $form->addButton();
 $form->render();
 ?>', true), '</pre>';
@@ -107,6 +107,8 @@ $form->render();
 					"includesPath" => "../includes",
 					"width" => 500,
 					"noAutoFocus" => 1,
+					"preventJQueryLoad" => 1,
+					"preventJQueryUILoad" => 1,
 					"map" => array(2, 2, 1, 3)
 				));
 
@@ -187,6 +189,8 @@ else {
 					"includesPath" => "../includes",
 					"width" => 500,
 					"noAutoFocus" => 1,
+					"preventJQueryLoad" => 1,
+					"preventJQueryUILoad" => 1,
 					"preventJSValidation" => 1,
 					"map" => array(2, 2, 1, 3)
 				));
@@ -266,6 +270,8 @@ exit();
 					"includesPath" => "../includes",
 					"width" => 400,
 					"noAutoFocus" => 1,
+					"preventJQueryLoad" => 1,
+					"preventJQueryUILoad" => 1,
 					"ajax" => 1,
 					"preventJSValidation" => 1
 				));
@@ -276,6 +282,8 @@ exit();
 				$subform = new form("validation_3sub");
 				$subform->setAttributes(array(
 					"includesPath" => "../includes",
+					"preventJQueryLoad" => 1,
+					"preventJQueryUILoad" => 1,
 					"width" => 400,
 				));
 				$subform->addEmail("Alternate Email Address #1:", "MyAlternateEmail1");
@@ -299,7 +307,6 @@ $form = new form("validation_3");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
 	"width" => 400,
-	"noAutoFocus" => 1,
 	"ajax" => 1,
 	"preventJSValidation" => 1
 ));
@@ -327,6 +334,60 @@ $form->render();
 		document.getElementById("alternateEmailAddressesDiv").style.display = "block";
 </script>
 ', true), '</pre>';
+?>
+	
+				<p><b>Modifying Error Messages</b> - Each of the four validation error types (see top section of this page for detailed list) generates its own error message explaining
+				what happened to the user so he/she can correct and re-submit.  There are four form attributes - "errorMsgFormat", "emailErrorMsgFormat", "integerErrorMsgFormat", 
+				and "alphanumericErrorMsgFormat" - that can be used to customize each of these error messages.  If "[LABEL]" is found within the error message, it will be replaced
+				by the appropriate element's label.</p>
+
+				<?php
+				$form = new form("validation_4");
+				$form->setAttributes(array(
+					"includesPath" => "../includes",
+					"noAutoFocus" => 1,
+					"preventJQueryLoad" => 1,
+					"preventJQueryUILoad" => 1,
+					"errorMsgFormat" => "Oops! You didn't fill in the [LABEL] field.",
+					"emailErrorMsgFormat" => "You didn't supply a valid email address in the [LABEL] field.",
+					"integerErrorMsgFormat" => "[LABEL] can only contain numbers. No letters or special character allowed!",
+					"alphanumericErrorMsgFormat" => "There were invalid character found in this field.  [LABEL] can only contain letters and/or numbers.",
+					"width" => 400
+				));
+
+				if(!empty($_GET["errormsg_4"]))
+					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+				$form->addHidden("cmd", "submit_4");
+				$form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
+				$form->addEmail("Email Address:", "MyEmail");
+				$form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
+				$form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
+				$form->addButton();
+				$form->render();
+
+echo '<pre>', highlight_string('<?php
+$form = new form("validation_4");
+$form->setAttributes(array(
+	"includesPath" => "../includes",
+	"errorMsgFormat" => "Oops! You didn\'t fill in the [LABEL] field.",
+	"emailErrorMsgFormat" => "You didn\'t supply a valid email address in the [LABEL] field.",
+	"integerErrorMsgFormat" => "[LABEL] can only contain numbers. No letters or special character allowed!",
+	"alphanumericErrorMsgFormat" => "There were invalid character found in this field.  [LABEL] can only contain letters and/or numbers.",
+	"width" => 400
+));
+
+if(!empty($_GET["errormsg_4"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_4");
+$form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
+$form->addEmail("Email Address:", "MyEmail");
+$form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
+$form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
+$form->addButton();
+$form->render();
+?>', true), '</pre>';
 				?>
     
 			</div>

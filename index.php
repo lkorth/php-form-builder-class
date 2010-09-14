@@ -29,10 +29,10 @@
 				<ul style="margin-top: 0; padding-top: 0;">
 					<li>Ajax Form Submission</li>
 					<li>Javascript and PHP Validation</li>
-					<li>jQuery Elements - date, daterange, sort, checksort, slider, rating, colorpicker (<a href="http://www.jquery.com/">jQuery</a>)</li>
+					<li>jQuery Elements - date, daterange, sort, checksort, slider, rating, color (<a href="http://www.jquery.com/">jQuery</a>)</li>
 					<li>jQuery UI Themes - (<a href="http://jqueryui.com">jQuery UI</a>)</li>
 					<li>Google Maps Element - latlng (<a href="http://code.google.com/apis/maps/documentation/v3/">Google Maps API v3</a>)</li>
-					<li>Hybrid Form Element Types - state, country, yesno, truefalse, date, daterange, sort, latlng, checksort, webeditor, slider, rating, captcha, html, colorpicker, email</li>
+					<li>Hybrid Form Element Types - state, country, yesno, truefalse, date, daterange, sort, latlng, checksort, webeditor, slider, rating, captcha, html, color, email</li>
 					<li>File Upload Support</li>
 					<li>Email Address Validation</li>
 					<li>Two Wysiwyg Web Editors (<a href="http://tinymce.moxiecode.com/">TinyMCE</a>, <a href="http://ckeditor.com/">CKEditor</a>)</li>

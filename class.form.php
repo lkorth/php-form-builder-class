@@ -756,7 +756,7 @@ class form extends pfbc {
 
 			$ele->jqueryOptions = $jqueryOptions;
 		}
-		elseif($eleType == "colorpicker") {
+		elseif($eleType == "color") {
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "colorinput_" . rand(0, 999);
 			if(!isset($this->jqueryColorIDArr))
@@ -783,7 +783,7 @@ class form extends pfbc {
 		}
 
 		//Add the appropriate javascript event functions if hint is present.  Several elements such as date and latlng have default hints that will be automatically applied.  An example of a hint is "Click to Select Date".
-		if(in_array($eleType, array("text", "textarea", "date", "daterange", "colorpicker", "latlng", "email")) && !empty($ele->hint)) {
+		if(in_array($eleType, array("text", "textarea", "date", "daterange", "color", "latlng", "email")) && !empty($ele->hint)) {
 			$hintFocusFunction = "hintfocus_" . $this->attributes["id"] . '(this, "' . str_replace('"', '\"', stripslashes($ele->hint)) . '");';
 			if(empty($ele->attributes["onclick"]))
 				$ele->attributes["onclick"] = $hintFocusFunction;
@@ -852,8 +852,13 @@ class form extends pfbc {
 		$this->addElement($label, $name, "ckeditor", $value, $additionalParams);
 	}
 
+	public function addColor($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "color", $value, $additionalParams);
+	}
+
+	//Included for backwards compatibility.  The preferred function is now addColor.
 	public function addColorPicker($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "colorpicker", $value, $additionalParams);
+		$this->addElement($label, $name, "color", $value, $additionalParams);
 	}
 
 	public function addCountry($label, $name, $value="", $additionalParams="") {
@@ -1215,9 +1220,9 @@ class form extends pfbc {
 					$ele->attributes["value"] = $ele->hint;
 
 				$str .= $this->indent();
-				if(in_array($eleType, array("text", "password", "email", "date", "daterange", "colorpicker"))) {
+				if(in_array($eleType, array("text", "password", "email", "date", "daterange", "color"))) {
 					//Temporarily set the type attribute to "text" for <input> tag.
-					if(in_array($eleType, array("email", "date", "daterange", "colorpicker"))) {
+					if(in_array($eleType, array("email", "date", "daterange", "color"))) {
 						$resetTypeTo = $eleType;
 						$eleType = "text";
 					}	
@@ -1363,7 +1368,7 @@ class form extends pfbc {
 						$str .= $this->indent() . '</div></td>';
 
 						if(empty($ele->hideCaption))
-							$str .= '<td valign="middle"><div id="' . $ele->ratingID . '_caption" style="padding-left: 5px;"></div></td>';
+							$str .= '<td valign="middle"><div id="' . $ele->ratingID . '_caption" style="padding-left: 0.5em;"></div></td>';
 
 						$str .= '</tr></table>';
 						$this->jqueryStarRatingIDArr[$ele->ratingID] = $ele;
@@ -1639,7 +1644,7 @@ class form extends pfbc {
 								}
 							}
 							else {
-								if(isset($sortLIArr[$ele->attributes["value"][$li]]))
+								if(isset($sortLIArr[$ele->attributes["value"]]))
 									$str .= $this->indent("\t") . $sortLIArr[$ele->attributes["value"]];
 							}		
 						}
@@ -1653,7 +1658,14 @@ class form extends pfbc {
 						$ele->attributes["value"] = "0";
 					if(is_array($ele->attributes["value"]) && sizeof($ele->attributes["value"]) == 1)
 						$ele->attributes["value"] = $ele->attributes["value"][0];
-					
+
+					if(!is_array($ele->attributes["value"])) {
+						if(!empty($ele->jqueryOptions["min"]) && $ele->attributes["value"] < $ele->jqueryOptions["min"])
+							$ele->attributes["value"] = $ele->jqueryOptions["min"];
+						if(!empty($ele->jqueryOptions["max"]) && $ele->attributes["value"] > $ele->jqueryOptions["max"])
+							$ele->attributes["value"] = $ele->jqueryOptions["max"];
+					}	
+
 					$str .= '<div class="pfbc-slider">';
 					$str .= $this->indent("\t") . '<div id="' . $ele->attributes["id"] . '" style="font-size: 12px !important; margin: 2px 0;';
 					if($ele->jqueryOptions["orientation"] == "vertical" && !empty($ele->height))
@@ -2140,7 +2152,7 @@ STR;
 
 STR;
 			}
-			elseif($eleType == "text" || $eleType == "textarea" || $eleType == "date" || $eleType == "daterange" || $eleType == "latlng" || $eleType == "colorpicker" || $eleType == "email") {
+			elseif($eleType == "text" || $eleType == "textarea" || $eleType == "date" || $eleType == "daterange" || $eleType == "latlng" || $eleType == "color" || $eleType == "email") {
 				if(!empty($this->ajax)) {
 					$str .= <<<STR
 	form_data += "&$eleName=";
@@ -2430,7 +2442,7 @@ STR;
 
 			if(!empty($form->integerExists) || !empty($form->alphanumericExists)) {
 			$str .= <<<STR
-var pfbc_allowed_keys = [8, 13, 37, 39, 46];			
+var pfbc_allowed_keys = [8, 9, 13, 37, 39, 46];			
 
 STR;
 			}
@@ -2438,10 +2450,10 @@ STR;
 			if(!empty($form->integerExists)) {
 				$str .= <<<STR
 jQuery("#{$this->attributes["id"]} .pfbc-integer").bind("keydown", function(event) {
-	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1			//Backspace, Enter, Arrow Left, Arrow Right, Delete
-		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))	//Copy
-		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))	//Paste
-		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))		//Numbers
+	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1
+		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))
+		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))
+		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))
 	)
 		return true;
 	else
@@ -2454,11 +2466,11 @@ STR;
 			if(!empty($form->alphanumericExists)) {
 				$str .= <<<STR
 jQuery("#{$this->attributes["id"]} .pfbc-alphanumeric").bind("keydown", function(event) {
-	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1			//Backspace, Enter, Arrow Left, Arrow Right, Delete
-		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))	//Copy
-		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))	//Paste
-		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))		//Numbers
-		|| (event.keyCode >= 65 && event.keyCode <= 90)					//Letters
+	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1
+		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))
+		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))
+		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))
+		|| (event.keyCode >= 65 && event.keyCode <= 90)
 	)
 		return true;
 	else
@@ -2559,8 +2571,8 @@ STR;
 					else {
 						$slider->jqueryOptions["range"] = "min";
 						$slider->jqueryOptions["value"] = $slider->attributes["value"];
-
 					}
+
 
 					$jqueryOptionStr = "";
 					foreach($slider->jqueryOptions as $key => $val) {
@@ -3329,7 +3341,7 @@ STR;
 								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio {
 	float: left;
-	margin-left: 5px;
+	margin-left: 0.5em;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-first {
 	margin: 0 !important;
@@ -3341,7 +3353,7 @@ STR;
 								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox {
 	float: left;
-	margin-left: 5px;
+	margin-left: 0.5em;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox-first {
 	margin: 0 !important;
@@ -3426,7 +3438,7 @@ STR;
 }
 
 STR;
-									if(in_array($ele->attributes["type"], array("text", "password", "email", "date", "daterange", "colorpicker"))) {
+									if(in_array($ele->attributes["type"], array("text", "password", "email", "date", "daterange", "color"))) {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
 	width: {$elementWidth}$labelWidthSuffix;

@@ -47,6 +47,10 @@ body, #pfbc_banner h2, #pfbc_banner h5 {
 	padding: 5px;
 	font-family: Courier New, monospace;
 }
+#pfbc_content h4 {
+	margin: 0;
+	padding: 0;
+}
 #pfbc_content .pfbc_doc_section pre {
 	margin: 0 10px;
 }

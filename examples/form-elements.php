@@ -30,7 +30,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 			<div id="pfbc_content">
 				<p><b>All Supported Form Elements</b> - This example demonstrates all 27 supported form element types: hidden, textbox, textarea, webeditor, password, file, date, daterange, state, country, yesno, truefalse, select, radio, checkbox, latlng,
-				sort, checksort, captcha, slider, rating, html, colorpicker, email, htmlexternal, button.  More information on each of these form elements can be found in the <a href="../documentation/index.php#Form-Elements">Supported Form Elements section of the documentation</a>.</p>
+				sort, checksort, captcha, slider, rating, html, color, email, htmlexternal, button.  More information on each of these form elements can be found in the <a href="../documentation/index.php#Form-Elements">Supported Form Elements section of the documentation</a>.</p>
 
 				<?php
 				$form = new form("form_elements");
@@ -62,7 +62,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				$form->addSlider("Slider:", "MySlider");
 				$form->addRating("Rating:", "MyRating", "", range(1, 10));
 				$form->addHTML("HTML:");
-				$form->addColorPicker("Color Picker:", "MyColorPicker");
+				$form->addColor("Color:", "MyColor");
 				$form->addEmail("Email:", "MyEmail");
 				$form->addHTMLExternal("External HTML:");
 				$form->addButton();
@@ -98,7 +98,7 @@ $form->addCaptcha("Captcha:");
 $form->addSlider("Slider:", "MySlider");
 $form->addRating("Rating:", "MyRating", "", range(1, 10));
 $form->addHTML("HTML:");
-$form->addColorPicker("Color Picker:", "MyColorPicker");
+$form->addColor("Color:", "MyColor");
 $form->addEmail("Email:", "MyEmail");
 $form->addHTMLExternal("External HTML:");
 $form->addButton();

@@ -108,7 +108,8 @@ $form->render();
 					"width" => 400,
 					"includesPath" => "../includes",
 					"noAutoFocus" => 1,
-					"preventJqueryLoad" => 1,
+					"preventJQueryLoad" => 1,
+					"preventJQueryUILoad" => 1,
 					"labelWidth" => 100
 				));
 
@@ -127,8 +128,6 @@ $form = new form("layout_1");
 $form->setAttributes(array(
 	"width" => 400,
 	"includesPath" => "../includes",
-	"noAutoFocus" => 1,
-	"preventJqueryLoad" => 1,
 	"labelWidth" => 100
 ));
 
@@ -141,14 +140,15 @@ $form->addPassword("Password:", "Password", "", array("required" => 1));
 $form->addHTML(\'<a href="#">Forgot your password?</a>\');
 $form->addButton("Login");
 $form->render();
-', true), '</pre>';
+?>', true), '</pre>';
 
 				$form = new form("layout_2");
 				$form->setAttributes(array(
 					"width" => 800,
 					"includesPath" => "../includes",
 					"noAutoFocus" => 1,
-					"preventJqueryLoad" => 1,
+					"preventJQueryLoad" => 1,
+					"preventJQueryUILoad" => 1,
 					"labelWidth" => 125,
 					"labelRightAlign" => 1,
 					"map" => array(2, 2, 1, 3)
@@ -174,8 +174,6 @@ $form = new form("layout_2");
 $form->setAttributes(array(
 	"width" => 800,
 	"includesPath" => "../includes",
-	"noAutoFocus" => 1,
-	"preventJqueryLoad" => 1,
 	"labelWidth" => 125,
 	"labelRightAlign" => 1,
 	"map" => array(2, 2, 1, 3)
@@ -195,7 +193,7 @@ $form->addState("State:", "State");
 $form->addTextbox("Zip Code:", "Zip");
 $form->addButton();
 $form->render();
-', true), '</pre>';
+?>', true), '</pre>';
 				?>
 
 			</div>
