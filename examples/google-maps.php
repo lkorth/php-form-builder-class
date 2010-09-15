@@ -3,8 +3,12 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
-	echo "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
+if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1"))) {
+	$form = new form("googlemaps_" . substr($_POST["cmd"], -1));
+	if($form->validate())
+		header("Location: google-maps.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
+	else
+		header("Location: google-maps.php");
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
@@ -25,38 +29,95 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 			</div>
 
 			<div id="pfbc_content">
-				<p><b>Google Maps</b> - Included in this class is a field for capturing a latitude/longitude by utilizing the Google Maps API v3.
-				To specifiy a location, simply click, drag, and drop the marker on the map to a given point.  Once dropped, the lattitude and 
-				longitude will be inserted into the textbox above the map. You can also make use of the Location Jump textbox to move to a specific 
-				location. The maps latitude/longitude will automatically update as you type.  The location will need to be parsed once submitted - I recommend using 
-				explode() on the "," and substring() on each piece.</p>
-				<p>You can customize the map's zoom, width, and height with the <i>zoom</i>, <i>width</i>, and <i>height</i> element attributes.  Also, you can disable
-				the location jump functionality with the <i>hideJump</i> element attribute.</p>
-				<p>Also, you can use the <i>latlngDefaultLocation</i> form attribute to control where the marker is placed on the map initially - with no value assigned.</p>
+				<p><b>Google Maps</b> - This project leverages v3 of the Google Maps API to provide functionality for capturing latitude/longitude information.  Below you will find a
+				detailed list of the various form/element attributes that affect the Google Maps API v3 integration.<p>
+
+				<ul style="margin: 0;">
+					<li>latlngDefaultLocation - The "latlngDefaultLocation" form attribute can be used to specify the map's default location when no value is provided.  By default, this attribute
+					will be set to array(41.847, -87.661), which places the marker on Chigago, IL.</li>
+					<li>height - This element attribute controls the height of the Google Map canvas.  Its default value will be set to 200.</li>
+					<li>width - This attribtue controls the width of the Google Map convas.  Its default value will be set to 100% of the form's width.</li>
+					<li>hideJump - Below the Google Map canvas, there's an area provided that allows you to find a latitude/longitude by typing a location into a free-form textbox.  This functionality is
+					included because it can be difficult to drag the marker accross large distances.  The "hideJump" element attribtue allows you to disable this functionality.</li>
+					<li>zoom - The "zoom" element attribute controls the default zoom level of the Google Map canvas.  If not specified, this attribute will be set to 9.</li>
+				</ul>
+
+				<p>Below you'll find several ways you can use the addLatLng function in your development.</p>
 
 				<?php
-				$form = new form("google_maps");
+				$form = new form("googlemaps_0");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
-					"width" => 500,
-					"latlngDefaultLocation" => array(38.897, -77.040)
+					"width" => 500
 				));
-				$form->addHidden("cmd", "submit");
-				$form->addLatLng("Detault LatLng Functionality:", "field0");
-				$form->addLatLng("Pre-Filled LatLng Functionality:", "field1", array(40.737, -73.994), array("zoom" => 12, "height" => 400));
+
+				if(!empty($_GET["errormsg_0"]))
+					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+				$form->addHidden("cmd", "submit_0");
+				$form->addLatLng("Latitude/Longitude:", "MyLatLng");
+				$form->addLatLng("Latitude/Longitude w/Default Value:", "MyLatLngPrefilled", array(40.689, -74.045));
+				$form->addLatLng("Latitude/Longitude w/Custom Dimensions:", "MyLatLngDimensions", "", array("style" => "width: 300px;", "height" => 150, "width" => 300));
+				$form->addLatLng("Latitude/Longitude w/zoom Attribute:", "MyLatLngZoom", "", array("zoom" => 13));
+				$form->addButton();
+				$form->render();
+				?>
+
+				<br/><br/>
+
+				<?php
+				$form = new form("googlemaps_1");
+				$form->setAttributes(array(
+					"includesPath" => "../includes",
+					"noAutoFocus" => 1,
+					"preventJQueryLoad" => 1,
+					"preventJQueryUILoad" => 1,
+					"latlngDefaultLocation" => array(52.523, 13.411),
+					"width" => 500
+				));
+
+				if(!empty($_GET["errormsg_1"]))
+					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+				$form->addHidden("cmd", "submit_1");
+				$form->addLatLng("Latitude/Longitude w/latlngDefaultLocation Attribute:", "MyLatLng");
 				$form->addButton();
 				$form->render();
 
 echo '<pre>', highlight_string('<?php
-$form = new form("google_maps");
+$form = new form("googlemaps_0");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
-	"width" => 500,
-	"latlngDefaultLocation" => array(38.897, -77.040)
+	"width" => 500
 ));
-$form->addHidden("cmd", "submit");
-$form->addLatLng("Detault LatLng Functionality:", "field0");
-$form->addLatLng("Pre-Filled LatLng Functionality:", "field1", array(40.737, -73.994), array("zoom" => 12, "height" => 400));
+
+if(!empty($_GET["errormsg_0"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_0");
+$form->addLatLng("Latitude/Longitude:", "MyLatLng");
+$form->addLatLng("Latitude/Longitude w/Default Value:", "MyLatLngPrefilled", array(40.689, -74.045));
+$form->addLatLng("Latitude/Longitude w/Custom Dimensions:", "MyLatLngDimensions", "", array("style" => "width: 300px;", "height" => 150, "width" => 300));
+$form->addLatLng("Latitude/Longitude w/zoom Attribute:", "MyLatLngZoom", "", array("zoom" => 13));
+$form->addButton();
+$form->render();
+?>
+
+<br/><br/>
+
+<?php
+$form = new form("googlemaps_1");
+$form->setAttributes(array(
+	"includesPath" => "../includes",
+	"latlngDefaultLocation" => array(52.523, 13.411),
+	"width" => 500
+));
+
+if(!empty($_GET["errormsg_1"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_1");
+$form->addLatLng("Latitude/Longitude w/latlngDefaultLocation Attribute:", "MyLatLng");
 $form->addButton();
 $form->render();
 ?>', true), '</pre>';

@@ -13,7 +13,7 @@
 		</div>
 
 		<div id="pfbc_content">
-			<b>About This Project:</b>
+			<h4>About This Project:</h4>
 			<div>
 			The goals of this project are to...
 				<ul style="margin-top: 0; padding-top: 0;">
@@ -24,7 +24,7 @@
 				</ul>
 			</div>
 
-			<b>Included Functionality:</b>
+			<h4>Included Functionality:</h4>
 			<div>
 				<ul style="margin-top: 0; padding-top: 0;">
 					<li>Ajax Form Submission</li>
@@ -43,7 +43,7 @@
 				</ul>
 			</div>
 
-			<b>Installation Instructions:</b>
+			<h4>Installation Instructions:</h4>
 			<div>
 				<ol style="margin-top: 0; padding-top: 0;">
 					<li><a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download</a> and unzip formbuilder.zip</li>
@@ -55,14 +55,14 @@
 				</ol>
 			</div>
 
-			<b>System Requirements:</b>
+			<h4>System Requirements:</h4>
 			<div>
 				<ul style="margin-top: 0; padding-top: 0;">
 					<li>PHP 5 or greater</li>
 				</ul>
 			</div>	
 
-			<b>Documentation:</b>
+			<h4>Documentation:</h4>
 			<div>
 				<ul style="margin-top: 0; padding-top: 0;">
 					<li><a href="documentation/index.php">User's Reference Guide</a></li>
@@ -70,7 +70,7 @@
 				</ul>
 			</div>	
 
-			<b>Included Tutorials/Examples:</b>
+			<h4>Included Tutorials/Examples:</h4>
 			<div>
 				<ul style="margin-top: 0; padding-top: 0;">
 					<li><a href="examples/form-elements.php">All Supported Form Elements</a></li>
@@ -79,7 +79,6 @@
 					<li><a href="examples/layout.php">Layout</a></li>
 					<li><a href="examples/jquery.php">jQuery</a></li>
 					<li><a href="examples/google-maps.php">Google Maps</a></li>
-					<li><a href="examples/tooltips.php">Tooltips</a></li>
 					<li><a href="examples/captcha.php">Captcha</a></li>
 					<li><a href="examples/web-editors.php">Web Editors</a></li>
 					<li><a href="examples/buttons.php">Buttons</a></li>
@@ -89,7 +88,7 @@
 				</ul>
 			</div>
 
-			<b>Donate:</b>
+			<h4>Donate:</h4>
 			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 			<div>
 				If you would like to support the development of this project with a monetary donation, please use the button provided below to securely submit your donation through PayPal.<br/>

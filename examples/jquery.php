@@ -43,7 +43,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 			</div>
 
 			<div id="pfbc_content">
-				<p><b>jQuery</b> - jQuery's javascript library and jQueryUI's functionality are leveraged heavily throughout this project.  Below you'll find two lists.  The first list serves as this example files table of contents and will help you find the specific subsection you're looking for in this length example file.  The second list provides the form/element attributes that affect jQuery's behavior within
+				<p><b>jQuery</b> - jQuery's javascript library and jQueryUI's functionality are leveraged heavily throughout this project.  Below you'll find two lists.  The first list serves as this example file's table of contents and will help you find the specific subsection you're looking for in this lengthy webpage.  The second list provides more details on the various form/element attributes that affect jQuery's behavior within
 				this project.</p>
 
 				<h4>Table of Contents</h4>
@@ -60,19 +60,20 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 				<h4 style="margin-top: 1em;">Form/Element Attributes</h4>
 				<ul style="margin: 0;">
-					<li>preventJQueryLoad - jQuery's core javascript file is a required for this project to function correctly.  Because of this, the latest version - 1.4.2 - is automatically included with every form rendered.
-					The "preventJQueryLoad" form attribute can be used to prevent this default behavior.  If you're already including jQuery's js file outside of this project, you will need to make use of this attribute to prevent
+					<li>preventJQueryLoad - Including jQuery and jQueryUI's core javascript files are a requirement for this project to function correctly.  Because of this, the latest versions, 1.4.2 and 1.8.4 respectively, are automatically included with every form rendered.
+					The "preventJQueryLoad" form attribute can be used to prevent jQuery's js file from being loaded by the project.  If you're already including jQuery's js file outside of this project, you will need to make use of this attribute to prevent
 					duplicate includes.</li>
-					<li>preventJQueryUILoad - This form attribute is identical to "preventJQueryLoad" except it affects jQueryUI's javascript file.  See the previous attribute for more information.</li>
+					<li>preventJQueryUILoad - This form attribute is identical to "preventJQueryLoad" except it affects jQueryUI's js file.  See the previous attribute for more information.</li>
 					<li>jqueryDateFormat - The "jqueryDateFormat" form attribute controls the date format returned by both the date and daterange elements.
 					See <a href="http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate">http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate</a> for a reference guide on how to set this attribute.</li>
 					<li>jqueryUIButtons - This form attribute will replace all standard html buttons added to a form with jQueryUI's button widget functionality.</li>
 					<li>jqueryUITheme - The "jqueryUITheme" form attribute can be used to specify one of the twenty-four supported jQueryUI themes.  Available themes include "black-tie", "blitzer", "cupertino", "dark-hive", "dot-luv", "eggplant", "excite-bike", "flick", "hot-sneaks", "humanity", "le-frog", "mint-choc", "overcast", "pepper-grinder", "redmond", "smoothness", "south-street", "start", "sunny", "swanky-purse", "trontastic", "ui-darkness", "ui-lightness", "vader". 
 					To view each of these themes, see <a href="http://jqueryui.com/themeroller/">http://jqueryui.com/themeroller/</a>.
-					<li>jqueryOptions - The "jqueryOptions" element attribute gives you - the developer - the flexibility to apply jQuery options that are supported by the specific plugin used by the element.  This attribute can be used on
+					<li>jqueryOptions - The "jqueryOptions" element attribute gives you - the developer - the flexibility to apply jQuery options that are supported by the specific widget/plugin used by the element.  This attribute can be used on
 					the following elements - date, daterange, slider, and rating.  See the <a href="../documentation/index.php#Additional-Parameters">additionalParams Element Parameter</a> section in the documentation for an example of how to set this attribute.</li>
 					<li>jqueryUI - This element attribute only applies to the addButton function.  It is identical to the jqueryUIButtons form attribute, except it is applied on the element level and only affects a single button - 
 					not all buttons added to a form.</li>
+					<li>tooltip - The "tooltip" element attribute allows you to specify text or html content for a tooltip, which provides your users with more information about the element.  This project utilizes the Poshy Tip jQuery plugin for its tooltip functionality.</li>
 				</ul>
 
 				<p><b><a name="date">jQueryUI Datepicker Widget</a></b> - The date element utilizes jQueryUI's datepicker widget.  Below, you'll find several ways you can use the addDate function in your forms.  See <a href="http://jqueryui.com/demos/datepicker/">http://jqueryui.com/demos/datepicker/</a> for more information on this jQueryUI widget.</p>
@@ -119,7 +120,7 @@ $form->render();
 ?>', true), '</pre>';
 				?>
 
-				<p><b><a name="daterange">jQuery Date Range Picker Plugin</a></b> - The daterange element utilizes the date range picker jQuery plugin developed by Filament Group, Inc.  Below, you'll find several ways you can use the addDateRange function in your forms.  See <a href="http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/">http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/</a> for more information on this jQuery plugin.</p>
+				<p><b><a name="daterange">jQuery Date Range Picker Plugin</a></b> - The daterange element utilizes the Date Range Picker jQuery plugin developed by Filament Group, Inc.  Below, you'll find several ways you can use the addDateRange function in your forms.  See <a href="http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/">http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/</a> for more information on this jQuery plugin.</p>
 
 				<?php
 				$form = new form("jquery_1");
@@ -230,7 +231,7 @@ $form->render();
 				$form->addSort("Sort:", "MySort", array("Option #1", "Option #2", "Option #3"));
 				$form->addSort("Sort w/Associative Array of Options:", "MySortAssociative", array("option1" => "Option #1", "option2" => "Option #2", "option3" => "Option #3"));
 				$form->addCheckSort("Checksort:", "MyChecksort", "", array("Option #1", "Option #2", "Option #3"));
-				$form->addCheckSort("Checksort w/NoBreak Attribute:", "MyChecksortNoBreak", "", array("Option #1", "Option #2", "Option #3"), array("nobreak" => 1));
+				$form->addCheckSort("Checksort w/nobreak Attribute:", "MyChecksortNoBreak", "", array("Option #1", "Option #2", "Option #3"), array("nobreak" => 1));
 				$form->addCheckSort("Checksort w/Single Default Value:", "MyChecksortSingleDefault", "Option #3", array("Option #1", "Option #2", "Option #3"));
 				$form->addCheckSort("Checksort w/Array of Default Values:", "MyChecksortArrayDefault", array("option1", "option2"), array("option1" => "Option #1", "option2" => "Option #2", "option3" => "Option #3"));
 				$form->addButton();
@@ -345,7 +346,7 @@ $form->render();
 				?>
 
 				<p><b><a name="button">jQueryUI Button Widget</a></b> - This project includes support for jQueryUI's button widget.  The two forms below demonstrate how 
-				to activate jQueryUI buttons - either globally with the "jqueryUIButtons" form attribute or by using the "jqueryUI" element attribute to active a single 
+				to activate jQueryUI buttons - either globally with the "jqueryUIButtons" form attribute or by using the "jqueryUI" element attribute to activate a single 
 				button.  See <a href="http://jqueryui.com/demos/button/">http://jqueryui.com/demos/button/</a> for more information on this jQueryUI widget.</p>
 
 				<?php
@@ -428,7 +429,7 @@ $form->render();
 ?>', true), '</pre>';
 				?>
 
-				<p><b><a name="tooltip">jQuery Tooltip Plugin</a></b> - This project utilizes the Poshy Tip jQuery plugin for handling tooltips.  To activate a tooltip, simply set the "tooltip" element attribute.  See <a href="http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/">http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/</a> for more information on this jQuery plugin.</p>
+				<p><b><a name="tooltip">jQuery Tooltip Plugin</a></b> - This project utilizes the Poshy Tip jQuery plugin for handling tooltips.  To activate a tooltip, simply set the "tooltip" element attribute to a string.  Both plain-text and html content are supported.  See <a href="http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/">http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/</a> for more information on this jQuery plugin.</p>
 
 				<?php
 				$form = new form("jquery_8");
