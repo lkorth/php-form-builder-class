@@ -49,7 +49,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 				<p>When using the addCaptcha function in your forms, there are a few important things to keep in mind.  First, it's essential that you invoke the validate function after the form's data has been submitted.  If you fail to do this, the user's reCAPTCHA solution
 				will never be validated.  If you have questions regarding how to use the validate function, you can view this example file's php source code.  The second important thing to keep in mind is that reCAPTCHA only permits one challenge phrase per page.  So, this means
-				that you can only use the addCaptcha function once per webpage.</p>
+				that you can only use the addCaptcha function once per webpage.  Finally, you can use the javascript function Recaptcha.reload() to force a new reCAPTCHA challenge phrase to be displayed to the user.  This can be helpful if you're using the "ajax" form attribute to
+				submit the form's data via AJAX.</p>
 
 				<?php
 				$form = new form("captcha_0");

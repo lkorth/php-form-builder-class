@@ -3743,7 +3743,6 @@ STR;
 						$errorMsg = "The reCAPTCHA API public/private keys are tied to a specific domain name for security reasons.";
 					else
 						$errorMsg = "An unknown reCAPTCHA error has occurred.";
-
 				}
 			}
 			elseif(!empty($ele->required)) {
