@@ -3,14 +3,12 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
-	$form = new form("captcha");
+if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit_0") {
+	$form = new form("captcha_0");
 	if($form->validate())
-		$msg = "Congratulations! The information you enter passed the form's validation.";
+		header("Location: captcha.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
 	else
-		$msg = "Oops! The information you entered did not pass the form's validation.  Please review the following error message and re-try - " . $form->errorMsg;
-
-	header("Location: captcha.php?errorMsg=" . urlencode($msg));
+		header("Location: captcha.php");
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
@@ -31,60 +29,55 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 			</div>
 
 			<div id="pfbc_content">
-				<p><b>Captcha</b> - The captcha form element, which integrates reCAPTCHA, is different than many of the other form elements within the form builder class in several ways.
-				The first difference is that the captcha element can only be used once per webpage, which is a reCAPTCHA restriction.  If two or more captcha elements are attached to a form,
-				the additional captchas will be ignored.  A second difference exists in how the captcha element is attached to a form.  The addCaptcha method has the following format -
-				addCaptcha($label="", $additionalParams="").  The $name and $value parameters that exist for many of the other form elements are excluded because reCAPTCHA hardcodes the $name to
-				"recaptcha_response_field" and there is no need to assign the $value parameter as reCAPTCHA cycles a new pair of challenge words with each page load.</p>
+				<p><b>Captcha</b> - This project leverages reCAPTCHA's anti-bot service to provide captcha functionality.  For more information about this service, visit <a href="http://www.google.com/recaptcha">http://www.google.com/recaptcha</a>.  
+				Below you will find a detailed list of the various form attributes that affect the reCAPTCHA integration.<p>
 
-				<p>This functionality requires that a session be started on the page where the form is being built and validated.  Simply call session_start() at the top of your page and 
-				you will be all set.</p>
+				<ul style="margin: 0;">
+					<li>captchaLang - The "captchaLang" form attribute allows you - the developer - to internationalize reCAPTCHA by supplying a two-character language code.  This project uses
+					"en" by default which displays text in English.  Supported options include "en" (English), "nl" (Dutch), "fr" (French), "de" (German), "pt" (Portuguese), "ru" (Russian), "es" (Spanish), and "tr" (Turkish).</li>
+					<li>captchaPublicKey - reCAPTCHA requires both a public and private key to function properly.  You receive each of these keys during the reCAPTCHA signup process.  By default, these keys are
+					only enabled on a specific domain (and all subdomain); however, there is also an option to generate keys that are enabled on all domains.  To provide out-of-the-box functionality,
+					this project uses keys that were generated to be enabled accross all domains.  For security, it is recommended that you complete the reCAPTCHA signup process at <a href="https://www.google.com/recaptcha/admin/create">https://www.google.com/recaptcha/admin/create</a>
+					and generate keys specific to the domain in which you will be using this project.</li>
+					<li>captchaPrivateKey - See previous form attribute, "captchaPublicKey", for more information.</li>
+					<li>captchaTheme - This form attribute allows you to modify the look/feel of the reCAPTCHA's container by supplying one of the four pre-defined themes.
+					Available options include "red", "white", "blackglass", and "clean".  These themes can be viewed at <a href="http://code.google.com/apis/recaptcha/docs/customization.html">http://code.google.com/apis/recaptcha/docs/customization.html</a>.
+					This project sets the "captchaTheme" attribute to "white" by default.</li>
+					<li>preventCaptchaLoad - The "preventCaptchaLoad" form attribute is used to prevent reCAPTCHA's javascript file from being included twice.  The only time this attribute is needed would be if you're
+					manually including reCAPTCHA's js file separate from this project.  Chances are, you will never have to use this attribute, but it's included just in case.</li>
+				</ul>
 
-				<p>Also, if you look in the php souce code of this example, you will notice that I'm passing a unique identifier when creating a new instance of the form class.  That line 
-				looks like this - $form = new form("captcha");.  After the form is submitted, you will see the exact same line before the validate() function is used.  These 
-				identifiers must match exactly for the validation to function properly.</p>
-
-				<p>reCAPTCHA and Ajax - If you are placing the captcha form element in a form submitting via ajax, check out the <a href="captcha-ajax.php">reCAPTCHA ajax example</a> for further instructions.</p>
-
-				<p>The <i>captchaTheme</i> form attribute allows the look and feel of reCAPTCHA to be cumstomized.  By default, the white theme will be applied.  Click the links below to view different reCAPTCHA themes.<br />
-				<a href="captcha.php?theme=white">white</a>, <a href="captcha.php?theme=red">red</a>, <a href="captcha.php?theme=blackglass">blackglass</a>, or <a href="captcha.php?theme=clean">clean</a></p>
-
-				<p>The <i>captchaLang</i> attribute allows the language of reCAPTCHA to be cumstomized.  By default, English will be used - <a href="http://recaptcha.net/apidocs/captcha/client.html">View reCAPTCHA's Supported Languages</a>.</p>
+				<p>When using the addCaptcha function in your forms, there are a few important things to keep in mind.  First, it's essential that you invoke the validate function after the form's data has been submitted.  If you fail to do this, the user's reCAPTCHA solution
+				will never be validated.  If you have questions regarding how to use the validate function, you can view this example file's php source code.  The second important thing to keep in mind is that reCAPTCHA only permits one challenge phrase per page.  So, this means
+				that you can only use the addCaptcha function once per webpage.</p>
 
 				<?php
-				if(!empty($_GET["errorMsg"]))
-					echo("<div style='text-align: center; font-weight: bold; color: #990000;'>" . htmlentities(stripslashes($_GET["errorMsg"])) . "</div>");
-				
-				$captchaTheme = "white";
-				if(!empty($_GET["theme"]))
-					$captchaTheme = $_GET["theme"];
-
-				$form = new form("captcha");
+				$form = new form("captcha_0");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
-					"width" => 400,
-					"captchaTheme" => $captchaTheme
+					"width" => 400
 				));
-				$form->addHidden("cmd", "submit");
-				$form->addTextarea("Comments:", "field0");
-				$form->addCaptcha();
+
+				if(!empty($_GET["errormsg_0"]))
+					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+				$form->addHidden("cmd", "submit_0");
+				$form->addCaptcha("Captcha:");
 				$form->addButton();
 				$form->render();
 
 echo '<pre>', highlight_string('<?php
-$captchaTheme = "white";
-if(!empty($_GET["theme"]))
-	$captchaTheme = $_GET["theme"];
-
-$form = new form("captcha");
+$form = new form("captcha_0");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
-	"width" => 400,
-	"captchaTheme" => $captchaTheme
+	"width" => 400
 ));
-$form->addHidden("cmd", "submit");
-$form->addTextarea("Comments:", "field0");
-$form->addCaptcha();
+
+if(!empty($_GET["errormsg_0"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_0");
+$form->addCaptcha("Captcha:");
 $form->addButton();
 $form->render();
 ?>', true), '</pre>';

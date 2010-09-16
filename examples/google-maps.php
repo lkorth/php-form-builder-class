@@ -33,6 +33,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				detailed list of the various form/element attributes that affect the Google Maps API v3 integration.<p>
 
 				<ul style="margin: 0;">
+					<li>preventGoogleMapsLoad - This form attribute is used to prevent the required Google Maps javascript file from being loaded when the form is rendered.  If you have multiple forms
+					on a signle page that invoke the addLatLng function, you will need to make use of this attribute to prevent a duplicate include of the Google Maps js file.
 					<li>latlngDefaultLocation - The "latlngDefaultLocation" form attribute can be used to specify the map's default location when no value is provided.  By default, this attribute
 					will be set to array(41.847, -87.661), which places the marker on Chigago, IL.</li>
 					<li>height - This element attribute controls the height of the Google Map canvas.  Its default value will be set to 200.</li>
@@ -72,6 +74,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 					"noAutoFocus" => 1,
 					"preventJQueryLoad" => 1,
 					"preventJQueryUILoad" => 1,
+					"preventGoogleMapsLoad" => 1,
 					"latlngDefaultLocation" => array(52.523, 13.411),
 					"width" => 500
 				));

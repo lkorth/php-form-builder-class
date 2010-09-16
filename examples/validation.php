@@ -47,10 +47,12 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 			<div id="pfbc_content">
 
-				<p><b>Validation</b> - Javascript/PHP validation within this project occurs when a form element meets one of four scenarios listed below.</p>
+				<p><b>Validation</b> - Javascript/PHP validation within this project occurs when a form element meets one of five scenarios listed below.</p>
 				<ol style="margin: 0;">
 					<li>When the "required" element attribute is applied.  The "required" attribute places a red asterisks to the left of the element's label to provide
 					a visual notification to the user that this field must be populated.</li>
+					<li>The element is of type "captcha".  Elements added to the form by the addCaptcha function are checked after (php) submission to ensure
+					the reCAPTCHA challenge phrase was answered correctly.</li>
 					<li>The element is of type "email".  Elements added to the form by the addEmail function are checked before (javascript) and after (php) submission to ensure
 					they contain an email address that is formatted correctly.</li>
 					<li>When the "integer" element attribute is applied.  The "integer" attribute allows only numbers to be typed into textboxes.  Copy-and-paste is allowed, so the
@@ -58,7 +60,7 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 					<li>When the "alphanumeric" element attribute is applied.  The "alphanumeric" attribute allows only numbers and/or letters to be typed into textboxes.  Copy-and-paste is allowed, so the
 					element's value is checked before (javascript) and after (php) submission to ensure no illegal characters exist.</li>
 				</ol>
-				<p>The first example form provided below demonstrates each of these four scenarios.</p>
+				<p>The first example form provided below demonstrates each of these five scenarios.</p>
 
 				<?php
 				$form = new form("validation_0");
@@ -72,6 +74,7 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 				$form->addHidden("cmd", "submit_0");
 				$form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
+				$form->addCaptcha("Captcha:");
 				$form->addEmail("Email Address:", "MyEmail");
 				$form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
 				$form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
@@ -336,7 +339,7 @@ $form->render();
 ', true), '</pre>';
 ?>
 	
-				<p><b>Modifying Error Messages</b> - Each of the four validation error types (see top section of this page for detailed list) generates its own error message explaining
+				<p><b>Modifying Error Messages</b> - Each of the five validation error types (see top section of this page for detailed list) generates its own error message explaining
 				what happened to the user so he/she can correct and re-submit.  There are four form attributes - "errorMsgFormat", "emailErrorMsgFormat", "integerErrorMsgFormat", 
 				and "alphanumericErrorMsgFormat" - that can be used to customize each of these error messages.  If "[LABEL]" is found within the error message, it will be replaced
 				by the appropriate element's label.</p>
