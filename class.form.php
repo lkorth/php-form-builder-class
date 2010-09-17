@@ -157,6 +157,67 @@ class form extends pfbc {
 		return $this->render(true);
 	}
 
+	public function addButton($value="Submit", $type="submit", $additionalParams="") {
+		$params = array("value" => $value, "type" => $type);
+		if(!empty($additionalParams) && is_array($additionalParams)) {
+			foreach($additionalParams as $key => $value)
+				$params[$key] = $value;
+		}
+
+		if(!empty($this->jqueryUIButtons))
+			$params["jqueryUI"] = 1;
+
+		$button = new button();
+		$button->setAttributes($params);
+		if(!empty($params["jqueryUI"]))
+			$this->jqueryUIButtonExists = 1;
+
+		$this->addElement("", "", "button", $button->render(true));
+	}
+
+	public function addCaptcha($label="", $additionalParams="") {
+		$this->addElement($label, "recaptcha_response_field", "captcha", "", $additionalParams);
+	}	
+
+	public function addCheckbox($label, $name, $value="", $options="", $additionalParams="") {
+		if(!is_array($additionalParams))
+			$additionalParams = array();
+		$additionalParams["options"] = $options;	
+		$this->addElement($label, $name, "checkbox", $value, $additionalParams);
+	}
+
+	public function addCheckSort($label, $name, $value="", $options="", $additionalParams="") {
+		if(!is_array($additionalParams))
+			$additionalParams = array();
+		$additionalParams["options"] = $options;	
+		$this->addElement($label, $name, "checksort", $value, $additionalParams);
+	}
+
+	public function addCKEditor($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "ckeditor", $value, $additionalParams);
+	}
+
+	public function addColor($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "color", $value, $additionalParams);
+	}
+
+	//Included for backwards compatibility.  The preferred function is now addColor.
+	public function addColorPicker($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "color", $value, $additionalParams);
+	}
+
+	public function addCountry($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "country", $value, $additionalParams);
+	}
+
+	public function addDate($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "date", $value, $additionalParams);
+	}
+
+	public function addDateRange($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "daterange", $value, $additionalParams);
+	}
+
 	private function addElement($label, $name, $type="", $value="", $additionalParams="") {
 		$params = array("label" => $label, "name" => $name);
 		if(!empty($type))
@@ -169,332 +230,96 @@ class form extends pfbc {
 		$this->attachElement($params);
 	}
 
+	public function addEmail($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "email", $value, $additionalParams);
+	}
+
+	public function addFile($label, $name, $additionalParams="") {
+		$this->addElement($label, $name, "file", "", $additionalParams);
+	}
+
+	public function addHidden($name, $value="", $additionalParams="") {
+		$this->addElement("", $name, "hidden", $value, $additionalParams);
+	}
+
+	public function addHTML($value , $additionalParams="") {
+		$this->addElement("", "", "html", $value, $additionalParams);
+	}
+
+	public function addHTMLExternal($value , $additionalParams="") {
+		$this->addElement("", "", "htmlexternal", $value, $additionalParams);
+	}
+
+	public function addLatLng($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "latlng", $value, $additionalParams);
+	}
+
+	public function addPassword($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "password", $value, $additionalParams);
+	}
+
+	public function addRadio($label, $name, $value="", $options="", $additionalParams="") {
+		if(!is_array($additionalParams))
+			$additionalParams = array();
+		$additionalParams["options"] = $options;	
+		$this->addElement($label, $name, "radio", $value, $additionalParams);
+	}
+
+	public function addRating($label, $name, $value="", $options="", $additionalParams="") {
+		if(!is_array($additionalParams))
+			$additionalParams = array();
+		$additionalParams["options"] = $options;	
+		$this->addElement($label, $name, "rating", $value, $additionalParams);
+	}
+
+	public function addSelect($label, $name, $value="", $options="", $additionalParams="") {
+		if(!is_array($additionalParams))
+			$additionalParams = array();
+		$additionalParams["options"] = $options;	
+		$this->addElement($label, $name, "select", $value, $additionalParams);
+	}
+
+	public function addSlider($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "slider", $value, $additionalParams);
+	}
+
+	public function addSort($label, $name, $options="", $additionalParams="") {
+		if(!is_array($additionalParams))
+			$additionalParams = array();
+		$additionalParams["options"] = $options;	
+		$this->addElement($label, $name, "sort", "", $additionalParams);
+	}
+
+	public function addState($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "state", $value, $additionalParams);
+	}
+
+	public function addTextarea($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "textarea", $value, $additionalParams);
+	}
+
+	public function addTextbox($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "text", $value, $additionalParams);
+	}
+
+	public function addTrueFalse($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "truefalse", $value, $additionalParams);
+	}
+
+	public function addWebEditor($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "webeditor", $value, $additionalParams);
+	}
+
+	public function addYesNo($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "yesno", $value, $additionalParams);
+	}
+
 	private function attachElement($params) {
 		$ele = new element();
 		$ele->setAttributes($params);
 		$eleType = &$ele->attributes["type"];
 
-		if($eleType == "state") {
-			$eleType = "select";
-
-			if(empty($this->stateArr)) {
-				$this->stateArr = array(
-					array("value" => "", "text" => "--Select a State/Province/Territory--"),
-					array("value" => "AL", "text" => "Alabama"),
-					array("value" => "AK", "text" => "Alaska"),
-					array("value" => "AZ", "text" => "Arizona"),
-					array("value" => "AR", "text" => "Arkansas"),
-					array("value" => "CA", "text" => "California"),
-					array("value" => "CO", "text" => "Colorado"),
-					array("value" => "CT", "text" => "Connecticut"),
-					array("value" => "DE", "text" => "Delaware"),
-					array("value" => "DC", "text" => "District of Columbia"),
-					array("value" => "FL", "text" => "Florida"),
-					array("value" => "GA", "text" => "Georgia"),
-					array("value" => "HI", "text" => "Hawaii"),
-					array("value" => "ID", "text" => "Idaho"),
-					array("value" => "IL", "text" => "Illinois"),
-					array("value" => "IN", "text" => "Indiana"),
-					array("value" => "IA", "text" => "Iowa"),
-					array("value" => "KS", "text" => "Kansas"),
-					array("value" => "KY", "text" => "Kentucky"),
-					array("value" => "LA", "text" => "Louisiana"),
-					array("value" => "ME", "text" => "Maine"),
-					array("value" => "MD", "text" => "Maryland"),
-					array("value" => "MA", "text" => "Massachusetts"),
-					array("value" => "MI", "text" => "Michigan"),
-					array("value" => "MN", "text" => "Minnesota"),
-					array("value" => "MS", "text" => "Mississippi"),
-					array("value" => "MO", "text" => "Missouri"),
-					array("value" => "MT", "text" => "Montana"),
-					array("value" => "NE", "text" => "Nebraska"),
-					array("value" => "NV", "text" => "Nevada"),
-					array("value" => "NH", "text" => "New Hampshire"),
-					array("value" => "NJ", "text" => "New Jersey"),
-					array("value" => "NM", "text" => "New Mexico"),
-					array("value" => "NY", "text" => "New York"),
-					array("value" => "NC", "text" => "North Carolina"),
-					array("value" => "ND", "text" => "North Dakota"),
-					array("value" => "OH", "text" => "Ohio"),
-					array("value" => "OK", "text" => "Oklahoma"),
-					array("value" => "OR", "text" => "Oregon"),
-					array("value" => "PA", "text" => "Pennsylvania"),
-					array("value" => "RI", "text" => "Rhode Island"),
-					array("value" => "SC", "text" => "South Carolina"),
-					array("value" => "SD", "text" => "South Dakota"),
-					array("value" => "TN", "text" => "Tennessee"),
-					array("value" => "TX", "text" => "Texas"),
-					array("value" => "UT", "text" => "Utah"),
-					array("value" => "VT", "text" => "Vermont"),
-					array("value" => "VA", "text" => "Virginia"),
-					array("value" => "WA", "text" => "Washington"),
-					array("value" => "WV", "text" => "West Virginia"),
-					array("value" => "WI", "text" => "Wisconsin"),
-					array("value" => "WY", "text" => "Wyoming"),
-					array("value" => "", "text" => ""),
-					array("value" => "", "text" => "-- Canadian Provinces/Territories --"),
-					array("value" => "AB", "text" => "Alberta"),
-					array("value" => "BC", "text" => "British Columbia"),
-					array("value" => "MB", "text" => "Manitoba"),
-					array("value" => "NB", "text" => "New Brunswick"),
-					array("value" => "NL", "text" => "Newfoundland and Labrador"),
-					array("value" => "NS", "text" => "Nova Scotia"),
-					array("value" => "NT", "text" => "Northwest Territories"),
-					array("value" => "NU", "text" => "Nunavut"),
-					array("value" => "ON", "text" => "Ontario"),
-					array("value" => "PE", "text" => "Prince Edward Island"),
-					array("value" => "QC", "text" => "Qu&#233;bec"),
-					array("value" => "SK", "text" => "Saskatchewan"),
-					array("value" => "YT", "text" => "Yukon"),
-					array("value" => "", "text" => ""),
-					array("value" => "", "text" => "-- U.S. Territories--"),
-					array("value" => "AS", "text" => "American Samoa"),
-					array("value" => "FM", "text" => "Federated States of Micronesia"),
-					array("value" => "GU", "text" => "Guam"),
-					array("value" => "MH", "text" => "Marshall Islands"),
-					array("value" => "PW", "text" => "Palau"),
-					array("value" => "PR", "text" => "Puerto Rico"),
-					array("value" => "VI", "text" => "Virgin Islands")
-				);
-			}
-
-			$ele->options = array();
-			$stateSize = sizeof($this->stateArr);
-			for($s = 0; $s < $stateSize; ++$s) {
-				$opt = new option();
-				$opt->setAttributes($this->stateArr[$s]);
-				$ele->options[] = $opt;
-			}
-		}	
-		elseif($eleType == "country") {
-			$eleType = "select";
-
-			if(empty($this->countryArr)) {
-				$this->countryArr = array(
-					array("value" => "", "text" => "--Select a Country--"),
-					array("value" => "US", "text" => "United States"),
-					array("value" => "AF", "text" => "Afghanistan"),
-					array("value" => "AL", "text" => "Albania"),
-					array("value" => "DZ", "text" => "Algeria"),
-					array("value" => "AS", "text" => "American Samoa"),
-					array("value" => "AD", "text" => "Andorra"),
-					array("value" => "AO", "text" => "Angola"),
-					array("value" => "AI", "text" => "Anguilla"),
-					array("value" => "AG", "text" => "Antigua and Barbuda"),
-					array("value" => "AR", "text" => "Argentina"),
-					array("value" => "AM", "text" => "Armenia"),
-					array("value" => "AW", "text" => "Aruba"),
-					array("value" => "AU", "text" => "Australia"),
-					array("value" => "AT", "text" => "Austria"),
-					array("value" => "AZ", "text" => "Azerbaijan"),
-					array("value" => "BS", "text" => "Bahamas"),
-					array("value" => "BH", "text" => "Bahrain"),
-					array("value" => "BD", "text" => "Bangladesh"),
-					array("value" => "BB", "text" => "Barbados"),
-					array("value" => "BY", "text" => "Belarus"),
-					array("value" => "BE", "text" => "Belgium"),
-					array("value" => "BZ", "text" => "Belize"),
-					array("value" => "BJ", "text" => "Benin"),
-					array("value" => "BM", "text" => "Bermuda"),
-					array("value" => "BT", "text" => "Bhutan"),
-					array("value" => "BO", "text" => "Bolivia"),
-					array("value" => "BA", "text" => "Bosnia and Herzegowina"),
-					array("value" => "BW", "text" => "Botswana"),
-					array("value" => "BR", "text" => "Brazil"),
-					array("value" => "IO", "text" => "British Indian Ocean Territory"),
-					array("value" => "BN", "text" => "Brunei Darussalam"),
-					array("value" => "BG", "text" => "Bulgaria"),
-					array("value" => "BF", "text" => "Burkina Faso"),
-					array("value" => "BI", "text" => "Burundi"),
-					array("value" => "KH", "text" => "Cambodia"),
-					array("value" => "CM", "text" => "Cameroon"),
-					array("value" => "CA", "text" => "Canada"),
-					array("value" => "CV", "text" => "Cape Verde"),
-					array("value" => "KY", "text" => "Cayman Islands"),
-					array("value" => "CF", "text" => "Central African Republic"),
-					array("value" => "TD", "text" => "Chad"),
-					array("value" => "CL", "text" => "Chile"),
-					array("value" => "CN", "text" => "China"),
-					array("value" => "CO", "text" => "Colombia"),
-					array("value" => "CG", "text" => "Congo"),
-					array("value" => "CK", "text" => "Cook Islands"),
-					array("value" => "CR", "text" => "Costa Rica"),
-					array("value" => "CI", "text" => "Cote d'Ivoire"),
-					array("value" => "HR", "text" => "Croatia"),
-					array("value" => "CY", "text" => "Cyprus"),
-					array("value" => "CZ", "text" => "Czech Republic"),
-					array("value" => "DK", "text" => "Denmark"),
-					array("value" => "DJ", "text" => "Djibouti"),
-					array("value" => "DM", "text" => "Dominica"),
-					array("value" => "DO", "text" => "Dominican Republic"),
-					array("value" => "EC", "text" => "Ecuador"),
-					array("value" => "EG", "text" => "Egypt"),
-					array("value" => "SV", "text" => "El Salvador"),
-					array("value" => "GQ", "text" => "Equatorial Guinea"),
-					array("value" => "ER", "text" => "Eritrea"),
-					array("value" => "EE", "text" => "Estonia"),
-					array("value" => "ET", "text" => "Ethiopia"),
-					array("value" => "FO", "text" => "Faroe Islands"),
-					array("value" => "FJ", "text" => "Fiji"),
-					array("value" => "FI", "text" => "Finland"),
-					array("value" => "FR", "text" => "France"),
-					array("value" => "GF", "text" => "French Guiana"),
-					array("value" => "PF", "text" => "French Polynesia"),
-					array("value" => "GA", "text" => "Gabon"),
-					array("value" => "GM", "text" => "Gambia"),
-					array("value" => "GE", "text" => "Georgia"),
-					array("value" => "DE", "text" => "Germany"),
-					array("value" => "GH", "text" => "Ghana"),
-					array("value" => "GI", "text" => "Gibraltar"),
-					array("value" => "GR", "text" => "Greece"),
-					array("value" => "GL", "text" => "Greenland"),
-					array("value" => "GD", "text" => "Grenada"),
-					array("value" => "GP", "text" => "Guadeloupe"),
-					array("value" => "GU", "text" => "Guam"),
-					array("value" => "GT", "text" => "Guatemala"),
-					array("value" => "GN", "text" => "Guinea"),
-					array("value" => "GW", "text" => "Guinea-Bissau"),
-					array("value" => "GY", "text" => "Guyana"),
-					array("value" => "HT", "text" => "Haiti"),
-					array("value" => "HM", "text" => "Heard Island And Mcdonald Islands"),
-					array("value" => "HK", "text" => "Hong Kong"),
-					array("value" => "HU", "text" => "Hungary"),
-					array("value" => "IS", "text" => "Iceland"),
-					array("value" => "IN", "text" => "India"),
-					array("value" => "ID", "text" => "Indonesia"),
-					array("value" => "IR", "text" => "Iran, Islamic Republic Of"),
-					array("value" => "IL", "text" => "Israel"),
-					array("value" => "IT", "text" => "Italy"),
-					array("value" => "JM", "text" => "Jamaica"),
-					array("value" => "JP", "text" => "Japan"),
-					array("value" => "JO", "text" => "Jordan"),
-					array("value" => "KZ", "text" => "Kazakhstan"),
-					array("value" => "KE", "text" => "Kenya"),
-					array("value" => "KI", "text" => "Kiribati"),
-					array("value" => "KP", "text" => "Korea, Democratic People's Republic Of"),
-					array("value" => "KW", "text" => "Kuwait"),
-					array("value" => "KG", "text" => "Kyrgyzstan"),
-					array("value" => "LA", "text" => "Lao People's Democratic Republic"),
-					array("value" => "LV", "text" => "Latvia"),
-					array("value" => "LB", "text" => "Lebanon"),
-					array("value" => "LS", "text" => "Lesotho"),
-					array("value" => "LR", "text" => "Liberia"),
-					array("value" => "LI", "text" => "Liechtenstein"),
-					array("value" => "LT", "text" => "Lithuania"),
-					array("value" => "LU", "text" => "Luxembourg"),
-					array("value" => "MO", "text" => "Macau"),
-					array("value" => "MK", "text" => "Macedonia, The Former Yugoslav Republic Of"),
-					array("value" => "MG", "text" => "Madagascar"),
-					array("value" => "MW", "text" => "Malawi"),
-					array("value" => "MY", "text" => "Malaysia"),
-					array("value" => "MV", "text" => "Maldives"),
-					array("value" => "ML", "text" => "Mali"),
-					array("value" => "MT", "text" => "Malta"),
-					array("value" => "MH", "text" => "Marshall Islands"),
-					array("value" => "MQ", "text" => "Martinique"),
-					array("value" => "MR", "text" => "Mauritania"),
-					array("value" => "MU", "text" => "Mauritius"),
-					array("value" => "MX", "text" => "Mexico"),
-					array("value" => "FM", "text" => "Micronesia, Federated States Of"),
-					array("value" => "MD", "text" => "Moldova, Republic Of"),
-					array("value" => "MC", "text" => "Monaco"),
-					array("value" => "MN", "text" => "Mongolia"),
-					array("value" => "MS", "text" => "Montserrat"),
-					array("value" => "MA", "text" => "Morocco"),
-					array("value" => "MZ", "text" => "Mozambique"),
-					array("value" => "NA", "text" => "Namibia"),
-					array("value" => "NP", "text" => "Nepal"),
-					array("value" => "NL", "text" => "Netherlands"),
-					array("value" => "AN", "text" => "Netherlands Antilles"),
-					array("value" => "NC", "text" => "New Caledonia"),
-					array("value" => "NZ", "text" => "New Zealand"),
-					array("value" => "NI", "text" => "Nicaragua"),
-					array("value" => "NE", "text" => "Niger"),
-					array("value" => "NG", "text" => "Nigeria"),
-					array("value" => "NF", "text" => "Norfolk Island"),
-					array("value" => "MP", "text" => "Northern Mariana Islands"),
-					array("value" => "NO", "text" => "Norway"),
-					array("value" => "OM", "text" => "Oman"),
-					array("value" => "PK", "text" => "Pakistan"),
-					array("value" => "PW", "text" => "Palau"),
-					array("value" => "PA", "text" => "Panama"),
-					array("value" => "PG", "text" => "Papua New Guinea"),
-					array("value" => "PY", "text" => "Paraguay"),
-					array("value" => "PE", "text" => "Peru"),
-					array("value" => "PH", "text" => "Philippines"),
-					array("value" => "PL", "text" => "Poland"),
-					array("value" => "PT", "text" => "Portugal"),
-					array("value" => "PR", "text" => "Puerto Rico"),
-					array("value" => "QA", "text" => "Qatar"),
-					array("value" => "RE", "text" => "Reunion"),
-					array("value" => "RO", "text" => "Romania"),
-					array("value" => "RU", "text" => "Russian Federation"),
-					array("value" => "RW", "text" => "Rwanda"),
-					array("value" => "KN", "text" => "Saint Kitts and Nevis"),
-					array("value" => "LC", "text" => "Saint Lucia"),
-					array("value" => "VC", "text" => "Saint Vincent and the Grenadines"),
-					array("value" => "WS", "text" => "Samoa"),
-					array("value" => "SM", "text" => "San Marino"),
-					array("value" => "SA", "text" => "Saudi Arabia"),
-					array("value" => "SN", "text" => "Senegal"),
-					array("value" => "SC", "text" => "Seychelles"),
-					array("value" => "SL", "text" => "Sierra Leone"),
-					array("value" => "SG", "text" => "Singapore"),
-					array("value" => "SK", "text" => "Slovakia"),
-					array("value" => "SI", "text" => "Slovenia"),
-					array("value" => "SB", "text" => "Solomon Islands"),
-					array("value" => "SO", "text" => "Somalia"),
-					array("value" => "ZA", "text" => "South Africa"),
-					array("value" => "ES", "text" => "Spain"),
-					array("value" => "LK", "text" => "Sri Lanka"),
-					array("value" => "SD", "text" => "Sudan"),
-					array("value" => "SR", "text" => "Suriname"),
-					array("value" => "SZ", "text" => "Swaziland"),
-					array("value" => "SE", "text" => "Sweden"),
-					array("value" => "CH", "text" => "Switzerland"),
-					array("value" => "SY", "text" => "Syrian Arab Republic"),
-					array("value" => "TW", "text" => "Taiwan, Province Of China"),
-					array("value" => "TJ", "text" => "Tajikistan"),
-					array("value" => "TZ", "text" => "Tanzania, United Republic Of"),
-					array("value" => "TH", "text" => "Thailand"),
-					array("value" => "TG", "text" => "Togo"),
-					array("value" => "TO", "text" => "Tonga"),
-					array("value" => "TT", "text" => "Trinidad and Tobago"),
-					array("value" => "TN", "text" => "Tunisia"),
-					array("value" => "TR", "text" => "Turkey"),
-					array("value" => "TM", "text" => "Turkmenistan"),
-					array("value" => "TC", "text" => "Turks and Caicos Islands"),
-					array("value" => "TV", "text" => "Tuvalu"),
-					array("value" => "UG", "text" => "Uganda"),
-					array("value" => "UA", "text" => "Ukraine"),
-					array("value" => "AE", "text" => "United Arab Emirates"),
-					array("value" => "GB", "text" => "United Kingdom"),
-					array("value" => "UY", "text" => "Uruguay"),
-					array("value" => "UZ", "text" => "Uzbekistan"),
-					array("value" => "VU", "text" => "Vanuatu"),
-					array("value" => "VE", "text" => "Venezuela"),
-					array("value" => "VN", "text" => "Vietnam"),
-					array("value" => "VG", "text" => "Virgin Islands (British)"),
-					array("value" => "VI", "text" => "Virgin Islands (U.S.)"),
-					array("value" => "WF", "text" => "Wallis and Futuna Islands"),
-					array("value" => "EH", "text" => "Western Sahara"),
-					array("value" => "YE", "text" => "Yemen"),
-					array("value" => "YU", "text" => "Yugoslavia"),
-					array("value" => "ZM", "text" => "Zambia"),
-					array("value" => "ZR", "text" => "Zaire"),
-					array("value" => "ZW", "text" => "Zimbabwe")
-				);
-			}
-
-			$ele->options = array();
-			$countrySize = sizeof($this->countryArr);
-			for($s = 0; $s < $countrySize; ++$s) {
-				$opt = new option();
-				$opt->setAttributes($this->countryArr[$s]);
-				$ele->options[] = $opt;
-			}
-		}
-		elseif($eleType == "yesno") {
+		if($eleType == "yesno") {
 			//The yesno field is a shortcut for creating a radio button with two options - yes and no.
 			$eleType = "radio";
 			$ele->options = array();
@@ -812,154 +637,34 @@ class form extends pfbc {
 		$this->elements[] = $ele;
 	}
 
-	public function addButton($value="Submit", $type="submit", $additionalParams="") {
-		$params = array("value" => $value, "type" => $type);
-		if(!empty($additionalParams) && is_array($additionalParams)) {
-			foreach($additionalParams as $key => $value)
-				$params[$key] = $value;
-		}
-
-		if(!empty($this->jqueryUIButtons))
-			$params["jqueryUI"] = 1;
-
-		$button = new button();
-		$button->setAttributes($params);
-		if(!empty($params["jqueryUI"]))
-			$this->jqueryUIButtonExists = 1;
-
-		$this->addElement("", "", "button", $button->render(true));
-	}
-
-	public function addCaptcha($label="", $additionalParams="") {
-		$this->addElement($label, "recaptcha_response_field", "captcha", "", $additionalParams);
-	}	
-
-	public function addCheckbox($label, $name, $value="", $options="", $additionalParams="") {
-		if(!is_array($additionalParams))
-			$additionalParams = array();
-		$additionalParams["options"] = $options;	
-		$this->addElement($label, $name, "checkbox", $value, $additionalParams);
-	}
-
-	public function addCheckSort($label, $name, $value="", $options="", $additionalParams="") {
-		if(!is_array($additionalParams))
-			$additionalParams = array();
-		$additionalParams["options"] = $options;	
-		$this->addElement($label, $name, "checksort", $value, $additionalParams);
-	}
-
-	public function addCKEditor($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "ckeditor", $value, $additionalParams);
-	}
-
-	public function addColor($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "color", $value, $additionalParams);
-	}
-
-	//Included for backwards compatibility.  The preferred function is now addColor.
-	public function addColorPicker($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "color", $value, $additionalParams);
-	}
-
-	public function addCountry($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "country", $value, $additionalParams);
-	}
-
-	public function addDate($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "date", $value, $additionalParams);
-	}
-	public function addDateRange($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "daterange", $value, $additionalParams);
-	}
-
-	public function addEmail($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "email", $value, $additionalParams);
-	}
-
-	public function addFile($label, $name, $additionalParams="") {
-		$this->addElement($label, $name, "file", "", $additionalParams);
-	}
-
-	public function addHidden($name, $value="", $additionalParams="") {
-		$this->addElement("", $name, "hidden", $value, $additionalParams);
-	}
-
-	public function addHTML($value , $additionalParams="") {
-		$this->addElement("", "", "html", $value, $additionalParams);
-	}
-
-	public function addHTMLExternal($value , $additionalParams="") {
-		$this->addElement("", "", "htmlexternal", $value, $additionalParams);
-	}
-
-	public function addLatLng($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "latlng", $value, $additionalParams);
-	}
-
-	public function addPassword($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "password", $value, $additionalParams);
-	}
-
-	public function addRadio($label, $name, $value="", $options="", $additionalParams="") {
-		if(!is_array($additionalParams))
-			$additionalParams = array();
-		$additionalParams["options"] = $options;	
-		$this->addElement($label, $name, "radio", $value, $additionalParams);
-	}
-
-	public function addRating($label, $name, $value="", $options="", $additionalParams="") {
-		if(!is_array($additionalParams))
-			$additionalParams = array();
-		$additionalParams["options"] = $options;	
-		$this->addElement($label, $name, "rating", $value, $additionalParams);
-	}
-
-	public function addSelect($label, $name, $value="", $options="", $additionalParams="") {
-		if(!is_array($additionalParams))
-			$additionalParams = array();
-		$additionalParams["options"] = $options;	
-		$this->addElement($label, $name, "select", $value, $additionalParams);
-	}
-
-	public function addSlider($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "slider", $value, $additionalParams);
-	}
-
-	public function addSort($label, $name, $options="", $additionalParams="") {
-		if(!is_array($additionalParams))
-			$additionalParams = array();
-		$additionalParams["options"] = $options;	
-		$this->addElement($label, $name, "sort", "", $additionalParams);
-	}
-
-	public function addState($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "state", $value, $additionalParams);
-	}
-
-	public function addTextarea($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "textarea", $value, $additionalParams);
-	}
-
-	public function addTextbox($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "text", $value, $additionalParams);
-	}
-
-	public function addTrueFalse($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "truefalse", $value, $additionalParams);
-	}
-
-	public function addWebEditor($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "webeditor", $value, $additionalParams);
-	}
-
-	public function addYesNo($label, $name, $value="", $additionalParams="") {
-		$this->addElement($label, $name, "yesno", $value, $additionalParams);
-	}
-
 	public function bind($ref, $jsIfCondition = "", $phpIfCondition = "") {
 		$this->bindRules[$ref->attributes["id"]] = array($ref, $jsIfCondition, $phpIfCondition);
 		if(!empty($ref->emailExists))
 			$this->emailExists = 1;
+	}
+
+	private function buildSessionValues($form, $referenceValues) {
+		$elementSize = sizeof($form->elements);
+		for($e = 0; $e < $elementSize; ++$e) {
+			$eleName = $form->elements[$e]->attributes["name"];
+			if(substr($eleName , -2) == "[]")
+				$eleName = substr($eleName, 0, -2);
+
+			if(array_key_exists($eleName, $referenceValues)) {
+				if(is_array($referenceValues[$eleName])) {
+					$valSize = sizeof($referenceValues[$eleName]);
+					for($v = 0; $v < $valSize; ++$v)
+						$_SESSION["pfbc-values"][$form->attributes["id"]][$eleName][$v] = stripslashes($referenceValues[$eleName][$v]);
+				}
+				else
+					$_SESSION["pfbc-values"][$form->attributes["id"]][$eleName] = stripslashes($referenceValues[$eleName]);
+			}	
+		}
+
+		if(array_key_exists("recaptcha_challenge_field", $_SESSION["pfbc-values"][$form->attributes["id"]]))
+			unset($_SESSION["pfbc-values"][$form->attributes["id"]]["recaptcha_challenge_field"]);
+		if(array_key_exists("recaptcha_response_field", $_SESSION["pfbc-values"][$form->attributes["id"]]))
+			unset($_SESSION["pfbc-values"][$form->attributes["id"]]["recaptcha_response_field"]);
 	}
 
 	public function clearElements() {
@@ -968,48 +673,6 @@ class form extends pfbc {
 
 	public function closeFieldset() {
 		$this->addElement("", "", "htmlexternal", '</fieldset>');
-	}
-
-	public function renderAjaxErrorResponse($returnString=false) {
-		$str = "";
-		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
-			//Unserialize the appropriate form instance stored in the session array.
-			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
-			if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
-				$errorMsg = array();
-				if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
-					$errors = $_SESSION["pfbc-errors"][$this->attributes["id"]];
-					if(!empty($errors["errormsg"])) {
-						$errorSize = sizeof($errors["errormsg"]);
-						for($e = 0; $e < $errorSize; ++$e) {
-							$error = $errors["errormsg"][$e];
-							if(!empty($error)) {
-								if(strpos($error, "Error: ") === 0)
-									$error = substr($error, 7);
-								$errorMsg[] = $error;
-							}
-						}
-					}
-				}	
-				if(!empty($errorMsg)) {
-					$errorSize = sizeof($errorMsg);
-					if($errorSize > 1)
-						$str .= "The following " . $errorSize . " errors were found:";
-					else	
-						$str .= "The following error was found:";
-					$str .= "<ul><li>" . implode("</li><li>", $errorMsg) . "</li></ul>";
-					$str = json_encode(array("container" => array(""), "errormsg" => array($str)));
-				}
-			}
-			else
-				$str = json_encode($_SESSION["pfbc-errors"][$this->attributes["id"]]);
-		}	
-		if(!$returnString) {
-			header("Content-type: application/json");
-			echo $str;
-		}	
-		else
-			return $str;
 	}
 
 	public function elementsToString() {
@@ -1083,7 +746,49 @@ class form extends pfbc {
 		$nonHiddenElements = array();
 		$nonHiddenInternalElementSize = 0;
 		for($i = 0; $i < $elementSize; ++$i) {
-			$ele = $this->elements[$i];
+			$ele = &$this->elements[$i];
+
+			/*This if/elseif section reads in the appropriate states/countries from an external file if necessary.
+			It's included here because the phpIncludesPath attribute is not available in the attachElement function.*/
+			if($ele->attributes["type"] == "state") {
+				$ele->attributes["type"] = "select";
+
+				if(empty($this->stateArr)) {
+					include($this->phpIncludesPath . "/stateArr.json.php");
+					$jsonObj = json_decode($jsonStates);
+					$this->stateArr = array();
+					for($s = 0; $s < sizeof($jsonObj->keys); $s++)
+						$this->stateArr[] = array("value" => $jsonObj->keys[$s], "text" => $jsonObj->values[$s]);
+				}		
+
+				$ele->options = array();
+				$stateSize = sizeof($this->stateArr);
+				for($s = 0; $s < $stateSize; ++$s) {
+					$opt = new option();
+					$opt->setAttributes($this->stateArr[$s]);
+					$ele->options[] = $opt;
+				}
+			}	
+			elseif($ele->attributes["type"] == "country") {
+				$ele->attributes["type"] = "select";
+
+				if(empty($this->countryArr)) {
+					include($this->phpIncludesPath . "/countryArr.json.php");
+					$jsonObj = json_decode($jsonCountries);
+					$this->countryArr = array();
+					for($s = 0; $s < sizeof($jsonObj->keys); $s++)
+						$this->countryArr[] = array("value" => $jsonObj->keys[$s], "text" => $jsonObj->values[$s]);
+				}		
+
+				$ele->options = array();
+				$countrySize = sizeof($this->countryArr);
+				for($s = 0; $s < $countrySize; ++$s) {
+					$opt = new option();
+					$opt->setAttributes($this->countryArr[$s]);
+					$ele->options[] = $opt;
+				}
+			}	
+
 			if($ele->attributes["type"] == "hidden") {
 				//If the referenceValues array is filled, check for this specific element's name in the associative array key and populate the field's value if applicable.
 				if(!empty($this->referenceValues) && is_array($this->referenceValues)) {
@@ -1863,131 +1568,12 @@ STR;
 		return $str;
 	}
 
-	public function openFieldset($legend, $additionalParams="") {
-		$this->addElement("", "", "htmlexternal", '<fieldset class="pfbc-fieldset"><legend>' . $legend . "</legend>");
-	}
-
-	public function render($returnString=false) {
-		$this->hasFormTag = 1;
-		ob_start();
-
-		echo $this->elementsToString();
-
-		$content = ob_get_contents();
-		ob_end_clean();
-
-		if(!$returnString)
-			echo($content);
-		else
-			return $content;
-	}
-
-	public function renderBody($returnString=false) {
-		if(empty($this->generateInlineResources)) {
-			$this->setIncludePaths();
-			$this->generateInlineResources = 1;
-		}
-		$str = $this->render(true);
-
-		$str .= "\n" . $this->renderJS(true);
-
-		if(!$returnString)
-			echo($str);
-		else
-			return $str;
-	}
-
-	public function renderHead($returnString=false) {
-		if(empty($this->generateInlineResources)) {
-			$this->setIncludePaths();
-			$this->generateInlineResources = 1;
-		}
-		$str = $this->renderCSS(true);
-
-		if(!$returnString)
-			echo($str);
-		else
-			return $str;
-	}
-
-	//This function is identical to setValues() and is included for backwards compatibility.
-	public function setReferenceValues($params) {
-		$this->setValues($params);
-	}
-
-	public function setValues($params) {
-		$this->referenceValues = $params;
-	}
-
-	public function validate() {
-		//Determine if the form's submit method was get or post.
-		if(!empty($_POST))
-			$referenceValues = $_POST;
-		elseif(!empty($_GET))
-			$referenceValues = $_GET;
-		else {
-			$this->errorMsg = 'The $_GET/$_POST array containing the form\'s submitted values does not exists.';
-			return false;
-		}
-
-		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
-			//Unserialize the appropriate form instance stored in the session array.
-			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
-
-			//Store the form's submitted values in a session array for prefilling if validation fails.
-			$this->buildSessionValues($form, $referenceValues);
-			if(!empty($form->bindRules)) {
-				$bindRuleKeys = array_keys($form->bindRules);
-				$bindRuleSize = sizeof($bindRuleKeys);
-				for($b = 0; $b < $bindRuleSize; ++$b) {
-					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
-							$this->buildSessionValues($form->bindRules[$bindRuleKeys[$b]][0], $referenceValues);
-					}		
-				}	
-			}	
-
-			//Cycle through the form's required elements to ensure they are valid.
-			$_SESSION["pfbc-errors"][$form->attributes["id"]] = array();
-			$this->phpCycleElements($form->elements, $referenceValues, $form);
-			if(!empty($form->bindRules)) {
-				$bindRuleKeys = array_keys($form->bindRules);
-				$bindRuleSize = sizeof($bindRuleKeys);
-				for($b = 0; $b < $bindRuleSize; ++$b) {
-					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
-							$this->phpCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements, $referenceValues, $form);
-					}
-				}
-			}
-			if(!empty($_SESSION["pfbc-errors"][$form->attributes["id"]]))
-				return false;
-			
-			//Unset the session array(s) containing the form's errors.
-			if(!empty($_SESSION["pfbc-errors"][$form->attributes["id"]]))
-				unset($_SESSION["pfbc-errors"][$form->attributes["id"]]);
-
-			//Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.
-			if(!empty($_SESSION["pfbc-values"][$form->attributes["id"]]))
-				unset($_SESSION["pfbc-values"][$form->attributes["id"]]);
-			if(!empty($form->bindRules)) {
-				$bindRuleKeys = array_keys($form->bindRules);
-				$bindRuleSize = sizeof($bindRuleKeys);
-				for($b = 0; $b < $bindRuleSize; ++$b) {
-					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))) {
-							if(!empty($_SESSION["pfbc-values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]))
-								unset($_SESSION["pfbc-values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]);
-						}
-					}	
-				}	
-			}	
-			return true;
-		}
-		else {
-			$this->errorMsg = 'The $_SESSION variable containing this form\'s serialized instance does not exists.';
-			return false;
-		}
+	private function indent($extra = "") {
+		$str = "\n$extra";
+		$str .= "\t\t";
+		if(!empty($this->map))
+			$str .= "\t";
+		return $str;
 	}
 
 	private function jsCycleElements($elements) {
@@ -2394,6 +1980,704 @@ STR;
 			}
 		}	
 		return $str;
+	}
+
+	public function openFieldset($legend, $additionalParams="") {
+		$this->addElement("", "", "htmlexternal", '<fieldset class="pfbc-fieldset"><legend>' . $legend . "</legend>");
+	}
+
+	private function phpCycleElements($elements, $referenceValues, $form) {
+		$elementSize = sizeof($elements);
+		for($i = 0; $i < $elementSize; ++$i) {
+			$ele = $elements[$i];
+			if(substr($ele->attributes["name"], -2) == "[]")
+				$ele->attributes["name"] = substr($ele->attributes["name"], 0, -2);
+
+			if(!empty($ele->label)) {
+				$eleLabel = strip_tags($ele->label);
+				if(substr($eleLabel, -1) == ":")
+					$eleLabel = substr($eleLabel, 0, -1);
+			}	
+			else
+				$eleLabel = strip_tags($ele->attributes["name"]);
+			
+			$errorMsg = "";
+
+			//The html, sort, and hidden element types are ignored.
+			if($ele->attributes["type"] == "html" || $ele->attributes["type"] == "sort" || $ele->attributes["type"] == "hidden")
+				continue;
+			elseif($ele->attributes["type"] == "captcha") {
+				require_once($form->phpIncludesPath . "/recaptchalib.php");
+				$recaptchaResp = recaptcha_check_answer($form->captchaPrivateKey, $_SERVER["REMOTE_ADDR"], $referenceValues["recaptcha_challenge_field"], $referenceValues["recaptcha_response_field"]);
+				if(!$recaptchaResp->is_valid) {
+					if($recaptchaResp->error == "invalid-site-public-key")
+						$errorMsg = "The reCAPTCHA public key could not be verified.";
+					elseif($recaptchaResp->error == "invalid-site-private-key")
+						$errorMsg = "The reCAPTCHA private key could not be verified.";
+					elseif($recaptchaResp->error == "invalid-request-cookie")
+						$errorMsg = "The reCAPTCHA challenge parameter of the verify script was incorrect.";
+					elseif($recaptchaResp->error == "incorrect-captcha-sol")
+						$errorMsg = "The reCATPCHA solution entered was incorrect.";
+					elseif($recaptchaResp->error == "verify-params-incorrect")
+						$errorMsg = "The reCAPTCHA parameters passed to the verification script were incorrect, make sure you are passing all the required parameters.";
+					elseif($recaptchaResp->error == "invalid-referrer")
+						$errorMsg = "The reCAPTCHA API public/private keys are tied to a specific domain name for security reasons.";
+					else
+						$errorMsg = "An unknown reCAPTCHA error has occurred.";
+				}
+			}
+			elseif(!empty($ele->required)) {
+				if($ele->attributes["type"] == "checkbox" || $ele->attributes["type"] == "radio" || $ele->attributes["type"] == "checksort" || $ele->attributes["type"] == "rating") {
+					if(!isset($referenceValues[$ele->attributes["name"]]))
+						$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
+				}
+				elseif($referenceValues[$ele->attributes["name"]] === $ele->hint || $referenceValues[$ele->attributes["name"]] === "")
+					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
+			}
+
+			if(empty($errorMsg) && $ele->attributes["type"] == "email" && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "") {
+				require_once($form->phpIncludesPath . "/php-email-address-validation/EmailAddressValidator.php");
+				$emailObj = new EmailAddressValidator;
+				if(!$emailObj->check_email_address($referenceValues[$ele->attributes["name"]]))
+					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
+			}
+
+			if(empty($errorMsg) && !empty($ele->integer) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^\d+$/", $referenceValues[$ele->attributes["name"]]))
+				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->integerErrorMsgFormat);
+			elseif(empty($errorMsg) && !empty($ele->alphanumeric) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^[0-9a-zA-Z]+$/", $referenceValues[$ele->attributes["name"]]))
+				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->alphanumericErrorMsgFormat);
+
+			if(!empty($errorMsg)) {
+				$_SESSION["pfbc-errors"][$form->attributes["id"]]["container"][] = $ele->container;
+				$_SESSION["pfbc-errors"][$form->attributes["id"]]["errormsg"][] = $errorMsg;
+			}
+		}
+	}	
+
+	public function render($returnString=false) {
+		$this->hasFormTag = 1;
+		ob_start();
+
+		echo $this->elementsToString();
+
+		$content = ob_get_contents();
+		ob_end_clean();
+
+		if(!$returnString)
+			echo($content);
+		else
+			return $content;
+	}
+
+	public function renderAjaxErrorResponse($returnString=false) {
+		$str = "";
+		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+			//Unserialize the appropriate form instance stored in the session array.
+			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+			if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
+				$errorMsg = array();
+				if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
+					$errors = $_SESSION["pfbc-errors"][$this->attributes["id"]];
+					if(!empty($errors["errormsg"])) {
+						$errorSize = sizeof($errors["errormsg"]);
+						for($e = 0; $e < $errorSize; ++$e) {
+							$error = $errors["errormsg"][$e];
+							if(!empty($error)) {
+								if(strpos($error, "Error: ") === 0)
+									$error = substr($error, 7);
+								$errorMsg[] = $error;
+							}
+						}
+					}
+				}	
+				if(!empty($errorMsg)) {
+					$errorSize = sizeof($errorMsg);
+					if($errorSize > 1)
+						$str .= "The following " . $errorSize . " errors were found:";
+					else	
+						$str .= "The following error was found:";
+					$str .= "<ul><li>" . implode("</li><li>", $errorMsg) . "</li></ul>";
+					$str = json_encode(array("container" => array(""), "errormsg" => array($str)));
+				}
+			}
+			else
+				$str = json_encode($_SESSION["pfbc-errors"][$this->attributes["id"]]);
+		}	
+		if(!$returnString) {
+			header("Content-type: application/json");
+			echo $str;
+		}	
+		else
+			return $str;
+	}
+
+	public function renderBody($returnString=false) {
+		if(empty($this->generateInlineResources)) {
+			$this->setIncludePaths();
+			$this->generateInlineResources = 1;
+		}
+		$str = $this->render(true);
+
+		$str .= "\n" . $this->renderJS(true);
+
+		if(!$returnString)
+			echo($str);
+		else
+			return $str;
+	}
+
+	//This function renders the form's css.  This function is invoked within includes/css.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.
+	public function renderCSS($returnString=false) {
+		$str = "";
+		if(empty($this->generateInlineResources)) {
+			if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+				//Unserialize the appropriate form instance stored in the session array.
+				$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+			}	
+		}	
+		else
+			$form = $this;
+		
+		if(!empty($form)) {
+			if($form->https)
+				$prefix = "https";
+			else
+				$prefix = "http";
+
+			if(empty($form->generateInlineResources)) {
+				$str .= str_replace("images/", "$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
+				if(!empty($form->jqueryDateRangeIDArr))
+					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
+				if(!empty($form->jqueryColorIDArr))
+					$str .= str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css"));
+				if(!empty($form->tooltipIDArr))
+					$str .= str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css"));
+			} else  {
+				$str .= "<link href='$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css' rel='stylesheet' type='text/css'/>";
+				if(!empty($form->jqueryDateRangeIDArr))
+					$str .= "<link href='{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css' rel='stylesheet' type='text/css'/>";
+				if(!empty($form->jqueryColorIDArr))
+					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css' rel='stylesheet' type='text/css'/>";
+				if(!empty($form->tooltipIDArr))
+					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css' rel='stylesheet' type='text/css'/>";
+				$str .= '<style type="text/css">';
+			}
+
+			if(empty($form->preventDefaultCSS)) {
+				$id = "#" . $this->attributes["id"];
+				$str .= <<<STR
+$id {
+	margin: 0;
+	padding: 0;
+}
+$id .pfbc-clear:after {
+	clear: both;
+	display: block;
+	margin: 0;
+	padding: 0;
+	visibility: hidden;
+	height: 0;
+	content: ":)";
+}	
+$id .pfbc-error {
+	padding: 0.5em;
+	margin-bottom: 0.5em;
+}
+$id .pfbc-error ul {
+	padding-left: 1.75em;
+	margin: 0;
+	margin-top: 0.25em;
+}
+$id .pfbc-buttons {
+	text-align: right;
+	padding-bottom: 1em;
+}
+$id .pfbc-required {
+	color: #990000; 
+}
+$id .pfbc-element {
+	padding-bottom: 1em;
+}
+$id .pfbc-nopaddingbottom {
+	padding-bottom: 0 !important;
+}	
+
+STR;
+
+				if(!empty($form->attributes["width"])) {
+					if(substr($form->attributes["width"], -1) == "%") {
+						$formWidth = substr($form->attributes["width"], 0, -1);
+						$formWidthSuffix = "%";
+					}	
+					elseif(substr($form->attributes["width"], -2) == "px") {
+						$formWidth = substr($form->attributes["width"], 0, -2);
+						$formWidthSuffix = "px";
+					}
+					else {
+						$formWidth = $form->attributes["width"];
+						$formWidthSuffix = "px";
+					}	
+					$str .= <<<STR
+$id .pfbc-main {
+	width: {$formWidth}$formWidthSuffix;
+}
+
+STR;
+				}
+				else
+					$formWidthSuffix = "%";
+				
+				//This section is seperated b/c it is used with and without labelWidths.
+				if(!empty($form->map)) {
+					$mapVals = array_values(array_unique($form->map));
+					$mapValSize = sizeof($mapVals);
+					$elementWidthMap = array();
+					for($m = 0; $m < $mapValSize; ++$m) {  
+						if($formWidthSuffix == "px") {
+							$elementWidth = floor((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]));
+							$elementWidthMap[$mapVals[$m]] = $elementWidth;
+						} 
+						else
+							$elementWidth = floor(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]));
+
+						$str .= <<<STR
+$id .pfbc-map-columns-{$mapVals[$m]} {
+	float: left; 
+	width: {$elementWidth}$formWidthSuffix;
+}
+
+STR;
+					}	
+
+					$str .= <<<STR
+$id .pfbc-map-element-first {
+	margin-left: 0 !important;
+}
+$id .pfbc-map-element-last {
+	float: right !important;
+	margin-right: 0 !important;
+}
+$id .pfbc-map-element-single {
+	margin: 0 !important;
+}
+$id .pfbc-element {
+	margin: 0 {$form->mapMargin}$formWidthSuffix;
+}
+
+STR;
+				}
+
+				if(empty($form->labelWidthExists)) {
+					$str .= <<<STR
+$id .pfbc-label {
+	display: block;
+	padding-bottom: .25em;
+}
+
+STR;
+					if(!empty($form->map)) {
+						for($m = 0; $m < $mapValSize; ++$m) {  
+							if($formWidthSuffix == "px")
+								$elementWidth = $elementWidthMap[$mapVals[$m]];
+							else
+								$elementWidth = floor(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]));
+
+							$str .= <<<STR
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textbox {
+	width: {$elementWidth}$formWidthSuffix;
+}
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textarea {
+	width: {$elementWidth}$formWidthSuffix;
+}
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
+	width: {$elementWidth}$formWidthSuffix;
+}
+
+STR;
+						}                                
+
+					}
+					else {
+						if($formWidthSuffix == "px")
+							$elementWidth = $formWidth;
+						else
+							$elementWidth = 98;
+						$str .= <<<STR
+$id .pfbc-textbox {
+	width: {$elementWidth}$formWidthSuffix;
+}
+$id .pfbc-textarea {
+	width: {$elementWidth}$formWidthSuffix;
+}
+$id .pfbc-select {
+	width: {$elementWidth}$formWidthSuffix;
+}
+
+STR;
+					}
+				}
+
+				$elementSize = sizeof($form->elements);
+				$id = str_replace("#", "", $id);
+				$nonHiddenInternalElementCount = 0;
+				if(!empty($form->map)) {
+					$mapIndex = 0;
+					$mapCount = 0;
+				}
+
+				for($e = 0; $e < $elementSize; ++$e) {
+					$ele = $form->elements[$e];
+					if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
+
+						//If the noBreak attribute is set, handle appropriately.
+						if(!empty($ele->noBreak)) {
+							if($ele->attributes["type"] == "radio") {
+								$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio {
+	float: left;
+	margin-left: 0.5em;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-first {
+	margin: 0 !important;
+}
+
+STR;
+							}
+							elseif(in_array($ele->attributes["type"], array("checkbox", "checksort"))) {
+								$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox {
+	float: left;
+	margin-left: 0.5em;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox-first {
+	margin: 0 !important;
+}
+
+STR;
+							}
+						}
+
+						//If the labelWidth attribute is set, handle appropriately.
+						if(!empty($form->labelWidthExists)) {
+							$labelWidth = "";
+							if(!empty($ele->labelWidth))
+								$labelWidth = $ele->labelWidth;
+							elseif(!empty($form->labelWidth))
+								$labelWidth = $form->labelWidth;
+
+							if(!empty($labelWidth)) {
+								$labelRightAlign = false;
+								if(!empty($ele->labelRightAlign))
+									$labelRightAlign = true;
+								elseif(!empty($form->labelRightAlign))
+									$labelRightAlign = true;
+								
+								if($labelRightAlign) {
+									$labelPaddingRight = $form->labelPaddingRight;
+									if(!empty($ele->labelPaddingRight))
+										$labelPaddingRight = $ele->labelPaddingRight;
+								}	
+
+								if(substr($labelWidth, -1) == "%") {
+									$labelWidth = substr($labelWidth, 0, -1);
+									$labelWidthSuffix = "%";
+								}	
+								elseif(substr($labelWidth, -2) == "px") {
+									$labelWidth = substr($labelWidth, 0, -2);
+									$labelWidthSuffix = "px";
+								}	
+								else
+									$labelWidthSuffix = "px";
+
+								if($labelWidthSuffix == $formWidthSuffix) {
+									if(!empty($form->map)) {
+										if($formWidthSuffix == "px")
+											$elementWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth;
+										else
+											$elementWidth = 98 - $labelWidth;
+									} 
+									else {
+										if($formWidthSuffix == "px")
+											$elementWidth = $formWidth - $labelWidth;
+										else
+											$elementWidth = 98 - $labelWidth;
+									}
+
+									$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
+	float: left;
+
+STR;
+									if(!empty($labelRightAlign)) {
+										$str .= <<<STR
+	text-align: right;
+
+STR;
+									}
+
+									if(!empty($labelPaddingRight)) {
+										if(substr($labelPaddingRight, -1) == "%")
+											$labelPaddingRight = substr($labelPaddingRight, 0, -1);
+										elseif(substr($labelPaddingRight, -2) == "px")
+											$labelPaddingRight = substr($labelPaddingRight, 0, -2);
+										$labelWidth -= $labelPaddingRight;
+										$str .= <<<STR
+	padding-right: {$labelPaddingRight}$labelWidthSuffix;
+
+STR;
+									}
+
+									$str .= <<<STR
+	width: {$labelWidth}$labelWidthSuffix;
+}
+
+STR;
+									if(in_array($ele->attributes["type"], array("text", "password", "email", "date", "daterange", "color"))) {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif(in_array($ele->attributes["type"], array("textarea", "webeditor", "ckeditor"))) {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									if(in_array($ele->attributes["type"], array("select", "rating"))) {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "radio") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "checkbox") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "checksort") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "sort") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "latlng") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-latlng {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "captcha") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-captcha {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+									elseif($ele->attributes["type"] == "slider") {
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-slider {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: right;
+}
+
+STR;
+									}
+								}
+							}
+
+							if(empty($labelWidth) || $labelWidthSuffix != $formWidthSuffix) {
+								$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
+	display: block;
+}	
+
+STR;
+								if(!empty($form->map)) {
+									if($formWidthSuffix == "px")
+										$elementWidth = $elementWidthMap[$form->map[$mapIndex]];
+									else
+										$elementWidth = 98;
+								} 
+								else {
+									if($formWidthSuffix == "px")
+										$elementWidth = $formWidth;
+									else
+										$elementWidth = 98;
+								}
+
+								$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
+	width: {$elementWidth}$formWidthSuffix;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
+	width: {$elementWidth}$formWidthSuffix;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
+	width: {$elementWidth}$formWidthSuffix;
+}
+
+STR;
+							}
+						}
+
+						if(!empty($form->map)) {
+							if(array_key_exists($mapIndex, $form->map) && $form->map[$mapIndex] > 1) {
+								if(($mapCount + 1) == $form->map[$mapIndex]) {
+									$mapCount = 0;
+									++$mapIndex;
+								}
+								else
+									++$mapCount;
+							}
+							else {
+								++$mapIndex;
+								$mapCount = 0;
+							}	
+						}
+
+						++$nonHiddenInternalElementCount;
+					}
+				}	
+			}
+                        
+			if(!empty($form->jqueryDateIDArr)) {
+				$str .= <<<STR
+.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 1em !important; }
+
+STR;
+			}	
+
+			if(!empty($form->jquerySliderIDArr)) {
+				$str .= <<<STR
+.ui-slider-handle { cursor: pointer !important; }
+
+STR;
+			}	
+
+			if(!empty($form->jqueryStarRatingIDArr)) {
+				$str .= <<<STR
+.ui-stars-star,
+.ui-stars-cancel {
+	float: left;
+	display: block;
+	overflow: hidden;
+	text-indent: -999em;
+	cursor: pointer;
+}
+.ui-stars-star a,
+.ui-stars-cancel a {
+	width: 28px;
+	height: 26px;
+	display: block;
+	position: relative;
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png", sizingMethod="scale");
+}
+.ui-stars-star a {
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png", sizingMethod="scale");
+}
+.ui-stars-star-on a {
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png", sizingMethod="scale");
+}
+.ui-stars-star-hover a {
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png", sizingMethod="scale");
+}
+.ui-stars-cancel-hover a {
+	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png") 0 0 no-repeat;
+	_background: none;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
+		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png", sizingMethod="scale");
+}
+.ui-stars-star-disabled,
+.ui-stars-star-disabled a,
+.ui-stars-cancel-disabled a {
+	cursor: default !important;
+}
+
+STR;
+			}
+		}
+
+		if(!empty($form->generateInlineResources)) {
+			 $str .= "</style>\n";
+		}
+
+		if(!$returnString)
+			echo($str);
+		else
+			return $str;
+	}
+
+	public function renderHead($returnString=false) {
+		if(empty($this->generateInlineResources)) {
+			$this->setIncludePaths();
+			$this->generateInlineResources = 1;
+		}
+		$str = $this->renderCSS(true);
+
+		if(!$returnString)
+			echo($str);
+		else
+			return $str;
 	}
 
 	//This function renders the form's javascript.  This function is invoked within includes/js.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.
@@ -3132,647 +3416,6 @@ STR;
 			return $str;
 	}
 
-	//This function renders the form's css.  This function is invoked within includes/css.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.
-	public function renderCSS($returnString=false) {
-		$str = "";
-		if(empty($this->generateInlineResources)) {
-			if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
-				//Unserialize the appropriate form instance stored in the session array.
-				$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
-			}	
-		}	
-		else
-			$form = $this;
-		
-		if(!empty($form)) {
-			if($form->https)
-				$prefix = "https";
-			else
-				$prefix = "http";
-
-			if(empty($form->generateInlineResources)) {
-				$str .= str_replace("images/", "$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
-				if(!empty($form->jqueryDateRangeIDArr))
-					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
-				if(!empty($form->jqueryColorIDArr))
-					$str .= str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css"));
-				if(!empty($form->tooltipIDArr))
-					$str .= str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css"));
-			} else  {
-				$str .= "<link href='$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css' rel='stylesheet' type='text/css'/>";
-				if(!empty($form->jqueryDateRangeIDArr))
-					$str .= "<link href='{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css' rel='stylesheet' type='text/css'/>";
-				if(!empty($form->jqueryColorIDArr))
-					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css' rel='stylesheet' type='text/css'/>";
-				if(!empty($form->tooltipIDArr))
-					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css' rel='stylesheet' type='text/css'/>";
-				$str .= '<style type="text/css">';
-			}
-
-			if(empty($form->preventDefaultCSS)) {
-				$id = "#" . $this->attributes["id"];
-				$str .= <<<STR
-$id {
-	margin: 0;
-	padding: 0;
-}
-$id .pfbc-clear:after {
-	clear: both;
-	display: block;
-	margin: 0;
-	padding: 0;
-	visibility: hidden;
-	height: 0;
-	content: ":)";
-}	
-$id .pfbc-error {
-	padding: 0.5em;
-	margin-bottom: 0.5em;
-}
-$id .pfbc-error ul {
-	padding-left: 1.75em;
-	margin: 0;
-	margin-top: 0.25em;
-}
-$id .pfbc-buttons {
-	text-align: right;
-	padding-bottom: 1em;
-}
-$id .pfbc-required {
-	color: #990000; 
-}
-$id .pfbc-element {
-	padding-bottom: 1em;
-}
-$id .pfbc-nopaddingbottom {
-	padding-bottom: 0 !important;
-}	
-
-STR;
-
-				if(!empty($form->attributes["width"])) {
-					if(substr($form->attributes["width"], -1) == "%") {
-						$formWidth = substr($form->attributes["width"], 0, -1);
-						$formWidthSuffix = "%";
-					}	
-					elseif(substr($form->attributes["width"], -2) == "px") {
-						$formWidth = substr($form->attributes["width"], 0, -2);
-						$formWidthSuffix = "px";
-					}
-					else {
-						$formWidth = $form->attributes["width"];
-						$formWidthSuffix = "px";
-					}	
-					$str .= <<<STR
-$id .pfbc-main {
-	width: {$formWidth}$formWidthSuffix;
-}
-
-STR;
-				}
-				else
-					$formWidthSuffix = "%";
-				
-				//This section is seperated b/c it is used with and without labelWidths.
-				if(!empty($form->map)) {
-					$mapVals = array_values(array_unique($form->map));
-					$mapValSize = sizeof($mapVals);
-					$elementWidthMap = array();
-					for($m = 0; $m < $mapValSize; ++$m) {  
-						if($formWidthSuffix == "px") {
-							$elementWidth = floor((($formWidth - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]));
-							$elementWidthMap[$mapVals[$m]] = $elementWidth;
-						} 
-						else
-							$elementWidth = floor(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]));
-
-						$str .= <<<STR
-$id .pfbc-map-columns-{$mapVals[$m]} {
-	float: left; 
-	width: {$elementWidth}$formWidthSuffix;
-}
-
-STR;
-					}	
-
-					$str .= <<<STR
-$id .pfbc-map-element-first {
-	margin-left: 0 !important;
-}
-$id .pfbc-map-element-last {
-	float: right !important;
-	margin-right: 0 !important;
-}
-$id .pfbc-map-element-single {
-	margin: 0 !important;
-}
-$id .pfbc-element {
-	margin: 0 {$form->mapMargin}$formWidthSuffix;
-}
-
-STR;
-				}
-
-				if(empty($form->labelWidthExists)) {
-					$str .= <<<STR
-$id .pfbc-label {
-	display: block;
-	padding-bottom: .25em;
-}
-
-STR;
-					if(!empty($form->map)) {
-						for($m = 0; $m < $mapValSize; ++$m) {  
-							if($formWidthSuffix == "px")
-								$elementWidth = $elementWidthMap[$mapVals[$m]];
-							else
-								$elementWidth = floor(((100 - ($form->mapMargin * 2 * ($mapVals[$m] - 1)))  / $mapVals[$m]));
-
-							$str .= <<<STR
-$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textbox {
-	width: {$elementWidth}$formWidthSuffix;
-}
-$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-textarea {
-	width: {$elementWidth}$formWidthSuffix;
-}
-$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
-	width: {$elementWidth}$formWidthSuffix;
-}
-
-STR;
-						}                                
-
-					}
-					else {
-						if($formWidthSuffix == "px")
-							$elementWidth = $formWidth;
-						else
-							$elementWidth = 98;
-						$str .= <<<STR
-$id .pfbc-textbox {
-	width: {$elementWidth}$formWidthSuffix;
-}
-$id .pfbc-textarea {
-	width: {$elementWidth}$formWidthSuffix;
-}
-$id .pfbc-select {
-	width: {$elementWidth}$formWidthSuffix;
-}
-
-STR;
-					}
-				}
-
-				$elementSize = sizeof($form->elements);
-				$id = str_replace("#", "", $id);
-				$nonHiddenInternalElementCount = 0;
-				if(!empty($form->map)) {
-					$mapIndex = 0;
-					$mapCount = 0;
-				}
-
-				for($e = 0; $e < $elementSize; ++$e) {
-					$ele = $form->elements[$e];
-					if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
-
-						//If the noBreak attribute is set, handle appropriately.
-						if(!empty($ele->noBreak)) {
-							if($ele->attributes["type"] == "radio") {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio {
-	float: left;
-	margin-left: 0.5em;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-first {
-	margin: 0 !important;
-}
-
-STR;
-							}
-							elseif(in_array($ele->attributes["type"], array("checkbox", "checksort"))) {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox {
-	float: left;
-	margin-left: 0.5em;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox-first {
-	margin: 0 !important;
-}
-
-STR;
-							}
-						}
-
-						//If the labelWidth attribute is set, handle appropriately.
-						if(!empty($form->labelWidthExists)) {
-							$labelWidth = "";
-							if(!empty($ele->labelWidth))
-								$labelWidth = $ele->labelWidth;
-							elseif(!empty($form->labelWidth))
-								$labelWidth = $form->labelWidth;
-
-							if(!empty($labelWidth)) {
-								$labelRightAlign = false;
-								if(!empty($ele->labelRightAlign))
-									$labelRightAlign = true;
-								elseif(!empty($form->labelRightAlign))
-									$labelRightAlign = true;
-								
-								if($labelRightAlign) {
-									$labelPaddingRight = $form->labelPaddingRight;
-									if(!empty($ele->labelPaddingRight))
-										$labelPaddingRight = $ele->labelPaddingRight;
-								}	
-
-								if(substr($labelWidth, -1) == "%") {
-									$labelWidth = substr($labelWidth, 0, -1);
-									$labelWidthSuffix = "%";
-								}	
-								elseif(substr($labelWidth, -2) == "px") {
-									$labelWidth = substr($labelWidth, 0, -2);
-									$labelWidthSuffix = "px";
-								}	
-								else
-									$labelWidthSuffix = "px";
-
-								if($labelWidthSuffix == $formWidthSuffix) {
-									if(!empty($form->map)) {
-										if($formWidthSuffix == "px")
-											$elementWidth = $elementWidthMap[$form->map[$mapIndex]] - $labelWidth;
-										else
-											$elementWidth = 98 - $labelWidth;
-									} 
-									else {
-										if($formWidthSuffix == "px")
-											$elementWidth = $formWidth - $labelWidth;
-										else
-											$elementWidth = 98 - $labelWidth;
-									}
-
-									$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
-	float: left;
-
-STR;
-									if(!empty($labelRightAlign)) {
-										$str .= <<<STR
-	text-align: right;
-
-STR;
-									}
-
-									if(!empty($labelPaddingRight)) {
-										if(substr($labelPaddingRight, -1) == "%")
-											$labelPaddingRight = substr($labelPaddingRight, 0, -1);
-										elseif(substr($labelPaddingRight, -2) == "px")
-											$labelPaddingRight = substr($labelPaddingRight, 0, -2);
-										$labelWidth -= $labelPaddingRight;
-										$str .= <<<STR
-	padding-right: {$labelPaddingRight}$labelWidthSuffix;
-
-STR;
-									}
-
-									$str .= <<<STR
-	width: {$labelWidth}$labelWidthSuffix;
-}
-
-STR;
-									if(in_array($ele->attributes["type"], array("text", "password", "email", "date", "daterange", "color"))) {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-
-STR;
-									}
-									elseif(in_array($ele->attributes["type"], array("textarea", "webeditor", "ckeditor"))) {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-
-STR;
-									}
-									if(in_array($ele->attributes["type"], array("select", "rating"))) {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-
-STR;
-									}
-									elseif($ele->attributes["type"] == "radio") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-
-STR;
-									}
-									elseif($ele->attributes["type"] == "checkbox") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-
-STR;
-									}
-									elseif($ele->attributes["type"] == "checksort") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-
-STR;
-									}
-									elseif($ele->attributes["type"] == "sort") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-
-STR;
-									}
-									elseif($ele->attributes["type"] == "latlng") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-latlng {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-
-STR;
-									}
-									elseif($ele->attributes["type"] == "captcha") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-captcha {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-
-STR;
-									}
-									elseif($ele->attributes["type"] == "slider") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-slider {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
-}
-
-STR;
-									}
-								}
-							}
-
-							if(empty($labelWidth) || $labelWidthSuffix != $formWidthSuffix) {
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
-	display: block;
-}	
-
-STR;
-								if(!empty($form->map)) {
-									if($formWidthSuffix == "px")
-										$elementWidth = $elementWidthMap[$form->map[$mapIndex]];
-									else
-										$elementWidth = 98;
-								} 
-								else {
-									if($formWidthSuffix == "px")
-										$elementWidth = $formWidth;
-									else
-										$elementWidth = 98;
-								}
-
-								$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
-	width: {$elementWidth}$formWidthSuffix;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
-	width: {$elementWidth}$formWidthSuffix;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
-	width: {$elementWidth}$formWidthSuffix;
-}
-
-STR;
-							}
-						}
-
-						if(!empty($form->map)) {
-							if(array_key_exists($mapIndex, $form->map) && $form->map[$mapIndex] > 1) {
-								if(($mapCount + 1) == $form->map[$mapIndex]) {
-									$mapCount = 0;
-									++$mapIndex;
-								}
-								else
-									++$mapCount;
-							}
-							else {
-								++$mapIndex;
-								$mapCount = 0;
-							}	
-						}
-
-						++$nonHiddenInternalElementCount;
-					}
-				}	
-			}
-                        
-			if(!empty($form->jqueryDateIDArr)) {
-				$str .= <<<STR
-.ui-datepicker-div, .ui-datepicker-inline, #ui-datepicker-div { font-size: 1em !important; }
-
-STR;
-			}	
-
-			if(!empty($form->jquerySliderIDArr)) {
-				$str .= <<<STR
-.ui-slider-handle { cursor: pointer !important; }
-
-STR;
-			}	
-
-			if(!empty($form->jqueryStarRatingIDArr)) {
-				$str .= <<<STR
-.ui-stars-star,
-.ui-stars-cancel {
-	float: left;
-	display: block;
-	overflow: hidden;
-	text-indent: -999em;
-	cursor: pointer;
-}
-.ui-stars-star a,
-.ui-stars-cancel a {
-	width: 28px;
-	height: 26px;
-	display: block;
-	position: relative;
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png", sizingMethod="scale");
-}
-.ui-stars-star a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png", sizingMethod="scale");
-}
-.ui-stars-star-on a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png", sizingMethod="scale");
-}
-.ui-stars-star-hover a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png", sizingMethod="scale");
-}
-.ui-stars-cancel-hover a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png", sizingMethod="scale");
-}
-.ui-stars-star-disabled,
-.ui-stars-star-disabled a,
-.ui-stars-cancel-disabled a {
-	cursor: default !important;
-}
-
-STR;
-			}
-		}
-
-		if(!empty($form->generateInlineResources)) {
-			 $str .= "</style>\n";
-		}
-
-		if(!$returnString)
-			echo($str);
-		else
-			return $str;
-	}
-
-	private function indent($extra = "") {
-		$str = "\n$extra";
-		$str .= "\t\t";
-		if(!empty($this->map))
-			$str .= "\t";
-		return $str;
-	}
-
-	private function buildSessionValues($form, $referenceValues) {
-		$elementSize = sizeof($form->elements);
-		for($e = 0; $e < $elementSize; ++$e) {
-			$eleName = $form->elements[$e]->attributes["name"];
-			if(substr($eleName , -2) == "[]")
-				$eleName = substr($eleName, 0, -2);
-
-			if(array_key_exists($eleName, $referenceValues)) {
-				if(is_array($referenceValues[$eleName])) {
-					$valSize = sizeof($referenceValues[$eleName]);
-					for($v = 0; $v < $valSize; ++$v)
-						$_SESSION["pfbc-values"][$form->attributes["id"]][$eleName][$v] = stripslashes($referenceValues[$eleName][$v]);
-				}
-				else
-					$_SESSION["pfbc-values"][$form->attributes["id"]][$eleName] = stripslashes($referenceValues[$eleName]);
-			}	
-		}
-
-		if(array_key_exists("recaptcha_challenge_field", $_SESSION["pfbc-values"][$form->attributes["id"]]))
-			unset($_SESSION["pfbc-values"][$form->attributes["id"]]["recaptcha_challenge_field"]);
-		if(array_key_exists("recaptcha_response_field", $_SESSION["pfbc-values"][$form->attributes["id"]]))
-			unset($_SESSION["pfbc-values"][$form->attributes["id"]]["recaptcha_response_field"]);
-	}
-
-	private function phpCycleElements($elements, $referenceValues, $form) {
-		$elementSize = sizeof($elements);
-		for($i = 0; $i < $elementSize; ++$i) {
-			$ele = $elements[$i];
-			if(substr($ele->attributes["name"], -2) == "[]")
-				$ele->attributes["name"] = substr($ele->attributes["name"], 0, -2);
-
-			if(!empty($ele->label)) {
-				$eleLabel = strip_tags($ele->label);
-				if(substr($eleLabel, -1) == ":")
-					$eleLabel = substr($eleLabel, 0, -1);
-			}	
-			else
-				$eleLabel = strip_tags($ele->attributes["name"]);
-			
-			$errorMsg = "";
-
-			//The html, sort, and hidden element types are ignored.
-			if($ele->attributes["type"] == "html" || $ele->attributes["type"] == "sort" || $ele->attributes["type"] == "hidden")
-				continue;
-			elseif($ele->attributes["type"] == "captcha") {
-				require_once($form->phpIncludesPath . "/recaptchalib.php");
-				$recaptchaResp = recaptcha_check_answer($form->captchaPrivateKey, $_SERVER["REMOTE_ADDR"], $referenceValues["recaptcha_challenge_field"], $referenceValues["recaptcha_response_field"]);
-				if(!$recaptchaResp->is_valid) {
-					if($recaptchaResp->error == "invalid-site-public-key")
-						$errorMsg = "The reCAPTCHA public key could not be verified.";
-					elseif($recaptchaResp->error == "invalid-site-private-key")
-						$errorMsg = "The reCAPTCHA private key could not be verified.";
-					elseif($recaptchaResp->error == "invalid-request-cookie")
-						$errorMsg = "The reCAPTCHA challenge parameter of the verify script was incorrect.";
-					elseif($recaptchaResp->error == "incorrect-captcha-sol")
-						$errorMsg = "The reCATPCHA solution entered was incorrect.";
-					elseif($recaptchaResp->error == "verify-params-incorrect")
-						$errorMsg = "The reCAPTCHA parameters passed to the verification script were incorrect, make sure you are passing all the required parameters.";
-					elseif($recaptchaResp->error == "invalid-referrer")
-						$errorMsg = "The reCAPTCHA API public/private keys are tied to a specific domain name for security reasons.";
-					else
-						$errorMsg = "An unknown reCAPTCHA error has occurred.";
-				}
-			}
-			elseif(!empty($ele->required)) {
-				if($ele->attributes["type"] == "checkbox" || $ele->attributes["type"] == "radio" || $ele->attributes["type"] == "checksort" || $ele->attributes["type"] == "rating") {
-					if(!isset($referenceValues[$ele->attributes["name"]]))
-						$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
-				}
-				elseif($referenceValues[$ele->attributes["name"]] === $ele->hint || $referenceValues[$ele->attributes["name"]] === "")
-					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
-			}
-
-			if(empty($errorMsg) && $ele->attributes["type"] == "email" && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "") {
-				require_once($form->phpIncludesPath . "/php-email-address-validation/EmailAddressValidator.php");
-				$emailObj = new EmailAddressValidator;
-				if(!$emailObj->check_email_address($referenceValues[$ele->attributes["name"]]))
-					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
-			}
-
-			if(empty($errorMsg) && !empty($ele->integer) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^\d+$/", $referenceValues[$ele->attributes["name"]]))
-				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->integerErrorMsgFormat);
-			elseif(empty($errorMsg) && !empty($ele->alphanumeric) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^[0-9a-zA-Z]+$/", $referenceValues[$ele->attributes["name"]]))
-				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->alphanumericErrorMsgFormat);
-
-			if(!empty($errorMsg)) {
-				$_SESSION["pfbc-errors"][$form->attributes["id"]]["container"][] = $ele->container;
-				$_SESSION["pfbc-errors"][$form->attributes["id"]]["errormsg"][] = $errorMsg;
-			}
-		}
-	}	
-
 	private function setIncludePaths() {
 		//If windows normalize backslashes to forward slashes.
 		if(PHP_OS == "WINNT")
@@ -3792,6 +3435,88 @@ STR;
 				$this->jsIncludesPath = $this->includesPath;
 				$this->phpIncludesPath = $_SERVER['DOCUMENT_ROOT'] . $this->includesPath;
 			}
+		}
+	}
+
+	//This function is identical to setValues() and is included for backwards compatibility.
+	public function setReferenceValues($params) {
+		$this->setValues($params);
+	}
+
+	public function setValues($params) {
+		$this->referenceValues = $params;
+	}
+
+	public function validate() {
+		$_SESSION["pfbc-errors"][$this->attributes["id"]] = array();
+		//Determine if the form's submit method was get or post.
+		if(!empty($_POST))
+			$referenceValues = $_POST;
+		elseif(!empty($_GET))
+			$referenceValues = $_GET;
+		else {
+			$_SESSION["pfbc-errors"][$this->attributes["id"]]["container"][] = "";
+			$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "The get/post array containing the form's submitted values does not exists.";
+			return false;
+		}
+
+		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+			//Unserialize the appropriate form instance stored in the session array.
+			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+
+			//Store the form's submitted values in a session array for prefilling if validation fails.
+			$this->buildSessionValues($form, $referenceValues);
+			if(!empty($form->bindRules)) {
+				$bindRuleKeys = array_keys($form->bindRules);
+				$bindRuleSize = sizeof($bindRuleKeys);
+				for($b = 0; $b < $bindRuleSize; ++$b) {
+					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
+						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
+							$this->buildSessionValues($form->bindRules[$bindRuleKeys[$b]][0], $referenceValues);
+					}		
+				}	
+			}	
+
+			//Cycle through the form's required elements to ensure they are valid.
+			$this->phpCycleElements($form->elements, $referenceValues, $form);
+			if(!empty($form->bindRules)) {
+				$bindRuleKeys = array_keys($form->bindRules);
+				$bindRuleSize = sizeof($bindRuleKeys);
+				for($b = 0; $b < $bindRuleSize; ++$b) {
+					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
+						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
+							$this->phpCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements, $referenceValues, $form);
+					}
+				}
+			}
+			if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]]))
+				return false;
+			
+			//Unset the session array(s) containing the form's errors.
+			if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]]))
+				unset($_SESSION["pfbc-errors"][$this->attributes["id"]]);
+
+			//Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.
+			if(!empty($_SESSION["pfbc-values"][$this->attributes["id"]]))
+				unset($_SESSION["pfbc-values"][$this->attributes["id"]]);
+			if(!empty($form->bindRules)) {
+				$bindRuleKeys = array_keys($form->bindRules);
+				$bindRuleSize = sizeof($bindRuleKeys);
+				for($b = 0; $b < $bindRuleSize; ++$b) {
+					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
+						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))) {
+							if(!empty($_SESSION["pfbc-values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]))
+								unset($_SESSION["pfbc-values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]);
+						}
+					}	
+				}	
+			}	
+			return true;
+		}
+		else {
+			$_SESSION["pfbc-errors"][$this->attributes["id"]]["container"][] = "";
+			$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "The session variable containing this form's serialized object instance does not exists.";
+			return false;
 		}
 	}
 }
