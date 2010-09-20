@@ -984,17 +984,22 @@ class form extends pfbc {
 					if(empty($ele->attributes["cols"]))
 						$ele->attributes["cols"] = "30";
 
-					if(!empty($ele->attributes["class"]))
-						$ele->attributes["class"] .= " pfbc-textarea";
-					else
-						$ele->attributes["class"] = "pfbc-textarea";
-
 					if($eleType == "webeditor") {
+						$class = "pfbc-webeditor";
 						if(!empty($ele->basic))
-							$ele->attributes["class"] .= " tiny_mce_simple";
+							$class .= " tiny_mce_simple";
 						else
-							$ele->attributes["class"] .= " tiny_mce";
+							$class .= " tiny_mce";
 					}
+					elseif($eleType == "ckeditor")
+						$class = "pfbc-ckeditor";
+					else
+						$class = "pfbc-textarea";
+
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " " . $class;
+					else
+						$ele->attributes["class"] = $class;
 
 					$str .= "<textarea";
 					if(!empty($ele->attributes) && is_array($ele->attributes)) {
@@ -1478,22 +1483,22 @@ STR;
 			//<![CDATA[
 			var jQueryElementObj;
 			function pfbc_adjust_{$this->attributes["id"]}() {
-				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea").each(function() { 
+				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea, #{$this->attributes["id"]} .pfbc-main .pfbc-webeditor").each(function() { 
 					if(!jQuery(this).hasClass("pfbc-adjusted")) {
 						if(jQuery(this).parent().parent().is(":hidden")) {
 							jQueryElementObj = jQuery(this);
 							jQuery.swap(jQueryElementObj.parent().parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
-								if(jQueryElementObj.hasClass("tiny_mce") || jQueryElementObj.hasClass("tiny_mce_simple"))
+								if(jQuery(this).hasClass("pfbc-webeditor"))
 									jQueryElementObj.width(jQueryElementObj.width());
-								else	
+								else
 									jQueryElementObj.outerWidth(jQueryElementObj.width());
 								jQueryElementObj.addClass("pfbc-adjusted");	
 							});
 						}	
 						else {
-							if(jQuery(this).hasClass("tiny_mce") || jQuery(this).hasClass("tiny_mce_simple"))
+							if(jQuery(this).hasClass("pfbc-webeditor"))
 								jQuery(this).width(jQuery(this).width());
-							else	
+							else
 								jQuery(this).outerWidth(jQuery(this).width());
 							jQuery(this).addClass("pfbc-adjusted");	
 						}
@@ -1508,9 +1513,8 @@ STR;
 			jQuery(document).ready(function() {
 				jQuery.get('{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param', function(cssText) {
 					jQuery("head").append('<style type="text/css">' + cssText + '<\/style>');
-					if(jQuery("#{$this->attributes["id"]}").parent().is(":hidden")) {
+					if(jQuery("#{$this->attributes["id"]}").parent().is(":hidden")) 
 						jQuery.swap(jQuery("#{$this->attributes["id"]}").parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, pfbc_adjust_{$this->attributes["id"]});
-					}	
 					else
 						pfbc_adjust_{$this->attributes["id"]}();
 					jQuery("#{$this->attributes["id"]}").css("visibility", "visible");	
@@ -2200,6 +2204,10 @@ $id .pfbc-element {
 }
 $id .pfbc-nopaddingbottom {
 	padding-bottom: 0 !important;
+}	
+$id .pfbc-webeditor, $id .pfbc-ckeditor{
+	width: 100%;
+	height: 200px;
 }	
 
 STR;
@@ -3092,12 +3100,14 @@ STR;
 tinyMCE.init({
 	mode: "textareas",
 	theme: "advanced",
-	plugins: "safari,table,paste,inlinepopups,preview",
+	plugins: "safari,table,paste,inlinepopups,preview,fullscreen",
 	dialog_type: "modal",
-	theme_advanced_buttons1: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,|,forecolor,backcolor",
-	theme_advanced_buttons2: "formatselect,fontselect,fontsizeselect,|,pastetext,pasteword,|,link,image",
-	theme_advanced_buttons3: "tablecontrols,|,code,preview,|,undo,redo",
+	theme_advanced_buttons1: "bold,italic,underline,strikethrough,|,forecolor,backcolor,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,|,formatselect,fontselect,fontsizeselect",
+	theme_advanced_buttons2: "link,unlink,anchor,image,charmap,hr,|,tablecontrols,|,pastetext,pasteword,|,cleanup,code,preview,fullscreen,|,undo,redo",
+	theme_advanced_buttons3: "",
 	theme_advanced_toolbar_location: "top",
+	theme_advanced_toolbar_align : "left",
+	theme_advanced_resizing : true,
 	editor_selector: "tiny_mce",
 	forced_root_block: false,
 	force_br_newlines: true,
