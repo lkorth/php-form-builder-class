@@ -641,6 +641,8 @@ class form extends pfbc {
 		$this->bindRules[$ref->attributes["id"]] = array($ref, $jsIfCondition, $phpIfCondition);
 		if(!empty($ref->emailExists))
 			$this->emailExists = 1;
+		if(!empty($ref->map) && empty($this->errorDisplayOption))
+			$this->errorDisplayOption = 1;
 	}
 
 	private function buildSessionValues($form, $referenceValues) {

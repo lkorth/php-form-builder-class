@@ -82,9 +82,8 @@
 					<li><a href="examples/captcha.php">Captcha</a></li>
 					<li><a href="examples/web-editors.php">Web Editors</a></li>
 					<li><a href="examples/buttons.php">Buttons</a></li>
-					<li><a href="examples/conditional-scenarios.php">Conditional Scenarios</a></li>
-					<li><a href="examples/includes-directory-path-error.php">Invalid includes Directory Path Error</a></li>
 					<li><a href="examples/fieldsets.php">Fieldsets</a></li>
+					<li><a href="examples/conditional-scenarios.php">Conditional Scenarios</a></li>
 				</ul>
 			</div>
 
