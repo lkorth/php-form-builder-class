@@ -3,10 +3,10 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
-	$form = new form("form_elements");
+if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1"))) {
+	$form = new form("formelements_" . substr($_POST["cmd"], -1));
 	if($form->validate())
-		echo "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
+		header("Location: form-elements.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
 	else
 		header("Location: form-elements.php");
 	exit();
@@ -33,17 +33,18 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				sort, checksort, captcha, slider, rating, html, color, email, htmlexternal, button.  More information on each of these form elements can be found in the <a href="../documentation/index.php#Form-Elements">Supported Form Elements section of the documentation</a>.</p>
 
 				<?php
-				$form = new form("form_elements");
+				$form = new form("formelements_0");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
 					"width" => "400"
 				));	
 
-				$form->addHidden("cmd", "submit");
+				if(!empty($_GET["errormsg_0"]))
+					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+				$form->addHidden("cmd", "submit_0");
 				$form->addTextbox("Textbox:", "MyTextbox");
 				$form->addTextarea("Textarea:", "MyTextarea");
-				$form->addWebEditor("Web Editor - TinyMCE:", "MyWebEditor");
-				$form->addCKEditor("Web Editor - CKEditor:", "MyCKEditor");
 				$form->addPassword("Password:", "MyPassword");
 				$form->addFile("File:", "MyFile");
 				$form->addDate("Date:", "MyDate");
@@ -67,19 +68,40 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				$form->addHTMLExternal("External HTML:");
 				$form->addButton();
 				$form->render();
+				?>
+
+				<br/><br/>
+
+				<?php
+				$form = new form("formelements_1");
+				$form->setAttributes(array(
+					"includesPath" => "../includes",
+					"width" => "850"
+				));	
+
+				if(!empty($_GET["errormsg_1"]))
+					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+				$form->addHidden("cmd", "submit_1");
+				$form->addWebEditor("Web Editor - TinyMCE:", "MyWebEditor");
+				$form->addCKEditor("Web Editor - CKEditor:", "MyCKEditor");
+				$form->addButton();
+				$form->render();
+
 
 echo '<pre>', highlight_string('<?php
-$form = new form("form_elements");
+$form = new form("formelements_0");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
 	"width" => "400"
 ));	
 
-$form->addHidden("cmd", "submit");
+if(!empty($_GET["errormsg_0"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_0");
 $form->addTextbox("Textbox:", "MyTextbox");
 $form->addTextarea("Textarea:", "MyTextarea");
-$form->addWebEditor("Web Editor - TinyMCE:", "MyWebEditor");
-$form->addCKEditor("Web Editor - CKEditor:", "MyCKEditor");
 $form->addPassword("Password:", "MyPassword");
 $form->addFile("File:", "MyFile");
 $form->addDate("Date:", "MyDate");
@@ -101,6 +123,25 @@ $form->addHTML("HTML:");
 $form->addColor("Color:", "MyColor");
 $form->addEmail("Email:", "MyEmail");
 $form->addHTMLExternal("External HTML:");
+$form->addButton();
+$form->render();
+?>
+
+<br/><br/>
+
+<?php
+$form = new form("formelements_1");
+$form->setAttributes(array(
+	"includesPath" => "../includes",
+	"width" => "850"
+));	
+
+if(!empty($_GET["errormsg_1"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_1");
+$form->addWebEditor("Web Editor - TinyMCE:", "MyWebEditor");
+$form->addCKEditor("Web Editor - CKEditor:", "MyCKEditor");
 $form->addButton();
 $form->render();
 ?>', true), '</pre>';

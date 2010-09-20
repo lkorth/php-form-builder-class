@@ -3,8 +3,12 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
-	echo "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
+if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0"))) {
+	$form = new form("fieldsets_" . substr($_POST["cmd"], -1));
+	if($form->validate())
+		header("Location: fieldsets.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
+	else
+		header("Location: fieldsets.php");
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
@@ -23,11 +27,9 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 					border: 1px solid #ccc;
 					-moz-border-radius: 8px; 
 					-webkit-border-radius: 8px;
+					width: 500px;
 				}
-				#fieldsets {
-					width: 322px;
-				}
-				#fieldsets_mapping {
+				#fieldsets_0 {
 					width: 522px;
 				}
 			</style>
@@ -40,93 +42,73 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 			</div>
 
 			<div id="pfbc_content">
-				<p><b>Fieldsets</b> - To insert fieldsets into your form, simply use the addFieldset() and closeFields() functions as seen below.  When using fieldsets and the mapping functionality to structure your form, 
-				keep in mind that the openFieldset/closeFieldset function calls do not count as form elements in the array passed to the <i>map</i> form attribute.</p>
+				<p><b>Fieldsets</b> - Fieldsets are applied to your forms by using the project's openFieldset/closeFieldset functions.  Below, you will find one way that you can use fieldsets in your
+				development.</p>
 
 				<?php
-				$form = new form("fieldsets");
-				$form->setAttributes(array(
-					"includesPath" => "../includes",
-					"width" => 300,
-				));
-				$form->addHidden("cmd", "submit");
-				$form->openFieldset("Fieldset #1");
-				$form->addTextbox("Field #1:", "Field1");
-				$form->addTextbox("Field #2:", "Field2");
-				$form->closeFieldset();
-				$form->openFieldset("Fieldset #2");
-				$form->addTextbox("Field #3:", "Field3");
-				$form->addTextbox("Field #4:", "Field4");
-				$form->closeFieldset();
-				$form->openFieldset("Fieldset #3");
-				$form->addTextbox("Field #5:", "Field5");
-				$form->addTextbox("Field #6:", "Field6");
-				$form->addButton();
-				$form->closeFieldset();
-				$form->render();
-
-echo '<pre>', highlight_string('<?php
-$form = new form("fieldsets");
-$form->setAttributes(array(
-	"includesPath" => "../includes",
-	"width" => 300,
-));
-$form->addHidden("cmd", "submit");
-$form->openFieldset("Fieldset #1");
-$form->addTextbox("Field #1:", "Field1");
-$form->addTextbox("Field #2:", "Field2");
-$form->closeFieldset();
-$form->openFieldset("Fieldset #2");
-$form->addTextbox("Field #3:", "Field3");
-$form->addTextbox("Field #4:", "Field4");
-$form->closeFieldset();
-$form->openFieldset("Fieldset #3");
-$form->addTextbox("Field #5:", "Field5");
-$form->addTextbox("Field #6:", "Field6");
-$form->addButton();
-$form->closeFieldset();
-$form->render();
-?>', true), '</pre>';
-
-				$form = new form("fieldsets_mapping");
+				$form = new form("fieldsets_0");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
 					"width" => 500,
-					"noAutoFocus" => 1,
-					"map" => array(2, 2, 1, 3, 1)
+					"map" => array(2, 1, 3, 2, 3)
 				));
-				$form->addHidden("cmd", "submit");
-				$form->openFieldset("Shipping Information");
+
+				if(!empty($_GET["errormsg_0"]))
+					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+				$form->addHidden("cmd", "submit_0");
+				$form->openFieldset("Name");
 				$form->addTextbox("First Name:", "FName");
 				$form->addTextbox("Last Name:", "LName");
-				$form->addEmail("Email Address:", "Email");
-				$form->addTextbox("Phone Number:", "Phone");
+				$form->closeFieldset();
+				$form->openFieldset("Address");
 				$form->addTextbox("Address:", "Address");
 				$form->addTextbox("City:", "City");
 				$form->addState("State:", "State");
 				$form->addTextbox("Zip Code:", "Zip");
+				$form->closeFieldset();
+				$form->openFieldset("Email Addresses");
+				$form->addEmail("Email Address:", "Email");
+				$form->addEmail("Alternate Email Address:", "AlternateEmail");
+				$form->closeFieldset();
+				$form->openFieldset("Phone Numbers");
+				$form->addTextbox("Mobile/Cell:", "Mobile");
+				$form->addTextbox("Home:", "Home");
+				$form->addTextbox("Work:", "Work");
 				$form->addButton();
 				$form->closeFieldset();
 				$form->render();
 
 echo '<pre>', highlight_string('<?php
-$form = new form("fieldsets_mapping");
+$form = new form("fieldsets_0");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
 	"width" => 500,
-	"noAutoFocus" => 1,
-	"map" => array(2, 2, 1, 3, 1)
+	"map" => array(2, 1, 3, 2, 3)
 ));
-$form->addHidden("cmd", "submit");
-$form->openFieldset("Shipping Information");
+
+if(!empty($_GET["errormsg_0"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_0");
+$form->openFieldset("Name");
 $form->addTextbox("First Name:", "FName");
 $form->addTextbox("Last Name:", "LName");
-$form->addEmail("Email Address:", "Email");
-$form->addTextbox("Phone Number:", "Phone");
+$form->closeFieldset();
+$form->openFieldset("Address");
 $form->addTextbox("Address:", "Address");
 $form->addTextbox("City:", "City");
 $form->addState("State:", "State");
 $form->addTextbox("Zip Code:", "Zip");
+$form->closeFieldset();
+$form->openFieldset("Email Addresses");
+$form->addEmail("Email Address:", "Email");
+$form->addEmail("Alternate Email Address:", "AlternateEmail");
+$form->closeFieldset();
+$form->openFieldset("Phone Numbers");
+$form->addTextbox("Mobile/Cell:", "Mobile");
+$form->addTextbox("Home:", "Home");
+$form->addTextbox("Work:", "Work");
 $form->addButton();
 $form->closeFieldset();
 $form->render();
