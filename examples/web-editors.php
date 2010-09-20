@@ -4,7 +4,7 @@ session_start();
 include("../class.form.php");
 
 if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1"))) {
-	$form = new form("webeditors_0");
+	$form = new form("webeditors_" . substr($_POST["cmd"], -1));
 	if($form->validate())
 		header("Location: web-editors.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
 	else

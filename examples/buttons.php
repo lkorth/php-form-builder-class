@@ -3,10 +3,10 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
-	$form = new form("buttons");
+if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1"))) {
+	$form = new form("buttons_" . substr($_POST["cmd"], -1));
 	if($form->validate())
-		echo "<pre>" . htmlentities(print_r($_POST,true)) . "</pre>";
+		header("Location: buttons.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
 	else
 		header("Location: buttons.php");
 	exit();
@@ -29,42 +29,115 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 			</div>
 
 			<div id="pfbc_content">
-				<p><b>Buttons</b> - This example demonstrates how buttons are handled within the class.  The addButton() function can be called anywhere in the flow of your form's elements allowing you to 
-				insert buttons in various places in your form's structure.  By default, buttons are right-aligned within their respective row.  The <i>jqueryUI</i> can be applied to leverage jQuery UI's button
-				widget functionality.</b>
+				<p><b>Buttons</b> - The list provided below identifies sevaral areas where the button element differs from other element types within this project.</b>
+
+				<ul style="margin: 0;">
+					<li>Using this project's default stylesheet, Buttons will always be rendered right-aligned on their own line separate from other elements.</li>
+					<li>Consecutive buttons will be rendered horizontally in the same line.</li>
+					<li>When using the "map" form attribute, buttons don't affect the the number of elements that are to be rendered on each line.</li>
+				</ul>
+
+				<p>See the <a href="jquery.php">jQuery example file</a> for more information on how the "jqueryUI" and "jqueryUIButtons" attributes can be used to leverage jQueryUI's button
+				widget functionality.  Below, you will find several ways of how you can use this project's addButton function in your development.</p>
 
 				<?php
-				$form = new form("buttons");
+				$form = new form("buttons_0");
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
 					"width" => 400
 				));
-				$form->addHidden("cmd", "submit");
-				$form->addTextbox("Textbox:", "field0");
-				$form->addSelect("Select:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+
+				if(!empty($_GET["errormsg_0"]))
+					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+				$form->addHidden("cmd", "submit_0");
+				$form->addTextbox("Textbox:", "MyTextbox");
+				$form->addSelect("Selectbox:", "MySelectbox", "", array("Option #1", "Option #2", "Option #3"));
+				$form->addButton("Button #1");
+				$form->addButton("Button #2");
+				$form->addButton("Button #3");
+				$form->addCheckbox("Checkboxes:", "MyCheckbox[]", "", array("Option #1", "Option #2", "Option #3"), array("nobreak" => 1));
+				$form->addRadio("Radio Buttons:", "MyRadio", "", array("Option #1", "Option #2", "Option #3"), array("nobreak" => 1));
+				$form->addButton("Button #4");
+				$form->render();
+
+				?>
+				<br/><br/>
+				<?php
+
+				$form = new form("buttons_1");
+				$form->setAttributes(array(
+					"includesPath" => "../includes",
+					"width" => 500,
+					"jqueryUIButtons" => 1,
+					"map" => array(2, 2, 1, 3)
+				));
+
+				if(!empty($_GET["errormsg_1"]))
+					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+				$form->addHidden("cmd", "submit_1");
+				$form->addTextbox("First Name:", "FName");
+				$form->addTextbox("Last Name:", "LName");
+				$form->addButton("Button w/Map Attribute");
+				$form->addEmail("Email Address:", "Email");
+				$form->addTextbox("Phone Number:", "Phone");
+				$form->addTextbox("Address:", "Address");
+				$form->addTextbox("City:", "City");
+				$form->addState("State:", "State");
+				$form->addTextbox("Zip Code:", "Zip");
+				$form->addButton("Cancel", "button", array("onclick" => "window.back();"));
 				$form->addButton();
-				$form->addButton("Apply", "submit", array("jqueryUI" => 1));
-				$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"));
-				$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"));
-				$form->addButton("php.net", "link", array("href" => "http://www.php.net", "jqueryUI" => 1));
-				$form->addButton("php.net", "button", array("onclick" => "window.location = 'http://www.php.net';"));
 				$form->render();
 
 echo '<pre>', highlight_string('<?php
-$form = new form("buttons");
+$form = new form("buttons_0");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
 	"width" => 400
 ));
-$form->addHidden("cmd", "submit");
-$form->addTextbox("Textbox:", "field0");
-$form->addSelect("Select:", "field1", "", array("" => "--Select an Option--", "1" => "Option #1", "2" => "Option #2", "3" => "Option #3"));
+
+if(!empty($_GET["errormsg_0"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_0");
+$form->addTextbox("Textbox:", "MyTextbox");
+$form->addSelect("Selectbox:", "MySelectbox", "", array("Option #1", "Option #2", "Option #3"));
+$form->addButton("Button #1");
+$form->addButton("Button #2");
+$form->addButton("Button #3");
+$form->addCheckbox("Checkboxes:", "MyCheckbox[]", "", array("Option #1", "Option #2", "Option #3"), array("nobreak" => 1));
+$form->addRadio("Radio Buttons:", "MyRadio", "", array("Option #1", "Option #2", "Option #3"), array("nobreak" => 1));
+$form->addButton("Button #4");
+$form->render();
+
+?>
+<br/><br/>
+<?
+
+$form = new form("buttons_1");
+$form->setAttributes(array(
+	"includesPath" => "../includes",
+	"width" => 500,
+	"jqueryUIButtons" => 1,
+	"map" => array(2, 2, 1, 3)
+));
+
+if(!empty($_GET["errormsg_1"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_1");
+$form->addTextbox("First Name:", "FName");
+$form->addTextbox("Last Name:", "LName");
+$form->addButton("Button w/Map Attribute");
+$form->addEmail("Email Address:", "Email");
+$form->addTextbox("Phone Number:", "Phone");
+$form->addTextbox("Address:", "Address");
+$form->addTextbox("City:", "City");
+$form->addState("State:", "State");
+$form->addTextbox("Zip Code:", "Zip");
+$form->addButton("Cancel", "button", array("onclick" => "window.back();"));
 $form->addButton();
-$form->addButton("Apply", "submit", array("jqueryUI" => 1));
-$form->addCheckbox("Checkboxes:", "field2", "", array("Option #1", "Option #2", "Option #3"));
-$form->addRadio("Radio Buttons:", "field3", "", array("Option #1", "Option #2", "Option #3"));
-$form->addButton("php.net", "link", array("href" => "http://www.php.net", "jqueryUI" => 1));
-$form->addButton("php.net", "button", array("onclick" => "window.location = \'http://www.php.net\';"));
 $form->render();
 ?>', true), '</pre>';
 
