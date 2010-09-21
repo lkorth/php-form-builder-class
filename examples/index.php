@@ -27,6 +27,7 @@
 					<li><a href="buttons.php">Buttons</a></li>
 					<li><a href="fieldsets.php">Fieldsets</a></li>
 					<li><a href="conditional-scenarios.php">Conditional Scenarios</a></li>
+					<li><a href="synchronous-resource-loading.php">Synchronous Resource Loading</a></li>
 				</ul>
 			</div>
 		</div>	

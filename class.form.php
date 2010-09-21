@@ -109,7 +109,7 @@ class form extends pfbc {
 	private $stateArr;
 	private $tinymceIDArr;
 	private $tooltipIDArr;
-	private $generateInlineResources;
+	private $synchronousResources;
 
 	public $errorMsg;
 
@@ -683,7 +683,7 @@ class form extends pfbc {
 		if(empty($this->referenceValues) && !empty($_SESSION["pfbc-values"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-values"]))
 			$this->setValues($_SESSION["pfbc-values"][$this->attributes["id"]]);
 
-		if(empty($this->generateInlineResources))
+		if(empty($this->synchronousResources))
 			$this->setIncludePaths();
 
 		if(empty($this->phpIncludesPath) || !is_dir($this->phpIncludesPath))
@@ -699,7 +699,7 @@ class form extends pfbc {
 
 		if(empty($this->hasFormTag)) {
 			$str .= "\n" . '<div id="' . $this->attributes["id"] . '"';
-			if(empty($this->generateInlineResources))
+			if(empty($this->synchronousResources))
 				$str .= ' style="visibility: hidden;"';
 			$str .= ">";
 		}	
@@ -709,7 +709,7 @@ class form extends pfbc {
 				$this->attributes["class"] .= " pfbc-form";
 			else	
 				$this->attributes["class"] = "pfbc-form";
-			if(empty($this->generateInlineResources)) {
+			if(empty($this->synchronousResources)) {
 				if(!empty($this->attributes["style"]))
 					$this->attributes["style"] .= " visibility: hidden;";
 				else	
@@ -1510,7 +1510,7 @@ STR;
 
 STR;
 		
-		if(empty($this->generateInlineResources)) {
+		if(empty($this->synchronousResources)) {
 			$str .= <<<STR
 			jQuery(document).ready(function() {
 				jQuery.get('{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param', function(cssText) {
@@ -2118,9 +2118,9 @@ STR;
 	}
 
 	public function renderBody($returnString=false) {
-		if(empty($this->generateInlineResources)) {
+		if(empty($this->synchronousResources)) {
 			$this->setIncludePaths();
-			$this->generateInlineResources = 1;
+			$this->synchronousResources = 1;
 		}
 		$str = $this->render(true);
 
@@ -2135,7 +2135,7 @@ STR;
 	//This function renders the form's css.  This function is invoked within includes/css.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.
 	public function renderCSS($returnString=false) {
 		$str = "";
-		if(empty($this->generateInlineResources)) {
+		if(empty($this->synchronousResources)) {
 			if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
 				//Unserialize the appropriate form instance stored in the session array.
 				$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
@@ -2150,7 +2150,7 @@ STR;
 			else
 				$prefix = "http";
 
-			if(empty($form->generateInlineResources)) {
+			if(empty($form->synchronousResources)) {
 				$str .= str_replace("images/", "$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
 				if(!empty($form->jqueryDateRangeIDArr))
 					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
@@ -2667,7 +2667,7 @@ STR;
 			}
 		}
 
-		if(!empty($form->generateInlineResources)) {
+		if(!empty($form->synchronousResources)) {
 			 $str .= "</style>\n";
 		}
 
@@ -2678,9 +2678,9 @@ STR;
 	}
 
 	public function renderHead($returnString=false) {
-		if(empty($this->generateInlineResources)) {
+		if(empty($this->synchronousResources)) {
 			$this->setIncludePaths();
-			$this->generateInlineResources = 1;
+			$this->synchronousResources = 1;
 		}
 		$str = $this->renderCSS(true);
 
@@ -2702,7 +2702,7 @@ STR;
 			else
 				$prefix = "http";
 
-			if(empty($form->generateInlineResources)) {
+			if(empty($form->synchronousResources)) {
 				if(!empty($form->tooltipIDArr))
 					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
 				if(!empty($form->jqueryStarRatingIDArr))
@@ -3416,7 +3416,7 @@ STR;
 			}	
 		}	
 
-		if(!empty($form->generateInlineResources)) {
+		if(!empty($form->synchronousResources)) {
 			$str .= "\n" . 'setTimeout("pfbc_focus_' . $this->attributes["id"] . '();", 250);';
 			$str .= "//]]>";
 			$str .= "</script>\n";
