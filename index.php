@@ -84,7 +84,7 @@
 					<li><a href="examples/buttons.php">Buttons</a></li>
 					<li><a href="examples/fieldsets.php">Fieldsets</a></li>
 					<li><a href="examples/conditional-scenarios.php">Conditional Scenarios</a></li>
-					<li><a href="synchronous-resource-loading.php">Synchronous Resource Loading</a></li>
+					<li><a href="examples/synchronous-resource-loading.php">Synchronous Resource Loading</a></li>
 				</ul>
 			</div>
 

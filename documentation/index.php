@@ -19,7 +19,7 @@ include("../class.form.php");
 		</div>
 
 		<div id="pfbc_content">
-			<b>Table of Contents:</b>
+			<h4>Table of Contents:</h4>
 			<div>
 				<ul style="margin-top: 0; padding-top: 0;">
 					<li><a href="#Introduction">Introduction</a></li>
@@ -943,7 +943,7 @@ $form->addCKEditor("My Basic TinyMCE Editor", "TinyMCE", "", array("basic" => 1)
 
 				<a name="Form-Elements-Captcha"></a>
 				<h4>Captcha:</h4><p>This project leverages reCAPTCHA's anti-bot services to help prevent non-human activity by requiring the end-user to interpret and solve a challenge phrase.  See <a href="http://www.google.com/recaptcha">http://www.google.com/recaptcha</a> for more information about reCAPTCHA.
-				The captcha form element is different in several ways from the other elements included in this project.  The first different is that there can only be one catpcha </p>
+				The captcha form element is different in several ways from the other elements included in this project.</p>
 
 				<?php
 echo '<pre>', highlight_string('<?php

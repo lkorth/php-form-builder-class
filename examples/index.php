@@ -13,7 +13,7 @@
 		</div>
 
 		<div id="pfbc_content">
-			<b>Included Tutorials/Examples:</b>
+			<h4>Included Tutorials/Examples:</h4>
 			<div>
 				<ul style="margin-top: 0; padding-top: 0;">
 					<li><a href="form-elements.php">All Supported Form Elements</a></li>
