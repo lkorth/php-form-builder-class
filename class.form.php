@@ -722,6 +722,15 @@ class form extends pfbc {
 			$str .= ">";
 		}
 
+		if(empty($this->synchronousResources)) {
+			$str .= <<<STR
+<script type="text/javascript">
+	document.getElementById("{$this->attributes["id"]}").style.visibility = "hidden";
+</script>
+
+STR;
+		}
+
 		$str .= "\n" . '<div class="pfbc-main">';
 
 		if(!empty($this->errorMsg))
@@ -1509,6 +1518,7 @@ STR;
 						jQuery.swap(jQuery("#{$this->attributes["id"]}").parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, pfbc_adjust_{$this->attributes["id"]});
 					else
 						pfbc_adjust_{$this->attributes["id"]}();
+					jQuery("#{$this->attributes["id"]}").css("visibility", "visible");
 				});
 				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param", function() {
 
@@ -1530,6 +1540,7 @@ STR;
 		</script>
 
 STR;
+
 		if(!empty($this->tinymceIDArr)) {
 			if(empty($this->preventTinyMCELoad)) {
 				$str .= <<<STR
