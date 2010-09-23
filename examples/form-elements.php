@@ -77,6 +77,9 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				$form->setAttributes(array(
 					"includesPath" => "../includes",
 					"width" => "850"
+					"noAutoFocus" => 1,
+					"preventJQueryLoad" => 1,
+					"preventJQueryUILoad" => 1,
 				));	
 
 				if(!empty($_GET["errormsg_1"]))

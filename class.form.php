@@ -697,24 +697,14 @@ class form extends pfbc {
 		else
 			$focus = false;
 
-		if(empty($this->hasFormTag)) {
-			$str .= "\n" . '<div id="' . $this->attributes["id"] . '"';
-			if(empty($this->synchronousResources))
-				$str .= ' style="visibility: hidden;"';
-			$str .= ">";
-		}	
+		if(empty($this->hasFormTag))
+			$str .= "\n" . '<div id="' . $this->attributes["id"] . '">';
 		else {
 			$str .= "\n<form";
 			if(!empty($this->attributes["class"]))
 				$this->attributes["class"] .= " pfbc-form";
 			else	
 				$this->attributes["class"] = "pfbc-form";
-			if(empty($this->synchronousResources)) {
-				if(!empty($this->attributes["style"]))
-					$this->attributes["style"] .= " visibility: hidden;";
-				else	
-					$this->attributes["style"] = "visibility: hidden;";
-			}	
 			if(!empty($this->attributes) && is_array($this->attributes)) {
 				/*This syntax will be used throughout the render() and elementsToString() functions ensuring that attributes added to various HTML tags
 				are allowed and valid.  If you find that an attribute is not being included in your HTML tag definition, please reference $this->allowedFields.*/
@@ -1519,7 +1509,6 @@ STR;
 						jQuery.swap(jQuery("#{$this->attributes["id"]}").parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, pfbc_adjust_{$this->attributes["id"]});
 					else
 						pfbc_adjust_{$this->attributes["id"]}();
-					jQuery("#{$this->attributes["id"]}").css("visibility", "visible");	
 				});
 				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param", function() {
 

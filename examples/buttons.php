@@ -70,6 +70,9 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 					"includesPath" => "../includes",
 					"width" => 500,
 					"jqueryUIButtons" => 1,
+					"noAutoFocus" => 1,
+					"preventJQueryLoad" => 1,
+					"preventJQueryUILoad" => 1,
 					"map" => array(2, 2, 1, 3)
 				));
 
