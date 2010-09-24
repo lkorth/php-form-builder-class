@@ -61,7 +61,6 @@ class form extends pfbc {
 	protected $jqueryDateFormat;
 	protected $jqueryUIButtons;
 	protected $jqueryUITheme;
-	protected $jsErrorFunction;
 	protected $labelPaddingRight;
 	protected $labelRightAlign;
 	protected $labelWidth;
@@ -137,7 +136,6 @@ class form extends pfbc {
 		$this->integerErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers are allowed.";
 		$this->jqueryDateFormat = "MM d, yy";
 		$this->jqueryUITheme = "smoothness";
-		$this->jsErrorFunction = "pfbc_error_". $this->attributes["id"];
 		$this->labelPaddingRight = 4;
 		$this->mapMargin = 2;
 		//These lists represent all xhtml 1.0 strict compliant attributes. See http://www.w3schools.com/tags/default.asp for reference.
@@ -1930,7 +1928,7 @@ STR;
 					js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 				}
 			},
-			error: function(XMLHttpRequest, textStatus, errorThrown) { {$this->jsErrorFunction}(XMLHttpRequest.responseText); }
+			error: function(XMLHttpRequest, textStatus, errorThrown) { pfbc_error_{$this->attributes["id"]}(XMLHttpRequest.responseText); }
 		});
 
 		if(!validemail_{$this->attributes["id"]}) {
@@ -3362,7 +3360,7 @@ STR;
 						$str .= <<<STR
 			}			
 		},	
-		error: function(XMLHttpRequest, textStatus, errorThrown) { {$form->jsErrorFunction}(XMLHttpRequest.responseText); }
+		error: function(XMLHttpRequest, textStatus, errorThrown) { pfbc_error_{$this->attributes["id"]}(XMLHttpRequest.responseText); }
 	});
 	return false;
 
