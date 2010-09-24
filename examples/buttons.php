@@ -20,6 +20,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 			<title>PHP Form Builder Class | Examples | Buttons</title>
 			<link href="../style.css" rel="stylesheet" type="text/css"/>
 			<link href="style.css" rel="stylesheet" type="text/css"/>
+			<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>  
 		</head>
 		<body>
 			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
