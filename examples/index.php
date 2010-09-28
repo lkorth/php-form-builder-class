@@ -23,6 +23,7 @@
 					<li><a href="layout.php">Layout</a></li>
 					<li><a href="jquery.php">jQuery</a></li>
 					<li><a href="google-maps.php">Google Maps</a></li>
+					<li><a href="google-spreadsheets.php">Google Spreadsheets</a></li>
 					<li><a href="captcha.php">Captcha</a></li>
 					<li><a href="web-editors.php">Web Editors</a></li>
 					<li><a href="buttons.php">Buttons</a></li>

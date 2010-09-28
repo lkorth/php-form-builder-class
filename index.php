@@ -42,6 +42,7 @@
 					<li>Captcha (<a href="http://recaptcha.net">reCAPTCHA</a>)</li>
 					<li>Flexible Div Layout</li>
 					<li>XHTML 1.0 Strict Compliant</li>
+					<li>Google Docs Spreadsheet Integration</li>
 				</ul>
 			</div>
 
@@ -81,6 +82,7 @@
 					<li><a href="examples/layout.php">Layout</a></li>
 					<li><a href="examples/jquery.php">jQuery</a></li>
 					<li><a href="examples/google-maps.php">Google Maps</a></li>
+					<li><a href="examples/google-spreadsheets.php">Google Spreadsheets</a></li>
 					<li><a href="examples/captcha.php">Captcha</a></li>
 					<li><a href="examples/web-editors.php">Web Editors</a></li>
 					<li><a href="examples/buttons.php">Buttons</a></li>

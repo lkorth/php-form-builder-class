@@ -667,6 +667,26 @@ class form extends pfbc {
 			unset($_SESSION["pfbc-values"][$form->attributes["id"]]["recaptcha_response_field"]);
 	}
 
+	private function buildSpreadsheetData($form, $referenceValues) {
+		$elementSize = sizeof($form->elements);
+		for($e = 0; $e < $elementSize; ++$e) {
+			$eleName = $form->elements[$e]->attributes["name"];
+			if(substr($eleName , -2) == "[]")
+				$eleName = substr($eleName, 0, -2);
+
+			$eleLabel = $form->elements[$e]->label;
+			if(empty($eleLabel))
+				$eleLabel = $eleName;
+
+			if(array_key_exists($eleName, $referenceValues)) {
+				if(is_array($referenceValues[$eleName]))
+					$_SESSION["pfbc-spreadsheet"][$form->attributes["id"]][$eleLabel] = stripslashes(implode(", ", $referenceValues[$eleName]));
+				else
+					$_SESSION["pfbc-spreadsheet"][$form->attributes["id"]][$eleLabel] = stripslashes($referenceValues[$eleName]);
+			}	
+		}
+	}
+
 	public function clearElements() {
 		$this->elements = array();
 	}
@@ -3424,6 +3444,40 @@ STR;
 			echo($str);
 		else
 			return $str;
+	}
+
+	public function sendToGoogleSpreadsheet($username, $password, $spreadsheet, $worksheet="") {
+		if(!empty($_POST))
+			$referenceValues = $_POST;
+		elseif(!empty($_GET))
+			$referenceValues = $_GET;
+
+		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+
+			require_once($form->phpIncludesPath . "/class.spreadsheet.php");
+			$this->buildSpreadsheetData($form, $referenceValues);
+			if(!empty($form->bindRules)) {
+				$bindRuleKeys = array_keys($form->bindRules);
+				$bindRuleSize = sizeof($bindRuleKeys);
+				for($b = 0; $b < $bindRuleSize; ++$b) {
+					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
+						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
+							$this->buildSpreadsheetData($form->bindRules[$bindRuleKeys[$b]][0], $referenceValues);
+					}		
+				}	
+			}	
+		}	
+
+		if(!empty($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]])) {
+			$gdoc = new spreadsheet();
+			$gdoc->authenticate($username, $password);
+			$gdoc->setSpreadsheet($spreadsheet);
+			if(!empty($worksheet))
+				$gdoc->setWorksheet($worksheet);
+			$gdoc->add($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);	
+			unset($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);
+		}	
 	}
 
 	private function setIncludePaths() {
