@@ -5,6 +5,7 @@ class spreadsheet {
 	private $worksheet;
 	private $spreadsheetid;
 	private $worksheetid;
+	private $error;
 
 	public function __construct() {
 	}
@@ -28,12 +29,22 @@ class spreadsheet {
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
 
+
+		$error = "Google ClientLogin authentication failed.  Verify that the supplied Google account login credentials are correct.";
 		if($status == 200) {
 			if(stripos($response, "auth=") !== false) {
 				preg_match("/auth=([a-z0-9_\-]+)/i", $response, $matches);
 				$this->token = $matches[1];
 			}
+			else
+				$this->error = $error;
 		}
+		else
+			$this->error = $error;
+	}
+
+	public function getError() {
+		return "Error: " . $this->error;
 	}
 
 	public function setSpreadsheet($title) {
@@ -74,9 +85,14 @@ class spreadsheet {
 					$response = curl_exec($curl);
 					$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 					curl_close($curl);
+					if($status == 201)
+						return true;
+					else
+						$this->error = "Error sending xml data to Google Docs spreadsheet/worksheet. Google Spreadsheets API response: " . $response;
 				}
 			}
 		}
+		return false;
 	}
 
 	private function getColumnIDs() {
@@ -95,16 +111,21 @@ class spreadsheet {
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
 
+		$error = "No column headers available.  The cells in the initial row of the specified Google Docs spreadsheet/worksheet must contain column headers.";
 		if($status == 200) {
-			$columnIDs = array();
 			$xml = simplexml_load_string($response);
 			if($xml->entry) {
+				$columnIDs = array();
 				$columnSize = sizeof($xml->entry);
 				for($c = 0; $c < $columnSize; ++$c)
 					$columnIDs[] = $this->formatColumnID($xml->entry[$c]->content);
+				return $columnIDs;		
 			}		
-			return $columnIDs;		
+			else
+				$this->error = $error;
 		}
+		else
+			$this->error = $error;
 
 		return "";
 	}
@@ -123,6 +144,12 @@ class spreadsheet {
 		$response = curl_exec($curl);
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
+		$spreadsheet_error = "Invalid spreadsheet title. The spreadsheet title specified could not be located in your Google Docs account.";
+		if(!empty($this->worksheet))
+			$worksheet_error = "Invalid worksheet title. The worksheet title specified could not be located in the specified Google Docs spreadsheet.";
+		else
+			$worksheet_error = "No worksheets available. The Google Docs spreadsheet specified does not contain any worksheets.";
+
 		if($status == 200) {
 			$spreadsheetXml = simplexml_load_string($response);
 			if($spreadsheetXml->entry) {
@@ -138,9 +165,18 @@ class spreadsheet {
 					$worksheetXml = simplexml_load_string($response);
 					if($worksheetXml->entry)
 						$this->worksheetid = basename(trim($worksheetXml->entry[0]->id));
+					else
+						$this->error = $worksheet_error;
 				}
+				else
+					$this->error = $worksheet_error;
 			}
+			else
+				$this->error = $spreadsheet_error;
 		}
+		else
+			$this->error = $spreadsheet_error;
+
 		curl_close($curl);
 		if(!empty($this->spreadsheetid) && !empty($this->worksheetid))
 			return "https://spreadsheets.google.com/feeds/list/" . $this->spreadsheetid . "/" . $this->worksheetid . "/private/full";

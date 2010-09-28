@@ -6,8 +6,10 @@ include("../class.form.php");
 if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0"))) {
 	$form = new form("googlespreadsheets_" . substr($_POST["cmd"], -1));
 	if($form->validate()) {
-		$form->sendToGoogleSpreadsheet("my_email", "my_password", "my_spreadsheet", "my_worksheet");
-		header("Location: google-spreadsheets.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
+		if($form->sendToGoogleSpreadsheet("my_email", "my_password", "my_spreadsheet", "my_worksheet"))
+			header("Location: google-spreadsheets.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter has been sent your Google Docs spreadsheet."));
+		else
+			header("Location: google-spreadsheets.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Oops! The following error has occurred while sending information to your Google Docs spreadsheet.  " .  $form->getGoogleSpreadsheetError()));
 	}	
 	else
 		header("Location: google-spreadsheets.php");

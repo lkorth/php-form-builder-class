@@ -88,6 +88,7 @@ class form extends pfbc {
 	private $elements;
 	private $emailExists;
 	private $focusElement;
+	private $gsErrorMsg;
 	private $hasFormTag;
 	private $hintExists;
 	private $https;
@@ -693,6 +694,10 @@ class form extends pfbc {
 
 	public function closeFieldset() {
 		$this->addElement("", "", "htmlexternal", '</fieldset>');
+	}
+
+	public function getGoogleSpreadsheetError() {
+		return $this->gsError;
 	}
 
 	public function elementsToString() {
@@ -3475,8 +3480,11 @@ STR;
 			$gdoc->setSpreadsheet($spreadsheet);
 			if(!empty($worksheet))
 				$gdoc->setWorksheet($worksheet);
-			$gdoc->add($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);	
+			$result = $gdoc->add($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);
+			if(!$result)
+				$this->gsError = $gdoc->getError();
 			unset($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);
+			return $result;
 		}	
 	}
 
