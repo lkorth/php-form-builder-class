@@ -671,20 +671,22 @@ class form extends pfbc {
 	private function buildSpreadsheetData($form, $referenceValues) {
 		$elementSize = sizeof($form->elements);
 		for($e = 0; $e < $elementSize; ++$e) {
-			$eleName = $form->elements[$e]->attributes["name"];
-			if(substr($eleName , -2) == "[]")
-				$eleName = substr($eleName, 0, -2);
+			if(empty($form->elements[$e]->ignoreGSSend)) {
+				$eleName = $form->elements[$e]->attributes["name"];
+				if(substr($eleName , -2) == "[]")
+					$eleName = substr($eleName, 0, -2);
 
-			$eleLabel = $form->elements[$e]->label;
-			if(empty($eleLabel))
-				$eleLabel = $eleName;
+				$eleLabel = $form->elements[$e]->label;
+				if(empty($eleLabel))
+					$eleLabel = $eleName;
 
-			if(array_key_exists($eleName, $referenceValues)) {
-				if(is_array($referenceValues[$eleName]))
-					$_SESSION["pfbc-spreadsheet"][$form->attributes["id"]][$eleLabel] = stripslashes(implode(", ", $referenceValues[$eleName]));
-				else
-					$_SESSION["pfbc-spreadsheet"][$form->attributes["id"]][$eleLabel] = stripslashes($referenceValues[$eleName]);
-			}	
+				if(array_key_exists($eleName, $referenceValues)) {
+					if(is_array($referenceValues[$eleName]))
+						$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]][$eleLabel] = stripslashes(implode(", ", $referenceValues[$eleName]));
+					else
+						$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]][$eleLabel] = stripslashes($referenceValues[$eleName]);
+				}	
+			}
 		}
 	}
 
@@ -3477,10 +3479,8 @@ STR;
 		if(!empty($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]])) {
 			$gdoc = new spreadsheet();
 			$gdoc->authenticate($username, $password);
-			$gdoc->setSpreadsheet($spreadsheet);
-			if(!empty($worksheet))
-				$gdoc->setWorksheet($worksheet);
-			$result = $gdoc->add($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);
+			$gdoc->select($spreadsheet, $worksheet);
+			$result = $gdoc->populate($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);
 			if(!$result)
 				$this->gsError = $gdoc->getError();
 			unset($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);
@@ -3604,6 +3604,7 @@ class element extends pfbc {
 	public $hideCaption;
 	public $hideDisplay;
 	public $hideJump;
+	public $ignoreGSSend;
 	public $integer;
 	public $jqueryOptions;
 	public $label;
