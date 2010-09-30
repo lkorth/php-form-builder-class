@@ -49,7 +49,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 				<ol style="margin: 0;">
 					<li>You'll need a Google account.  If you don't have one, you can create one by clicking the "Create an account now" link at <a href="http://docs.google.com">http://docs.google.com</a>.</li>
-					<li>If the spreadsheet title you specify in the sendToGoogleSpreadsheet function does not exist, a new spreadsheet will be created for you with the appropriate column headers.</li>
+					<li>If the spreadsheet title you specify in the sendToGoogleSpreadsheet function does not exist, a new spreadsheet will be created for you with the appropriate title and column headers.</li>
 					<li>If you're creating your spreadsheet manually through the Google Docs GUI, an important thing to keep in mind is that Google will treat the initial row of cells as column identifiers.
 					These column identifiers must match an element's label used in your form ("First Name:", "Last Name:", etc), which enables the form's submitted 
 					data to be correctly placed within the appropriate column.  If the spreadsheet you specify in the sendToGoogleSpreadsheet function exists but has no inital row of column headers, your form's data will not
