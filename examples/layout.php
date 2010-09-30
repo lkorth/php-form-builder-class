@@ -12,75 +12,61 @@ if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1",
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
+	$title = "Layout";
+	include("../header.php");
 	?>
-	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-		<head>
-			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-			<title>PHP Form Builder Class | Examples | Layout</title>
-			<link href="../style.css" rel="stylesheet" type="text/css"/>
-			<link href="style.css" rel="stylesheet" type="text/css"/>
-			<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>  
-		</head>
-		<body>
-			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
-			<div id="pfbc_banner">
-				<h2><a href="../index.php">PHP Form Builder Class</a> / <a href="index.php">Examples</a> / Layout</h2>
-				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
-			</div>
 
-			<div id="pfbc_content">
-				<p><b>Layout</b> - The project's default layout will render each element on it's own line, place the labels above the elements, and set the elements' widths
-				to span the entire length of the form.  Below, you'll find several form/element attributes that can be used to alter your forms' layouts.</p>
+	<p><b>Layout</b> - The project's default layout will render each element on it's own line, place the labels above the elements, and set the elements' widths
+	to span the entire length of the form.  Below, you'll find several form/element attributes that can be used to alter your forms' layouts.</p>
 
-				<ul style="margin: 0;">
-					<li>map - The "map" form attribute is used to render multiple elements on each line by specifying a single dimention array where the array values
-					corresponds with the number of elements that should be displayed on each respective line.</li>
-					<li>mapMargin - When using the "map" attribute, "mapMargin" is used to adjust the amount of left/right padding applied to form elements rendered
-					on the same line.  By default, this attribute will be set to 2px or 2% depending on if the form's width is set as a pixel or percentage value.
-					The total padding between form elements will be twice the value of the "mapMargin" attribute as it is applied to padding on both the left and right
-					side of each element.</li>
-					<li>labelWidth - The "labelWidth" attribute gives you - the developer - the ability display labels floated left beside the elements (instead of dispalyed
-					block above the elements).  The "labelWidth" attribute exists as both a form and element attribute, which means it can be applied in the form's setAttributes function
-					and/or in the additionalParams associative array when adding form elements.  Setting "labelWidth" in the form's setAttribute function will apply the attribute
-					to each form element.  If "labelWidth" is applied both as a form and element attribute, the element attribute's value will take precedence.</li>
-					<li>labelRightAlign - When using the "labelWidth" attribtue, "labelRightAlign" can be used to right align the label's text (instead of left).
-					Like "labelWidth", the "labelRightAlign" attribute exists as both a form and element attribute, which means it can be applied in the form's setAttributes function
-					and/or in the additionalParams associative array when adding form elements.  Setting "labelRightAlign" in the form's setAttribute function will apply the attribute
-					to each form element.  If "labelRightAlign" is applied both as a form and element attribute, the element attribute's value will take precedence.</li>
-					<li>labelPaddingRight - When using both the "labelWidth" and "labelRightAlign" attributes, "labelPaddingRight" can be used to adjust the amount of padding between the
-					label and the element.  This attribute will default to 4px or 4% depending on if the form's width is set as a pixel or percentage value.
-					Like "labelWidth", the "labelPaddingRight" attribute exists as both a form and element attribute, which means it can be applied in the form's setAttributes function
-					and/or in the additionalParams associative array when adding form elements.  Setting "labelPaddingRight" in the form's setAttribute function will apply the attribute
-					to each form element.  If "labelPaddingRight" is applied both as a form and element attribute, the element attribute's value will take precedence.</li>
-				</ul>
+	<ul style="margin: 0;">
+		<li>map - The "map" form attribute is used to render multiple elements on each line by specifying a single dimention array where the array values
+		corresponds with the number of elements that should be displayed on each respective line.</li>
+		<li>mapMargin - When using the "map" attribute, "mapMargin" is used to adjust the amount of left/right padding applied to form elements rendered
+		on the same line.  By default, this attribute will be set to 2px or 2% depending on if the form's width is set as a pixel or percentage value.
+		The total padding between form elements will be twice the value of the "mapMargin" attribute as it is applied to padding on both the left and right
+		side of each element.</li>
+		<li>labelWidth - The "labelWidth" attribute gives you - the developer - the ability display labels floated left beside the elements (instead of dispalyed
+		block above the elements).  The "labelWidth" attribute exists as both a form and element attribute, which means it can be applied in the form's setAttributes function
+		and/or in the additionalParams associative array when adding form elements.  Setting "labelWidth" in the form's setAttribute function will apply the attribute
+		to each form element.  If "labelWidth" is applied both as a form and element attribute, the element attribute's value will take precedence.</li>
+		<li>labelRightAlign - When using the "labelWidth" attribtue, "labelRightAlign" can be used to right align the label's text (instead of left).
+		Like "labelWidth", the "labelRightAlign" attribute exists as both a form and element attribute, which means it can be applied in the form's setAttributes function
+		and/or in the additionalParams associative array when adding form elements.  Setting "labelRightAlign" in the form's setAttribute function will apply the attribute
+		to each form element.  If "labelRightAlign" is applied both as a form and element attribute, the element attribute's value will take precedence.</li>
+		<li>labelPaddingRight - When using both the "labelWidth" and "labelRightAlign" attributes, "labelPaddingRight" can be used to adjust the amount of padding between the
+		label and the element.  This attribute will default to 4px or 4% depending on if the form's width is set as a pixel or percentage value.
+		Like "labelWidth", the "labelPaddingRight" attribute exists as both a form and element attribute, which means it can be applied in the form's setAttributes function
+		and/or in the additionalParams associative array when adding form elements.  Setting "labelPaddingRight" in the form's setAttribute function will apply the attribute
+		to each form element.  If "labelPaddingRight" is applied both as a form and element attribute, the element attribute's value will take precedence.</li>
+	</ul>
 
-				<p>Below are several example forms that demo many of the attributes listed above.</p>
+	<p>Below are several example forms that demo many of the attributes listed above.</p>
 
-				<?php
-				$form = new form("layout_0");
-				$form->setAttributes(array(
-					"includesPath" => "../includes",
-					"width" => 500,
-					"map" => array(2, 2, 1, 3)
-				));
+	<?php
+	$form = new form("layout_0");
+	$form->setAttributes(array(
+		"includesPath" => "../includes",
+		"width" => 500,
+		"map" => array(2, 2, 1, 3)
+	));
 
-				if(!empty($_GET["errormsg_0"]))
-					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	if(!empty($_GET["errormsg_0"]))
+		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
-				$form->addHidden("cmd", "submit_0");
-				$form->addTextbox("First Name:", "FName");
-				$form->addTextbox("Last Name:", "LName");
-				$form->addEmail("Email Address:", "Email");
-				$form->addTextbox("Phone Number:", "Phone");
-				$form->addTextbox("Address:", "Address");
-				$form->addTextbox("City:", "City");
-				$form->addState("State:", "State");
-				$form->addTextbox("Zip Code:", "Zip");
-				$form->addButton();
-				$form->render();
+	$form->addHidden("cmd", "submit_0");
+	$form->addTextbox("First Name:", "FName");
+	$form->addTextbox("Last Name:", "LName");
+	$form->addEmail("Email Address:", "Email");
+	$form->addTextbox("Phone Number:", "Phone");
+	$form->addTextbox("Address:", "Address");
+	$form->addTextbox("City:", "City");
+	$form->addState("State:", "State");
+	$form->addTextbox("Zip Code:", "Zip");
+	$form->addButton();
+	$form->render();
 
-echo '<pre>', highlight_string('<?php
+	echo '<pre>', highlight_string('<?php
 $form = new form("layout_0");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -104,27 +90,27 @@ $form->addButton();
 $form->render();
 ?>', true), '</pre>';
 
-				$form = new form("layout_1");
-				$form->setAttributes(array(
-					"width" => 400,
-					"includesPath" => "../includes",
-					"noAutoFocus" => 1,
-					"preventJQueryLoad" => 1,
-					"preventJQueryUILoad" => 1,
-					"labelWidth" => 100
-				));
+	$form = new form("layout_1");
+	$form->setAttributes(array(
+		"width" => 400,
+		"includesPath" => "../includes",
+		"noAutoFocus" => 1,
+		"preventJQueryLoad" => 1,
+		"preventJQueryUILoad" => 1,
+		"labelWidth" => 100
+	));
 
-				if(!empty($_GET["errormsg_1"]))
-					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	if(!empty($_GET["errormsg_1"]))
+		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
-				$form->addHidden("cmd", "submit_1");
-				$form->addTextbox("Username:", "Username", "", array("required" => 1));
-				$form->addPassword("Password:", "Password", "", array("required" => 1));
-				$form->addHTML('<a href="#">Forgot your password?</a>');
-				$form->addButton("Login");
-				$form->render();
+	$form->addHidden("cmd", "submit_1");
+	$form->addTextbox("Username:", "Username", "", array("required" => 1));
+	$form->addPassword("Password:", "Password", "", array("required" => 1));
+	$form->addHTML('<a href="#">Forgot your password?</a>');
+	$form->addButton("Login");
+	$form->render();
 
-echo '<pre>', highlight_string('<?php
+	echo '<pre>', highlight_string('<?php
 $form = new form("layout_1");
 $form->setAttributes(array(
 	"width" => 400,
@@ -143,34 +129,34 @@ $form->addButton("Login");
 $form->render();
 ?>', true), '</pre>';
 
-				$form = new form("layout_2");
-				$form->setAttributes(array(
-					"width" => 800,
-					"includesPath" => "../includes",
-					"noAutoFocus" => 1,
-					"preventJQueryLoad" => 1,
-					"preventJQueryUILoad" => 1,
-					"labelWidth" => 125,
-					"labelRightAlign" => 1,
-					"map" => array(2, 2, 1, 3)
-				));
+	$form = new form("layout_2");
+	$form->setAttributes(array(
+		"width" => 800,
+		"includesPath" => "../includes",
+		"noAutoFocus" => 1,
+		"preventJQueryLoad" => 1,
+		"preventJQueryUILoad" => 1,
+		"labelWidth" => 125,
+		"labelRightAlign" => 1,
+		"map" => array(2, 2, 1, 3)
+	));
 
-				if(!empty($_GET["errormsg_2"]))
-					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_2"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	if(!empty($_GET["errormsg_2"]))
+		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_2"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
-				$form->addHidden("cmd", "submit_2");
-				$form->addTextbox("First Name:", "FName", "", array("required" => 1));
-				$form->addTextbox("Last Name:", "LName", "", array("required" => 1));
-				$form->addEmail("Email Address:", "Email", "", array("required" => 1));
-				$form->addTextbox("Phone Number:", "Phone");
-				$form->addTextbox("Address:", "Address");
-				$form->addTextbox("City:", "City");
-				$form->addState("State:", "State");
-				$form->addTextbox("Zip Code:", "Zip");
-				$form->addButton();
-				$form->render();
+	$form->addHidden("cmd", "submit_2");
+	$form->addTextbox("First Name:", "FName", "", array("required" => 1));
+	$form->addTextbox("Last Name:", "LName", "", array("required" => 1));
+	$form->addEmail("Email Address:", "Email", "", array("required" => 1));
+	$form->addTextbox("Phone Number:", "Phone");
+	$form->addTextbox("Address:", "Address");
+	$form->addTextbox("City:", "City");
+	$form->addState("State:", "State");
+	$form->addTextbox("Zip Code:", "Zip");
+	$form->addButton();
+	$form->render();
 
-echo '<pre>', highlight_string('<?php
+	echo '<pre>', highlight_string('<?php
 $form = new form("layout_2");
 $form->setAttributes(array(
 	"width" => 800,
@@ -195,11 +181,7 @@ $form->addTextbox("Zip Code:", "Zip");
 $form->addButton();
 $form->render();
 ?>', true), '</pre>';
-				?>
-
-			</div>
-		</body>	
-	</html>	
-	<?php
+	
+	include("../footer.php");
 }
 ?>

@@ -37,34 +37,18 @@ $form->addRating("Rating:", "MyRating", "", range(1, 10));
 $form->addColor("Color:", "MyColor");
 $form->addEmail("Email:", "MyEmail");
 $form->addButton();
+
+$title = "Synchronous Resource Loading";
+$headextra = $form->renderHead(true);
+include("../header.php");
 ?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<title>PHP Form Builder Class | Examples | Synchronous Resource Loading</title>
-		<link href="../style.css" rel="stylesheet" type="text/css"/>
-		<link href="style.css" rel="stylesheet" type="text/css"/>
-		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>  
-		<?php
-		$form->renderHead();
-		?>
-	</head>
-	<body>
-		<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
-		<div id="pfbc_banner">
-			<h2><a href="../index.php">PHP Form Builder Class</a> / <a href="index.php">Examples</a> / Synchronous Resource Loading</h2>
-			<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
-		</div>
+<p><b>Synchronous Resource Loading</b> - This project's render function loads the form's required css/js resources asynchronously.  For XHTML strict compliance, the css include files and style tag sections are
+appended to the head tag.  This example file demonstrates how two functions - renderHead and renderBody - can be used to load these css/js resources synchronously.  One of the benefits of this approach
+is that the form's stylesheet is loaded before any markup is generated, which eliminates the visual delay that can occur when the render function is invoked.</p>
 
-		<div id="pfbc_content">
-			<p><b>Synchronous Resource Loading</b> - This project's render function loads the form's required css/js resources asynchronously.  For XHTML strict compliance, the css include files and style tag sections are
-			appended to the head tag.  This example file demonstrates how two functions - renderHead and renderBody - can be used to load these css/js resources synchronously.  One of the benefits of this approach
-			is that the form's stylesheet is loaded before any markup is generated, which eliminates the visual delay that can occur when the render function is invoked.</p>
-			<?php
-			$form->renderBody();
-			?>
-		</div>
-	</body>
-</html>
+<?php
+$form->renderBody();
+include("../footer.php");
+?>
+

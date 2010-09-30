@@ -12,78 +12,64 @@ if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1")
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
+	$title = "Web Editors";
+	include("../header.php");
 	?>
-	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-		<head>
-			<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-			<title>PHP Form Builder Class | Examples | Web Editors</title>
-			<link href="../style.css" rel="stylesheet" type="text/css"/>
-			<link href="style.css" rel="stylesheet" type="text/css"/>
-			<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>  
-		</head>	
-		<body>
-			<div id="pfbc_links"><a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a> | <a href="http://groups.google.com/group/php-form-builder-class/">Development Community - Google Groups</a> | <a href="http://php-form-builder-class.googlecode.com/files/formbuilder.zip">Download Version <?php echo(file_get_contents('../version'));?></a></div>
-			<div id="pfbc_banner">
-				<h2><a href="../index.php">PHP Form Builder Class</a> / <a href="index.php">Examples</a> / Web Editors</h2>
-				<h5><span>Version: <?php echo(file_get_contents('../version'));?></span><span style="padding-left: 10px;">Released: <?php echo(file_get_contents('../release'));?></span></h5>
-			</div>
 
-			<div id="pfbc_content">
-				<p><b>Web Editors</b> - This project has support for two web editors - TinyMCE and CKEditor.  More information about these editors can be found at
-				<a href="http://tinymce.moxiecode.com/">http://tinymce.moxiecode.com/</a> and <a href="http://ckeditor.com/">http://ckeditor.com/</a> respectively.
-				Below, you will find several form/element attributes that affect the behavior of these two html wysiwyg editors.</p>
+	<p><b>Web Editors</b> - This project has support for two web editors - TinyMCE and CKEditor.  More information about these editors can be found at
+	<a href="http://tinymce.moxiecode.com/">http://tinymce.moxiecode.com/</a> and <a href="http://ckeditor.com/">http://ckeditor.com/</a> respectively.
+	Below, you will find several form/element attributes that affect the behavior of these two html wysiwyg editors.</p>
 
-				<ul style="margin: 0;">
-					<li>preventTinyMCELoad - The "preventTinyMCELoad" form attribtue is used to prevent TinyMCE's javascript file from being loaded twice if
-					it has already been included either by or external to this project.</li>
-					<li>preventTinyMCEInitLoad - This form attribute prevents TinyMCE's init function from being invoked, which is responsible for converting 
-					all textareas with the appropriate class applied into TinyMCE web editors.  If you're using this project multiple times on the same webpage, and a previous form
-					uses the addWebEditor function, you will need to use this form attribute prevent TinyMCE's init function from being invoke multiple times.
-					Chances are that if you find yourself needing to apply the "preventTinyMCELoad" attribute, you will also need to apply this form attribute.</li>
-					<li>preventCKEditorLoad - The "preventCKEditorLoad" form attribtue is used to prevent CKEditor's javascript file from being loaded twice if
-					it has already been included either by or external to this project.</li>
-					<li>basic - This element attribute is used to render a minified version of each web editor's control bar.</li>
-				</ul>
+	<ul style="margin: 0;">
+		<li>preventTinyMCELoad - The "preventTinyMCELoad" form attribtue is used to prevent TinyMCE's javascript file from being loaded twice if
+		it has already been included either by or external to this project.</li>
+		<li>preventTinyMCEInitLoad - This form attribute prevents TinyMCE's init function from being invoked, which is responsible for converting 
+		all textareas with the appropriate class applied into TinyMCE web editors.  If you're using this project multiple times on the same webpage, and a previous form
+		uses the addWebEditor function, you will need to use this form attribute prevent TinyMCE's init function from being invoke multiple times.
+		Chances are that if you find yourself needing to apply the "preventTinyMCELoad" attribute, you will also need to apply this form attribute.</li>
+		<li>preventCKEditorLoad - The "preventCKEditorLoad" form attribtue is used to prevent CKEditor's javascript file from being loaded twice if
+		it has already been included either by or external to this project.</li>
+		<li>basic - This element attribute is used to render a minified version of each web editor's control bar.</li>
+	</ul>
 
-				<p>Below you'll find several ways you can use the addWebEditor and addCKEditor functions in your development.</p>
+	<p>Below you'll find several ways you can use the addWebEditor and addCKEditor functions in your development.</p>
 
-				<?php
-				$form = new form("webeditors_0");
-				$form->setAttributes(array(
-					"includesPath" => "../includes",
-					"width" => 655, 
-				));
+	<?php
+	$form = new form("webeditors_0");
+	$form->setAttributes(array(
+		"includesPath" => "../includes",
+		"width" => 655, 
+	));
 
-				if(!empty($_GET["errormsg_0"]))
-					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	if(!empty($_GET["errormsg_0"]))
+		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
-				$form->addHidden("cmd", "submit_0");
-				$form->addWebEditor("TinyMCE Web Editor:", "MyWebEditor");
-				$form->addWebEditor("TinyMCE Web Editor w/Basic Attribute:", "MyWebEditorBasic", "", array("basic" => 1));
-				$form->addButton();
-				$form->render();
-				?>
+	$form->addHidden("cmd", "submit_0");
+	$form->addWebEditor("TinyMCE Web Editor:", "MyWebEditor");
+	$form->addWebEditor("TinyMCE Web Editor w/Basic Attribute:", "MyWebEditorBasic", "", array("basic" => 1));
+	$form->addButton();
+	$form->render();
+	?>
 
-				<br/><br/>
+	<br/><br/>
 
-				<?php
-				$form = new form("webeditors_1");
-				$form->setAttributes(array(
-					"includesPath" => "../includes",
-					"width" => "850"
-				));
+	<?php
+	$form = new form("webeditors_1");
+	$form->setAttributes(array(
+		"includesPath" => "../includes",
+		"width" => "850"
+	));
 
-				if(!empty($_GET["errormsg_1"]))
-					$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	if(!empty($_GET["errormsg_1"]))
+		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
-				$form->addHidden("cmd", "submit_1");
-				$form->addCKEditor("CKEditor Web Editor:", "MyCKEditor");
-				$form->addCKEditor("CKEditor Web Editor w/Basic Attribute:", "MyCKEditorBasic", "", array("basic" => 1));
-				$form->addButton();
-				$form->render();
+	$form->addHidden("cmd", "submit_1");
+	$form->addCKEditor("CKEditor Web Editor:", "MyCKEditor");
+	$form->addCKEditor("CKEditor Web Editor w/Basic Attribute:", "MyCKEditorBasic", "", array("basic" => 1));
+	$form->addButton();
+	$form->render();
 
-echo '<pre>', highlight_string('<?php
+	echo '<pre>', highlight_string('<?php
 $form = new form("webeditors_0");
 $form->setAttributes(array(
 	"includesPath" => "../includes",
@@ -119,11 +105,7 @@ $form->addButton();
 $form->render();
 ?>', true), '</pre>';
 
-				?>
-			</div>	
-		</body>
-	</html>
-	<?php
+	include("../footer.php");
 }
 ?>
 
