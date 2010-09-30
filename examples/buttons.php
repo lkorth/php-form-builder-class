@@ -16,7 +16,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	include("../header.php");
 	?>
 
-	<p><b>Buttons</b> - The list provided below identifies sevaral areas where the button element differs from other element types within this project.</b>
+	<p><b>Buttons</b> - The list provided below identifies sevaral areas where the button element differs from other element types within this project.</p>
 
 	<ul style="margin: 0;">
 		<li>Using this project's default stylesheet, Buttons will always be rendered right-aligned on their own line separate from other elements.</li>

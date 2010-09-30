@@ -17,7 +17,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	?>
 
 	<p><b>Captcha</b> - This project leverages reCAPTCHA's anti-bot service to provide captcha functionality.  For more information about this service, visit <a href="http://www.google.com/recaptcha">http://www.google.com/recaptcha</a>.  
-	Below you will find a detailed list of the various form attributes that affect the reCAPTCHA integration.<p>
+	Below you will find a detailed list of the various form attributes that affect the reCAPTCHA integration.</p>
 
 	<ul style="margin: 0;">
 		<li>captchaLang - The "captchaLang" form attribute allows you - the developer - to internationalize reCAPTCHA by supplying a two-character language code.  This project uses

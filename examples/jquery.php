@@ -58,7 +58,7 @@ STR;
 		See <a href="http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate">http://docs.jquery.com/UI/Datepicker/$.datepicker.formatDate</a> for a reference guide on how to set this attribute.</li>
 		<li>jqueryUIButtons - This form attribute will replace all standard html buttons added to a form with jQueryUI's button widget functionality.</li>
 		<li>jqueryUITheme - The "jqueryUITheme" form attribute can be used to specify one of the twenty-four supported jQueryUI themes.  Available themes include "black-tie", "blitzer", "cupertino", "dark-hive", "dot-luv", "eggplant", "excite-bike", "flick", "hot-sneaks", "humanity", "le-frog", "mint-choc", "overcast", "pepper-grinder", "redmond", "smoothness", "south-street", "start", "sunny", "swanky-purse", "trontastic", "ui-darkness", "ui-lightness", "vader". 
-		To view each of these themes, see <a href="http://jqueryui.com/themeroller/">http://jqueryui.com/themeroller/</a>.
+		To view each of these themes, see <a href="http://jqueryui.com/themeroller/">http://jqueryui.com/themeroller/</a>.</li>
 		<li>jqueryOptions - The "jqueryOptions" element attribute gives you - the developer - the flexibility to apply jQuery options that are supported by the specific widget/plugin used by the element.  This attribute can be used on
 		the following elements - date, daterange, slider, and rating.  See the <a href="../documentation/index.php#Additional-Parameters">additionalParams Element Parameter</a> section in the documentation for an example of how to set this attribute.</li>
 		<li>jqueryUI - This element attribute only applies to the addButton function.  It is identical to the jqueryUIButtons form attribute, except it is applied on the element level and only affects a single button - 
