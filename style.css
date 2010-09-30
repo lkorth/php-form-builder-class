@@ -41,6 +41,13 @@ body, #pfbc_banner h2, #pfbc_banner h5 {
 #pfbc_content {
 	padding: 10px 5px;
 }
+#pfbc_screenshots {
+	padding-left: 10px;
+	float: right;
+}
+#pfbc_screenshots img {
+	border: 0;
+}
 #pfbc_content pre {
 	border: 1px solid #3366CC;
 	background-color: #E5ECF9;

@@ -14,6 +14,14 @@
 		</div>
 
 		<div id="pfbc_content">
+			<div id="pfbc_screenshots">
+				<h4>Screenshots:</h4>
+				<div>
+					<a href="examples/layout.php"><img src="screenshots/1.png" alt="Flexible Layout Options"/></a><br/>
+					<a href="examples/google-maps.php"><img src="screenshots/2.png" alt="Google Maps Support"/></a><br/>
+					<a href="examples/captcha.php"><img src="screenshots/3.png" alt="TinyMCE and reCAPTCHA Integrations"/></a>
+				</div>
+			</div>
 			<h4>About This Project:</h4>
 			<div>
 			The goals of this project are to...
