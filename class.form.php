@@ -644,6 +644,35 @@ class form extends pfbc {
 			$this->errorDisplayOption = 1;
 	}
 
+	private function buildEmailBody($form, $referenceValues) {
+		$elementSize = sizeof($form->elements);
+		$str = "";
+		for($e = 0; $e < $elementSize; ++$e) {
+			if(!in_array($form->elements[$e]->attributes["type"], array("hidden", "captcha", "button", "html", "htmlexternal"))) {
+				$eleName = $form->elements[$e]->attributes["name"];
+				if(substr($eleName , -2) == "[]")
+					$eleName = substr($eleName, 0, -2);
+
+				$eleLabel = $form->elements[$e]->label;
+				if(empty($eleLabel))
+					$eleLabel = $eleName;
+				$str .= $eleLabel . "<br/>";	
+
+				$val = "";
+				if(array_key_exists($eleName, $referenceValues)) {
+					if(is_array($referenceValues[$eleName]))
+						$val = stripslashes(implode(", ", $referenceValues[$eleName]));
+					else
+						$val = stripslashes($referenceValues[$eleName]);
+				}	
+				if($val == "")
+					$val = "Not Specified";
+				$str .= $val . "<br/><br/>";
+			}
+		}
+		return $str;
+	}
+
 	private function buildSessionValues($form, $referenceValues) {
 		$elementSize = sizeof($form->elements);
 		for($e = 0; $e < $elementSize; ++$e) {
@@ -671,7 +700,7 @@ class form extends pfbc {
 	private function buildSpreadsheetData($form, $referenceValues) {
 		$elementSize = sizeof($form->elements);
 		for($e = 0; $e < $elementSize; ++$e) {
-			if(empty($form->elements[$e]->ignoreGSSend)) {
+			if(empty($form->elements[$e]->ignoreGSSend) && !in_array($form->elements[$e]->attributes["type"], array("hidden", "captcha", "button", "html", "htmlexternal"))) {
 				$eleName = $form->elements[$e]->attributes["name"];
 				if(substr($eleName , -2) == "[]")
 					$eleName = substr($eleName, 0, -2);
@@ -696,6 +725,27 @@ class form extends pfbc {
 
 	public function closeFieldset() {
 		$this->addElement("", "", "htmlexternal", '</fieldset>');
+	}
+
+	public function getEmailBody($textonly = false) {
+		if(!empty($_POST))
+			$referenceValues = $_POST;
+		elseif(!empty($_GET))
+			$referenceValues = $_GET;
+
+		$str = "";
+		$str .= $this->buildEmailBody($this, $referenceValues);
+		if(!empty($this->bindRules)) {
+			$bindRuleKeys = array_keys($this->bindRules);
+			$bindRuleSize = sizeof($bindRuleKeys);
+			for($b = 0; $b < $bindRuleSize; ++$b) {
+				if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements)) {
+					if(empty($this->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $this->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
+						$str .= $this->buildEmailBody($this->bindRules[$bindRuleKeys[$b]][0], $referenceValues);
+				}		
+			}	
+		}	
+		return $str;
 	}
 
 	public function getGoogleSpreadsheetError() {
@@ -1471,6 +1521,20 @@ STR;
 			}
 		}
 
+		if(!empty($this->hasFormTag)) {
+			$id = md5(uniqid(rand(), true));
+			$tokens = array($id, strrev($id), "");
+			$tokenSize = sizeof($tokens);
+			$tokenKeys = array_keys($tokens);
+			shuffle($tokenKeys);
+			$_SESSION["pfbc-tokens"][$this->attributes["id"]] = $tokenKeys;
+
+			$str .= "\n\t" . '<div class="pfbc-tokens">';
+			for($t = 0; $t < $tokenSize; $t++)
+				$str .= "\n\t\t" . '<input type="text" name="pfbc-token' . $t . '" value="' . $tokens[$tokenKeys[$t]] . '"/>';
+			$str .= "\n\t</div>";
+		}
+
 		//This javascript section loads all required js and css files needed for a specific form.  CSS files are loaded into the <head> tag with javascript.
 		$str .= <<<STR
 
@@ -2193,6 +2257,14 @@ STR;
 					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css' rel='stylesheet' type='text/css'/>";
 				$str .= '<style type="text/css">';
 			}
+
+			$str .= <<<STR
+.pfbc-tokens {
+	visibility: hidden;
+	display: none;
+}
+
+STR;
 
 			if(empty($form->preventDefaultCSS)) {
 				$id = "#" . $this->attributes["id"];
@@ -3453,6 +3525,114 @@ STR;
 			return $str;
 	}
 
+	public function sendFromGmail($username, $password, $to, $subject, $from="", $replyto="", $cc="", $bcc="") {
+		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+
+			require_once($form->phpIncludesPath . "/phpmailer/class.phpmailer.php");
+			$mail = new PHPMailer(); 
+			$mail->IsSMTP();
+			$mail->SMTPAuth = true;
+			$mail->Host = "ssl://smtp.gmail.com";
+			$mail->Port = 465;
+			$mail->Username = $username;
+			$mail->Password = $password;
+			$mail->IsHTML(true);
+			$mail->WordWrap = 50;
+
+			if(!empty($from)) {
+				if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $from, $matches)) {
+					$fromname = $matches[1];
+					$from = $matches[2];
+				}
+				else
+					$fromname = $from;
+			}
+			else {
+				$from = $username;
+				$fromname = $username;
+			}	
+			$mail->From = $from;
+			$mail->FromName = $from;
+
+			$to = explode(",", $to);
+			$toSize = sizeof($to);
+			$sent = array();
+			for($t = 0; $t < $toSize; ++$t) {
+				$email = trim($to[$t]);
+				$emailname = "";
+				if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $email, $matches)) {
+					$emailname = $matches[1];
+					$email = $matches[2];
+				}	
+				if(!in_array($email, $sent)) {
+					$mail->AddAddress($email, $emailname);
+					$sent[] = $email;
+				}
+			}
+
+			if(!empty($replyto)) {
+				$replyto = explode(",", $replyto);
+				$replytoSize = sizeof($replyto);
+				$sent = array();
+				for($r = 0; $r < $replytoSize; ++$r) {
+					$email = trim($replyto[$r]);
+					$emailname = "";
+					if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $email, $matches)) {
+						$emailname = $matches[1];
+						$email = $matches[2];
+					}	
+					if(!in_array($email, $sent)) {
+						$mail->AddReplyTo($email, $emailname);
+						$sent[] = $email;
+					}
+				}
+			}
+			else
+				$mail->AddReplyTo($from);
+
+			if(!empty($cc)) {
+				$cc = explode(",", $cc);
+				$ccSize = sizeof($cc);
+				$sent = array();
+				for($c = 0; $c < $ccSize; ++$c) {
+					$email = trim($cc[$c]);
+					$emailname = "";
+					if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $email, $matches)) {
+						$emailname = $matches[1];
+						$email = $matches[2];
+					}	
+					if(!in_array($email, $sent)) {
+						$mail->AddCC($email, $emailname);
+						$sent[] = $email;
+					}
+				}
+			}
+
+			if(!empty($bcc)) {
+				$bcc = explode(",", $bcc);
+				$bccSize = sizeof($bcc);
+				$sent = array();
+				for($b = 0; $b < $bccSize; ++$b) {
+					$email = trim($bcc[$b]);
+					$emailname = "";
+					if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $email, $matches)) {
+						$emailname = $matches[1];
+						$email = $matches[2];
+					}	
+					if(!in_array($email, $sent)) {
+						$mail->AddBCC($email, $emailname);
+						$sent[] = $email;
+					}
+				}
+			}
+
+			$mail->Subject = $subject;
+			$mail->Body = $form->getEmailBody();
+			$mail->Send();
+		}	
+	}
+
 	public function sendToGoogleSpreadsheet($username, $password, $spreadsheet, $worksheet="") {
 		if(!empty($_POST))
 			$referenceValues = $_POST;
@@ -3528,11 +3708,30 @@ STR;
 			$referenceValues = $_GET;
 		else {
 			$_SESSION["pfbc-errors"][$this->attributes["id"]]["container"][] = "";
-			$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "The get/post array containing the form's submitted values does not exists.";
+			$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "Your form submission does not contain any data and has been rejected.";
 			return false;
 		}
 
 		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+			//Prevent unauthorized bot/spam traffic.
+			$valid = false;
+			if(!empty($_SESSION["pfbc-tokens"][$this->attributes["id"]]) && isset($referenceValues["pfbc-token0"]) && isset($referenceValues["pfbc-token1"]) && isset($referenceValues["pfbc-token2"])) {
+				$tokens = $_SESSION["pfbc-tokens"][$this->attributes["id"]];
+				$tokenSize = sizeof($tokens);
+				for($t = 0; $t < $tokenSize; ++$t) {
+					$val = "token" . $tokens[$t];
+					$$val = $referenceValues["pfbc-token$t"];
+				}	
+				$regexp = "/^[0-9a-zA-Z]{32}$/";
+				if(preg_match($regexp, $token0) && preg_match($regexp, $token1) && $token0 == strrev($token1) && $token2 === "")
+					$valid = true;
+			}
+			if(!$valid) {
+				$_SESSION["pfbc-errors"][$this->attributes["id"]]["container"][] = "";
+				$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "Your form submission has been rejected because it has been flagged as spam in our anti-bot detection process.";
+				return false;
+			}
+
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
@@ -3587,7 +3786,7 @@ STR;
 		}
 		else {
 			$_SESSION["pfbc-errors"][$this->attributes["id"]]["container"][] = "";
-			$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "The session variable containing this form's serialized object instance does not exists.";
+			$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "While completing this form, your session timed out as a result of inactivity and your submission has been rejected.  Typically, you are given 20-30 minutes to complete and submit this form before timeout occurs.";
 			return false;
 		}
 	}

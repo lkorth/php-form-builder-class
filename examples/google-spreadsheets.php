@@ -42,6 +42,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 		populated upon submission.  Your spreadsheet does not need to contain a column for every element used in the form - data for those elements that are
 		not included will just not be collected.  Likewise, your spreadsheet can contain column identifiers that don't match an element's label used in the form - data for those columns will
 		be left blank.</li>
+		<li>Elements of type hidden, captcha, button, html, and htmlexternal will not be included in the information that is sent to your Google spreadsheet.</li>
 		<li>The "ignoreGSSend" element attribute can be applied to form elements that you do not want to be send to your Google Docs spreadsheet.  The hidden field "cmd" has this attribute set in the form below.</li>
 	</ol>
 
@@ -59,7 +60,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	if(!empty($_GET["errormsg_0"]))
 		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
-	$form->addHidden("cmd", "submit_0", array("ignoreGSSend" => 1));
+	$form->addHidden("cmd", "submit_0");
 	$form->addTextbox("First Name:", "FName");
 	$form->addTextbox("Last Name:", "LName");
 	$form->addEmail("Email Address:", "Email");
