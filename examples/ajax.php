@@ -5,11 +5,12 @@ include("../class.form.php");
 
 if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit_0") {
 	$form = new form("ajax_0");
-	if($form->validate())
+	if($form->validate()) {
 		if($_POST["Password"] != $_POST["Password2"])
 			echo "The Password and Re-Enter Password fields do not match.";
 		else
 			echo "Congratulations! The information you enter passed the form's validation.";
+	}		
 	else
 		$form->renderAjaxErrorResponse();
 	exit();

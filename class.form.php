@@ -1527,7 +1527,8 @@ STR;
 			$tokenSize = sizeof($tokens);
 			$tokenKeys = array_keys($tokens);
 			shuffle($tokenKeys);
-			$_SESSION["pfbc-tokens"][$this->attributes["id"]] = $tokenKeys;
+			$_SESSION["pfbc-tokenmap"][$this->attributes["id"]] = $tokenKeys;
+			$_SESSION["pfbc-tokenid"][$this->attributes["id"]] = $id;
 
 			$str .= "\n\t" . '<div class="pfbc-tokens">';
 			for($t = 0; $t < $tokenSize; $t++)
@@ -3414,6 +3415,9 @@ STR;
 						
 					if(!empty($form->ajax)) {
 						$str .= <<<STR
+	form_data += "&pfbc-token0=" + escape(formObj.elements["pfbc-token0"].value);
+	form_data += "&pfbc-token1=" + escape(formObj.elements["pfbc-token1"].value);
+	form_data += "&pfbc-token2=" + escape(formObj.elements["pfbc-token2"].value);
 	form_data = form_data.substring(1, form_data.length);
 	jQuery.ajax({
 		type: "{$form->attributes["method"]}",
@@ -3715,15 +3719,14 @@ STR;
 		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
 			//Prevent unauthorized bot/spam traffic.
 			$valid = false;
-			if(!empty($_SESSION["pfbc-tokens"][$this->attributes["id"]]) && isset($referenceValues["pfbc-token0"]) && isset($referenceValues["pfbc-token1"]) && isset($referenceValues["pfbc-token2"])) {
-				$tokens = $_SESSION["pfbc-tokens"][$this->attributes["id"]];
-				$tokenSize = sizeof($tokens);
-				for($t = 0; $t < $tokenSize; ++$t) {
-					$val = "token" . $tokens[$t];
-					$$val = $referenceValues["pfbc-token$t"];
-				}	
-				$regexp = "/^[0-9a-zA-Z]{32}$/";
-				if(preg_match($regexp, $token0) && preg_match($regexp, $token1) && $token0 == strrev($token1) && $token2 === "")
+			$tokenmap = $_SESSION["pfbc-tokenmap"][$this->attributes["id"]];
+			$tokenid = $_SESSION["pfbc-tokenid"][$this->attributes["id"]];
+			if(!empty($tokenmap) && !empty($tokenid) && isset($referenceValues["pfbc-token0"]) && isset($referenceValues["pfbc-token1"]) && isset($referenceValues["pfbc-token2"])) {
+				$tokensize = sizeof($tokenmap);
+				$tokens = array();
+				for($t = 0; $t < $tokensize; ++$t)
+					$tokens[$tokenmap[$t]] = $referenceValues["pfbc-token$t"];
+				if($tokens[0] === $tokenid &&  $tokens[0] === strrev($tokens[1]) && $tokens[2] === "")
 					$valid = true;
 			}
 			if(!$valid) {
