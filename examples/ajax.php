@@ -101,6 +101,8 @@ $form->render();
 		"includesPath" => "../includes",
 		"width" => "400",
 		"noAutoFocus" => 1,
+		"preventJQueryLoad" => 1,
+		"preventJQueryUILoad" => 1,
 		"ajaxCallback" => "parseJSONResponse",
 		"ajax" => 1
 	));
