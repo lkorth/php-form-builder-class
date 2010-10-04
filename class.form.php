@@ -656,18 +656,18 @@ class form extends pfbc {
 				$eleLabel = $form->elements[$e]->label;
 				if(empty($eleLabel))
 					$eleLabel = $eleName;
-				$str .= $eleLabel . "<br/>";	
+				$str .= "\n\t" . '<div class="pfbc-element">';	
+				$str .= "\n\t\t" . '<label class="pfbc-label">' . $eleLabel . "</label>";	
 
-				$val = "";
+				$str .= "\n\t\t" . '<div class="pfbc-textbox">';
 				if(array_key_exists($eleName, $referenceValues)) {
 					if(is_array($referenceValues[$eleName]))
-						$val = stripslashes(implode(", ", $referenceValues[$eleName]));
+						$str .= stripslashes(implode(", ", $referenceValues[$eleName]));
 					else
-						$val = stripslashes($referenceValues[$eleName]);
+						$str .= stripslashes($referenceValues[$eleName]);
 				}	
-				if($val == "")
-					$val = "Not Specified";
-				$str .= $val . "<br/><br/>";
+				$str .= "</div>";
+				$str .= "\n\t</div>";
 			}
 		}
 		return $str;
@@ -735,7 +735,38 @@ class form extends pfbc {
 		elseif(!empty($_GET))
 			$referenceValues = $_GET;
 
-		$str = "";
+		$str = <<<STR
+<style type="text/css">
+	#pfbc-main {
+		margin: 0 auto;
+		padding: .25em 0.75em;
+		width: 400px;
+		font-family: "American Typewriter";
+		font-size: 14px;
+		background-color: #f5f4f4;
+		border: 1px solid #ccc;
+		-moz-border-radius: 0.5em; 
+		-webkit-border-radius: 0.5em;
+	}
+	.pfbc-element {
+		padding: 0.5em 0;
+	}
+	.pfbc-label {
+		display: block;
+		padding-bottom: 0.25em;
+	}
+	.pfbc-textbox {
+		padding: 0.5em;
+		width: 384px;
+		font-family: "American Typewriter";
+		font-size: 14px;
+		background-color: #fff;
+		border: 1px solid #ccc;
+	}
+</style>
+
+STR;
+		$str .= '<div id="pfbc-main">';
 		$str .= $this->buildEmailBody($this, $referenceValues);
 		if(!empty($this->bindRules)) {
 			$bindRuleKeys = array_keys($this->bindRules);
@@ -747,6 +778,7 @@ class form extends pfbc {
 				}		
 			}	
 		}	
+		$str .= "\n</div>";
 		return $str;
 	}
 
