@@ -708,6 +708,8 @@ class form extends pfbc {
 				$eleLabel = $form->elements[$e]->label;
 				if(empty($eleLabel))
 					$eleLabel = $eleName;
+				if(substr($eleLabel, -1) == ":")
+					$eleLabel = substr($eleLabel, 0, -1);
 
 				if(array_key_exists($eleName, $referenceValues)) {
 					if(is_array($referenceValues[$eleName]))
@@ -3647,6 +3649,7 @@ STR;
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
 			require_once($form->phpIncludesPath . "/class.spreadsheet.php");
+			$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]["Timestamp"] = date("Y-m-d H:i:s");
 			$this->buildSpreadsheetData($form, $referenceValues);
 			if(!empty($form->bindRules)) {
 				$bindRuleKeys = array_keys($form->bindRules);
@@ -3658,17 +3661,17 @@ STR;
 					}		
 				}	
 			}	
-		}	
 
-		if(!empty($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]])) {
-			$gdoc = new spreadsheet();
-			$gdoc->authenticate($username, $password);
-			$gdoc->select($spreadsheet, $worksheet);
-			$result = $gdoc->populate($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);
-			if(!$result)
-				$this->gsError = $gdoc->getError();
-			unset($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);
-			return $result;
+			if(!empty($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]])) {
+				$gdoc = new spreadsheet();
+				$gdoc->authenticate($username, $password);
+				$gdoc->select($spreadsheet, $worksheet);
+				$result = $gdoc->populate($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);
+				if(!$result)
+					$this->gsError = $gdoc->getError();
+				unset($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]);
+				return $result;
+			}	
 		}	
 	}
 

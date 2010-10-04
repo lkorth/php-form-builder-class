@@ -44,6 +44,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 		be left blank.</li>
 		<li>Elements of type hidden, captcha, button, html, and htmlexternal will not be included in the information that is sent to your Google spreadsheet.</li>
 		<li>The "ignoreGSSend" element attribute can be applied to form elements that you do not want to be send to your Google Docs spreadsheet.  The hidden field "cmd" has this attribute set in the form below.</li>
+		<li>If you're populating an existing spreadsheet in your Google Docs account, you can store the web server's date/time at the moment the form's data is submitted
+		by adding "Timestamp" as a column header.</li>
 	</ol>
 
 	<p>In the php source code of this example file, you'll see that the sendToGoogleSpreadsheet function call currently contains demo authentication/spreadshet settings ("my_email", "my_password", etc).
