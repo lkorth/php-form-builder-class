@@ -65,6 +65,7 @@ class form extends pfbc {
 	protected $labelRightAlign;
 	protected $labelWidth;
 	protected $latlngDefaultLocation;
+	protected $loadingMsg;
 	protected $map;
 	protected $mapMargin;
 	protected $noAutoFocus;
@@ -112,6 +113,7 @@ class form extends pfbc {
 	private $synchronousResources;
 
 	public $errorMsg;
+	public $highlightMsg;
 
 	public function __construct($id = "myform") {
 		//Non alpha-numeric characters are replaced with underscores to prevent invalid javascript function names.
@@ -138,6 +140,7 @@ class form extends pfbc {
 		$this->jqueryDateFormat = "MM d, yy";
 		$this->jqueryUITheme = "smoothness";
 		$this->labelPaddingRight = 4;
+		$this->loadingMsg = "Processing";
 		$this->mapMargin = 2;
 		//These lists represent all xhtml 1.0 strict compliant attributes. See http://www.w3schools.com/tags/default.asp for reference.
 		$this->allowedFields = array(
@@ -820,15 +823,13 @@ STR;
 				$tmpAllowFieldArr = $this->allowedFields["form"];
 				foreach($this->attributes as $key => $value) {
 					//Skip any user-defined onsubmit function if one or more of the following conditions is met.
-					if($key == "onsubmit" && (!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists) || !empty($this->integerExists) || !empty($this->alphanumericExists)))
+					if($key == "onsubmit")
 						continue;
 					if(in_array($key, $tmpAllowFieldArr))
 						$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 				}	
 			}
-			if(!empty($this->checkform) || !empty($this->ajax) || !empty($this->captchaExists) || !empty($this->hintExists) || !empty($this->emailExists) || !empty($this->integerExists) || !empty($this->alphanumericExists))	
-				$str .= ' onsubmit="return pfbc_onsubmit_' . $this->attributes["id"] . '(this);"';
-			$str .= ">";
+			$str .= ' onsubmit="return pfbc_onsubmit_' . $this->attributes["id"] . '(this);">';
 		}
 
 		if(empty($this->synchronousResources)) {
@@ -844,6 +845,8 @@ STR;
 
 		if(!empty($this->errorMsg))
 			$str .= '<div class="pfbc-error ui-state-error ui-corner-all">' . $this->errorMsg . '</div>';
+		if(!empty($this->highlightMsg))
+			$str .= '<div class="pfbc-error ui-state-highlight ui-corner-all">' . $this->highlightMsg . '</div>';
 
 		if(!empty($this->map)) {
 			$mapIndex = 0;
@@ -1692,8 +1695,10 @@ STR;
 
 		if(empty($this->hasFormTag))
 			$str .= "\n</div>";
-		else
+		else {
+			$str .= "\n\t" . '<div class="pfbc-loading">' . $this->loadingMsg . '</div>';
 			$str .= "\n</form>";
+		}	
 
 		return $str;
 	}
@@ -2305,6 +2310,7 @@ STR;
 				$id = "#" . $this->attributes["id"];
 				$str .= <<<STR
 $id {
+	position: relative;
 	margin: 0;
 	padding: 0;
 }
@@ -2339,10 +2345,18 @@ $id .pfbc-element {
 $id .pfbc-nopaddingbottom {
 	padding-bottom: 0 !important;
 }	
-$id .pfbc-webeditor, $id .pfbc-ckeditor{
+$id .pfbc-webeditor, $id .pfbc-ckeditor {
 	width: 100%;
 	height: 200px;
 }	
+$id .pfbc-loading {
+	display: none;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background: transparent url("{$form->jsIncludesPath}/images/ajax-loader.gif") 0 50% no-repeat;
+	padding-left: 22px;
+}
 
 STR;
 
@@ -3354,69 +3368,67 @@ STR;
 			}
 
 			if(!empty($form->hasFormTag)) {
-				/*If there are any required fields in the form or if this form is setup to utilize ajax, build a javascript 
-				function for performing form validation before submission and/or for building and submitting a data string through ajax.*/
-				if(!empty($form->checkform) || !empty($form->ajax) || !empty($form->captchaExists) || !empty($form->hintExists) || !empty($form->emailExists) || !empty($form->integerExists) || !empty($form->alphanumericExists)) {
-					if(empty($form->preventJSValidation) && !empty($form->emailExists)) {
-						$str .= <<<STR
+				if(empty($form->preventJSValidation) && !empty($form->emailExists)) {
+					$str .= <<<STR
 var validemail_{$this->attributes["id"]};
 
 STR;
-					}	
-					$str .= <<<STR
+				}	
+				$str .= <<<STR
 function pfbc_scroll_{$this->attributes["id"]}() {
    jQuery("html, body").animate({ scrollTop: jQuery("#{$this->attributes["id"]}").offset().top }, 500 );
 }
 function pfbc_onsubmit_{$this->attributes["id"]}(formObj) {
 	jQuery("#{$this->attributes["id"]} .pfbc-error").remove();
+	jQuery("#{$this->attributes["id"]} .pfbc-loading").show();
 
 STR;
-					if(empty($form->preventJSValidation)) {
-						$str .= <<<STR
+				if(empty($form->preventJSValidation)) {
+					$str .= <<<STR
         var js_errors_{$this->attributes["id"]} = [];
 
 STR;
-					}
+				}
 
-					/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
-					key/value pair and acts as the GET or POST string.*/
-					if(!empty($form->ajax)) {
-						$str .= <<<STR
+				/*If this form is setup for ajax submission, a javascript variable (form_data) is defined and built.  This variable holds each
+				key/value pair and acts as the GET or POST string.*/
+				if(!empty($form->ajax)) {
+					$str .= <<<STR
 	var form_data = "";
 
 STR;
-					}	
+				}	
 
-					$str .= $form->jsCycleElements($form->elements);
-					if(!empty($form->bindRules)) {
-						$bindRuleKeys = array_keys($form->bindRules);
-						$bindRuleSize = sizeof($bindRuleKeys);
-						for($b = 0; $b < $bindRuleSize; ++$b) {
-							if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-								if(!empty($form->bindRules[$bindRuleKeys[$b]][1])) {
-									$str .= <<<STR
+				$str .= $form->jsCycleElements($form->elements);
+				if(!empty($form->bindRules)) {
+					$bindRuleKeys = array_keys($form->bindRules);
+					$bindRuleSize = sizeof($bindRuleKeys);
+					for($b = 0; $b < $bindRuleSize; ++$b) {
+						if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
+							if(!empty($form->bindRules[$bindRuleKeys[$b]][1])) {
+								$str .= <<<STR
 	if({$form->bindRules[$bindRuleKeys[$b]][1]}) {
 STR;
-								}	
-								$str .= $form->jsCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements);
-								if(!empty($form->bindRules[$bindRuleKeys[$b]][1])) {
-									$str .= <<<STR
+							}	
+							$str .= $form->jsCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements);
+							if(!empty($form->bindRules[$bindRuleKeys[$b]][1])) {
+								$str .= <<<STR
 	}
 
 STR;
-								}	
-							}
+							}	
 						}
 					}
+				}
 
-					if(empty($form->preventJSValidation)) {
-						$str .= <<<STR
+				if(empty($form->preventJSValidation)) {
+					$str .= <<<STR
 	if(js_errors_{$this->attributes["id"]}.length) {
 		var js_error_size_{$this->attributes["id"]} = js_errors_{$this->attributes["id"]}.length;
 
 STR;
-						if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
-							$str .= <<<STR
+					if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
+						$str .= <<<STR
 		if(js_error_size_{$this->attributes["id"]} == 1)
 			var js_error_message{$this->attributes["id"]} = "The following error was found:";
 		else	
@@ -3430,25 +3442,25 @@ STR;
 		pfbc_error_{$this->attributes["id"]}(js_error_message{$this->attributes["id"]});
 
 STR;
-						}
-						else {
-							$str .= <<<STR
+					}
+					else {
+						$str .= <<<STR
 		for(e = 0; e < js_error_size_{$this->attributes["id"]}; ++e)
 			pfbc_error_{$this->attributes["id"]}(js_errors_{$this->attributes["id"]}[e].errormsg, js_errors_{$this->attributes["id"]}[e].container);
 
 STR;
-						}
-						$str .= <<<STR
+					}
+					$str .= <<<STR
 		pfbc_scroll_{$this->attributes["id"]}();
 		return false;
 						
 	}
 
 STR;
-					}
-						
-					if(!empty($form->ajax)) {
-						$str .= <<<STR
+				}
+					
+				if(!empty($form->ajax)) {
+					$str .= <<<STR
 	form_data += "&pfbc-token0=" + escape(formObj.elements["pfbc-token0"].value);
 	form_data += "&pfbc-token1=" + escape(formObj.elements["pfbc-token1"].value);
 	form_data += "&pfbc-token2=" + escape(formObj.elements["pfbc-token2"].value);
@@ -3458,20 +3470,21 @@ STR;
 		url: "{$form->attributes["action"]}",
 
 STR;
-						$str .= <<<STR
+					$str .= <<<STR
 		data: form_data,
 
 STR;
-						if(!empty($form->ajaxPreCallback)) {
-							$str .= <<<STR
+					if(!empty($form->ajaxPreCallback)) {
+						$str .= <<<STR
 		beforeSend: function() {
 			{$form->ajaxPreCallback}();
 		},
 
 STR;
-						}
-						$str .= <<<STR
+					}
+					$str .= <<<STR
 		success: function(responseMsg) {
+			jQuery("#{$this->attributes["id"]} .pfbc-loading").hide();
 			if(responseMsg != undefined && typeof responseMsg == "object" && responseMsg.container) {
 				for(e = 0; e < responseMsg.container.length; ++e)
 					pfbc_error_{$this->attributes["id"]}(responseMsg.errormsg[e], responseMsg.container[e]);
@@ -3479,43 +3492,41 @@ STR;
 			}
 			else {
 STR;
-						if(!empty($form->ajaxCallback)) {
-							$str .= <<<STR
+					if(!empty($form->ajaxCallback)) {
+						$str .= <<<STR
 			{$form->ajaxCallback}(responseMsg);
 
 STR;
-						}
-						else {
-							$str .= <<<STR
+					}
+					else {
+						$str .= <<<STR
 			if(responseMsg != undefined && typeof responseMsg == "string") {
 				pfbc_error_{$this->attributes["id"]}(responseMsg);
 				pfbc_scroll_{$this->attributes["id"]}();
 			}	
 
 STR;
-						}
-						$str .= <<<STR
+					}
+					$str .= <<<STR
 			}			
 		},	
-		error: function(XMLHttpRequest, textStatus, errorThrown) { pfbc_error_{$this->attributes["id"]}(XMLHttpRequest.responseText); }
+		error: function(XMLHttpRequest, textStatus, errorThrown) { 
+			jQuery("#{$this->attributes["id"]} .pfbc-loading").hide();
+			pfbc_error_{$this->attributes["id"]}(XMLHttpRequest.responseText); 
+		}
 	});
 	return false;
 
 STR;
-					}	
-					else {
-						$str .= <<<STR
+				}	
+				else {
+					$str .= <<<STR
 	return true;					
 
 STR;
-					}
-					$str .= <<<STR
-}
-
-STR;
 				}
-
 				$str .= <<<STR
+}
 function pfbc_focus_{$form->attributes["id"]}() {
 STR;
 				//This javascript section sets the focus of the first field in the form.  This default behavior can be overwritten by setting the noAutoFocus parameter.
