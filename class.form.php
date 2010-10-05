@@ -736,15 +736,50 @@ class form extends pfbc {
 		$this->addElement("", "", "htmlexternal", '</fieldset>');
 	}
 
-	public function getEmailBody($textonly = false) {
+	public function getEmailHTML() {
 		if(!empty($_POST))
 			$referenceValues = $_POST;
 		elseif(!empty($_GET))
 			$referenceValues = $_GET;
 
+		$str = '<div id="pfbc-main">';
+		$str .= $this->buildEmailBody($this, $referenceValues);
+		if(!empty($this->bindRules)) {
+			$bindRuleKeys = array_keys($this->bindRules);
+			$bindRuleSize = sizeof($bindRuleKeys);
+			for($b = 0; $b < $bindRuleSize; ++$b) {
+				if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements)) {
+					if(empty($this->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $this->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
+						$str .= $this->buildEmailBody($this->bindRules[$bindRuleKeys[$b]][0], $referenceValues);
+				}		
+			}	
+		}	
+		$datetime = date("Y-m-d H:i:s");	
+		$str .= <<<STR
+	<div class="pfbc-additional">Additional Information</div>
+	<div class="pfbc-element">
+		<label class="pfbc-label">Date/Time:</label>
+		<div class="pfbc-textbox">{$datetime}</div>
+	</div>
+	<div class="pfbc-element">
+		<label class="pfbc-label">IP Address:</label>
+		<div class="pfbc-textbox">{$_SERVER["REMOTE_ADDR"]}</div>
+	</div>
+	<div class="pfbc-element">
+		<label class="pfbc-label">Url:</label>
+		<div class="pfbc-textbox">{$this->url}</div>
+	</div>
+
+STR;
+		$str .= "\n</div>";
+		return $str;
+	}
+
+	public function getEmailCSS() {
 		$str = <<<STR
 <style type="text/css">
 	#pfbc-main {
+		margin: 0.75em 0;
 		padding: .25em 0.75em;
 		width: 400px;
 		font-family: "American Typewriter";
@@ -776,36 +811,6 @@ class form extends pfbc {
 </style>
 
 STR;
-		$str .= '<div id="pfbc-main">';
-		$str .= $this->buildEmailBody($this, $referenceValues);
-		if(!empty($this->bindRules)) {
-			$bindRuleKeys = array_keys($this->bindRules);
-			$bindRuleSize = sizeof($bindRuleKeys);
-			for($b = 0; $b < $bindRuleSize; ++$b) {
-				if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-					if(empty($this->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $this->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
-						$str .= $this->buildEmailBody($this->bindRules[$bindRuleKeys[$b]][0], $referenceValues);
-				}		
-			}	
-		}	
-		$datetime = date("Y-m-d H:i:s");	
-		$str .= <<<STR
-	<div class="pfbc-additional">Additional Information</div>
-	<div class="pfbc-element">
-		<label class="pfbc-label">Date/Time:</label>
-		<div class="pfbc-textbox">{$datetime}</div>
-	</div>
-	<div class="pfbc-element">
-		<label class="pfbc-label">IP Address:</label>
-		<div class="pfbc-textbox">{$_SERVER["REMOTE_ADDR"]}</div>
-	</div>
-	<div class="pfbc-element">
-		<label class="pfbc-label">Url:</label>
-		<div class="pfbc-textbox">{$this->url}</div>
-	</div>
-
-STR;
-		$str .= "\n</div>";
 		return $str;
 	}
 
@@ -3598,7 +3603,7 @@ STR;
 			return $str;
 	}
 
-	public function sendFromGmail($username, $password, $to, $subject, $from="", $replyto="", $cc="", $bcc="") {
+	public function email($username, $password, $to="", $subject="", $from="", $replyto="", $cc="", $bcc="", $preHTML="", $postHTML="") {
 		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
@@ -3612,6 +3617,9 @@ STR;
 			$mail->Password = $password;
 			$mail->IsHTML(true);
 			$mail->WordWrap = 50;
+
+			if(empty($to))
+				$to = $username;
 
 			if(!empty($from)) {
 				if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $from, $matches)) {
@@ -3700,8 +3708,19 @@ STR;
 				}
 			}
 
-			$mail->Subject = $subject;
-			$mail->Body = $form->getEmailBody();
+			if(!empty($subject))
+				$mail->Subject = $subject;
+			
+			$html = $form->getEmailHTML();
+			$css = $form->getEmailCSS();
+
+			$body = $preHTML . $css . $html . $postHTML;
+			$mail->Body = $body;
+
+			$altbody = str_replace(array("\n", "\t"), "", $html);
+			$altbody = strip_tags($preHTML . str_replace(array('</label><div class="pfbc-textbox">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array("\n", "\n\n", "\n\n"), $altbody) . $postHTML);
+			$mail->AltBody = $altbody;
+
 			$mail->Send();
 		}	
 	}

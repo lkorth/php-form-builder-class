@@ -6,7 +6,7 @@ include("../class.form.php");
 if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0"))) {
 	$form = new form("email_" . substr($_POST["cmd"], -1));
 	if($form->validate())
-		$form->sendFromGmail("my_email", "my_password", "my_recipient(s)", "my_subject");
+		$form->email("my_username", "my_password", "(optional) my_recipient(s)", "(optional) my_subject", "(optional) my_from", "(optional) my_replyto", "(optional) my_cc", "(optional) my_bcc", "(optional) my_prehtml", "(optional) my_posthtml");
 
 	header("Location: email.php");
 	exit();
