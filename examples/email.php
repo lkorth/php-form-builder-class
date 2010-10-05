@@ -8,7 +8,7 @@ if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0"))) {
 	if($form->validate())
 		$form->sendFromGmail("my_email", "my_password", "my_recipient(s)", "my_subject");
 
-	header("Location: google-gmail.php");
+	header("Location: email.php");
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {

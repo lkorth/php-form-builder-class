@@ -65,7 +65,6 @@ class form extends pfbc {
 	protected $labelRightAlign;
 	protected $labelWidth;
 	protected $latlngDefaultLocation;
-	protected $loadingMsg;
 	protected $map;
 	protected $mapMargin;
 	protected $noAutoFocus;
@@ -77,6 +76,7 @@ class form extends pfbc {
 	protected $preventCaptchaLoad;
 	protected $preventCKEditorLoad;
 	protected $preventDefaultCSS;
+	protected $processingMsg;
 	protected $tooltipIcon;
 
 	private $allowedFields;
@@ -111,6 +111,7 @@ class form extends pfbc {
 	private $tinymceIDArr;
 	private $tooltipIDArr;
 	private $synchronousResources;
+	private $url;
 
 	public $errorMsg;
 	public $highlightMsg;
@@ -132,16 +133,19 @@ class form extends pfbc {
 		$this->emailErrorMsgFormat = "Error: [LABEL] contains an invalid email address.";
 		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
 		if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
-			$this->https = true;
-		else	
-			$this->https = false;
+			$this->https = 1;
 		$this->includesPath = "php-form-builder-class/includes";
 		$this->integerErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers are allowed.";
 		$this->jqueryDateFormat = "MM d, yy";
 		$this->jqueryUITheme = "smoothness";
 		$this->labelPaddingRight = 4;
-		$this->loadingMsg = "Processing";
+		$this->processingMsg = "Processing";
 		$this->mapMargin = 2;
+		$this->url = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
+		if(!empty($this->https))
+			$this->url = "https://" . $this->url;
+		else
+			$this->url = "http://" . $this->url;
 		//These lists represent all xhtml 1.0 strict compliant attributes. See http://www.w3schools.com/tags/default.asp for reference.
 		$this->allowedFields = array(
 			"form" => array("action", "accept", "accept-charset", "enctype", "method", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onreset", "onsubmit"),
@@ -741,7 +745,6 @@ class form extends pfbc {
 		$str = <<<STR
 <style type="text/css">
 	#pfbc-main {
-		margin: 0 auto;
 		padding: .25em 0.75em;
 		width: 400px;
 		font-family: "American Typewriter";
@@ -766,6 +769,10 @@ class form extends pfbc {
 		background-color: #fff;
 		border: 1px solid #ccc;
 	}
+	.pfbc-additional {
+		padding-top: 0.75em;
+		font-size: 1.25em;
+	}
 </style>
 
 STR;
@@ -781,6 +788,23 @@ STR;
 				}		
 			}	
 		}	
+		$datetime = date("Y-m-d H:i:s");	
+		$str .= <<<STR
+	<div class="pfbc-additional">Additional Information</div>
+	<div class="pfbc-element">
+		<label class="pfbc-label">Date/Time:</label>
+		<div class="pfbc-textbox">{$datetime}</div>
+	</div>
+	<div class="pfbc-element">
+		<label class="pfbc-label">IP Address:</label>
+		<div class="pfbc-textbox">{$_SERVER["REMOTE_ADDR"]}</div>
+	</div>
+	<div class="pfbc-element">
+		<label class="pfbc-label">Url:</label>
+		<div class="pfbc-textbox">{$this->url}</div>
+	</div>
+
+STR;
 		$str .= "\n</div>";
 		return $str;
 	}
@@ -1582,7 +1606,7 @@ STR;
 		//Serialize the form and store it in a session array.  This variable will be unserialized and used within js/css.php and the validate() method.
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
-		if($this->https)
+		if(!empty($this->https))
 			$prefix = "https";
 		else
 			$prefix = "http";
@@ -1696,7 +1720,7 @@ STR;
 		if(empty($this->hasFormTag))
 			$str .= "\n</div>";
 		else {
-			$str .= "\n\t" . '<div class="pfbc-loading">' . $this->loadingMsg . '</div>';
+			$str .= "\n\t" . '<div class="pfbc-loading">' . $this->processingMsg . '</div>';
 			$str .= "\n</form>";
 		}	
 
@@ -2274,7 +2298,7 @@ STR;
 			$form = $this;
 		
 		if(!empty($form)) {
-			if($form->https)
+			if(!empty($form->https))
 				$prefix = "https";
 			else
 				$prefix = "http";
@@ -2843,7 +2867,7 @@ STR;
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
-			if($form->https)
+			if(!empty($form->https))
 				$prefix = "https";
 			else
 				$prefix = "http";

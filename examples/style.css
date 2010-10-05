@@ -16,8 +16,11 @@
 	border: 1px solid #ccc;
 	font-size: 14px;
 }
+.pfbc-textbox {
+	height: 16px;
+}
 .pfbc-select {
-	padding: 0.5em;
+	height: 32px;
 }
 .pfbc-small {
 	font-size: 0.75em;
