@@ -3481,8 +3481,8 @@ STR;
 					}
 					$str .= <<<STR
 		pfbc_scroll_{$this->attributes["id"]}();
+		jQuery("#{$this->attributes["id"]} .pfbc-loading").hide();
 		return false;
-						
 	}
 
 STR;
@@ -3513,7 +3513,6 @@ STR;
 					}
 					$str .= <<<STR
 		success: function(responseMsg) {
-			jQuery("#{$this->attributes["id"]} .pfbc-loading").hide();
 			if(responseMsg != undefined && typeof responseMsg == "object" && responseMsg.container) {
 				for(e = 0; e < responseMsg.container.length; ++e)
 					pfbc_error_{$this->attributes["id"]}(responseMsg.errormsg[e], responseMsg.container[e]);
@@ -3538,10 +3537,11 @@ STR;
 					}
 					$str .= <<<STR
 			}			
+			jQuery("#{$this->attributes["id"]} .pfbc-loading").hide();
 		},	
 		error: function(XMLHttpRequest, textStatus, errorThrown) { 
-			jQuery("#{$this->attributes["id"]} .pfbc-loading").hide();
 			pfbc_error_{$this->attributes["id"]}(XMLHttpRequest.responseText); 
+			jQuery("#{$this->attributes["id"]} .pfbc-loading").hide();
 		}
 	});
 	return false;
@@ -3718,7 +3718,7 @@ STR;
 			$mail->Body = $body;
 
 			$altbody = str_replace(array("\n", "\t"), "", $html);
-			$altbody = strip_tags($preHTML . str_replace(array('</label><div class="pfbc-textbox">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array("\n", "\n\n", "\n\n"), $altbody) . $postHTML);
+			$altbody = strip_tags($preHTML . "\n\n" . str_replace(array('</label><div class="pfbc-textbox">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array("\n", "\n\n", "\n\n"), $altbody) . "\n\n" . $postHTML);
 			$mail->AltBody = $altbody;
 
 			$mail->Send();
