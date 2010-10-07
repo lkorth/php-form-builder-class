@@ -666,7 +666,7 @@ class form extends pfbc {
 				$str .= "\n\t" . '<div class="pfbc-element">';	
 				$str .= "\n\t\t" . '<label class="pfbc-label">' . $eleLabel . "</label>";	
 
-				$str .= "\n\t\t" . '<div class="pfbc-textbox">';
+				$str .= "\n\t\t" . '<div class="pfbc-data">';
 				if(array_key_exists($eleName, $referenceValues)) {
 					if(is_array($referenceValues[$eleName]))
 						$str .= stripslashes(implode(", ", $referenceValues[$eleName]));
@@ -736,13 +736,13 @@ class form extends pfbc {
 		$this->addElement("", "", "htmlexternal", '</fieldset>');
 	}
 
-	public function getEmailHTML() {
+	public function getEmail($textonly=false) {
 		if(!empty($_POST))
 			$referenceValues = $_POST;
 		elseif(!empty($_GET))
 			$referenceValues = $_GET;
 
-		$str = '<div id="pfbc-main">';
+		$str = '<div class="pfbc-email">';
 		$str .= $this->buildEmailBody($this, $referenceValues);
 		if(!empty($this->bindRules)) {
 			$bindRuleKeys = array_keys($this->bindRules);
@@ -759,58 +759,25 @@ class form extends pfbc {
 	<div class="pfbc-additional">Additional Information</div>
 	<div class="pfbc-element">
 		<label class="pfbc-label">Date/Time:</label>
-		<div class="pfbc-textbox">{$datetime}</div>
+		<div class="pfbc-data">{$datetime}</div>
 	</div>
 	<div class="pfbc-element">
 		<label class="pfbc-label">IP Address:</label>
-		<div class="pfbc-textbox">{$_SERVER["REMOTE_ADDR"]}</div>
+		<div class="pfbc-data">{$_SERVER["REMOTE_ADDR"]}</div>
 	</div>
 	<div class="pfbc-element">
 		<label class="pfbc-label">Url:</label>
-		<div class="pfbc-textbox">{$this->url}</div>
+		<div class="pfbc-data">{$this->url}</div>
 	</div>
 
 STR;
 		$str .= "\n</div>";
-		return $str;
-	}
 
-	public function getEmailCSS() {
-		$str = <<<STR
-<style type="text/css">
-	#pfbc-main {
-		margin: 0.75em 0;
-		padding: .25em 0.75em;
-		width: 400px;
-		font-family: "American Typewriter";
-		font-size: 14px;
-		background-color: #f5f4f4;
-		border: 1px solid #ccc;
-		-moz-border-radius: 0.5em; 
-		-webkit-border-radius: 0.5em;
-	}
-	.pfbc-element {
-		padding: 0.5em 0;
-	}
-	.pfbc-label {
-		display: block;
-		padding-bottom: 0.25em;
-	}
-	.pfbc-textbox {
-		padding: 0.5em;
-		width: 384px;
-		font-family: "American Typewriter";
-		font-size: 14px;
-		background-color: #fff;
-		border: 1px solid #ccc;
-	}
-	.pfbc-additional {
-		padding-top: 0.75em;
-		font-size: 1.25em;
-	}
-</style>
+		if($textonly) {
+			$str = str_replace(array("\n", "\t"), "", $str);
+			$str = strip_tags(str_replace(array('</label><div class="pfbc-data">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array("\n", "\n\n", "\n\n"), $str));
+		}	
 
-STR;
 		return $str;
 	}
 
@@ -3603,125 +3570,19 @@ STR;
 			return $str;
 	}
 
-	public function email($username, $password, $to="", $subject="", $from="", $replyto="", $cc="", $bcc="", $preHTML="", $postHTML="") {
+	public function email($username, $password, $additionalParams="") {
 		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
+			$params = array("username" => $username, "password" => $password);
+			if(!empty($additionalParams) && is_array($additionalParams)) {
+				foreach($additionalParams as $key => $value)
+					$params[$key] = $value;
+			}
 			require_once($form->phpIncludesPath . "/phpmailer/class.phpmailer.php");
-			$mail = new PHPMailer(); 
-			$mail->IsSMTP();
-			$mail->SMTPAuth = true;
-			$mail->Host = "ssl://smtp.gmail.com";
-			$mail->Port = 465;
-			$mail->Username = $username;
-			$mail->Password = $password;
-			$mail->IsHTML(true);
-			$mail->WordWrap = 50;
-
-			if(empty($to))
-				$to = $username;
-
-			if(!empty($from)) {
-				if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $from, $matches)) {
-					$fromname = $matches[1];
-					$from = $matches[2];
-				}
-				else
-					$fromname = $from;
-			}
-			else {
-				$from = $username;
-				$fromname = $username;
-			}	
-			$mail->From = $from;
-			$mail->FromName = $from;
-
-			$to = explode(",", $to);
-			$toSize = sizeof($to);
-			$sent = array();
-			for($t = 0; $t < $toSize; ++$t) {
-				$email = trim($to[$t]);
-				$emailname = "";
-				if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $email, $matches)) {
-					$emailname = $matches[1];
-					$email = $matches[2];
-				}	
-				if(!in_array($email, $sent)) {
-					$mail->AddAddress($email, $emailname);
-					$sent[] = $email;
-				}
-			}
-
-			if(!empty($replyto)) {
-				$replyto = explode(",", $replyto);
-				$replytoSize = sizeof($replyto);
-				$sent = array();
-				for($r = 0; $r < $replytoSize; ++$r) {
-					$email = trim($replyto[$r]);
-					$emailname = "";
-					if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $email, $matches)) {
-						$emailname = $matches[1];
-						$email = $matches[2];
-					}	
-					if(!in_array($email, $sent)) {
-						$mail->AddReplyTo($email, $emailname);
-						$sent[] = $email;
-					}
-				}
-			}
-			else
-				$mail->AddReplyTo($from);
-
-			if(!empty($cc)) {
-				$cc = explode(",", $cc);
-				$ccSize = sizeof($cc);
-				$sent = array();
-				for($c = 0; $c < $ccSize; ++$c) {
-					$email = trim($cc[$c]);
-					$emailname = "";
-					if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $email, $matches)) {
-						$emailname = $matches[1];
-						$email = $matches[2];
-					}	
-					if(!in_array($email, $sent)) {
-						$mail->AddCC($email, $emailname);
-						$sent[] = $email;
-					}
-				}
-			}
-
-			if(!empty($bcc)) {
-				$bcc = explode(",", $bcc);
-				$bccSize = sizeof($bcc);
-				$sent = array();
-				for($b = 0; $b < $bccSize; ++$b) {
-					$email = trim($bcc[$b]);
-					$emailname = "";
-					if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $email, $matches)) {
-						$emailname = $matches[1];
-						$email = $matches[2];
-					}	
-					if(!in_array($email, $sent)) {
-						$mail->AddBCC($email, $emailname);
-						$sent[] = $email;
-					}
-				}
-			}
-
-			if(!empty($subject))
-				$mail->Subject = $subject;
-			
-			$html = $form->getEmailHTML();
-			$css = $form->getEmailCSS();
-
-			$body = $preHTML . $css . $html . $postHTML;
-			$mail->Body = $body;
-
-			$altbody = str_replace(array("\n", "\t"), "", $html);
-			$altbody = strip_tags($preHTML . "\n\n" . str_replace(array('</label><div class="pfbc-textbox">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array("\n", "\n\n", "\n\n"), $altbody) . "\n\n" . $postHTML);
-			$mail->AltBody = $altbody;
-
-			$mail->Send();
+			$email = new email();
+			$email->setAttributes($params);
+			$email->send($form->getEmail());
 		}	
 	}
 
@@ -3930,10 +3791,10 @@ class option extends pfbc {
 	public $value;
 }
 class button extends pfbc {
-	private $allowedFields; 
-
 	protected $attributes;
 	protected $jqueryUI;
+
+	private $allowedFields; 
 
 	public function __construct() {
 		$this->allowedFields = array(
@@ -3978,6 +3839,135 @@ class button extends pfbc {
 			echo($str);
 		else
 			return $str;
+	}
+}
+class email extends pfbc {
+	protected $username;
+	protected $password;
+	protected $to;
+	protected $subject;
+	protected $from;
+	protected $replyto;
+	protected $cc;
+	protected $bcc;
+	protected $preHTML;
+	protected $postHTML;
+	protected $css;
+	protected $textonly;
+
+	private function applyPHPMailerSetting($str, &$mail, $action, $default="") {
+		if(!empty($str)) {
+			$emails = explode(",", $str);
+			$emailSize = sizeof($emails);
+			$exists = array();
+			for($e = 0; $e < $emailSize; ++$e) {
+				$email = trim($emails[$e]);
+				$emailname = "";
+				if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $email, $matches)) {
+					$emailname = $matches[1];
+					$email = $matches[2];
+				}	
+				if(!in_array($email, $exists)) {
+					$mail->$action($email, $emailname);
+					$exists[] = $email;
+				}
+			}
+		}
+		elseif(!empty($default))
+			$mail->$action($default);
+	}
+
+	private function convertToPlainText($str) {
+		$str = str_replace(array("\n", "\t"), "", $str);
+		$str = str_replace(array('</label><div class="pfbc-data">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array("\n", "\n\n", "\n\n"), $str);
+		if(!empty($this->preHTML))
+			$str = $this->preHTML . "\n\n" . $str;
+		if(!empty($this->postHTML))
+			$str = $str . "\n\n" . $this->postHTML;
+		return strip_tags($str);
+	}
+
+	public function send($str) {
+		$mail = new PHPMailer(); 
+		$mail->IsSMTP();
+		$mail->SMTPAuth = true;
+		$mail->Host = "ssl://smtp.gmail.com";
+		$mail->Port = 465;
+		$mail->Username = $this->username;
+		$mail->Password = $this->password;
+		$mail->WordWrap = 50;
+
+		if(empty($this->to))
+			$this->to = $this->username;
+
+		if(!empty($this->from)) {
+			if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $this->from, $matches)) {
+				$fromname = $matches[1];
+				$this->from = $matches[2];
+			}
+			else
+				$fromname = $this->from;
+		}
+		else {
+			$this->from = $this->username;
+			$fromname = $this->username;
+		}	
+		$mail->From = $this->from;
+		$mail->FromName = $fromname;
+
+		$this->applyPHPMailerSetting($this->to, $mail, "AddAddress");
+		$this->applyPHPMailerSetting($this->replyto, $mail, "AddReplyTo", $this->from);
+		$this->applyPHPMailerSetting($this->cc, $mail, "AddCC");
+		$this->applyPHPMailerSetting($this->bcc, $mail, "AddBCC");
+
+		if(!empty($subject))
+			$mail->Subject = $subject;
+		
+		if(!empty($this->textonly))
+			$mail->Body = $this->convertToPlainText($str);
+		else {
+			if(empty($this->css)) {
+				$this->css = <<<STR
+<style type="text/css">
+	.pfbc-email {
+		margin: 0.75em 0;
+		padding: .25em 0.75em;
+		width: 400px;
+		font-family: "American Typewriter";
+		font-size: 14px;
+		background-color: #f5f4f4;
+		border: 1px solid #ccc;
+		-moz-border-radius: 0.5em; 
+		-webkit-border-radius: 0.5em;
+	}
+	.pfbc-element {
+		padding: 0.5em 0;
+	}
+	.pfbc-label {
+		display: block;
+		padding-bottom: 0.25em;
+	}
+	.pfbc-data {
+		padding: 0.5em;
+		width: 384px;
+		font-family: "American Typewriter";
+		font-size: 14px;
+		background-color: #fff;
+		border: 1px solid #ccc;
+	}
+	.pfbc-additional {
+		padding-top: 0.75em;
+		font-size: 1.25em;
+	}
+</style>
+
+STR;
+			}
+			$mail->Body = $this->preHTML . $this->css . $str . $this->postHTML;
+			$mail->AltBody = $this->convertToPlainText($str);
+		}
+
+		$mail->Send();
 	}
 }
 ?>

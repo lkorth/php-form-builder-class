@@ -49,7 +49,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	</ol>
 
 	<p>In the php source code of this example file, you'll see that the sendToGoogleSpreadsheet function call currently contains demo authentication/spreadshet settings ("my_email", "my_password", etc).
-	You'll want to replace these with your information. </p>
+	You'll want to replace these with your information.</p>
 
 	<?php
 	$form = new form("googlespreadsheets_0");
