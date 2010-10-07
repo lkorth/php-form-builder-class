@@ -54,7 +54,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 	<ol style="margin: 0;">
 		<li>You'll need a Google Gmail account.  If you don't have one, you can create one by clicking the "Create an account" link at <a href="http://mail.google.com">http://mail.google.com</a>.</li>
-		<li>To, From, Reply To, CC, and BCC can contain multiple email addresses - just separate them with commas.  Email addresses used for these parameters can be formatted as either "my@email.com" or "My Email &lt;my@email.com&gt;"</li>
+		<li>To, Reply To, CC, and BCC can contain multiple email addresses - just separate them with commas.  Email addresses used for these parameters (and From) can be formatted as either "my@email.com" or "My Email &lt;my@email.com&gt;"</li>
 		<li>Within the email function, a call is made to another public function - getEmail - to get the email's html/text content.  If you already have an existing system in place for sending email, you can use this function instead
 		of the project's email function to build a string containing an html/text representation of the form's submitted data.  By default, this function will return html, but you can pass true as the first and only parameter to return
 		text.</li>
