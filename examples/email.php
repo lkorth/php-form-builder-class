@@ -16,6 +16,7 @@ if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0"))) {
 			"preHTML" => "my_prehtml", 
 			"postHTML" => "my_posthtml",
 			"css" => '<style type="text/css">...</style>',
+			"cssFile" => 'my_css.css',
 			"textonly" => "true/false"
 		));
 	}
@@ -46,6 +47,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 				<li>postHTML - Allows you to append html content below the form's submitted data.</li>
 				<li>textonly - Sends text-only version of the form's submitted data.  By default, the email function will send an email containing both an html and text version.</li>
 				<li>css - Gives you the ability to style the html email as needed.  This parameter should be passed as a string beginning with &lt;style type="text/css"&gt; and ending with &lt;/style&gt;</li>
+				<li>cssFile - Gives you the ability to style the html email as needed by specifying a css include file.</li>
 			</ul>
 		</li>
 	</ul>
@@ -54,7 +56,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 	<ol style="margin: 0;">
 		<li>You'll need a Google Gmail account.  If you don't have one, you can create one by clicking the "Create an account" link at <a href="http://mail.google.com">http://mail.google.com</a>.</li>
-		<li>To, Reply To, CC, and BCC can contain multiple email addresses - just separate them with commas.  Email addresses used for these parameters (and From) can be formatted as either "my@email.com" or "My Email &lt;my@email.com&gt;"</li>
+		<li>to, replyto, cc, and bcc can contain multiple email addresses - just separate them with commas.</li>
+		<li>to, from, replyto, cc, bcc can contain email addresses formatted as either "my@email.com" or "My Email &lt;my@email.com&gt;"</li>
 		<li>Within the email function, a call is made to another public function - getEmail - to get the email's html/text content.  If you already have an existing system in place for sending email, you can use this function instead
 		of the project's email function to build a string containing an html/text representation of the form's submitted data.  By default, this function will return html, but you can pass true as the first and only parameter to return
 		text.</li>

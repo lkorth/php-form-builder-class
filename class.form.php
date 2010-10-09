@@ -3853,6 +3853,7 @@ class email extends pfbc {
 	protected $preHTML;
 	protected $postHTML;
 	protected $css;
+	protected $cssFile;
 	protected $textonly;
 
 	private function applyPHPMailerSetting($str, &$mail, $action, $default="") {
@@ -3926,8 +3927,7 @@ class email extends pfbc {
 		if(!empty($this->textonly))
 			$mail->Body = $this->convertToPlainText($str);
 		else {
-			if(empty($this->css)) {
-				$this->css = <<<STR
+			$defaultCSS = <<<STR
 <style type="text/css">
 	.pfbc-email {
 		margin: 0.75em 0;
@@ -3962,7 +3962,19 @@ class email extends pfbc {
 </style>
 
 STR;
+
+			if(!empty($this->cssFile)) {
+				$this->css = file_get_contents($this->cssFile);
+				if(!$this->css)
+					$this->css = $defaultCSS;
 			}
+
+			if(empty($this->css))
+				$this->css = $defaultCSS;
+
+			if(stripos($this->css, "<style") !== 0)
+				$this->css = '<style type="text/css">' . $this->css . '</style>';
+
 			$mail->Body = $this->preHTML . $this->css . $str . $this->postHTML;
 			$mail->AltBody = $this->convertToPlainText($str);
 		}
