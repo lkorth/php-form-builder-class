@@ -88,6 +88,7 @@ class form extends pfbc {
 	private $ckeditorIDArr;
 	private $countryArr;
 	private $elements;
+	private $emailError;
 	private $emailExists;
 	private $focusElement;
 	private $gsErrorMsg;
@@ -668,12 +669,14 @@ class form extends pfbc {
 				$str .= "\n\t\t" . '<label class="pfbc-label">' . $eleLabel . "</label>";	
 
 				$str .= "\n\t\t" . '<div class="pfbc-data">';
-				if(array_key_exists($eleName, $referenceValues)) {
+				if(array_key_exists($eleName, $referenceValues) && $referenceValues[$eleName] !== "") {
 					if(is_array($referenceValues[$eleName]))
 						$str .= stripslashes(implode(", ", $referenceValues[$eleName]));
 					else
 						$str .= stripslashes($referenceValues[$eleName]);
 				}	
+				else
+					$str .= "&nbsp;";
 				$str .= "</div>";
 				$str .= "\n\t</div>";
 			}
@@ -737,6 +740,26 @@ class form extends pfbc {
 		$this->addElement("", "", "htmlexternal", '</fieldset>');
 	}
 
+	public function email($username, $password, $additionalParams="") {
+		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+
+			$params = array("username" => $username, "password" => $password);
+			if(!empty($additionalParams) && is_array($additionalParams)) {
+				foreach($additionalParams as $key => $value)
+					$params[$key] = $value;
+			}
+			require_once($form->phpIncludesPath . "/phpmailer/class.phpmailer.php");
+			$email = new email();
+			$email->setAttributes($params);
+			$result = $email->send($form->getEmail());
+			if(!$result)
+				$this->emailError = $email->getError();
+
+			return $result;	
+		}	
+	}
+
 	public function getEmail($textonly=false) {
 		if(!empty($_POST))
 			$referenceValues = $_POST;
@@ -776,10 +799,14 @@ STR;
 
 		if($textonly) {
 			$str = str_replace(array("\n", "\t"), "", $str);
-			$str = strip_tags(str_replace(array('</label><div class="pfbc-data">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array("\n", "\n\n", "\n\n"), $str));
+			$str = strip_tags(str_replace(array("&nbsp;", '</label><div class="pfbc-data">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array(" ", "\n", "\n\n", "\n\n"), $str));
 		}	
 
 		return $str;
+	}
+
+	public function getEmailError() {
+		return $this->emailError;
 	}
 
 	public function getGoogleSpreadsheetError() {
@@ -3582,22 +3609,6 @@ STR;
 			return $str;
 	}
 
-	public function email($username, $password, $additionalParams="") {
-		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
-			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
-
-			$params = array("username" => $username, "password" => $password);
-			if(!empty($additionalParams) && is_array($additionalParams)) {
-				foreach($additionalParams as $key => $value)
-					$params[$key] = $value;
-			}
-			require_once($form->phpIncludesPath . "/phpmailer/class.phpmailer.php");
-			$email = new email();
-			$email->setAttributes($params);
-			$email->send($form->getEmail());
-		}	
-	}
-
 	public function sendToGoogleSpreadsheet($username, $password, $spreadsheet, $worksheet="") {
 		if(!empty($_POST))
 			$referenceValues = $_POST;
@@ -3608,7 +3619,9 @@ STR;
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
 			require_once($form->phpIncludesPath . "/class.spreadsheet.php");
-			$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]["Timestamp"] = date("Y-m-d H:i:s");
+			$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]["Date/Time"] = date("Y-m-d H:i:s");
+			$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]["IP Address"] = $_SERVER["REMOTE_ADDR"];
+			$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]["Url"] = $form->url;
 			$this->buildSpreadsheetData($form, $referenceValues);
 			if(!empty($form->bindRules)) {
 				$bindRuleKeys = array_keys($form->bindRules);
@@ -3868,6 +3881,8 @@ class email extends pfbc {
 	protected $cssFile;
 	protected $textonly;
 
+	private $error;
+
 	private function applyPHPMailerSetting($str, &$mail, $action, $default="") {
 		if(!empty($str)) {
 			$emails = explode(",", $str);
@@ -3892,12 +3907,16 @@ class email extends pfbc {
 
 	private function convertToPlainText($str) {
 		$str = str_replace(array("\n", "\t"), "", $str);
-		$str = str_replace(array('</label><div class="pfbc-data">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array("\n", "\n\n", "\n\n"), $str);
+		$str = str_replace(array("&nbsp;", '</label><div class="pfbc-data">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array(" ", "\n", "\n\n", "\n\n"), $str);
 		if(!empty($this->preHTML))
 			$str = $this->preHTML . "\n\n" . $str;
 		if(!empty($this->postHTML))
 			$str = $str . "\n\n" . $this->postHTML;
 		return strip_tags($str);
+	}
+
+	public function getError() {
+		return $this->error;
 	}
 
 	public function send($str) {
@@ -3991,7 +4010,11 @@ STR;
 			$mail->AltBody = $this->convertToPlainText($str);
 		}
 
-		$mail->Send();
+		$result = $mail->Send();
+		if(!$result)
+			$this->error = $mail->ErrorInfo;
+
+		return $result;	
 	}
 }
 ?>

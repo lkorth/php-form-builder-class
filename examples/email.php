@@ -6,7 +6,7 @@ include("../class.form.php");
 if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0"))) {
 	$form = new form("email_" . substr($_POST["cmd"], -1));
 	if($form->validate()) {
-		$form->email("my_username", "my_password", array(
+		$result = $form->email("my_username", "my_password", array(
 			"to" => "my_recipient(s)", 
 			"subject" => "my_subject", 
 			"from" => "my_from", 
@@ -16,12 +16,18 @@ if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0"))) {
 			"preHTML" => "my_prehtml", 
 			"postHTML" => "my_posthtml",
 			"css" => '<style type="text/css">...</style>',
-			"cssFile" => 'my_css.css',
+			"cssFile" => "my_css.css or http://www.my_domain.com/my_css.css",
 			"textonly" => "true/false"
 		));
-	}
 
-	header("Location: email.php");
+		if($result)
+			header("Location: email.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter has been emailed from your Google Gmail account."));
+		else
+			header("Location: email.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Oops! The following error has occurred while sending information from your Google Gmail account.  " .  $form->getEmailError()));
+	}
+	else
+		header("Location: email.php");
+
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
