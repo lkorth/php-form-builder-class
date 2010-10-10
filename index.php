@@ -39,6 +39,7 @@ The goals of this project are to...
 		<li>Flexible Div Layout</li>
 		<li>XHTML 1.0 Strict Compliant</li>
 		<li>Google Docs Spreadsheet Integration (<a href="http://code.google.com/apis/spreadsheets/data/3.0/developers_guide.html">Google Spreadsheets API v3</a>)</li>
+		<li>Email Support w/PHPMailer + Google's Gmail Service</li>
 	</ul>
 </div>
 

@@ -35,7 +35,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	include("../header.php");
 	?>
 
-	<p><b>Email w/Google's Gmail Service</b> - This project's email function provides the ability to email a form's submitted data using your Google Gmail account.
+	<p><b>Email w/Google's Gmail Service</b> - This project's email function provides the ability to email a form's submitted data using PHPMailer and Google's Gmail service.
 	This function has four parameters as seen below.</p>
 
 	<ul style="margin: 0;">
@@ -70,7 +70,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	</ol>	
 
 	<p>In the php source code of this example file, you'll see that the email function call currently contains demo authentication/email settings ("my_email", "my_password", etc).
-	You'll want to replace these with your information.</p>
+	You'll want to replace these with your information.  Another important thing to note is that the various email settings that can be applied through the email function's fourth parameter
+	are optional.  In the php source code of this example file, you'll find all of them listed for reference in the email function call.  Feel free to include as many or few as needed.</p>
 
 	<?php
 	$form = new form("email_0");
