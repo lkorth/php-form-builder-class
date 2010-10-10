@@ -80,7 +80,7 @@ The goals of this project are to...
 		<li><a href="examples/jquery.php">jQuery</a></li>
 		<li><a href="examples/google-maps.php">Google Maps</a></li>
 		<li><a href="examples/google-spreadsheets.php">Google Spreadsheets</a></li>
-		<li><a href="examples/email.php">Email w/Google's Gmail Service</a></li>
+		<li><a href="examples/email.php">Email w/PHPMailer + Google's Gmail Service</a></li>
 		<li><a href="examples/captcha.php">Captcha</a></li>
 		<li><a href="examples/web-editors.php">Web Editors</a></li>
 		<li><a href="examples/buttons.php">Buttons</a></li>

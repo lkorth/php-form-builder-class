@@ -31,7 +31,7 @@ if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0"))) {
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
-	$title = "Email w/Google's Gmail Service";
+	$title = "Email w/PHPMailer + Google's Gmail Service";
 	include("../header.php");
 	?>
 
