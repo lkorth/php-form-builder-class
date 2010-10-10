@@ -59,6 +59,7 @@ class form extends pfbc {
 	protected $includesPath;
 	protected $integerErrorMsgFormat;
 	protected $jqueryDateFormat;
+	protected $jqueryNoConflict;
 	protected $jqueryUIButtons;
 	protected $jqueryUITheme;
 	protected $labelPaddingRight;
@@ -1605,6 +1606,17 @@ STR;
 		$str .= <<<STR
 		<script type="text/javascript">
 			//<![CDATA[
+
+STR;
+
+		if(!empty($this->jqueryNoConflict)) {
+			$str .= <<<STR
+			jQuery.noConflict();
+
+STR;
+		}
+
+		$str .= <<<STR
 			var jQueryElementObj;
 			function pfbc_adjust_{$this->attributes["id"]}() {
 				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea, #{$this->attributes["id"]} .pfbc-main .pfbc-webeditor").each(function() { 
