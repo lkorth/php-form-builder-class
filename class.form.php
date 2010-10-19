@@ -61,6 +61,7 @@ class form extends pfbc {
 	protected $jqueryNoConflict;
 	protected $jqueryUIButtons;
 	protected $jqueryUITheme;
+	protected $jsIncludesPath;
 	protected $labelPaddingRight;
 	protected $labelRightAlign;
 	protected $labelWidth;
@@ -103,7 +104,6 @@ class form extends pfbc {
 	private $jquerySliderIDArr;
 	private $jqueryStarRatingIDArr;
 	private $jqueryUIButtonExists;
-	private $jsIncludesPath;
 	private $labelWidthExists;
 	private $latlngIDArr;
 	private $phpIncludesPath;
@@ -819,6 +819,18 @@ STR;
 
 		if(empty($this->synchronousResources))
 			$this->setIncludePaths();
+
+		$triggerJSIncludesError = true;
+		if(!empty($this->jsIncludesPath)) {
+			if($this->jsIncludesPath[0] == "/")
+				$includesPath = $_SERVER["DOCUMENT_ROOT"] . $this->jsIncludesPath . "/jquery";
+			else
+				$includesPath = getcwd() . "/" . $this->jsIncludesPath . "/jquery";
+			if(is_dir($includesPath))
+				$triggerJSIncludesError = false;
+		}
+		if($triggerJSIncludesError)
+			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid jsIncludesPath Form Attribute\n\nUse the jsIncludesPath form attribute to identify the location of the includes directory included within the php-form-builder-class folder.  This attribute can contain a relative or absolute path; however, keep in mind absolute paths will begin from the document root, not the web server root.");</script>';
 
 		if(empty($this->tooltipIcon))
 			$this->tooltipIcon = $this->jsIncludesPath . "/jquery/plugins/poshytip/tooltip-icon.gif";
@@ -2317,11 +2329,11 @@ STR;
 			if(empty($form->synchronousResources)) {
 				$str .= str_replace("images/", "$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
 				if(!empty($form->jqueryDateRangeIDArr))
-					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css");
+					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/ui/ui.daterangepicker.css");
 				if(!empty($form->jqueryColorIDArr))
-					$str .= str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css"));
+					$str .= str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents("{$form->phpIncludesPath}/jquery/plugins/colorpicker/colorpicker.css"));
 				if(!empty($form->tooltipIDArr))
-					$str .= str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css"));
+					$str .= str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents("{$form->phpIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css"));
 			} else  {
 				$str .= "<link href='$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css' rel='stylesheet' type='text/css'/>";
 				if(!empty($form->jqueryDateRangeIDArr))
@@ -2885,13 +2897,13 @@ STR;
 
 			if(empty($form->synchronousResources)) {
 				if(!empty($form->tooltipIDArr))
-					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
+					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
 				if(!empty($form->jqueryStarRatingIDArr))
-					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js");
+					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js");
 				if(!empty($form->jqueryDateRangeIDArr))
-					$str .= str_replace(array(), array(), file_get_contents("{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js"));
+					$str .= str_replace(array(), array(), file_get_contents("{$form->phpIncludesPath}/jquery/ui/daterangepicker.jQuery.js"));
 				if(!empty($form->jqueryColorIDArr))
-					$str .= file_get_contents("{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
+					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
 				if(empty($form->preventGoogleMapsLoad) && !empty($form->latlngIDArr))
 					$str .= file_get_contents("http://maps.google.com/maps/api/js?callback=myfunction&sensor=false");
 				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID))
@@ -3648,8 +3660,15 @@ STR;
 	}
 
 	private function setIncludePaths() {
-		$this->phpIncludesPath = __DIR__ . "/includes";
-		$this->jsIncludesPath = substr($this->phpIncludesPath, strlen($_SERVER['DOCUMENT_ROOT']));
+		$this->phpIncludesPath = dirname(__FILE__) . "/includes";
+		if(empty($this->jsIncludesPath)) {
+			if(strpos($this->phpIncludesPath, $_SERVER['DOCUMENT_ROOT']))
+				$this->jsIncludesPath = substr($this->phpIncludesPath, strlen($_SERVER['DOCUMENT_ROOT']));
+			else
+				$this->jsIncludesPath = "/php-form-builder-class/includes";
+		}	
+		elseif(substr($this->jsIncludesPath, -1) == "/")
+			$this->jsIncludesPath = substr($this->jsIncludesPath, 0, -1);
 	}
 
 	//This function is identical to setValues() and is included for backwards compatibility.

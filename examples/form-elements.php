@@ -22,7 +22,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("formelements_0");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => "400"
 	));	
 
