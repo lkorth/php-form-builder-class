@@ -2160,8 +2160,11 @@ STR;
 		$elementSize = sizeof($elements);
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = $elements[$i];
-			if(substr($ele->attributes["name"], -2) == "[]")
-				$ele->attributes["name"] = substr($ele->attributes["name"], 0, -2);
+			$eleType = $ele->attributes["type"];
+
+			$eleName = $ele->attributes["name"];
+			if(substr($eleName, -2) == "[]")
+				$eleName = substr($eleName, 0, -2);
 
 			if(!empty($ele->label)) {
 				$eleLabel = strip_tags($ele->label);
@@ -2173,10 +2176,18 @@ STR;
 			
 			$errorMsg = "";
 
+			$validValue = false;
+			$eleValue = "";
+			if(isset($referenceValues[$eleName])) {
+				$eleValue = $referenceValues[$eleName];
+				if($eleValue !== $ele->hint && $eleValue !== "")
+					$validValue = true;
+			}
+
 			//The html, sort, and hidden element types are ignored.
-			if($ele->attributes["type"] == "html" || $ele->attributes["type"] == "sort" || $ele->attributes["type"] == "hidden")
+			if(in_array($eleType, array("html", "sort", "hidden")))
 				continue;
-			elseif($ele->attributes["type"] == "captcha") {
+			elseif($eleType == "captcha") {
 				require_once($form->phpIncludesPath . "/recaptchalib.php");
 				$recaptchaResp = recaptcha_check_answer($form->captchaPrivateKey, $_SERVER["REMOTE_ADDR"], $referenceValues["recaptcha_challenge_field"], $referenceValues["recaptcha_response_field"]);
 				if(!$recaptchaResp->is_valid) {
@@ -2196,25 +2207,19 @@ STR;
 						$errorMsg = "An unknown reCAPTCHA error has occurred.";
 				}
 			}
-			elseif(!empty($ele->required)) {
-				if($ele->attributes["type"] == "checkbox" || $ele->attributes["type"] == "radio" || $ele->attributes["type"] == "checksort" || $ele->attributes["type"] == "rating") {
-					if(!isset($referenceValues[$ele->attributes["name"]]))
-						$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
-				}
-				elseif($referenceValues[$ele->attributes["name"]] === $ele->hint || $referenceValues[$ele->attributes["name"]] === "")
-					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
-			}
+			elseif(!empty($ele->required) && !$validValue)
+				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
 
-			if(empty($errorMsg) && $ele->attributes["type"] == "email" && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "") {
+			if(empty($errorMsg) && $eleType == "email" && $validValue) {
 				require_once($form->phpIncludesPath . "/php-email-address-validation/EmailAddressValidator.php");
 				$emailObj = new EmailAddressValidator;
-				if(!$emailObj->check_email_address($referenceValues[$ele->attributes["name"]]))
+				if(!$emailObj->check_email_address($eleValue))
 					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
 			}
 
-			if(empty($errorMsg) && !empty($ele->integer) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^\d+$/", $referenceValues[$ele->attributes["name"]]))
+			if(empty($errorMsg) && !empty($ele->integer) && $validValue && !preg_match("/^\d+$/", $eleValue))
 				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->integerErrorMsgFormat);
-			elseif(empty($errorMsg) && !empty($ele->alphanumeric) && $referenceValues[$ele->attributes["name"]] !== $ele->hint && $referenceValues[$ele->attributes["name"]] !== "" && !preg_match("/^[0-9a-zA-Z]+$/", $referenceValues[$ele->attributes["name"]]))
+			elseif(empty($errorMsg) && !empty($ele->alphanumeric) && $validValue && !preg_match("/^[0-9a-zA-Z]+$/", $eleValue))
 				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->alphanumericErrorMsgFormat);
 
 			if(!empty($errorMsg)) {
@@ -3714,6 +3719,8 @@ STR;
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
 			//Store the form's submitted values in a session array for prefilling if validation fails.
+			if(isset($_SESSION["pfbc-values"][$this->attributes["id"]]))
+				unset($_SESSION["pfbc-values"][$this->attributes["id"]]);
 			$this->buildSessionValues($form, $referenceValues);
 			if(!empty($form->bindRules)) {
 				$bindRuleKeys = array_keys($form->bindRules);
