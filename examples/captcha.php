@@ -42,7 +42,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("captcha_0");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 400
 	));
 
@@ -57,7 +56,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	echo '<pre>', highlight_string('<?php
 $form = new form("captcha_0");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 

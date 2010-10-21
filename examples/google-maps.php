@@ -36,7 +36,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("googlemaps_0");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 500
 	));
 
@@ -57,7 +56,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("googlemaps_1");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -77,7 +75,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	echo '<pre>', highlight_string('<?php
 $form = new form("googlemaps_0");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 500
 ));
 
@@ -98,7 +95,6 @@ $form->render();
 <?php
 $form = new form("googlemaps_1");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"latlngDefaultLocation" => array(52.523, 13.411),
 	"width" => 500
 ));

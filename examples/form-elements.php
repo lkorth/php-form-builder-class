@@ -61,7 +61,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("formelements_1");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => "850",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
@@ -80,7 +79,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	echo '<pre>', highlight_string('<?php
 $form = new form("formelements_0");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => "400"
 ));	
 
@@ -120,7 +118,6 @@ $form->render();
 <?php
 $form = new form("formelements_1");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => "850"
 ));	
 

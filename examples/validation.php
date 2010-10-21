@@ -43,7 +43,6 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("validation_0");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 400
 	));
 
@@ -62,7 +61,6 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	echo '<pre>', highlight_string('<?php
 $form = new form("validation_0");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 
@@ -85,7 +83,6 @@ $form->render();
 	<?php
 	$form = new form("validation_1");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 500,
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
@@ -111,7 +108,6 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 $form = new form("validation_1");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 500,
 	"map" => array(2, 2, 1, 3)
 ));
@@ -167,7 +163,6 @@ else {
 	<?php
 	$form = new form("validation_2");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 500,
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
@@ -194,7 +189,6 @@ else {
 	echo '<pre>', highlight_string('<?php
 $form = new form("validation_2");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 500,
 	"preventJSValidation" => 1,
 	"map" => array(2, 2, 1, 3)
@@ -248,7 +242,6 @@ exit();
 	<?php
 	$form = new form("validation_3");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 400,
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
@@ -262,7 +255,6 @@ exit();
 
 	$subform = new form("validation_3sub");
 	$subform->setAttributes(array(
-		"includesPath" => "../includes",
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
 		"width" => 400,
@@ -293,7 +285,6 @@ exit();
 	echo '<pre>', highlight_string('<?php
 $form = new form("validation_3");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400,
 	"ajax" => 1,
 	"preventJSValidation" => 1
@@ -304,7 +295,6 @@ $form->addYesNo("Do you have any alternate email addresses?", "MyYesNo", "", arr
 
 $subform = new form("validation_3sub");
 $subform->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400,
 ));
 $subform->addEmail("Alternate Email Address #1:", "MyAlternateEmail1");
@@ -339,7 +329,6 @@ $form->render();
 	<?php
 	$form = new form("validation_4");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -364,7 +353,6 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 $form = new form("validation_4");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"errorMsgFormat" => "Oops! You didn\'t fill in the [LABEL] field.",
 	"emailErrorMsgFormat" => "You didn\'t supply a valid email address in the [LABEL] field.",
 	"integerErrorMsgFormat" => "[LABEL] can only contain numbers. No letters or special character allowed!",

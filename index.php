@@ -15,9 +15,9 @@ include("header.php");
 The goals of this project are to...
 	<ul style="margin-top: 0; padding-top: 0;">
 		<li>promote rapid development of forms through an object-oriented PHP structure.</li>
-		<li>eliminate the grunt/repetitive work of writing the html and javascript validation when building forms.</li>
+		<li>eliminate the grunt/repetitive work of writing the html and javascript/php validation when building forms.</li>
 		<li>reduce human error by using a consistent/tested utility.</li>
-		<li>incorporate complex elements such as jquery, google maps, tooltips, captcha, and html web editors quickly and with little effort.</li>
+		<li>incorporate complex elements such as jquery, google maps, google spreadsheets, tooltips, recaptcha, and html web editors quickly and with little effort.</li>
 	</ul>
 </div>
 
@@ -46,10 +46,10 @@ The goals of this project are to...
 <h4>Installation Instructions:</h4>
 <div>
 	<ol style="margin-top: 0; padding-top: 0;">
-		<li><a href="http://php-form-builder-class.googlecode.com/files/formbuilder-<?php echo($version);?>.zip">Download</a> and unzip formbuilder.zip</li>
-		<li>Upload the php-form-builder-class directory to your web server.</li>
-		<li>index.php, style.css, and the examples directory are included only for instruction and can be omitted once in production.</li>
-		<li>It is recommended that the scripts building/rendering your forms be located in the same folder as the php-form-builder-class directory.  Doing so will eliminate the need for specifying the <i>includesPath</i> attribute while building your forms.  An alternative is to make use of symbolic links within your file structure.  See the example - Invalid includes Directory Path Error - provided below for more details on the <i>includesPath</i> form attribute.</li>
+		<li><a href="http://php-form-builder-class.googlecode.com/files/formbuilder-<?php echo($version);?>.zip">Download</a> and unzip formbuilder-<?php echo($version);?>.zip</li>
+		<li>Upload the php-form-builder-class directory within the public path of your web server.</li>
+		<li>The only files/directories you need for production are class.form.php, license, and includes.  The other files/directories are included only for instruction and can be omitted.</li>
+		<li>If you are using a symbolic link to reference the php-form-builder-class directory in a public path, it is recommended that you place this symbolic link at your server's document root.  Doing this will eliminate the need for specifying the <i>jsIncludesPath</i> attribute while building your forms.</li>
 		<li>Be sure to review the examples provided below as well as review the source of class.form.php.</li>
 		<li>If you have any questions about using this project, suggestions for new features, or need to report a bug, please use the Google Code Project Hosting issue tracker located at http://code.google.com/p/php-form-builder-class/issues/list</li>
 	</ol>

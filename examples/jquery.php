@@ -71,7 +71,6 @@ STR;
 	<?php
 	$form = new form("jquery_0");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 400
 	));
 
@@ -91,7 +90,6 @@ STR;
 	echo '<pre>', highlight_string('<?php
 $form = new form("jquery_0");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 
@@ -115,7 +113,6 @@ $form->render();
 	<?php
 	$form = new form("jquery_1");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -137,7 +134,6 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 $form = new form("jquery_1");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 
@@ -160,7 +156,6 @@ $form->render();
 	<?php
 	$form = new form("jquery_2");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -183,7 +178,6 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 $form = new form("jquery_2");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 
@@ -207,7 +201,6 @@ $form->render();
 	<?php
 	$form = new form("jquery_3");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -230,7 +223,6 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 $form = new form("jquery_3");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 
@@ -254,7 +246,6 @@ $form->render();
 	<?php
 	$form = new form("jquery_4");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -276,7 +267,6 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 $form = new form("jquery_4");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 
@@ -299,7 +289,6 @@ $form->render();
 	<?php
 	$form = new form("jquery_5");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -319,7 +308,6 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 $form = new form("jquery_5");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 
@@ -342,7 +330,6 @@ $form->render();
 	<?php
 	$form = new form("jquery_6");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -366,7 +353,6 @@ $form->render();
 	<?php
 	$form = new form("jquery_7");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -386,7 +372,6 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 $form = new form("jquery_6");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"jqueryUIButtons" => 1,
 	"width" => 400
 ));
@@ -407,7 +392,6 @@ $form->render();
 <?php
 $form = new form("jquery_7");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 
@@ -428,7 +412,6 @@ $form->render();
 	<?php
 	$form = new form("jquery_8");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -448,7 +431,6 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 $form = new form("jquery_8");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 

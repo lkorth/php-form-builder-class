@@ -23,7 +23,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$billing_form = new form("conditionalscenarios_0");
 	$billing_form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 500,
 		"map" => array(1, 2, 2, 1, 3, 1)
 	));
@@ -44,7 +43,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 	$shipping_form = new form("shipping");
 	$shipping_form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 500,
 		"map" => array(1, 2, 2, 1, 3)
 	));
@@ -80,7 +78,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	echo '<pre>', highlight_string('<?php
 $billing_form = new form("conditionalscenarios_0");
 $billing_form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 500,
 	"map" => array(1, 2, 2, 1, 3, 1)
 ));
@@ -101,7 +98,6 @@ $billing_form->addTextbox("Zip Code:", "BillingZip", "", array("required" => 1))
 
 $shipping_form = new form("shipping");
 $shipping_form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 500,
 	"map" => array(1, 2, 2, 1, 3)
 ));
@@ -136,7 +132,6 @@ $billing_form->render();
 
 	$location_form = new form("conditionalscenarios_1");
 	$location_form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 500,
 		"noAutoFocus" => 1
 	));	
@@ -146,14 +141,12 @@ $billing_form->render();
 
 	$map_form = new form("map");
 	$map_form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 500
 	));	
 	$map_form->addLatLng("", "LatitudeLongitude", "", array("required" => 1));
 
 	$address_form = new form("address");
 	$address_form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 500,
 		"map" => array(1, 3)
 	));	
@@ -184,7 +177,6 @@ $billing_form->render();
 	echo '<pre>', highlight_string('<?php
 $location_form = new form("conditionalscenarios_1");
 $location_form->setAttributes(array(
-	"includesPath" => "../includes",
 	"ajax" => 1,
 	"width" => 500,
 	"noAutoFocus" => 1
@@ -195,14 +187,12 @@ if(!empty($_GET["errormsg_1"]))
 
 $map_form = new form("map");
 $map_form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 500
 ));	
 $map_form->addLatLng("", "LatitudeLongitude", "", array("required" => 1));
 
 $address_form = new form("address");
 $address_form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 500,
 	"map" => array(1, 3)
 ));	

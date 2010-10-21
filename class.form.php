@@ -1,5 +1,7 @@
 <?php
 /*
+php-form-builder-class v1.1.2
+
 Google Code Project Hosting - http://code.google.com/p/php-form-builder-class/
 User Google Group - http://groups.google.com/group/php-form-builder-class/
 Developer Google Group - http://groups.google.com/group/php-form-builder-class-developer/
@@ -820,6 +822,7 @@ STR;
 		if(empty($this->synchronousResources))
 			$this->setIncludePaths();
 
+		//Ensure that the jsIncludesPath attribute is set appropriately.  If not, display a javascript alert message.
 		$triggerJSIncludesError = true;
 		if(!empty($this->jsIncludesPath)) {
 			if($this->jsIncludesPath[0] == "/")
@@ -830,7 +833,7 @@ STR;
 				$triggerJSIncludesError = false;
 		}
 		if($triggerJSIncludesError)
-			$str .= "\n\t" . '<script type="text/javascript">alert("php-form-builder-class Configuration Error: Invalid jsIncludesPath Form Attribute\n\nUse the jsIncludesPath form attribute to identify the location of the includes directory included within the php-form-builder-class folder.  This attribute can contain a relative or absolute path; however, keep in mind absolute paths will begin from the document root, not the web server root.");</script>';
+			$str .= '<script type="text/javascript">alert("PFBC Configuration Error: The jsIncludesPath form attribute contains an invalid path - \"' . $this->jsIncludesPath . '\".\n\nUse the form\'s setAttributes function to set this attribute to the location of the includes folder within the project\'s main directory, php-form-builder-class.  The jsIncludesPath can contain a relative or absolute path.  If an absolute path is used, keep in mind that the beginning / is interpreted from the document root - not the server root.\n\nIf you have questions about this attribute, post them on the project\'s mailing list at http://groups.google.com/group/php-form-builder-class.");</script>';
 
 		if(empty($this->tooltipIcon))
 			$this->tooltipIcon = $this->jsIncludesPath . "/jquery/plugins/poshytip/tooltip-icon.gif";
@@ -863,10 +866,12 @@ STR;
 			$str .= ' onsubmit="return pfbc_onsubmit_' . $this->attributes["id"] . '(this);">';
 		}
 
-		if(empty($this->synchronousResources)) {
+		if(empty($this->synchronousResources) && !$triggerJSIncludesError) {
 			$str .= <<<STR
+
 <script type="text/javascript">
-	document.getElementById("{$this->attributes["id"]}").style.visibility = "hidden";
+	if(document.getElementById("{$this->attributes["id"]}"))
+		document.getElementById("{$this->attributes["id"]}").style.visibility = "hidden";
 </script>
 
 STR;
@@ -2345,16 +2350,15 @@ STR;
 				$str .= '<style type="text/css">';
 			}
 
+			$id = "#" . $this->attributes["id"];
 			$str .= <<<STR
-.pfbc-tokens {
-	visibility: hidden;
+$id .pfbc-tokens {
 	display: none;
 }
 
 STR;
 
 			if(empty($form->preventDefaultCSS)) {
-				$id = "#" . $this->attributes["id"];
 				$str .= <<<STR
 $id {
 	position: relative;

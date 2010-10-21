@@ -46,7 +46,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("layout_0");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 500,
 		"map" => array(2, 2, 1, 3)
 	));
@@ -69,7 +68,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	echo '<pre>', highlight_string('<?php
 $form = new form("layout_0");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 500,
 	"map" => array(2, 2, 1, 3)
 ));
@@ -93,7 +91,6 @@ $form->render();
 	$form = new form("layout_1");
 	$form->setAttributes(array(
 		"width" => 400,
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -114,7 +111,6 @@ $form->render();
 $form = new form("layout_1");
 $form->setAttributes(array(
 	"width" => 400,
-	"includesPath" => "../includes",
 	"labelWidth" => 100
 ));
 
@@ -132,7 +128,6 @@ $form->render();
 	$form = new form("layout_2");
 	$form->setAttributes(array(
 		"width" => 800,
-		"includesPath" => "../includes",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -160,7 +155,6 @@ $form->render();
 $form = new form("layout_2");
 $form->setAttributes(array(
 	"width" => 800,
-	"includesPath" => "../includes",
 	"labelWidth" => 125,
 	"labelRightAlign" => 1,
 	"map" => array(2, 2, 1, 3)

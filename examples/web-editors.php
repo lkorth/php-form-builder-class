@@ -37,7 +37,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("webeditors_0");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 655, 
 	));
 
@@ -56,7 +55,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("webeditors_1");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => "850"
 	));
 
@@ -72,7 +70,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	echo '<pre>', highlight_string('<?php
 $form = new form("webeditors_0");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 655, 
 ));
 
@@ -91,7 +88,6 @@ $form->render();
 <?php
 $form = new form("webeditors_1");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => "850"
 ));
 

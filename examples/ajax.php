@@ -45,7 +45,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("ajax_0");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => "500",
 		"map" => array(1, 2, 2, 2, 1, 3),
 		"ajax" => 1
@@ -69,7 +68,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	echo '<pre>', highlight_string('<?php
 $form = new form("ajax_0");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => "500",
 	"map" => array(1, 2, 2, 2, 1, 3),
 	"ajax" => 1
@@ -98,7 +96,6 @@ $form->render();
 	<?php
 	$form = new form("ajax_1");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => "400",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
@@ -137,7 +134,6 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 $form = new form("ajax_1");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => "400",
 	"ajaxCallback" => "parseJSONResponse",
 	"ajax" => 1

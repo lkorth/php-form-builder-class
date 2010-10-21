@@ -54,7 +54,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<?php
 	$form = new form("googlespreadsheets_0");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"map" => array(2, 2, 1, 3),
 		"width" => 500
 	));

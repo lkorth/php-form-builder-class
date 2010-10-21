@@ -11,7 +11,6 @@ if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
 } 
 
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 400
 ));
 $form->addHidden("cmd", "submit");

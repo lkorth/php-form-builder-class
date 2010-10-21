@@ -38,7 +38,6 @@ STR;
 	<?php
 	$form = new form("fieldsets_0");
 	$form->setAttributes(array(
-		"includesPath" => "../includes",
 		"width" => 500,
 		"map" => array(2, 1, 3, 2, 3)
 	));
@@ -72,7 +71,6 @@ STR;
 	echo '<pre>', highlight_string('<?php
 $form = new form("fieldsets_0");
 $form->setAttributes(array(
-	"includesPath" => "../includes",
 	"width" => 500,
 	"map" => array(2, 1, 3, 2, 3)
 ));
