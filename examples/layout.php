@@ -34,11 +34,15 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 		Like "labelWidth", the "labelRightAlign" attribute exists as both a form and element attribute, which means it can be applied in the form's setAttributes function
 		and/or in the additionalParams associative array when adding form elements.  Setting "labelRightAlign" in the form's setAttribute function will apply the attribute
 		to each form element.  If "labelRightAlign" is applied both as a form and element attribute, the element attribute's value will take precedence.</li>
-		<li>labelPaddingRight - When using both the "labelWidth" and "labelRightAlign" attributes, "labelPaddingRight" can be used to adjust the amount of padding between the
+		<li>labelPaddingRight - When using both the "labelWidth" attribute, "labelPaddingRight" can be used to adjust the amount of padding between the
 		label and the element.  This attribute will default to 4px or 4% depending on if the form's width is set as a pixel or percentage value.
 		Like "labelWidth", the "labelPaddingRight" attribute exists as both a form and element attribute, which means it can be applied in the form's setAttributes function
 		and/or in the additionalParams associative array when adding form elements.  Setting "labelPaddingRight" in the form's setAttribute function will apply the attribute
 		to each form element.  If "labelPaddingRight" is applied both as a form and element attribute, the element attribute's value will take precedence.</li>
+		<li>labelDisplayRight - This form/element attribute can be used to render the label to the right of the form element.  It differs from "labelRightAlign" as this attribute
+		only right aligns the text within the label.</li>
+		<li>labelPaddingLeft - The "labelPaddingLeft" form/element attribute comes into play when setting "labelDisplayRight" and is used to adjust the amount of padding between
+		the label and the form element.  It functions identically to "labelPaddingRight" except padding is applied to the left side of the label as apposed to the right.</li>
 	</ul>
 
 	<p>Below are several example forms that demo many of the attributes listed above.</p>
@@ -176,6 +180,48 @@ $form->addButton();
 $form->render();
 ?>', true), '</pre>';
 	
+	$form = new form("layout_3");
+	$form->setAttributes(array(
+		"width" => 400,
+		"noAutoFocus" => 1,
+		"preventJQueryLoad" => 1,
+		"preventJQueryUILoad" => 1,
+		"labelWidth" => 100,
+		"labelDisplayRight" => 1
+	));
+
+	if(!empty($_GET["errormsg_3"]))
+		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_3"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+	$form->addHidden("cmd", "submit_3");
+	$form->addTextbox("Username:", "Username", "", array("required" => 1));
+	$form->addPassword("Password:", "Password", "", array("required" => 1));
+	$form->addHTML('<a href="#">Forgot your password?</a>');
+	$form->addButton("Login");
+	$form->render();
+
+	echo '<pre>', highlight_string('<?php
+$form = new form("layout_3");
+$form->setAttributes(array(
+	"width" => 400,
+	"noAutoFocus" => 1,
+	"preventJQueryLoad" => 1,
+	"preventJQueryUILoad" => 1,
+	"labelWidth" => 100,
+	"labelDisplayRight" => 1
+));
+
+if(!empty($_GET["errormsg_3"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_3"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_3");
+$form->addTextbox("Username:", "Username", "", array("required" => 1));
+$form->addPassword("Password:", "Password", "", array("required" => 1));
+$form->addHTML(\'<a href="#">Forgot your password?</a>\');
+$form->addButton("Login");
+$form->render();
+?>', true), '</pre>';
+
 	include("../footer.php");
 }
 ?>

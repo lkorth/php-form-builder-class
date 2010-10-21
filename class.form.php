@@ -64,6 +64,8 @@ class form extends pfbc {
 	protected $jqueryUIButtons;
 	protected $jqueryUITheme;
 	protected $jsIncludesPath;
+	protected $labelDisplayRight;
+	protected $labelPaddingLeft;
 	protected $labelPaddingRight;
 	protected $labelRightAlign;
 	protected $labelWidth;
@@ -141,6 +143,7 @@ class form extends pfbc {
 		$this->jqueryDateFormat = "MM d, yy";
 		$this->jqueryUITheme = "smoothness";
 		$this->labelPaddingRight = 4;
+		$this->labelPaddingLeft = 4;
 		$this->processingMsg = "Processing";
 		$this->mapMargin = 2;
 		$this->url = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
@@ -2574,15 +2577,40 @@ STR;
 
 							if(!empty($labelWidth)) {
 								$labelRightAlign = false;
-								if(!empty($ele->labelRightAlign))
-									$labelRightAlign = true;
+								if(isset($ele->labelRightAlign)) {
+									if(!empty($ele->labelRightAlign))
+										$labelRightAlign = true;
+								}
 								elseif(!empty($form->labelRightAlign))
 									$labelRightAlign = true;
+
+								$labelDisplayRight = false;
+								if(isset($ele->labelDisplayRight)) {
+									if(!empty($ele->labelDisplayRight))
+										$labelDisplayRight = true;
+								}
+								elseif(!empty($form->labelDisplayRight))
+									$labelDisplayRight = true;
 								
-								if($labelRightAlign) {
+								$labelPaddingRight = "";
+								if(!$labelDisplayRight) {
 									$labelPaddingRight = $form->labelPaddingRight;
 									if(!empty($ele->labelPaddingRight))
 										$labelPaddingRight = $ele->labelPaddingRight;
+								}	
+
+								$labelPaddingLeft = "";
+								if($labelDisplayRight) {
+									$labelPaddingLeft = $form->labelPaddingLeft;
+									if(!empty($ele->labelPaddingLeft))
+										$labelPaddingLeft = $ele->labelPaddingLeft;
+								}	
+
+								$labelFloat = "left";
+								$elementFloat = "right";
+								if($labelDisplayRight) {
+									$labelFloat = "right";
+									$elementFloat = "left";
 								}	
 
 								if(substr($labelWidth, -1) == "%") {
@@ -2610,9 +2638,10 @@ STR;
 											$elementWidth = 98 - $labelWidth;
 									}
 
+
 									$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
-	float: left;
+	float: $labelFloat;
 
 STR;
 									if(!empty($labelRightAlign)) {
@@ -2634,6 +2663,18 @@ STR;
 STR;
 									}
 
+									if(!empty($labelPaddingLeft)) {
+										if(substr($labelPaddingLeft, -1) == "%")
+											$labelPaddingLeft = substr($labelPaddingLeft, 0, -1);
+										elseif(substr($labelPaddingLeft, -2) == "px")
+											$labelPaddingLeft = substr($labelPaddingLeft, 0, -2);
+										$labelWidth -= $labelPaddingLeft;
+										$str .= <<<STR
+	padding-left: {$labelPaddingLeft}$labelWidthSuffix;
+
+STR;
+									}
+
 									$str .= <<<STR
 	width: {$labelWidth}$labelWidthSuffix;
 }
@@ -2643,7 +2684,7 @@ STR;
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 
 STR;
@@ -2652,7 +2693,7 @@ STR;
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 
 STR;
@@ -2661,7 +2702,7 @@ STR;
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 
 STR;
@@ -2670,7 +2711,7 @@ STR;
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 
 STR;
@@ -2679,7 +2720,7 @@ STR;
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 
 STR;
@@ -2688,11 +2729,11 @@ STR;
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 
 STR;
@@ -2701,7 +2742,7 @@ STR;
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 
 STR;
@@ -2710,11 +2751,11 @@ STR;
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-latlng {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 
 STR;
@@ -2723,7 +2764,7 @@ STR;
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-captcha {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 
 STR;
@@ -2732,7 +2773,7 @@ STR;
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-slider {
 	width: {$elementWidth}$labelWidthSuffix;
-	float: right;
+	float: $elementFloat;
 }
 
 STR;
@@ -3793,6 +3834,8 @@ class element extends pfbc {
 	public $integer;
 	public $jqueryOptions;
 	public $label;
+	public $labelDisplayRight;
+	public $labelPaddingLeft;
 	public $labelPaddingRight;
 	public $labelRightAlign;
 	public $labelWidth;
