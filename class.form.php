@@ -67,6 +67,7 @@ class form extends pfbc {
 	protected $labelDisplayRight;
 	protected $labelPaddingLeft;
 	protected $labelPaddingRight;
+	protected $labelPaddingTop;
 	protected $labelRightAlign;
 	protected $labelWidth;
 	protected $latlngDefaultLocation;
@@ -2606,6 +2607,10 @@ STR;
 										$labelPaddingLeft = $ele->labelPaddingLeft;
 								}	
 
+								$labelPaddingTop = $form->labelPaddingTop;
+								if(!empty($ele->labelPaddingTop))
+									$labelPaddingTop = $ele->labelPaddingTop;
+
 								$labelFloat = "left";
 								$elementFloat = "right";
 								if($labelDisplayRight) {
@@ -2671,6 +2676,15 @@ STR;
 										$labelWidth -= $labelPaddingLeft;
 										$str .= <<<STR
 	padding-left: {$labelPaddingLeft}$labelWidthSuffix;
+
+STR;
+									}
+
+									if(!empty($labelPaddingTop)) {
+										if(is_numeric($labelPaddingTop))
+											$labelPaddingTop = $labelPaddingTop . $labelWidthSuffix;
+										$str .= <<<STR
+	padding-top: {$labelPaddingTop};
 
 STR;
 									}
@@ -3837,6 +3851,7 @@ class element extends pfbc {
 	public $labelDisplayRight;
 	public $labelPaddingLeft;
 	public $labelPaddingRight;
+	public $labelPaddingTop;
 	public $labelRightAlign;
 	public $labelWidth;
 	public $max;

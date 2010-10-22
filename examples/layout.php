@@ -98,7 +98,8 @@ $form->render();
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
-		"labelWidth" => 100
+		"labelWidth" => 100,
+		"labelPaddingTop" => "0.5em"
 	));
 
 	if(!empty($_GET["errormsg_1"]))
@@ -115,7 +116,8 @@ $form->render();
 $form = new form("layout_1");
 $form->setAttributes(array(
 	"width" => 400,
-	"labelWidth" => 100
+	"labelWidth" => 100,
+	"labelPaddingTop" => "0.5em"
 ));
 
 if(!empty($_GET["errormsg_1"]))
@@ -137,6 +139,7 @@ $form->render();
 		"preventJQueryUILoad" => 1,
 		"labelWidth" => 125,
 		"labelRightAlign" => 1,
+		"labelPaddingTop" => "0.5em",
 		"map" => array(2, 2, 1, 3)
 	));
 
@@ -161,6 +164,7 @@ $form->setAttributes(array(
 	"width" => 800,
 	"labelWidth" => 125,
 	"labelRightAlign" => 1,
+	"labelPaddingTop" => "0.5em",
 	"map" => array(2, 2, 1, 3)
 ));
 
@@ -187,6 +191,7 @@ $form->render();
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
 		"labelWidth" => 100,
+		"labelPaddingTop" => "0.5em",
 		"labelDisplayRight" => 1
 	));
 
@@ -208,6 +213,7 @@ $form->setAttributes(array(
 	"preventJQueryLoad" => 1,
 	"preventJQueryUILoad" => 1,
 	"labelWidth" => 100,
+	"labelPaddingTop" => "0.5em",
 	"labelDisplayRight" => 1
 ));
 
