@@ -2595,21 +2595,25 @@ STR;
 								
 								$labelPaddingRight = "";
 								if(!$labelDisplayRight) {
-									$labelPaddingRight = $form->labelPaddingRight;
-									if(!empty($ele->labelPaddingRight))
+									if(isset($ele->labelPaddingRight))
 										$labelPaddingRight = $ele->labelPaddingRight;
+									if(isset($form->labelPaddingRight))
+										$labelPaddingRight = $form->labelPaddingRight;
 								}	
 
 								$labelPaddingLeft = "";
 								if($labelDisplayRight) {
-									$labelPaddingLeft = $form->labelPaddingLeft;
-									if(!empty($ele->labelPaddingLeft))
+									if(isset($ele->labelPaddingLeft))
 										$labelPaddingLeft = $ele->labelPaddingLeft;
+									elseif(isset($form->labelPaddingLeft))	
+										$labelPaddingLeft = $form->labelPaddingLeft;
 								}	
 
-								$labelPaddingTop = $form->labelPaddingTop;
-								if(!empty($ele->labelPaddingTop))
+								$labelPaddingTop = "";
+								if(isset($ele->labelPaddingTop))
 									$labelPaddingTop = $ele->labelPaddingTop;
+								elseif(isset($form->labelPaddingTop))	
+									$labelPaddingTop = $form->labelPaddingTop;
 
 								$labelFloat = "left";
 								$elementFloat = "right";

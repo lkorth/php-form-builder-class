@@ -43,6 +43,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 		only right aligns the text within the label.</li>
 		<li>labelPaddingLeft - The "labelPaddingLeft" form/element attribute comes into play when setting "labelDisplayRight" and is used to adjust the amount of padding between
 		the label and the form element.  It functions identically to "labelPaddingRight" except padding is applied to the left side of the label as apposed to the right.</li>
+		<li>labelPaddingTop - When used in combination with "labelWidth", this form/element attribute allows you to apply padding on the top the element's label, which can
+		be used to center the label's text in relation to the textbox or other element.</li>
 	</ul>
 
 	<p>Below are several example forms that demo many of the attributes listed above.</p>
