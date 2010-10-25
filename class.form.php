@@ -162,6 +162,9 @@ class form extends pfbc {
 			"checksort" => array("checked", "disabled", "size", "accesskey", "class", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
 			"latlng" => array("disabled", "maxlength", "name", "readonly", "size", "type", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
 		);
+
+		$this->setIncludePaths();
+		require_once($this->phpIncludesPath . "/class.element.php");
 	}
 
 	//Instead of calling the render() function to display your form, this magic method allows you to use the familiar echo function.
@@ -179,6 +182,7 @@ class form extends pfbc {
 		if(!empty($this->jqueryUIButtons))
 			$params["jqueryUI"] = 1;
 
+		require_once($this->phpIncludesPath . "/class.button.php");
 		$button = new button();
 		$button->setAttributes($params);
 		if(!empty($params["jqueryUI"]))
@@ -334,48 +338,33 @@ class form extends pfbc {
 		if($eleType == "yesno") {
 			//The yesno field is a shortcut for creating a radio button with two options - yes and no.
 			$eleType = "radio";
-			$ele->options = array();
-			$opt = new option();
-			$opt->setAttributes(array("value" => "1", "text" => "Yes"));
-			$ele->options[] = $opt;
-			$opt = new option();
-			$opt->setAttributes(array("value" => "0", "text" => "No"));
-			$ele->options[] = $opt;
+			$ele->optionKeys = array("1", "0");
+			$ele->optionValues = array("Yes", "No");
+
 			if(!isset($ele->noBreak))
 				$ele->noBreak = 1;
 		}
 		elseif($eleType == "truefalse") {
 			//Similar to yesno, the truefalse field is shortcut creating a radio button with two options - true and false.
 			$eleType = "radio";
-			$ele->options = array();
-			$opt = new option();
-			$opt->setAttributes(array("value" => "1", "text" => "True"));
-			$ele->options[] = $opt;
-			$opt = new option();
-			$opt->setAttributes(array("value" => "0", "text" => "False"));
-			$ele->options[] = $opt;
+			$ele->optionKeys = array("1", "0");
+			$ele->optionValues = array("True", "False");
+
 			if(!isset($ele->noBreak))
 				$ele->noBreak = 1;
 		}
 		elseif(array_key_exists("options", $params) && is_array($params["options"])) {
 			//Various form types (select, radio, sort, checksort, etc.) use the options parameter to handle value/text scenarios.
 			if(array_key_exists("options", $params) && is_array($params["options"])) {
-				$ele->options = array();
 				//If the options array is one-dimensional, assign the array's value to both the value and text.
 				if(array_values($params["options"]) === $params["options"]) {
-					foreach($params["options"] as $key => $value) {
-						$opt = new option();
-						$opt->setAttributes(array("value" => $value, "text" => $value));
-						$ele->options[] = $opt;
-					}
+					$ele->optionKeys = $params["options"];
+					$ele->optionValues = $params["options"];
 				}
 				//If the options array is associative, assign the value and text for each key/value pair.
 				else {
-					foreach($params["options"] as $key => $value) {
-						$opt = new option();
-						$opt->setAttributes(array("value" => $key, "text" => $value));
-						$ele->options[] = $opt;
-					}
+					$ele->optionKeys = array_keys($params["options"]);
+					$ele->optionValues = array_values($params["options"]);
 				}
 			}
 		}
@@ -753,10 +742,19 @@ class form extends pfbc {
 				foreach($additionalParams as $key => $value)
 					$params[$key] = $value;
 			}
-			require_once($form->phpIncludesPath . "/phpmailer/class.phpmailer.php");
+			require_once($form->phpIncludesPath . "/class.email.php");
 			$email = new email();
 			$email->setAttributes($params);
-			$result = $email->send($form->getEmail());
+
+			$additionalInfo = false;
+			if(!empty($email->additionalInfo))
+				$additionalInfo = true;
+
+			$textOnly = false;
+			if(!empty($email->textOnly))
+				$textOnly = true;
+
+			$result = $email->send($form->getEmail($textOnly, $additionalInfo));
 			if(!$result)
 				$this->emailError = $email->getError();
 
@@ -764,7 +762,7 @@ class form extends pfbc {
 		}	
 	}
 
-	public function getEmail($textonly=false) {
+	public function getEmail($textOnly=false, $additionalInfo=false) {
 		if(!empty($_POST))
 			$referenceValues = $_POST;
 		elseif(!empty($_GET))
@@ -782,26 +780,30 @@ class form extends pfbc {
 				}		
 			}	
 		}	
-		$datetime = date("Y-m-d H:i:s");	
-		$str .= <<<STR
-	<div class="pfbc-additional">Additional Information</div>
-	<div class="pfbc-element">
-		<label class="pfbc-label">Date/Time:</label>
-		<div class="pfbc-data">{$datetime}</div>
-	</div>
-	<div class="pfbc-element">
-		<label class="pfbc-label">IP Address:</label>
-		<div class="pfbc-data">{$_SERVER["REMOTE_ADDR"]}</div>
-	</div>
-	<div class="pfbc-element">
-		<label class="pfbc-label">Url:</label>
-		<div class="pfbc-data">{$this->url}</div>
-	</div>
+
+		if($additionalInfo) {
+			$datetime = date("Y-m-d H:i:s");	
+			$str .= <<<STR
+		<div class="pfbc-additional">Additional Information</div>
+		<div class="pfbc-element">
+			<label class="pfbc-label">Date/Time:</label>
+			<div class="pfbc-data">{$datetime}</div>
+		</div>
+		<div class="pfbc-element">
+			<label class="pfbc-label">IP Address:</label>
+			<div class="pfbc-data">{$_SERVER["REMOTE_ADDR"]}</div>
+		</div>
+		<div class="pfbc-element">
+			<label class="pfbc-label">Url:</label>
+			<div class="pfbc-data">{$this->url}</div>
+		</div>
 
 STR;
+		}
+
 		$str .= "\n</div>";
 
-		if($textonly) {
+		if($textOnly) {
 			$str = str_replace(array("\n", "\t"), "", $str);
 			$str = strip_tags(str_replace(array("&nbsp;", '</label><div class="pfbc-data">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array(" ", "\n", "\n\n", "\n\n"), $str));
 		}	
@@ -824,7 +826,6 @@ STR;
 			$this->setValues($_SESSION["pfbc-values"][$this->attributes["id"]]);
 
 		if(empty($this->synchronousResources))
-			$this->setIncludePaths();
 
 		//Ensure that the jsIncludesPath attribute is set appropriately.  If not, display a javascript alert message.
 		$triggerJSIncludesError = true;
@@ -906,40 +907,18 @@ STR;
 			if($ele->attributes["type"] == "state") {
 				$ele->attributes["type"] = "select";
 
-				if(empty($this->stateArr)) {
-					include($this->phpIncludesPath . "/stateArr.json.php");
-					$jsonObj = json_decode($jsonStates);
-					$this->stateArr = array();
-					for($s = 0; $s < sizeof($jsonObj->keys); $s++)
-						$this->stateArr[] = array("value" => $jsonObj->keys[$s], "text" => $jsonObj->values[$s]);
-				}		
-
-				$ele->options = array();
-				$stateSize = sizeof($this->stateArr);
-				for($s = 0; $s < $stateSize; ++$s) {
-					$opt = new option();
-					$opt->setAttributes($this->stateArr[$s]);
-					$ele->options[] = $opt;
-				}
+				include($this->phpIncludesPath . "/stateArr.json.php");
+				$jsonObj = json_decode($jsonStates);
+				$ele->optionKeys = $jsonObj->keys;
+				$ele->optionValues = $jsonObj->values;
 			}	
 			elseif($ele->attributes["type"] == "country") {
 				$ele->attributes["type"] = "select";
 
-				if(empty($this->countryArr)) {
-					include($this->phpIncludesPath . "/countryArr.json.php");
-					$jsonObj = json_decode($jsonCountries);
-					$this->countryArr = array();
-					for($s = 0; $s < sizeof($jsonObj->keys); $s++)
-						$this->countryArr[] = array("value" => $jsonObj->keys[$s], "text" => $jsonObj->values[$s]);
-				}		
-
-				$ele->options = array();
-				$countrySize = sizeof($this->countryArr);
-				for($s = 0; $s < $countrySize; ++$s) {
-					$opt = new option();
-					$opt->setAttributes($this->countryArr[$s]);
-					$ele->options[] = $opt;
-				}
+				include($this->phpIncludesPath . "/countryArr.json.php");
+				$jsonObj = json_decode($jsonStates);
+				$ele->optionKeys = $jsonObj->keys;
+				$ele->optionValues = $jsonObj->values;
 			}	
 
 			if($ele->attributes["type"] == "hidden") {
@@ -1208,20 +1187,20 @@ STR;
 					}
 
 					$selected = false;
-					if(is_array($ele->options)) {
-						$optionSize = sizeof($ele->options);
+					if(is_array($ele->optionKeys)) {
+						$optionSize = sizeof($ele->optionKeys);
 						for($o = 0; $o < $optionSize; ++$o) {
-							if($ele->options[$o]->value !== "") {
-								if(is_numeric($ele->options[$o]->value))
-									$ele->options[$o]->value = (string) $ele->options[$o]->value;
+							if($ele->optionKeys[$o] !== "") {
+								if(is_numeric($ele->optionKeys[$o]))
+									$ele->optionKeys[$o] = (string) $ele->optionKeys[$o];
 							}		
 
-							$str .= $this->indent("\t") . '<option value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';
-							if((!is_array($ele->attributes["value"]) && !$selected && $ele->attributes["value"] === $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true))) {
+							$str .= $this->indent("\t") . '<option value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';
+							if((!is_array($ele->attributes["value"]) && !$selected && $ele->attributes["value"] === $ele->optionKeys[$o]) || (is_array($ele->attributes["value"]) && in_array($ele->optionKeys[$o], $ele->attributes["value"], true))) {
 								$str .= ' selected="selected"';
 								$selected = true;
 							}
-							$str .= '>' . $ele->options[$o]->text . "</option>";
+							$str .= '>' . $ele->optionValues[$o] . "</option>";
 						}
 					}
 
@@ -1241,20 +1220,19 @@ STR;
 						$this->focusElement = $ele->attributes["name"];
 				}
 				elseif($eleType == "radio") {
-					if(is_array($ele->options)) {
-
+					if(is_array($ele->optionKeys)) {
 						if($ele->attributes["value"] !== "") {
 							if(is_numeric($ele->attributes["value"]))
 								$ele->attributes["value"] = (string) $ele->attributes["value"];
 						}		
 
-						$optionSize = sizeof($ele->options);
+						$optionSize = sizeof($ele->optionKeys);
 						$str .= '<div class="pfbc-radio-buttons">';
 						for($o = 0; $o < $optionSize; ++$o) {
 
-							if($ele->options[$o]->value !== "") {
-								if(is_numeric($ele->options[$o]->value))
-									$ele->options[$o]->value = (string) $ele->options[$o]->value;
+							if($ele->optionKeys[$o] !== "") {
+								if(is_numeric($ele->optionKeys[$o]))
+									$ele->optionKeys[$o] = (string) $ele->optionKeys[$o];
 							}		
 
 							$str .= $this->indent("\t") . '<div class="pfbc-radio';
@@ -1271,11 +1249,11 @@ STR;
 										$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
 								}		
 							}
-							$str .= ' id="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';		
-							if($ele->attributes["value"] === $ele->options[$o]->value)
+							$str .= ' id="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';		
+							if($ele->attributes["value"] === $ele->optionKeys[$o])
 								$str .= ' checked="checked"';
 							$str .= '/>';
-							$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->options[$o]->text . "</label></div>";
+							$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->optionValues[$o] . "</label></div>";
 						}	
 
 						if(!empty($ele->noBreak))
@@ -1288,8 +1266,8 @@ STR;
 					}
 				}
 				elseif($eleType == "checkbox") {
-					if(is_array($ele->options)) {
-						$optionSize = sizeof($ele->options);
+					if(is_array($ele->optionKeys)) {
+						$optionSize = sizeof($ele->optionKeys);
 
 						if($optionSize > 1 && substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
@@ -1312,9 +1290,9 @@ STR;
 
 						$str .= '<div class="pfbc-checkboxes">';
 						for($o = 0; $o < $optionSize; ++$o) {
-							if($ele->options[$o]->value !== "") {
-								if(is_numeric($ele->options[$o]->value))
-									$ele->options[$o]->value = (string) $ele->options[$o]->value;
+							if($ele->optionKeys[$o] !== "") {
+								if(is_numeric($ele->optionKeys[$o]))
+									$ele->optionKeys[$o] = (string) $ele->optionKeys[$o];
 							}		
 
 							$str .= $this->indent("\t") . '<div class="pfbc-checkbox';
@@ -1332,13 +1310,13 @@ STR;
 								}		
 							}
 							$tmpID = str_replace(array('"', '[]'), array('&quot;', '-'), $ele->attributes["name"]) . $o;
-							$str .= ' id="' . $tmpID . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"';		
+							$str .= ' id="' . $tmpID . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';		
 
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
-							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true)))
+							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->optionKeys[$o]) || (is_array($ele->attributes["value"]) && in_array($ele->optionKeys[$o], $ele->attributes["value"], true)))
 								$str .= ' checked="checked"';
 							$str .= '/>';
-							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
+							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></div>';
 						}	
 
 						if(!empty($ele->noBreak))
@@ -1351,31 +1329,29 @@ STR;
 					}
 				}
 				elseif($eleType == "sort") {
-					if(is_array($ele->options)) {
+					if(is_array($ele->optionKeys)) {
+						$optionSize = sizeof($ele->optionKeys);
+
 						if(substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
 
 						if(!empty($ele->attributes["value"])) {
-							$options = array();
-							$optionSize = sizeof($ele->options);
-							for($o = 0; $o < $optionSize; ++$o)
-								$options[$ele->options[$o]->value] = $ele->options[$o]->text;
-
-							foreach($options as $key => $value) {
-								$index = array_search($key, $ele->attributes["value"]);
-								if($index !== false) {
-									$opt = new option();
-									$opt->setAttributes(array("value" => $key, "text" => $value));
-									$ele->options[$index] = $opt;
-								}	
+							$values = array();
+							for($o = 0; $o < $optionSize; ++$o) {
+								$index = array_search($ele->optionKeys[$o], $ele->attributes["value"]);
+								if($index !== false)
+									$values[$index] = $ele->optionValues[$o];
 							}
-						}
+							if(sizeof($values) == $optionSize) {
+								$ele->optionKeys = $ele->attributes["value"];
+								$ele->optionValues = $values;
+							}
+						}	
 
 						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" class="pfbc-sort" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
 
-						$optionSize = sizeof($ele->options);
 						for($o = 0; $o < $optionSize; ++$o)
-							$str .= $this->indent("\t") . '<li class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"/>' . $ele->options[$o]->text . '</li>';
+							$str .= $this->indent("\t") . '<li class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"/>' . $ele->optionValues[$o] . '</li>';
 
 						$str .= $this->indent() . "</ul>";
 					}
@@ -1434,7 +1410,7 @@ STR;
 					$this->latlngIDArr[$ele->attributes["id"]] = $ele;
 				}
 				elseif($eleType == "checksort") {
-					if(is_array($ele->options)) {
+					if(is_array($ele->optionKeys)) {
 						if(substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
 
@@ -1459,11 +1435,11 @@ STR;
 
 						$str .= '<div class="pfbc-checkboxes">';
 						$sortLIArr = array();
-						$optionSize = sizeof($ele->options);
+						$optionSize = sizeof($ele->optionKeys);
 						for($o = 0; $o < $optionSize; ++$o) {
-							if($ele->options[$o]->value !== "") {
-								if(is_numeric($ele->options[$o]->value))
-									$ele->options[$o]->value = (string) $ele->options[$o]->value;
+							if($ele->optionKeys[$o] !== "") {
+								if(is_numeric($ele->optionKeys[$o]))
+									$ele->optionKeys[$o] = (string) $ele->optionKeys[$o];
 							}		
 
 							$str .= $this->indent("\t") . '<div class="pfbc-checkbox';
@@ -1481,15 +1457,15 @@ STR;
 							}
 
 							$tmpID = str_replace(array('"', '[]'), array('&quot;', '-'), $ele->attributes["name"]) . $o;
-							$str .= ' id="' . $tmpID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->options[$o]->value) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->options[$o]->text) . '\');"';
+							$str .= ' id="' . $tmpID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionKeys[$o]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionValues[$o]) . '\');"';
 
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
-							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->options[$o]->value) || (is_array($ele->attributes["value"]) && in_array($ele->options[$o]->value, $ele->attributes["value"], true))) {
+							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->optionKeys[$o]) || (is_array($ele->attributes["value"]) && in_array($ele->optionKeys[$o], $ele->attributes["value"], true))) {
 								$str .= ' checked="checked"';
-								$sortLIArr[$ele->options[$o]->value] = '<li id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . $o . '" class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->options[$o]->value) . '"/>' . $ele->options[$o]->text . '</li>' . "\n";
+								$sortLIArr[$ele->optionKeys[$o]] = '<li id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . $o . '" class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"/>' . $ele->optionValues[$o] . '</li>' . "\n";
 							}	
 							$str .= '/>';
-							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->options[$o]->text . '</label></div>';
+							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></div>';
 						}	
 						$str .= $this->indent() . "</div>";
 
@@ -2303,10 +2279,8 @@ STR;
 	}
 
 	public function renderBody($returnString=false) {
-		if(empty($this->synchronousResources)) {
-			$this->setIncludePaths();
+		if(empty($this->synchronousResources))
 			$this->synchronousResources = 1;
-		}
 		$str = $this->render(true);
 
 		$str .= "\n" . $this->renderJS(true);
@@ -2934,10 +2908,8 @@ STR;
 	}
 
 	public function renderHead($returnString=false) {
-		if(empty($this->synchronousResources)) {
-			$this->setIncludePaths();
+		if(empty($this->synchronousResources))
 			$this->synchronousResources = 1;
-		}
 		$str = $this->renderCSS(true);
 
 		if(!$returnString)
@@ -3695,8 +3667,6 @@ STR;
 
 			require_once($form->phpIncludesPath . "/class.spreadsheet.php");
 			$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]["Date/Time"] = date("Y-m-d H:i:s");
-			$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]["IP Address"] = $_SERVER["REMOTE_ADDR"];
-			$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]["Url"] = $form->url;
 			$this->buildSpreadsheetData($form, $referenceValues);
 			if(!empty($form->bindRules)) {
 				$bindRuleKeys = array_keys($form->bindRules);
@@ -3834,257 +3804,6 @@ STR;
 			$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "While completing this form, your session timed out as a result of inactivity and your submission has been rejected.  Typically, you are given 20-30 minutes to complete and submit this form before timeout occurs.";
 			return false;
 		}
-	}
-}
-
-class element extends pfbc {
-	public $alphanumeric;
-	public $attributes;
-	public $basic;
-	public $container;
-	public $height;
-	public $hint;
-	public $hideCancel;
-	public $hideCaption;
-	public $hideDisplay;
-	public $hideJump;
-	public $ignoreGSSend;
-	public $integer;
-	public $jqueryOptions;
-	public $label;
-	public $labelDisplayRight;
-	public $labelPaddingLeft;
-	public $labelPaddingRight;
-	public $labelPaddingTop;
-	public $labelRightAlign;
-	public $labelWidth;
-	public $max;
-	public $min;
-	public $months;
-	public $noBreak;
-	public $options;
-	public $orientation;
-	public $prefix;
-	public $preHTML;
-	public $postHTML;
-	public $required;
-	public $snapIncrement;
-	public $suffix;
-	public $tooltip;
-	public $tooltipID;
-	public $width;
-	public $zoom;
-
-	public function __construct() {
-		$this->attributes = array(
-			"type" => "text"
-		);
-	}
-}
-class option extends pfbc {
-	public $text;
-	public $value;
-}
-class button extends pfbc {
-	protected $attributes;
-	protected $jqueryUI;
-
-	private $allowedFields; 
-
-	public function __construct() {
-		$this->allowedFields = array(
-			"button" => array("alt", "disabled", "name", "size", "src", "type", "value", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
-			"a" => array("charset", "coords", "href", "hreflang", "name", "rel", "rev", "sharp", "accesskey", "class", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup"),
-		);
-	}
-
-	public function render($returnString) {
-		if(!empty($this->jqueryUI)) {
-			if(!empty($this->attributes["class"]))
-				$this->attributes["class"] .= " jqueryui-button";
-			else	
-				$this->attributes["class"] = "jqueryui-button";
-		}	
-
-		$str = "\n\t\t";
-		if($this->attributes["type"] == "link") {
-			$str .= "<a";
-			if(!empty($this->attributes) && is_array($this->attributes)) {
-				$tmpAllowFieldArr = $this->allowedFields["a"];
-				foreach($this->attributes as $key => $value) {
-					if(in_array($key, $tmpAllowFieldArr))
-						$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-				}		
-			}	
-			$str .= ">" . $this->attributes["value"] . "</a>";
-		}
-		else {
-			$str .= "<input";
-			if(!empty($this->attributes) && is_array($this->attributes)) {
-				$tmpAllowFieldArr = $this->allowedFields["button"];
-				foreach($this->attributes as $key => $value) {
-					if(in_array($key, $tmpAllowFieldArr))
-						$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-				}		
-			}
-			$str .= "/>";
-		}
-
-		if(!$returnString)
-			echo($str);
-		else
-			return $str;
-	}
-}
-class email extends pfbc {
-	protected $username;
-	protected $password;
-	protected $to;
-	protected $subject;
-	protected $from;
-	protected $replyto;
-	protected $cc;
-	protected $bcc;
-	protected $preHTML;
-	protected $postHTML;
-	protected $css;
-	protected $cssFile;
-	protected $textonly;
-
-	private $error;
-
-	private function applyPHPMailerSetting($str, &$mail, $action, $default="") {
-		if(!empty($str)) {
-			$emails = explode(",", $str);
-			$emailSize = sizeof($emails);
-			$exists = array();
-			for($e = 0; $e < $emailSize; ++$e) {
-				$email = trim($emails[$e]);
-				$emailname = "";
-				if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $email, $matches)) {
-					$emailname = $matches[1];
-					$email = $matches[2];
-				}	
-				if(!in_array($email, $exists)) {
-					$mail->$action($email, $emailname);
-					$exists[] = $email;
-				}
-			}
-		}
-		elseif(!empty($default))
-			$mail->$action($default);
-	}
-
-	private function convertToPlainText($str) {
-		$str = str_replace(array("\n", "\t"), "", $str);
-		$str = str_replace(array("&nbsp;", '</label><div class="pfbc-data">', '</div><div class="pfbc-element"><label class="pfbc-label">', '<div class="pfbc-additional">'), array(" ", "\n", "\n\n", "\n\n"), $str);
-		if(!empty($this->preHTML))
-			$str = $this->preHTML . "\n\n" . $str;
-		if(!empty($this->postHTML))
-			$str = $str . "\n\n" . $this->postHTML;
-		return strip_tags($str);
-	}
-
-	public function getError() {
-		return $this->error;
-	}
-
-	public function send($str) {
-		$mail = new PHPMailer(); 
-		$mail->IsSMTP();
-		$mail->SMTPAuth = true;
-		$mail->Host = "ssl://smtp.gmail.com";
-		$mail->Port = 465;
-		$mail->Username = $this->username;
-		$mail->Password = $this->password;
-		$mail->WordWrap = 50;
-
-		if(empty($this->to))
-			$this->to = $this->username;
-
-		if(!empty($this->from)) {
-			if(preg_match("/^(.+)\s*\x3C(.*)\x3E/", $this->from, $matches)) {
-				$fromname = $matches[1];
-				$this->from = $matches[2];
-			}
-			else
-				$fromname = $this->from;
-		}
-		else {
-			$this->from = $this->username;
-			$fromname = $this->username;
-		}	
-		$mail->From = $this->from;
-		$mail->FromName = $fromname;
-
-		$this->applyPHPMailerSetting($this->to, $mail, "AddAddress");
-		$this->applyPHPMailerSetting($this->replyto, $mail, "AddReplyTo", $this->from);
-		$this->applyPHPMailerSetting($this->cc, $mail, "AddCC");
-		$this->applyPHPMailerSetting($this->bcc, $mail, "AddBCC");
-
-		if(!empty($subject))
-			$mail->Subject = $subject;
-		
-		if(!empty($this->textonly))
-			$mail->Body = $this->convertToPlainText($str);
-		else {
-			$defaultCSS = <<<STR
-<style type="text/css">
-	.pfbc-email {
-		margin: 0.75em 0;
-		padding: .25em 0.75em;
-		width: 400px;
-		font-family: "American Typewriter";
-		font-size: 14px;
-		background-color: #f5f4f4;
-		border: 1px solid #ccc;
-		-moz-border-radius: 0.5em; 
-		-webkit-border-radius: 0.5em;
-	}
-	.pfbc-element {
-		padding: 0.5em 0;
-	}
-	.pfbc-label {
-		display: block;
-		padding-bottom: 0.25em;
-	}
-	.pfbc-data {
-		padding: 0.5em;
-		width: 384px;
-		font-family: "American Typewriter";
-		font-size: 14px;
-		background-color: #fff;
-		border: 1px solid #ccc;
-	}
-	.pfbc-additional {
-		padding-top: 0.75em;
-		font-size: 1.25em;
-	}
-</style>
-
-STR;
-
-			if(!empty($this->cssFile)) {
-				$this->css = file_get_contents($this->cssFile);
-				if(!$this->css)
-					$this->css = $defaultCSS;
-			}
-
-			if(empty($this->css))
-				$this->css = $defaultCSS;
-
-			if(stripos($this->css, "<style") !== 0)
-				$this->css = '<style type="text/css">' . $this->css . '</style>';
-
-			$mail->Body = $this->preHTML . $this->css . $str . $this->postHTML;
-			$mail->AltBody = $this->convertToPlainText($str);
-		}
-
-		$result = $mail->Send();
-		if(!$result)
-			$this->error = $mail->ErrorInfo;
-
-		return $result;	
 	}
 }
 ?>
