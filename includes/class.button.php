@@ -21,28 +21,10 @@ class button extends pfbc {
 		}	
 
 		$str = "\n\t\t";
-		if($this->attributes["type"] == "link") {
-			$str .= "<a";
-			if(!empty($this->attributes) && is_array($this->attributes)) {
-				$tmpAllowFieldArr = $this->allowedFields["a"];
-				foreach($this->attributes as $key => $value) {
-					if(in_array($key, $tmpAllowFieldArr))
-						$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-				}		
-			}	
-			$str .= ">" . $this->attributes["value"] . "</a>";
-		}
-		else {
-			$str .= "<input";
-			if(!empty($this->attributes) && is_array($this->attributes)) {
-				$tmpAllowFieldArr = $this->allowedFields["button"];
-				foreach($this->attributes as $key => $value) {
-					if(in_array($key, $tmpAllowFieldArr))
-						$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-				}		
-			}
-			$str .= "/>";
-		}
+		if($this->attributes["type"] == "link")
+			$str .= "<a" . $this->applyAttributes($this->attributes, $this->allowedFields["a"]) . ">" . $this->attributes["value"] . "</a>";
+		else
+			$str .= "<input" . $this->applyAttributes($this->attributes, $this->allowedFields["button"]) . "/>";
 
 		if(!$returnString)
 			echo($str);

@@ -8,11 +8,31 @@ Developer Google Group - http://groups.google.com/group/php-form-builder-class-d
 */
 
 abstract class pfbc {
-	function debug() {
+	protected function applyAttributes($attributes, $allow, $exclude="") {
+		$str = "";
+		$ignore = array();
+		if(!empty($exclude)) {
+			if(!is_array($exclude))
+				$ignore[] = $exclude;
+			else
+				$ignore = $exclude;
+		}		
+
+		if(!empty($attributes) && is_array($attributes)) {
+			foreach($attributes as $key => $value) {
+				if(!in_array($key, $ignore) && in_array($key, $allow))
+					$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
+			}	
+		}
+
+		return $str;
+	}
+
+	public function debug() {
 		echo "<pre>", print_r($this, true), "</pre>";
 	}
 
-	function setAttributes($params) {
+	public function setAttributes($params) {
 		if(!empty($params) && is_array($params)) {
 			//Loop through and get accessible class variables. Build lookup array for the keys allowing for case insensitive attribute setting.
 			$objArr = array();
@@ -154,7 +174,7 @@ class form extends pfbc {
 			$this->url = "http://" . $this->url;
 		//These lists represent all xhtml 1.0 strict compliant attributes. See http://www.w3schools.com/tags/default.asp for reference.
 		$this->allowedFields = array(
-			"form" => array("action", "accept", "accept-charset", "enctype", "method", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onreset", "onsubmit"),
+			"form" => array("action", "accept", "accept-charset", "enctype", "method", "class", "dir", "id", "lang", "style", "title", "xml:lang", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onreset"),
 			"text" => array("accept", "disabled", "maxlength", "name", "readonly", "size", "type", "value", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
 			"textarea" => array("cols", "rows", "disabled", "name", "readonly", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
 			"select" => array("disabled", "multiple", "name", "size", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup"),
@@ -335,25 +355,7 @@ class form extends pfbc {
 		$ele->setAttributes($params);
 		$eleType = &$ele->attributes["type"];
 
-		if($eleType == "yesno") {
-			//The yesno field is a shortcut for creating a radio button with two options - yes and no.
-			$eleType = "radio";
-			$ele->optionKeys = array("1", "0");
-			$ele->optionValues = array("Yes", "No");
-
-			if(!isset($ele->noBreak))
-				$ele->noBreak = 1;
-		}
-		elseif($eleType == "truefalse") {
-			//Similar to yesno, the truefalse field is shortcut creating a radio button with two options - true and false.
-			$eleType = "radio";
-			$ele->optionKeys = array("1", "0");
-			$ele->optionValues = array("True", "False");
-
-			if(!isset($ele->noBreak))
-				$ele->noBreak = 1;
-		}
-		elseif(array_key_exists("options", $params) && is_array($params["options"])) {
+		if(array_key_exists("options", $params) && is_array($params["options"])) {
 			//Various form types (select, radio, sort, checksort, etc.) use the options parameter to handle value/text scenarios.
 			if(array_key_exists("options", $params) && is_array($params["options"])) {
 				//If the options array is one-dimensional, assign the array's value to both the value and text.
@@ -369,19 +371,31 @@ class form extends pfbc {
 			}
 		}
 
-		//This set of conditions sets default information for specific form elements. Setting information here allows similar elements within the elementsToString() function to be compressed.
-		if($eleType == "email")
-			$this->emailExists = 1;
-		elseif($eleType == "file")
-			$this->attributes["enctype"] = "multipart/form-data";
-		elseif($eleType == "webeditor") {
+		if($eleType == "captcha") {
+			//If there is a captcha elements in the form, make sure javascript onsubmit function is enabled.
+			if(empty($this->captchaExists))
+				$this->captchaExists = 1;
+			else
+				return;
+
 			if(empty($ele->attributes["id"]))
-				$ele->attributes["id"] = "webeditor_" . rand(0, 999);
-			if(empty($this->tinymceIDArr))
-				$this->tinymceIDArr = array();
-			while(in_array($ele->attributes["id"], $this->tinymceIDArr))
-				$ele->attributes["id"] = "webeditor_" . rand(0, 999);
-			$this->tinymceIDArr[] = $ele->attributes["id"];
+				$ele->attributes["id"] = "captchainput_" . rand(0, 999);
+
+			$this->captchaID = array();
+			$this->captchaID = $ele->attributes["id"];
+		}
+		elseif($eleType == "checksort") {
+			//The identifiers for both the sort and checksort element types are stores in the same array (this->jquerySortIDArr).  This is done because they use the same jquery ui sortable functionality.
+			if(empty($ele->attributes["id"]))
+				$ele->attributes["id"] = "checksort_" . rand(0, 999);
+			if(!isset($this->jquerySortIDArr))
+				$this->jquerySortIDArr = array();
+			while(in_array($ele->attributes["id"], $this->jquerySortIDArr))
+				$ele->attributes["id"] = "checksort_" . rand(0, 999);
+			$this->jquerySortIDArr[] = $ele->attributes["id"];
+
+			//This variable triggers a javascript section for handling the dynamic adding/removing of sortable option when a user clicks the checkbox.
+			$this->jqueryCheckSort = 1;
 		}
 		elseif($eleType == "ckeditor") {
 			if(empty($ele->attributes["id"]))
@@ -390,6 +404,25 @@ class form extends pfbc {
 				$this->ckeditorIDArr = array();
 			while(array_key_exists($ele->attributes["id"], $this->ckeditorIDArr))
 				$ele->attributes["id"] = "ckeditor_" . rand(0, 999);
+		}
+		elseif($eleType == "color") {
+			if(empty($ele->attributes["id"]))
+				$ele->attributes["id"] = "colorinput_" . rand(0, 999);
+			if(!isset($this->jqueryColorIDArr))
+				$this->jqueryColorIDArr = array();
+			while(in_array($ele->attributes["id"], $this->jqueryColorIDArr))
+				$ele->attributes["id"] = "colorinput_" . rand(0, 999);
+			$this->jqueryColorIDArr[] = $ele->attributes["id"];
+
+			if(empty($ele->hint))
+				$ele->hint = "Click to Select Color...";
+		}
+		elseif($eleType == "country") {
+			$eleType = "select";
+			include($this->phpIncludesPath . "/countryArr.json.php");
+			$jsonObj = json_decode($jsonCountries);
+			$ele->optionKeys = $jsonObj->keys;
+			$ele->optionValues = $jsonObj->values;
 		}
 		elseif($eleType == "date") {
 			if(empty($ele->attributes["id"]))
@@ -453,15 +486,10 @@ class form extends pfbc {
 
 			$this->jqueryDateRangeIDArr[$ele->attributes["id"]] = $ele;
 		}
-		elseif($eleType == "sort") {
-			if(empty($ele->attributes["id"]))
-				$ele->attributes["id"] = "sort_" . rand(0, 999);
-			if(!isset($this->jquerySortIDArr))
-				$this->jquerySortIDArr = array();
-			while(in_array($ele->attributes["id"], $this->jquerySortIDArr))
-				$ele->attributes["id"] = "sort_" . rand(0, 999);
-			$this->jquerySortIDArr[] = $ele->attributes["id"];
-		}
+		elseif($eleType == "email")
+			$this->emailExists = 1;
+		elseif($eleType == "file")
+			$this->attributes["enctype"] = "multipart/form-data";
 		elseif($eleType == "latlng") {
 			if(empty($ele->attributes["id"]))
 				$ele->attributes["id"] = "latlnginput_" . rand(0, 999);
@@ -477,31 +505,33 @@ class form extends pfbc {
 			if(empty($ele->hint))
 				$ele->hint = "Drag Map Marker to Select Location...";
 		}
-		elseif($eleType == "checksort") {
-			//The identifiers for both the sort and checksort element types are stores in the same array (this->jquerySortIDArr).  This is done because they use the same jquery ui sortable functionality.
-			if(empty($ele->attributes["id"]))
-				$ele->attributes["id"] = "checksort_" . rand(0, 999);
-			if(!isset($this->jquerySortIDArr))
-				$this->jquerySortIDArr = array();
-			while(in_array($ele->attributes["id"], $this->jquerySortIDArr))
-				$ele->attributes["id"] = "checksort_" . rand(0, 999);
-			$this->jquerySortIDArr[] = $ele->attributes["id"];
+		elseif($eleType == "rating") {
+			$ele->ratingID = "starrating_" . rand(0, 999);
+			if(!isset($this->jqueryStarRatingIDArr))
+				$this->jqueryStarRatingIDArr = array();
+			while(array_key_exists($ele->ratingID, $this->jqueryStarRatingIDArr))
+				$ele->ratingID = "starrating_" . rand(0, 999);
+			$this->jqueryStarRatingIDArr[$ele->ratingID] = "";
 
-			//This variable triggers a javascript section for handling the dynamic adding/removing of sortable option when a user clicks the checkbox.
-			$this->jqueryCheckSort = 1;
-		}
-		elseif($eleType == "captcha") {
-			//If there is a captcha elements in the form, make sure javascript onsubmit function is enabled.
-			if(empty($this->captchaExists))
-				$this->captchaExists = 1;
-			else
-				return;
+			$jqueryOptions = array("inputType" => "select", "cancelValue" => "");
+			if(empty($this->jqueryAllowedParams["rating"]))
+				$this->jqueryAllowedParams["rating"] = array("disabled", "split", "oneVoteOnly", "captionEl", "cancelShow");
+			if(!empty($ele->jqueryOptions)) {
+				foreach($ele->jqueryOptions as $key => $val) {
+					if(in_array($key, $this->jqueryAllowedParams["rating"])) 
+						$jqueryOptions[$key] = $val;
+				}
+			}
 
-			if(empty($ele->attributes["id"]))
-				$ele->attributes["id"] = "captchainput_" . rand(0, 999);
+			//Added for backwards compatibility to ensure the hideCancel element attribute is still functional in future releases.
+			if(!empty($ele->hideCancel) && !array_key_exists("cancelShow", $jqueryOptions))
+				$jqueryOptions["cancelShow"] = false;
 
-			$this->captchaID = array();
-			$this->captchaID = $ele->attributes["id"];
+			//Set default values if not specified by user.
+			if(empty($ele->hideCaption) && !array_key_exists("captionEl", $jqueryOptions))
+				$jqueryOptions["captionEl"] = 'js:jQuery("#' . $ele->ratingID . '_caption")';
+
+			$ele->jqueryOptions = $jqueryOptions;
 		}
 		elseif($eleType == "slider") {
 			if(empty($ele->attributes["id"]))
@@ -554,45 +584,48 @@ class form extends pfbc {
 
 			$this->jquerySliderIDArr[$ele->attributes["id"]] = $ele;
 		}
-		elseif($eleType == "rating") {
-			$ele->ratingID = "starrating_" . rand(0, 999);
-			if(!isset($this->jqueryStarRatingIDArr))
-				$this->jqueryStarRatingIDArr = array();
-			while(array_key_exists($ele->ratingID, $this->jqueryStarRatingIDArr))
-				$ele->ratingID = "starrating_" . rand(0, 999);
-			$this->jqueryStarRatingIDArr[$ele->ratingID] = "";
-
-			$jqueryOptions = array("inputType" => "select", "cancelValue" => "");
-			if(empty($this->jqueryAllowedParams["rating"]))
-				$this->jqueryAllowedParams["rating"] = array("disabled", "split", "oneVoteOnly", "captionEl", "cancelShow");
-			if(!empty($ele->jqueryOptions)) {
-				foreach($ele->jqueryOptions as $key => $val) {
-					if(in_array($key, $this->jqueryAllowedParams["rating"])) 
-						$jqueryOptions[$key] = $val;
-				}
-			}
-
-			//Added for backwards compatibility to ensure the hideCancel element attribute is still functional in future releases.
-			if(!empty($ele->hideCancel) && !array_key_exists("cancelShow", $jqueryOptions))
-				$jqueryOptions["cancelShow"] = false;
-
-			//Set default values if not specified by user.
-			if(empty($ele->hideCaption) && !array_key_exists("captionEl", $jqueryOptions))
-				$jqueryOptions["captionEl"] = 'js:jQuery("#' . $ele->ratingID . '_caption")';
-
-			$ele->jqueryOptions = $jqueryOptions;
-		}
-		elseif($eleType == "color") {
+		elseif($eleType == "sort") {
 			if(empty($ele->attributes["id"]))
-				$ele->attributes["id"] = "colorinput_" . rand(0, 999);
-			if(!isset($this->jqueryColorIDArr))
-				$this->jqueryColorIDArr = array();
-			while(in_array($ele->attributes["id"], $this->jqueryColorIDArr))
-				$ele->attributes["id"] = "colorinput_" . rand(0, 999);
-			$this->jqueryColorIDArr[] = $ele->attributes["id"];
+				$ele->attributes["id"] = "sort_" . rand(0, 999);
+			if(!isset($this->jquerySortIDArr))
+				$this->jquerySortIDArr = array();
+			while(in_array($ele->attributes["id"], $this->jquerySortIDArr))
+				$ele->attributes["id"] = "sort_" . rand(0, 999);
+			$this->jquerySortIDArr[] = $ele->attributes["id"];
+		}
+		elseif($eleType == "state") {
+			$eleType = "select";
+			include($this->phpIncludesPath . "/stateArr.json.php");
+			$jsonObj = json_decode($jsonStates);
+			$ele->optionKeys = $jsonObj->keys;
+			$ele->optionValues = $jsonObj->values;
+		}
+		elseif($eleType == "truefalse") {
+			//Similar to yesno, the truefalse field is shortcut creating a radio button with two options - true and false.
+			$eleType = "radio";
+			$ele->optionKeys = array("1", "0");
+			$ele->optionValues = array("True", "False");
 
-			if(empty($ele->hint))
-				$ele->hint = "Click to Select Color...";
+			if(!isset($ele->noBreak))
+				$ele->noBreak = 1;
+		}
+		elseif($eleType == "webeditor") {
+			if(empty($ele->attributes["id"]))
+				$ele->attributes["id"] = "webeditor_" . rand(0, 999);
+			if(empty($this->tinymceIDArr))
+				$this->tinymceIDArr = array();
+			while(in_array($ele->attributes["id"], $this->tinymceIDArr))
+				$ele->attributes["id"] = "webeditor_" . rand(0, 999);
+			$this->tinymceIDArr[] = $ele->attributes["id"];
+		}
+		elseif($eleType == "yesno") {
+			//The yesno field is a shortcut for creating a radio button with two options - yes and no.
+			$eleType = "radio";
+			$ele->optionKeys = array("1", "0");
+			$ele->optionValues = array("Yes", "No");
+
+			if(!isset($ele->noBreak))
+				$ele->noBreak = 1;
 		}
 
 		//If there is a required field type in the form, make sure javascript error checking is enabled.
@@ -851,24 +884,11 @@ STR;
 		if(empty($this->hasFormTag))
 			$str .= "\n" . '<div id="' . $this->attributes["id"] . '">';
 		else {
-			$str .= "\n<form";
 			if(!empty($this->attributes["class"]))
 				$this->attributes["class"] .= " pfbc-form";
 			else	
 				$this->attributes["class"] = "pfbc-form";
-			if(!empty($this->attributes) && is_array($this->attributes)) {
-				/*This syntax will be used throughout the render() and elementsToString() functions ensuring that attributes added to various HTML tags
-				are allowed and valid.  If you find that an attribute is not being included in your HTML tag definition, please reference $this->allowedFields.*/
-				$tmpAllowFieldArr = $this->allowedFields["form"];
-				foreach($this->attributes as $key => $value) {
-					//Skip any user-defined onsubmit function if one or more of the following conditions is met.
-					if($key == "onsubmit")
-						continue;
-					if(in_array($key, $tmpAllowFieldArr))
-						$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-				}	
-			}
-			$str .= ' onsubmit="return pfbc_onsubmit_' . $this->attributes["id"] . '(this);">';
+			$str .= "\n<form" . $this->applyAttributes($this->attributes, $this->allowedFields["form"]) . ' onsubmit="return pfbc_onsubmit_' . $this->attributes["id"] . '(this);">';
 		}
 
 		if(empty($this->synchronousResources) && !$triggerJSIncludesError) {
@@ -902,25 +922,6 @@ STR;
 		for($i = 0; $i < $elementSize; ++$i) {
 			$ele = &$this->elements[$i];
 
-			/*This if/elseif section reads in the appropriate states/countries from an external file if necessary.
-			It's included here because the phpIncludesPath attribute is not available in the attachElement function.*/
-			if($ele->attributes["type"] == "state") {
-				$ele->attributes["type"] = "select";
-
-				include($this->phpIncludesPath . "/stateArr.json.php");
-				$jsonObj = json_decode($jsonStates);
-				$ele->optionKeys = $jsonObj->keys;
-				$ele->optionValues = $jsonObj->values;
-			}	
-			elseif($ele->attributes["type"] == "country") {
-				$ele->attributes["type"] = "select";
-
-				include($this->phpIncludesPath . "/countryArr.json.php");
-				$jsonObj = json_decode($jsonStates);
-				$ele->optionKeys = $jsonObj->keys;
-				$ele->optionValues = $jsonObj->values;
-			}	
-
 			if($ele->attributes["type"] == "hidden") {
 				//If the referenceValues array is filled, check for this specific element's name in the associative array key and populate the field's value if applicable.
 				if(!empty($this->referenceValues) && is_array($this->referenceValues)) {
@@ -935,15 +936,7 @@ STR;
 					$hiddenElementExists = true;
 				}	
 
-				$str .= "\n\t\t<input";
-				if(!empty($ele->attributes) && is_array($ele->attributes)) {
-					$tmpAllowFieldArr = $this->allowedFields["text"];
-					foreach($ele->attributes as $key => $value) {
-						if(in_array($key, $tmpAllowFieldArr))
-							$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-					}		
-				}
-				$str .= "/>";
+				$str .= "\n\t\t<input" . $this->applyAttributes($ele->attributes, $this->allowedFields["text"]) . "/>";
 			}
 			else {
 				if(!in_array($ele->attributes["type"], array("button", "htmlexternal")))
@@ -1074,15 +1067,7 @@ STR;
 					elseif(!empty($ele->alphanumeric))
 						$ele->attributes["class"] .= " pfbc-alphanumeric";
 						
-					$str .= "<input";
-					if(!empty($ele->attributes) && is_array($ele->attributes)) {
-						$tmpAllowFieldArr = $this->allowedFields["text"];
-						foreach($ele->attributes as $key => $value) {
-							if(in_array($key, $tmpAllowFieldArr))
-								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-						}		
-					}
-					$str .= "/>";
+					$str .= "<input" . $this->applyAttributes($ele->attributes, $this->allowedFields["text"]) . "/>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 					
@@ -1091,24 +1076,6 @@ STR;
 						$eleType = $resetTypeTo;
 						unset($resetTypeTo);
 					}
-				}
-				elseif($eleType == "file") {
-					if(!empty($ele->attributes["class"]))
-						$ele->attributes["class"] .= " pfbc-file";
-					else	
-						$ele->attributes["class"] = "pfbc-file";
-
-					$str .= "<input";
-					if(!empty($ele->attributes) && is_array($ele->attributes)) {
-						$tmpAllowFieldArr = $this->allowedFields["text"];
-						foreach($ele->attributes as $key => $value) {
-							if(in_array($key, $tmpAllowFieldArr))
-								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-						}		
-					}
-					$str .= "/>";
-					if($focus)
-						$this->focusElement = $ele->attributes["name"];
 				}
 				elseif(in_array($eleType, array("textarea", "webeditor", "ckeditor"))) {
 					if(empty($ele->attributes["rows"]))
@@ -1133,15 +1100,7 @@ STR;
 					else
 						$ele->attributes["class"] = $class;
 
-					$str .= "<textarea";
-					if(!empty($ele->attributes) && is_array($ele->attributes)) {
-						$tmpAllowFieldArr = $this->allowedFields["textarea"];
-						foreach($ele->attributes as $key => $value) {
-							if(in_array($key, $tmpAllowFieldArr))
-								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-						}
-					}
-					$str .= ">" . $ele->attributes["value"] . "</textarea>";
+					$str .= "<textarea" . $this->applyAttributes($ele->attributes, $this->allowedFields["textarea"]) . ">" . $ele->attributes["value"] . "</textarea>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 
@@ -1160,15 +1119,7 @@ STR;
 					if($eleType == "rating")
 						$str .= '<table cellpadding="0" cellspacing="0" border="0"><tr><td valign="middle"><div id="' . $ele->ratingID . '">';
 
-					$str .= "<select";
-					if(!empty($ele->attributes) && is_array($ele->attributes)) {
-						$tmpAllowFieldArr = $this->allowedFields["select"];
-						foreach($ele->attributes as $key => $value) {
-							if(in_array($key, $tmpAllowFieldArr))
-								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-						}
-					}
-					$str .= ">";
+					$str .= "<select" . $this->applyAttributes($ele->attributes, $this->allowedFields["select"]) . ">";
 
 					if(!is_array($ele->attributes["value"])) {
 						if($ele->attributes["value"] !== "") {
@@ -1219,52 +1170,8 @@ STR;
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 				}
-				elseif($eleType == "radio") {
-					if(is_array($ele->optionKeys)) {
-						if($ele->attributes["value"] !== "") {
-							if(is_numeric($ele->attributes["value"]))
-								$ele->attributes["value"] = (string) $ele->attributes["value"];
-						}		
-
-						$optionSize = sizeof($ele->optionKeys);
-						$str .= '<div class="pfbc-radio-buttons">';
-						for($o = 0; $o < $optionSize; ++$o) {
-
-							if($ele->optionKeys[$o] !== "") {
-								if(is_numeric($ele->optionKeys[$o]))
-									$ele->optionKeys[$o] = (string) $ele->optionKeys[$o];
-							}		
-
-							$str .= $this->indent("\t") . '<div class="pfbc-radio';
-							if($o == 0)
-								$str .= ' pfbc-radio-first';
-							elseif($o + 1 == $optionSize)	
-								$str .= ' pfbc-radio-last';
-
-							$str .= '"><input';
-							$tmpAllowFieldArr = $this->allowedFields["radio"];
-							if(!empty($ele->attributes) && is_array($ele->attributes)) {
-								foreach($ele->attributes as $key => $value) {
-									if(in_array($key, $tmpAllowFieldArr))
-										$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-								}		
-							}
-							$str .= ' id="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';		
-							if($ele->attributes["value"] === $ele->optionKeys[$o])
-								$str .= ' checked="checked"';
-							$str .= '/>';
-							$str .= '<label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->optionValues[$o] . "</label></div>";
-						}	
-
-						if(!empty($ele->noBreak))
-							$str .= $this->indent("\t") . '<div style="clear: both;"></div>';
-
-						$str .= $this->indent() . '</div>';
-
-						if($focus)
-							$this->focusElement = $ele->attributes["name"];
-					}
-				}
+				elseif($eleType == "captcha")
+					$str .= '<div id="' . $ele->attributes["id"] . '" class="pfbc-captcha"></div>';
 				elseif($eleType == "checkbox") {
 					if(is_array($ele->optionKeys)) {
 						$optionSize = sizeof($ele->optionKeys);
@@ -1295,28 +1202,20 @@ STR;
 									$ele->optionKeys[$o] = (string) $ele->optionKeys[$o];
 							}		
 
+							$checkboxID = str_replace(array('"', '[]'), array('&quot;', '-'), $ele->attributes["name"]) . $o;
+
 							$str .= $this->indent("\t") . '<div class="pfbc-checkbox';
 							if($o == 0)
 								$str .= ' pfbc-checkbox-first';
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-checkbox-last';
 
-							$str .= '"><input';
-							if(!empty($ele->attributes) && is_array($ele->attributes)) {
-								$tmpAllowFieldArr = $this->allowedFields["radio"];
-								foreach($ele->attributes as $key => $value) {
-									if(in_array($key, $tmpAllowFieldArr))
-										$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-								}		
-							}
-							$tmpID = str_replace(array('"', '[]'), array('&quot;', '-'), $ele->attributes["name"]) . $o;
-							$str .= ' id="' . $tmpID . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';		
+							$str .= '"><input' . $this->applyAttributes($ele->attributes, $this->allowedFields["radio"]) . ' id="' . $checkboxID . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';
 
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->optionKeys[$o]) || (is_array($ele->attributes["value"]) && in_array($ele->optionKeys[$o], $ele->attributes["value"], true)))
 								$str .= ' checked="checked"';
-							$str .= '/>';
-							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></div>';
+							$str .= '/><label for="' . $checkboxID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></div>';
 						}	
 
 						if(!empty($ele->noBreak))
@@ -1327,87 +1226,6 @@ STR;
 						if($focus)
 							$this->focusElement = $ele->attributes["name"];
 					}
-				}
-				elseif($eleType == "sort") {
-					if(is_array($ele->optionKeys)) {
-						$optionSize = sizeof($ele->optionKeys);
-
-						if(substr($ele->attributes["name"], -2) != "[]")
-							$ele->attributes["name"] .= "[]";
-
-						if(!empty($ele->attributes["value"])) {
-							$values = array();
-							for($o = 0; $o < $optionSize; ++$o) {
-								$index = array_search($ele->optionKeys[$o], $ele->attributes["value"]);
-								if($index !== false)
-									$values[$index] = $ele->optionValues[$o];
-							}
-							if(sizeof($values) == $optionSize) {
-								$ele->optionKeys = $ele->attributes["value"];
-								$ele->optionValues = $values;
-							}
-						}	
-
-						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" class="pfbc-sort" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
-
-						for($o = 0; $o < $optionSize; ++$o)
-							$str .= $this->indent("\t") . '<li class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"/>' . $ele->optionValues[$o] . '</li>';
-
-						$str .= $this->indent() . "</ul>";
-					}
-				}
-				elseif($eleType == "latlng") {
-					if(!empty($ele->attributes["class"]))
-						$ele->attributes["class"] .= " pfbc-textbox";
-					else	
-						$ele->attributes["class"] = "pfbc-textbox";
-					
-					if(empty($ele->attributes["style"]))
-						$ele->attributes["style"] = "";
-
-					//If the value is formatted "Latitude: 123.45, Longitude: -67.89" parse and convert to array.
-					if(!empty($ele->attributes["value"]) && !is_array($ele->attributes["value"]) && strpos($ele->attributes["value"], "Latitude:", 0) === 0)
-						$ele->attributes["value"] = array(substr($ele->attributes["value"], strpos($ele->attributes["value"], ":") + 2, strpos($ele->attributes["value"], ",") - strpos($ele->attributes["value"], ":") - 2), substr($ele->attributes["value"], strrpos($ele->attributes["value"], ":") + 1));
-
-					$latlngID = htmlentities($ele->attributes["id"], ENT_QUOTES);
-
-					//Temporarily set the type attribute to "text" for <input> tag.
-					$eleType = "text";
-
-					$str .= '<div class="pfbc-latlng">';
-					$str .= $this->indent("\t") . "<input";
-					if(!empty($ele->attributes) && is_array($ele->attributes)) {
-						$tmpAllowFieldArr = $this->allowedFields["latlng"];
-						foreach($ele->attributes as $key => $value) {
-							if(in_array($key, $tmpAllowFieldArr))
-								$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-						}	
-					}
-					$str .= ' value="';
-					if(!empty($ele->attributes["value"]) && is_array($ele->attributes["value"]))	
-						$str .=  "Latitude: " . $ele->attributes["value"][0] . ", Longitude: " . $ele->attributes["value"][1];
-					else
-						$str .= str_replace('"', '&quot;', $ele->hint);
-					$str .= '"/>';
-
-					//Now that <input> tag his been rendered, change type attribute back to "latlng".
-					$eleType = "latlng";
-
-					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_canvas" style="margin: 2px 0; height: ' . $ele->height . 'px;';
-					if(!empty($ele->width))
-						$str .= ' width: ' . $ele->width . 'px;';
-					$str .= '"></div>';
-
-					if(empty($ele->hideJump))
-						$str .= $this->indent("\t") . '<input id="' . $latlngID . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["id"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["id"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["id"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');"/>';
-
-					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_clearDiv" style="';
-					if(empty($ele->attributes["value"]) || !is_array($ele->attributes["value"]))
-						$str .= 'display: none;';
-					$str .= '"><a href="javascript: clearLatLng_' . $this->attributes["id"] . '(\'' . $latlngID . '\', \'' . htmlentities($ele->hint, ENT_QUOTES) . '\');" class="pfbc-link">Clear Latitude/Longitude</a></div>';	
-					$str .= $this->indent() . "</div>";
-
-					$this->latlngIDArr[$ele->attributes["id"]] = $ele;
 				}
 				elseif($eleType == "checksort") {
 					if(is_array($ele->optionKeys)) {
@@ -1442,30 +1260,21 @@ STR;
 									$ele->optionKeys[$o] = (string) $ele->optionKeys[$o];
 							}		
 
+							$checkboxID = str_replace(array('"', '[]'), array('&quot;', '-'), $ele->attributes["name"]) . $o;
+
 							$str .= $this->indent("\t") . '<div class="pfbc-checkbox';
 							if($o == 0)
 								$str .= ' pfbc-checkbox-first';
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-checkbox-last';
-							$str .= '"><input';
-							if(!empty($ele->attributes) && is_array($ele->attributes)) {
-								$tmpAllowFieldArr = $this->allowedFields["checksort"];
-								foreach($ele->attributes as $key => $value) {
-									if(in_array($key, $tmpAllowFieldArr))
-										$str .= ' ' . $key . '="' . str_replace('"', '&quot;', $value) . '"';
-								}		
-							}
-
-							$tmpID = str_replace(array('"', '[]'), array('&quot;', '-'), $ele->attributes["name"]) . $o;
-							$str .= ' id="' . $tmpID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionKeys[$o]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionValues[$o]) . '\');"';
+							$str .= '"><input' . $this->applyAttributes($ele->attributes, $this->allowedFields["checksort"]) . ' id="' . $checkboxID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionKeys[$o]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionValues[$o]) . '\');"';
 
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->optionKeys[$o]) || (is_array($ele->attributes["value"]) && in_array($ele->optionKeys[$o], $ele->attributes["value"], true))) {
 								$str .= ' checked="checked"';
 								$sortLIArr[$ele->optionKeys[$o]] = '<li id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . $o . '" class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"/>' . $ele->optionValues[$o] . '</li>' . "\n";
 							}	
-							$str .= '/>';
-							$str .= '<label for="' . $tmpID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></div>';
+							$str .= '/><label for="' . $checkboxID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></div>';
 						}	
 						$str .= $this->indent() . "</div>";
 
@@ -1490,8 +1299,99 @@ STR;
 						$str .= $this->indent("\t") . "<li style='display: none'>&nbsp;</li>" . $this->indent() . "</ul>";
 					}
 				}
-				elseif($eleType == "captcha")
-					$str .= '<div id="' . $ele->attributes["id"] . '" class="pfbc-captcha"></div>';
+				elseif($eleType == "file") {
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-file";
+					else	
+						$ele->attributes["class"] = "pfbc-file";
+
+					$str .= "<input" . $this->applyAttributes($ele->attributes, $this->allowedFields["text"]) . "/>";
+					if($focus)
+						$this->focusElement = $ele->attributes["name"];
+				}
+				elseif($eleType == "html")
+					$str .= $ele->attributes["value"];
+				elseif($eleType == "latlng") {
+					if(!empty($ele->attributes["class"]))
+						$ele->attributes["class"] .= " pfbc-textbox";
+					else	
+						$ele->attributes["class"] = "pfbc-textbox";
+					
+					if(empty($ele->attributes["style"]))
+						$ele->attributes["style"] = "";
+
+					//If the value is formatted "Latitude: 123.45, Longitude: -67.89" parse and convert to array.
+					if(!empty($ele->attributes["value"]) && !is_array($ele->attributes["value"]) && strpos($ele->attributes["value"], "Latitude:", 0) === 0)
+						$ele->attributes["value"] = array(substr($ele->attributes["value"], strpos($ele->attributes["value"], ":") + 2, strpos($ele->attributes["value"], ",") - strpos($ele->attributes["value"], ":") - 2), substr($ele->attributes["value"], strrpos($ele->attributes["value"], ":") + 1));
+
+					$latlngID = htmlentities($ele->attributes["id"], ENT_QUOTES);
+
+					//Temporarily set the type attribute to "text" for <input> tag.
+					$eleType = "text";
+
+					$str .= '<div class="pfbc-latlng">' . $this->indent("\t") . "<input" . $this->applyAttributes($ele->attributes, $this->allowedFields["latlng"]) . ' value="';
+					if(!empty($ele->attributes["value"]) && is_array($ele->attributes["value"]))	
+						$str .=  "Latitude: " . $ele->attributes["value"][0] . ", Longitude: " . $ele->attributes["value"][1];
+					else
+						$str .= str_replace('"', '&quot;', $ele->hint);
+					$str .= '"/>';
+
+					//Now that <input> tag his been rendered, change type attribute back to "latlng".
+					$eleType = "latlng";
+
+					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_canvas" style="margin: 2px 0; height: ' . $ele->height . 'px;';
+					if(!empty($ele->width))
+						$str .= ' width: ' . $ele->width . 'px;';
+					$str .= '"></div>';
+
+					if(empty($ele->hideJump))
+						$str .= $this->indent("\t") . '<input id="' . $latlngID . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["id"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["id"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["id"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');"/>';
+
+					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_clearDiv" style="';
+					if(empty($ele->attributes["value"]) || !is_array($ele->attributes["value"]))
+						$str .= 'display: none;';
+					$str .= '"><a href="javascript: clearLatLng_' . $this->attributes["id"] . '(\'' . $latlngID . '\', \'' . htmlentities($ele->hint, ENT_QUOTES) . '\');" class="pfbc-link">Clear Latitude/Longitude</a></div>';	
+					$str .= $this->indent() . "</div>";
+
+					$this->latlngIDArr[$ele->attributes["id"]] = $ele;
+				}
+				elseif($eleType == "radio") {
+					if(is_array($ele->optionKeys)) {
+						if($ele->attributes["value"] !== "") {
+							if(is_numeric($ele->attributes["value"]))
+								$ele->attributes["value"] = (string) $ele->attributes["value"];
+						}		
+
+						$optionSize = sizeof($ele->optionKeys);
+						$str .= '<div class="pfbc-radio-buttons">';
+						for($o = 0; $o < $optionSize; ++$o) {
+
+							if($ele->optionKeys[$o] !== "") {
+								if(is_numeric($ele->optionKeys[$o]))
+									$ele->optionKeys[$o] = (string) $ele->optionKeys[$o];
+							}		
+
+							$str .= $this->indent("\t") . '<div class="pfbc-radio';
+							if($o == 0)
+								$str .= ' pfbc-radio-first';
+							elseif($o + 1 == $optionSize)	
+								$str .= ' pfbc-radio-last';
+
+							$str .= '"><input' . $this->applyAttributes($ele->attributes, $this->allowedFields["radio"]) . ' id="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';		
+							if($ele->attributes["value"] === $ele->optionKeys[$o])
+								$str .= ' checked="checked"';
+							$str .= '/><label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->optionValues[$o] . "</label></div>";
+						}	
+
+						if(!empty($ele->noBreak))
+							$str .= $this->indent("\t") . '<div style="clear: both;"></div>';
+
+						$str .= $this->indent() . '</div>';
+
+						if($focus)
+							$this->focusElement = $ele->attributes["name"];
+					}
+				}
 				elseif($eleType == "slider") {
 					if(empty($ele->attributes["value"]))
 						$ele->attributes["value"] = "0";
@@ -1536,8 +1436,34 @@ STR;
 
 					$this->jquerySliderIDArr[$ele->attributes["id"]] = $ele;
 				}
-				elseif($eleType == "html")
-					$str .= $ele->attributes["value"];
+				elseif($eleType == "sort") {
+					if(is_array($ele->optionKeys)) {
+						$optionSize = sizeof($ele->optionKeys);
+
+						if(substr($ele->attributes["name"], -2) != "[]")
+							$ele->attributes["name"] .= "[]";
+
+						if(!empty($ele->attributes["value"])) {
+							$values = array();
+							for($o = 0; $o < $optionSize; ++$o) {
+								$index = array_search($ele->optionKeys[$o], $ele->attributes["value"]);
+								if($index !== false)
+									$values[$index] = $ele->optionValues[$o];
+							}
+							if(sizeof($values) == $optionSize) {
+								$ele->optionKeys = $ele->attributes["value"];
+								$ele->optionValues = $values;
+							}
+						}	
+
+						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" class="pfbc-sort" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
+
+						for($o = 0; $o < $optionSize; ++$o)
+							$str .= $this->indent("\t") . '<li class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"/>' . $ele->optionValues[$o] . '</li>';
+
+						$str .= $this->indent() . "</ul>";
+					}
+				}
 
 				if(!empty($ele->postHTML))
 					$str .= $this->indent() . $ele->postHTML;
