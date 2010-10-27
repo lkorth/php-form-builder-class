@@ -8,7 +8,14 @@ Developer Google Group - http://groups.google.com/group/php-form-builder-class-d
 */
 
 abstract class pfbc {
-	protected function applyAttributes($attributes, $allow, $exclude="") {
+	protected function applyClass($class) {
+		if(!empty($this->attributes["class"]))
+			$this->attributes["class"] .= " " . $class;
+		else
+			$this->attributes["class"] = $class;
+	}
+
+	protected function attributesToHTML($attributes, $allow, $exclude="") {
 		$str = "";
 		$ignore = array();
 		if(!empty($exclude)) {
@@ -884,11 +891,8 @@ STR;
 		if(empty($this->hasFormTag))
 			$str .= "\n" . '<div id="' . $this->attributes["id"] . '">';
 		else {
-			if(!empty($this->attributes["class"]))
-				$this->attributes["class"] .= " pfbc-form";
-			else	
-				$this->attributes["class"] = "pfbc-form";
-			$str .= "\n<form" . $this->applyAttributes($this->attributes, $this->allowedFields["form"]) . ' onsubmit="return pfbc_onsubmit_' . $this->attributes["id"] . '(this);">';
+			$this->applyClass("pfbc-form");	
+			$str .= "\n<form" . $this->attributesToHTML($this->attributes, $this->allowedFields["form"]) . ' onsubmit="return pfbc_onsubmit_' . $this->attributes["id"] . '(this);">';
 		}
 
 		if(empty($this->synchronousResources) && !$triggerJSIncludesError) {
@@ -936,7 +940,7 @@ STR;
 					$hiddenElementExists = true;
 				}	
 
-				$str .= "\n\t\t<input" . $this->applyAttributes($ele->attributes, $this->allowedFields["text"]) . "/>";
+				$str .= "\n\t\t<input" . $this->attributesToHTML($ele->attributes, $this->allowedFields["text"]) . "/>";
 			}
 			else {
 				if(!in_array($ele->attributes["type"], array("button", "htmlexternal")))
@@ -1057,17 +1061,13 @@ STR;
 						$eleType = "text";
 					}	
 
-					if(!empty($ele->attributes["class"]))
-						$ele->attributes["class"] .= " pfbc-textbox";
-					else	
-						$ele->attributes["class"] = "pfbc-textbox";
-					
+					$ele->applyClass("pfbc-textbox");	
 					if(!empty($ele->integer))
-						$ele->attributes["class"] .= " pfbc-integer";
+						$ele->applyClass("pfbc-integer");	
 					elseif(!empty($ele->alphanumeric))
-						$ele->attributes["class"] .= " pfbc-alphanumeric";
+						$ele->applyClass("pfbc-alphanumeric");
 						
-					$str .= "<input" . $this->applyAttributes($ele->attributes, $this->allowedFields["text"]) . "/>";
+					$str .= "<input" . $this->attributesToHTML($ele->attributes, $this->allowedFields["text"]) . "/>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 					
@@ -1094,13 +1094,9 @@ STR;
 						$class = "pfbc-ckeditor";
 					else
 						$class = "pfbc-textarea";
+					$ele->applyClass($class);
 
-					if(!empty($ele->attributes["class"]))
-						$ele->attributes["class"] .= " " . $class;
-					else
-						$ele->attributes["class"] = $class;
-
-					$str .= "<textarea" . $this->applyAttributes($ele->attributes, $this->allowedFields["textarea"]) . ">" . $ele->attributes["value"] . "</textarea>";
+					$str .= "<textarea" . $this->attributesToHTML($ele->attributes, $this->allowedFields["textarea"]) . ">" . $ele->attributes["value"] . "</textarea>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 
@@ -1108,18 +1104,14 @@ STR;
 						$this->ckeditorIDArr[$ele->attributes["id"]] = $ele; 
 				}
 				elseif($eleType == "select" || $eleType == "rating") {
-					if(!empty($ele->attributes["class"]))
-						$ele->attributes["class"] .= " pfbc-select";
-					else
-						$ele->attributes["class"] = "pfbc-select";
-					
+					$ele->applyClass("pfbc-select");
 					if(!empty($ele->attributes["multiple"]) && substr($ele->attributes["name"], -2) != "[]")
 							$ele->attributes["name"] .= "[]";
 
 					if($eleType == "rating")
 						$str .= '<table cellpadding="0" cellspacing="0" border="0"><tr><td valign="middle"><div id="' . $ele->ratingID . '">';
 
-					$str .= "<select" . $this->applyAttributes($ele->attributes, $this->allowedFields["select"]) . ">";
+					$str .= "<select" . $this->attributesToHTML($ele->attributes, $this->allowedFields["select"]) . ">";
 
 					if(!is_array($ele->attributes["value"])) {
 						if($ele->attributes["value"] !== "") {
@@ -1210,7 +1202,7 @@ STR;
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-checkbox-last';
 
-							$str .= '"><input' . $this->applyAttributes($ele->attributes, $this->allowedFields["radio"]) . ' id="' . $checkboxID . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';
+							$str .= '"><input' . $this->attributesToHTML($ele->attributes, $this->allowedFields["radio"]) . ' id="' . $checkboxID . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';
 
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->optionKeys[$o]) || (is_array($ele->attributes["value"]) && in_array($ele->optionKeys[$o], $ele->attributes["value"], true)))
@@ -1267,7 +1259,7 @@ STR;
 								$str .= ' pfbc-checkbox-first';
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-checkbox-last';
-							$str .= '"><input' . $this->applyAttributes($ele->attributes, $this->allowedFields["checksort"]) . ' id="' . $checkboxID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionKeys[$o]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionValues[$o]) . '\');"';
+							$str .= '"><input' . $this->attributesToHTML($ele->attributes, $this->allowedFields["checksort"]) . ' id="' . $checkboxID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionKeys[$o]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionValues[$o]) . '\');"';
 
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->optionKeys[$o]) || (is_array($ele->attributes["value"]) && in_array($ele->optionKeys[$o], $ele->attributes["value"], true))) {
@@ -1300,23 +1292,15 @@ STR;
 					}
 				}
 				elseif($eleType == "file") {
-					if(!empty($ele->attributes["class"]))
-						$ele->attributes["class"] .= " pfbc-file";
-					else	
-						$ele->attributes["class"] = "pfbc-file";
-
-					$str .= "<input" . $this->applyAttributes($ele->attributes, $this->allowedFields["text"]) . "/>";
+					$ele->applyClass("pfbc-file");
+					$str .= "<input" . $this->attributesToHTML($ele->attributes, $this->allowedFields["text"]) . "/>";
 					if($focus)
 						$this->focusElement = $ele->attributes["name"];
 				}
 				elseif($eleType == "html")
 					$str .= $ele->attributes["value"];
 				elseif($eleType == "latlng") {
-					if(!empty($ele->attributes["class"]))
-						$ele->attributes["class"] .= " pfbc-textbox";
-					else	
-						$ele->attributes["class"] = "pfbc-textbox";
-					
+					$ele->applyClass("pfbc-textbox");
 					if(empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "";
 
@@ -1329,7 +1313,7 @@ STR;
 					//Temporarily set the type attribute to "text" for <input> tag.
 					$eleType = "text";
 
-					$str .= '<div class="pfbc-latlng">' . $this->indent("\t") . "<input" . $this->applyAttributes($ele->attributes, $this->allowedFields["latlng"]) . ' value="';
+					$str .= '<div class="pfbc-latlng">' . $this->indent("\t") . "<input" . $this->attributesToHTML($ele->attributes, $this->allowedFields["latlng"]) . ' value="';
 					if(!empty($ele->attributes["value"]) && is_array($ele->attributes["value"]))	
 						$str .=  "Latitude: " . $ele->attributes["value"][0] . ", Longitude: " . $ele->attributes["value"][1];
 					else
@@ -1377,7 +1361,7 @@ STR;
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-radio-last';
 
-							$str .= '"><input' . $this->applyAttributes($ele->attributes, $this->allowedFields["radio"]) . ' id="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';		
+							$str .= '"><input' . $this->attributesToHTML($ele->attributes, $this->allowedFields["radio"]) . ' id="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';		
 							if($ele->attributes["value"] === $ele->optionKeys[$o])
 								$str .= ' checked="checked"';
 							$str .= '/><label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->optionValues[$o] . "</label></div>";

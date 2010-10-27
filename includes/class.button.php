@@ -13,18 +13,14 @@ class button extends pfbc {
 	}
 
 	public function render($returnString) {
-		if(!empty($this->jqueryUI)) {
-			if(!empty($this->attributes["class"]))
-				$this->attributes["class"] .= " jqueryui-button";
-			else	
-				$this->attributes["class"] = "jqueryui-button";
-		}	
+		if(!empty($this->jqueryUI))
+			$this->applyClass("jqueryui-button");	
 
 		$str = "\n\t\t";
 		if($this->attributes["type"] == "link")
-			$str .= "<a" . $this->applyAttributes($this->attributes, $this->allowedFields["a"]) . ">" . $this->attributes["value"] . "</a>";
+			$str .= "<a" . $this->attributesToHTML($this->attributes, $this->allowedFields["a"]) . ">" . $this->attributes["value"] . "</a>";
 		else
-			$str .= "<input" . $this->applyAttributes($this->attributes, $this->allowedFields["button"]) . "/>";
+			$str .= "<input" . $this->attributesToHTML($this->attributes, $this->allowedFields["button"]) . "/>";
 
 		if(!$returnString)
 			echo($str);
