@@ -373,6 +373,12 @@ class form extends pfbc {
 				//If the options array is associative, assign the value and text for each key/value pair.
 				else {
 					$ele->optionKeys = array_keys($params["options"]);
+					$optionSize = sizeof($ele->optionKeys);
+					for($o = 0; $o < $optionSize; ++$o) {
+						if(strpos($ele->optionKeys[$o], "_pfbcempty") === 0)
+							$ele->optionKeys[$o] = "";
+					}
+						
 					$ele->optionValues = array_values($params["options"]);
 				}
 			}
