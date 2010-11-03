@@ -118,10 +118,10 @@ class form extends pfbc {
 	private $captchaExists;
 	private $checkform;
 	private $ckeditorIDArr;
-	private $countryArr;
 	private $elements;
 	private $emailError;
 	private $emailExists;
+	private $expdateExists;
 	private $focusElement;
 	private $gsErrorMsg;
 	private $hasFormTag;
@@ -140,7 +140,6 @@ class form extends pfbc {
 	private $latlngIDArr;
 	private $phpIncludesPath;
 	private $referenceValues;
-	private $stateArr;
 	private $tinymceIDArr;
 	private $tooltipIDArr;
 	private $synchronousResources;
@@ -277,6 +276,10 @@ class form extends pfbc {
 		$this->addElement($label, $name, "email", $value, $additionalParams);
 	}
 
+	public function addExpDate($label, $name, $value="", $additionalParams="") {
+		$this->addElement($label, $name, "expdate", $value, $additionalParams);
+	}
+
 	public function addFile($label, $name, $additionalParams="") {
 		$this->addElement($label, $name, "file", "", $additionalParams);
 	}
@@ -375,10 +378,14 @@ class form extends pfbc {
 					$ele->optionKeys = array_keys($params["options"]);
 					$optionSize = sizeof($ele->optionKeys);
 					for($o = 0; $o < $optionSize; ++$o) {
-						if(strpos($ele->optionKeys[$o], "_pfbcempty") === 0)
-							$ele->optionKeys[$o] = "";
+						$_pfbcpos = strpos($ele->optionKeys[$o], "_pfbc");
+						if($_pfbcpos !== false) {
+							if($_pfbcpos == 0)
+								$ele->optionKeys[$o] = "";
+							else
+								$ele->optionKeys[$o] = substr($ele->optionKeys[$o], 0, $_pfbcpos);
+						}
 					}
-						
 					$ele->optionValues = array_values($params["options"]);
 				}
 			}
@@ -432,7 +439,7 @@ class form extends pfbc {
 		}
 		elseif($eleType == "country") {
 			$eleType = "select";
-			include($this->phpIncludesPath . "/countryArr.json.php");
+			include($this->phpIncludesPath . "/country.json.php");
 			$jsonObj = json_decode($jsonCountries);
 			$ele->optionKeys = $jsonObj->keys;
 			$ele->optionValues = $jsonObj->values;
@@ -608,7 +615,7 @@ class form extends pfbc {
 		}
 		elseif($eleType == "state") {
 			$eleType = "select";
-			include($this->phpIncludesPath . "/stateArr.json.php");
+			include($this->phpIncludesPath . "/state.json.php");
 			$jsonObj = json_decode($jsonStates);
 			$ele->optionKeys = $jsonObj->keys;
 			$ele->optionValues = $jsonObj->values;
@@ -1112,7 +1119,7 @@ STR;
 				elseif($eleType == "select" || $eleType == "rating") {
 					$ele->applyClass("pfbc-select");
 					if(!empty($ele->attributes["multiple"]) && substr($ele->attributes["name"], -2) != "[]")
-							$ele->attributes["name"] .= "[]";
+						$ele->attributes["name"] .= "[]";
 
 					if($eleType == "rating")
 						$str .= '<table cellpadding="0" cellspacing="0" border="0"><tr><td valign="middle"><div id="' . $ele->ratingID . '">';
@@ -1296,6 +1303,83 @@ STR;
 						}
 						$str .= $this->indent("\t") . "<li style='display: none'>&nbsp;</li>" . $this->indent() . "</ul>";
 					}
+				}
+				elseif($eleType == "expdate") {
+					if(empty($this->expdateExists))
+						$this->expdateExists = 1;
+
+					$expdateClass = "";
+					if(!empty($ele->attributes["class"]))
+						$expdateClass = $ele->attributes["class"];
+					$ele->applyClass("pfbc-select pfbc-expmonth");
+					if(substr($ele->attributes["name"], -2) != "[]")
+						$ele->attributes["name"] .= "[]";
+					
+					$expmonthValue = "";
+					$expyearValue = "";
+					$expdateValue = $ele->attributes["value"];
+					if(!empty($expdateValue) && is_array($expdateValue)) {
+						if(isset($expdateValue[0]))
+							$expmonthValue = (string) $expdateValue[0];
+						if(isset($expdateValue[1]))
+							$expyearValue = (string) $expdateValue[1];
+					}
+					if($expmonthValue !== "" && strlen($expmonthValue) == 1)
+						$expmonthValue = "0$expmonthValue";
+					if($expyearValue !== "" && strlen($expyearValue) == 1)
+						$expyearValue = "0$expyearValue";
+					
+					$str .= '<div class="pfbc-expdate pfbc-clear">' . $this->indent("\t") . "<select" . $this->attributesToHTML($ele->attributes, $this->allowedFields["select"]) . ">";
+					include($this->phpIncludesPath . "/expmonth.json.php");
+					$jsonObj = json_decode($jsonExpMonth);
+					$ele->optionKeys = $jsonObj->keys;
+					$ele->optionValues = $jsonObj->values;
+
+					$selected = false;
+					if(is_array($ele->optionKeys)) {
+						$optionSize = sizeof($ele->optionKeys);
+						for($o = 0; $o < $optionSize; ++$o) {
+							if($ele->optionKeys[$o] !== "") {
+								if(is_numeric($ele->optionKeys[$o]))
+									$ele->optionKeys[$o] = (string) $ele->optionKeys[$o];
+							}		
+
+							$str .= $this->indent("\t\t") . '<option value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';
+							if($expmonthValue === $ele->optionKeys[$o]) {
+								$str .= ' selected="selected"';
+								$selected = true;
+							}
+							$str .= '>' . $ele->optionValues[$o] . "</option>";
+						}
+					}
+					$str .= $this->indent("\t") . "</select>";
+
+					$ele->attributes["class"] = $expdateClass;
+					$ele->applyClass("pfbc-select pfbc-expyear");
+					$str .= $this->indent("\t") . "<select" . $this->attributesToHTML($ele->attributes, $this->allowedFields["select"]) . ">";
+					include($this->phpIncludesPath . "/expyear.json.php");
+					$jsonObj = json_decode($jsonExpYear);
+					$ele->optionKeys = $jsonObj->keys;
+					$ele->optionValues = $jsonObj->values;
+
+					$selected = false;
+					if(is_array($ele->optionKeys)) {
+						$optionSize = sizeof($ele->optionKeys);
+						for($o = 0; $o < $optionSize; ++$o) {
+							if($ele->optionKeys[$o] !== "") {
+								if(is_numeric($ele->optionKeys[$o]))
+									$ele->optionKeys[$o] = (string) $ele->optionKeys[$o];
+							}		
+
+							$str .= $this->indent("\t\t") . '<option value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';
+							if($expyearValue === $ele->optionKeys[$o]) {
+								$str .= ' selected="selected"';
+								$selected = true;
+							}
+							$str .= ">" . $ele->optionValues[$o] . "</option>";
+						}
+					}
+					$str .= $this->indent("\t") . "</select>" . $this->indent() . "</div>";
 				}
 				elseif($eleType == "file") {
 					$ele->applyClass("pfbc-file");
@@ -1555,30 +1639,32 @@ STR;
 			var jQueryElementObj;
 			function pfbc_adjust_{$this->attributes["id"]}() {
 				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea, #{$this->attributes["id"]} .pfbc-main .pfbc-webeditor").each(function() { 
-					if(!jQuery(this).hasClass("pfbc-adjusted")) {
-						if(jQuery(this).parent().parent().is(":hidden")) {
-							jQueryElementObj = jQuery(this);
+					jQueryElementObj = jQuery(this);
+					if(!jQueryElementObj.hasClass("pfbc-adjusted")) {
+						if(jQueryElementObj.parent().parent().is(":hidden")) {
 							jQuery.swap(jQueryElementObj.parent().parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
-								if(jQuery(this).hasClass("pfbc-webeditor"))
-									jQueryElementObj.width(jQueryElementObj.width());
-								else
-									jQueryElementObj.outerWidth(jQueryElementObj.width());
-								jQueryElementObj.addClass("pfbc-adjusted");	
+								pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
 							});
 						}	
-						else {
-							if(jQuery(this).hasClass("pfbc-webeditor"))
-								jQuery(this).width(jQuery(this).width());
-							else
-								jQuery(this).outerWidth(jQuery(this).width());
-							jQuery(this).addClass("pfbc-adjusted");	
-						}
+						else if(jQueryElementObj.parent().is(":hidden")) {
+							jQuery.swap(jQueryElementObj.parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
+								pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
+							});
+						}	
+						else
+							pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
 					}
 				});
 			}
+			function pfbc_width_{$this->attributes["id"]}(eleObj) {
+				if(eleObj.hasClass("pfbc-webeditor"))
+					eleObj.width(eleObj.width());
+				else
+					eleObj.outerWidth(eleObj.width());
+				eleObj.addClass("pfbc-adjusted");	
+			}
 
 STR;
-		
 		if(empty($this->synchronousResources)) {
 			$str .= <<<STR
 			jQuery(document).ready(function() {
@@ -1983,6 +2069,29 @@ STR;
 
 STR;
 			}
+			elseif($eleType == "expdate") {
+				if(!empty($this->ajax)) {
+					$str .= <<<STR
+	form_data += "&$eleName=" + escape(formObj.elements["$eleName"][0].value);
+	form_data += "&$eleName=" + escape(formObj.elements["$eleName"][1].value);
+
+STR;
+				}	
+				if($isRequired) {
+					$str .= <<<STR
+	if(formObj.elements["$eleName"][0].value == "" || formObj.elements["$eleName"][1].value == "") {
+		js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+		if(js_errors_{$this->attributes["id"]}.length == 1) {
+			if(formObj.elements["$eleName"][0].value == "")
+				formObj.elements["$eleName"][0].focus();
+			else
+				formObj.elements["$eleName"][1].focus();
+		}	
+	}
+
+STR;
+				}
+			}
 				
 			if(empty($this->preventJSValidation) && $eleType == "email") {
 				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->emailErrorMsgFormat);
@@ -2114,6 +2223,10 @@ STR;
 					else
 						$errorMsg = "An unknown reCAPTCHA error has occurred.";
 				}
+			}
+			elseif($eleType == "expdate") {
+				if(!isset($referenceValues[$eleName]) || !is_array($referenceValues[$eleName]) || sizeof($referenceValues[$eleName]) != 2  || $referenceValues[$eleName][0] === "" || $referenceValues[$eleName][1] === "")
+					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
 			}
 			elseif(!empty($ele->required) && !$validValue)
 				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
@@ -2395,14 +2508,28 @@ $id .pfbc-map-columns-{$mapVals[$m]} .pfbc-select {
 }
 
 STR;
-						}                                
+							if(!empty($form->expdateExists)) {
+								$expdateWidth = floor(($elementWidth / 2) - $form->mapMargin);
+								$str .= <<<STR
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-expmonth {
+	float: left;
+	width: {$expdateWidth}$formWidthSuffix !important;
+}
+$id .pfbc-map-columns-{$mapVals[$m]} .pfbc-expyear {
+	float: right;
+	width: {$expdateWidth}$formWidthSuffix !important;
+}
 
+STR;
+							}
+						}                                
 					}
 					else {
 						if($formWidthSuffix == "px")
 							$elementWidth = $formWidth;
 						else
 							$elementWidth = 98;
+
 						$str .= <<<STR
 $id .pfbc-textbox {
 	width: {$elementWidth}$formWidthSuffix;
@@ -2415,6 +2542,20 @@ $id .pfbc-select {
 }
 
 STR;
+						if(!empty($form->expdateExists)) {
+							$expdateWidth = floor(($elementWidth / 2) - $form->mapMargin);
+							$str .= <<<STR
+$id .pfbc-expmonth {
+	float: left;
+	width: {$expdateWidth}$formWidthSuffix !important;
+}
+$id .pfbc-expyear {
+	float: right;
+	width: {$expdateWidth}$formWidthSuffix !important;
+}
+
+STR;
+						}	
 					}
 				}
 
@@ -2428,11 +2569,11 @@ STR;
 
 				for($e = 0; $e < $elementSize; ++$e) {
 					$ele = $form->elements[$e];
-					if(!in_array($ele->attributes["type"], array("hidden", "htmlexternal", "button"))) {
-
+					$eleType = $ele->attributes["type"];
+					if(!in_array($eleType, array("hidden", "htmlexternal", "button"))) {
 						//If the noBreak attribute is set, handle appropriately.
 						if(!empty($ele->noBreak)) {
-							if($ele->attributes["type"] == "radio") {
+							if($eleType == "radio") {
 								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio {
 	float: left;
@@ -2444,7 +2585,7 @@ STR;
 
 STR;
 							}
-							elseif(in_array($ele->attributes["type"], array("checkbox", "checksort"))) {
+							elseif(in_array($eleType, array("checkbox", "checksort"))) {
 								$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkbox {
 	float: left;
@@ -2537,7 +2678,6 @@ STR;
 											$elementWidth = 98 - $labelWidth;
 									}
 
-
 									$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-label {
 	float: $labelFloat;
@@ -2588,7 +2728,7 @@ STR;
 }
 
 STR;
-									if(in_array($ele->attributes["type"], array("text", "password", "email", "date", "daterange", "color"))) {
+									if(in_array($eleType, array("text", "password", "email", "date", "daterange", "color"))) {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
 	width: {$elementWidth}$labelWidthSuffix;
@@ -2597,7 +2737,7 @@ STR;
 
 STR;
 									}
-									elseif(in_array($ele->attributes["type"], array("textarea", "webeditor", "ckeditor"))) {
+									elseif(in_array($eleType, array("textarea", "webeditor", "ckeditor"))) {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
 	width: {$elementWidth}$labelWidthSuffix;
@@ -2606,7 +2746,7 @@ STR;
 
 STR;
 									}
-									if(in_array($ele->attributes["type"], array("select", "rating"))) {
+									elseif(in_array($eleType, array("select", "rating"))) {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
 	width: {$elementWidth}$labelWidthSuffix;
@@ -2615,7 +2755,7 @@ STR;
 
 STR;
 									}
-									elseif($ele->attributes["type"] == "radio") {
+									elseif($eleType == "radio") {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
 	width: {$elementWidth}$labelWidthSuffix;
@@ -2624,7 +2764,7 @@ STR;
 
 STR;
 									}
-									elseif($ele->attributes["type"] == "checkbox") {
+									elseif($eleType == "checkbox") {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
 	width: {$elementWidth}$labelWidthSuffix;
@@ -2633,7 +2773,7 @@ STR;
 
 STR;
 									}
-									elseif($ele->attributes["type"] == "checksort") {
+									elseif($eleType == "checksort") {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
 	width: {$elementWidth}$labelWidthSuffix;
@@ -2646,7 +2786,7 @@ STR;
 
 STR;
 									}
-									elseif($ele->attributes["type"] == "sort") {
+									elseif($eleType == "sort") {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
 	width: {$elementWidth}$labelWidthSuffix;
@@ -2655,7 +2795,7 @@ STR;
 
 STR;
 									}
-									elseif($ele->attributes["type"] == "latlng") {
+									elseif($eleType == "latlng") {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-latlng {
 	width: {$elementWidth}$labelWidthSuffix;
@@ -2668,7 +2808,7 @@ STR;
 
 STR;
 									}
-									elseif($ele->attributes["type"] == "captcha") {
+									elseif($eleType == "captcha") {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-captcha {
 	width: {$elementWidth}$labelWidthSuffix;
@@ -2677,11 +2817,29 @@ STR;
 
 STR;
 									}
-									elseif($ele->attributes["type"] == "slider") {
+									elseif($eleType == "slider") {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-slider {
 	width: {$elementWidth}$labelWidthSuffix;
 	float: $elementFloat;
+}
+
+STR;
+									}
+									elseif($eleType == "expdate") {
+										$expdateWidth = floor(($elementWidth / 2) - $form->mapMargin);
+										$str .= <<<STR
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-expdate {
+	width: {$elementWidth}$labelWidthSuffix;
+	float: $elementFloat;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-expmonth {
+	float: left;
+	width: {$expdateWidth}$formWidthSuffix !important;
+}
+#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-expyear {
+	float: right;
+	width: {$expdateWidth}$formWidthSuffix !important;
 }
 
 STR;

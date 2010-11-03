@@ -16,7 +16,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	include("../header.php");
 	?>
 
-	<p><b>All Supported Form Elements</b> - This example demonstrates all 27 supported form element types: hidden, textbox, textarea, webeditor, password, file, date, daterange, state, country, yesno, truefalse, select, radio, checkbox, latlng,
+	<p><b>All Supported Form Elements</b> - This example demonstrates all 28 supported form element types: hidden, textbox, textarea, webeditor, password, file, date, daterange, expdate, state, country, yesno, truefalse, select, radio, checkbox, latlng,
 	sort, checksort, captcha, slider, rating, html, color, email, htmlexternal, button.  More information on each of these form elements can be found in the <a href="../documentation/index.php#Form-Elements">Supported Form Elements section of the documentation</a>.</p>
 
 	<?php
@@ -35,6 +35,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->addFile("File:", "MyFile");
 	$form->addDate("Date:", "MyDate");
 	$form->addDateRange("Date Range:", "MyDateRange");
+	$form->addExpDate("Expiration Date:", "MyExpDate");
 	$form->addState("State:", "MyState");
 	$form->addCountry("Country:", "MyCountry");
 	$form->addYesNo("Yes/No:", "MyYesNo");
@@ -92,6 +93,7 @@ $form->addPassword("Password:", "MyPassword");
 $form->addFile("File:", "MyFile");
 $form->addDate("Date:", "MyDate");
 $form->addDateRange("Date Range:", "MyDateRange");
+$form->addExpDate("Expiration Date:", "MyExpDate");
 $form->addState("State:", "MyState");
 $form->addCountry("Country:", "MyCountry");
 $form->addYesNo("Yes/No:", "MyYesNo");
