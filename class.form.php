@@ -1625,17 +1625,6 @@ STR;
 		$str .= <<<STR
 		<script type="text/javascript">
 			//<![CDATA[
-
-STR;
-
-		if(!empty($this->jqueryNoConflict)) {
-			$str .= <<<STR
-			jQuery.noConflict();
-
-STR;
-		}
-
-		$str .= <<<STR
 			var jQueryElementObj;
 			function pfbc_adjust_{$this->attributes["id"]}() {
 				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea, #{$this->attributes["id"]} .pfbc-main .pfbc-webeditor").each(function() { 
@@ -1665,6 +1654,7 @@ STR;
 			}
 
 STR;
+
 		if(empty($this->synchronousResources)) {
 			$str .= <<<STR
 			jQuery(document).ready(function() {
@@ -1676,17 +1666,7 @@ STR;
 						pfbc_adjust_{$this->attributes["id"]}();
 					jQuery("#{$this->attributes["id"]}").css("visibility", "visible");
 				});
-				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param", function() {
-
-STR;
-			if(!empty($this->hasFormTag)) {
-				$str .= <<<STR
-					setTimeout("pfbc_focus_{$this->attributes["id"]}();", 250);
-
-STR;
-			}
-			$str .= <<<STR
-				});	
+				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param");
 			});
 
 STR;
@@ -3035,6 +3015,12 @@ STR;
 				$str .= "\npfbc_adjust_" . $this->attributes["id"] . "();";
 			}
 
+			if(!empty($form->jqueryNoConflict)) {
+				$str .= <<<STR
+jQuery.noConflict();
+
+STR;
+			}
 
 			if(!empty($form->integerExists) || !empty($form->alphanumericExists)) {
 			$str .= <<<STR
@@ -3683,10 +3669,13 @@ STR;
 				}
 				$str .= <<<STR
 }
+
+STR;
+
+				if(empty($form->noAutoFocus) && !empty($form->focusElement)) {
+					$str .= <<<STR
 function pfbc_focus_{$form->attributes["id"]}() {
 STR;
-				//This javascript section sets the focus of the first field in the form.  This default behavior can be overwritten by setting the noAutoFocus parameter.
-				if(empty($form->noAutoFocus) && !empty($form->focusElement)) {
 					//The webeditor and ckeditor fields are a special case.
 					if(!empty($form->tinymceIDArr) && is_array($form->tinymceIDArr) && in_array($form->focusElement, $form->tinymceIDArr)) {
 						$str .= <<<STR
@@ -3710,16 +3699,16 @@ STR;
 
 STR;
 					}		
-				}
-				$str .= <<<STR
+					$str .= <<<STR
 }				
+pfbc_focus_{$this->attributes["id"]}();
 
 STR;
+				}
 			}	
 		}	
 
 		if(!empty($form->synchronousResources)) {
-			$str .= "\n" . 'setTimeout("pfbc_focus_' . $this->attributes["id"] . '();", 250);';
 			$str .= "//]]>";
 			$str .= "</script>\n";
 		}

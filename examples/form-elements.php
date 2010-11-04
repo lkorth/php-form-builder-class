@@ -48,7 +48,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->addCheckSort("Checksort:", "MyChecksort", "", array("Option #0", "Option #1", "Option #2"));
 	$form->addCaptcha("Captcha:");
 	$form->addSlider("Slider:", "MySlider");
-	$form->addRating("Rating:", "MyRating", "", range(1, 10));
+	$form->addRating("Rating:", "MyRating", "", range(1, 5));
 	$form->addHTML("HTML:");
 	$form->addColor("Color:", "MyColor");
 	$form->addEmail("Email:", "MyEmail");
