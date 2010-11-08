@@ -1605,14 +1605,14 @@ STR;
 
 		if(empty($this->preventJQueryLoad)) {
 			$str .= <<<STR
-		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 
 STR;
 		}
 
 		if(empty($this->preventJQueryUILoad)) {
 			$str .= <<<STR
-		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js"></script>
 
 STR;
 		}
@@ -1630,20 +1630,37 @@ STR;
 				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea, #{$this->attributes["id"]} .pfbc-main .pfbc-webeditor").each(function() { 
 					jQueryElementObj = jQuery(this);
 					if(!jQueryElementObj.hasClass("pfbc-adjusted")) {
-						if(jQueryElementObj.parent().parent().is(":hidden")) {
-							jQuery.swap(jQueryElementObj.parent().parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
-								pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
-							});
-						}	
-						else if(jQueryElementObj.parent().is(":hidden")) {
-							jQuery.swap(jQueryElementObj.parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
-								pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
-							});
+						if(jQueryElementObj.is(":hidden")) {
+							if(jQuery("#{$this->attributes["id"]}").is(":hidden")) {
+								jQuery.swap(jQuery("#{$this->attributes["id"]}")[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
+									pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
+								});
+							}
+							else if(jQueryElementObj.parent().parent().parent().is(":hidden")) {
+								jQuery.swap(jQueryElementObj.parent().parent().parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
+									pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
+								});
+							}	
+							else if(jQueryElementObj.parent().parent().is(":hidden")) {
+								jQuery.swap(jQueryElementObj.parent().parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
+									pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
+								});
+							}	
+							else if(jQueryElementObj.parent().is(":hidden")) {
+								jQuery.swap(jQueryElementObj.parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
+									pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
+								});
+							}	
+							else {
+								jQuery.swap(jQueryElementObj[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
+									pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
+								});
+							}	
 						}	
 						else
 							pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
 					}
-				});
+				});	
 			}
 			function pfbc_width_{$this->attributes["id"]}(eleObj) {
 				if(eleObj.hasClass("pfbc-webeditor"))
