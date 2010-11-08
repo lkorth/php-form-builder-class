@@ -101,6 +101,7 @@ class form extends pfbc {
 	protected $map;
 	protected $mapMargin;
 	protected $noAutoFocus;
+	protected $phpIncludesPath;
 	protected $preventJQueryLoad;
 	protected $preventJQueryUILoad;
 	protected $preventJSValidation;
@@ -138,7 +139,6 @@ class form extends pfbc {
 	private $jqueryUIButtonExists;
 	private $labelWidthExists;
 	private $latlngIDArr;
-	private $phpIncludesPath;
 	private $referenceValues;
 	private $tinymceIDArr;
 	private $tooltipIDArr;
@@ -2990,7 +2990,7 @@ STR;
 				if(!empty($form->jqueryStarRatingIDArr))
 					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js");
 				if(!empty($form->jqueryDateRangeIDArr))
-					$str .= str_replace(array(), array(), file_get_contents("{$form->phpIncludesPath}/jquery/ui/daterangepicker.jQuery.js"));
+					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/ui/daterangepicker.jQuery.js");
 				if(!empty($form->jqueryColorIDArr))
 					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
 				if(empty($form->preventGoogleMapsLoad) && !empty($form->latlngIDArr))

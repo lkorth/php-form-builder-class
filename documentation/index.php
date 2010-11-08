@@ -45,7 +45,7 @@ include("../header.php");
 	<a name="The-Hello-World-of-PHP-Form-Builder-Class"></a>
 	<h3>The "Hello World" of PHP Form Builder Class</h3>
 	<p>Before getting started, you will need to <a href="http://code.google.com/p/php-form-builder-class/downloads/list">download the latest version
-	of this project</a>, unzip formbuilder.zip, and install the php-form-builder-class directory on your web server.  After you've done this, you're 
+	of this project</a>, unzip formbuilder.zip, and install the php-form-builder-class directory in a publicly accessible location on your web server.  After you've done this, you're 
 	ready to get started creating your first form using this project.</p>
 		
 	<p>Let's begin by looking at the code snippet of our "Hello World" form seen below...</p>	
@@ -79,7 +79,7 @@ include("php-form-builder-class/class.form.php");
 
 	<?php
 echo '<pre>', highlight_string('<?php
-	$form = new form("HelloWorld");
+$form = new form("HelloWorld");
 ?>', true), '</pre>';
 	?>
 
@@ -144,8 +144,8 @@ $form->render();
 <div class="pfbc_doc_section">
 	<a name="Form-Elements"></a>
 	<h3>Form Elements</h3>
-	<p>The latest release of this project - version <?php echo(file_get_contents('../version'));?> - contains support for 26 form element types.  These 
-	include button, captcha, checkbox, checksort, ckeditor, colorpicker, country, date, daterange, email, file, hidden, html, htmlexternal, latlng, 
+	<p>The latest release of this project - version <?php echo(file_get_contents('../version'));?> - contains support for 27 form element types.  These 
+	include button, captcha, checkbox, checksort, ckeditor, colorpicker, country, date, daterange, email, expdate, file, hidden, html, htmlexternal, latlng, 
 	password, radio, rating, select, sort, state, textarea, textbox, truefalse, webeditor, and yesno.  Let's take a closer look at how each of these form element
 	types can be used in your development.</p>
 
