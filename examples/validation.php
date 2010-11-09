@@ -74,6 +74,7 @@ $form->addHidden("cmd", "submit_0");
 $form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
 $form->addEmail("Email Address:", "MyEmail");
 $form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
+$form->addTextbox("Textbox w/Float Validation:", "MyFloatTextbox", "", array("float" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
 $form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
 $form->addButton();
 $form->render();
@@ -325,8 +326,8 @@ $form->render();
 	?>
 
 	<p><b>Modifying Error Messages</b> - Each of the five validation error types (see top section of this page for detailed list) generates its own error message explaining
-	what happened to the user so he/she can correct and re-submit.  There are four form attributes - "errorMsgFormat", "emailErrorMsgFormat", "integerErrorMsgFormat", 
-	and "alphanumericErrorMsgFormat" - that can be used to customize each of these error messages.  If "[LABEL]" is found within the error message, it will be replaced
+	what happened to the user so he/she can correct and re-submit.  There are five form attributes - "errorMsgFormat", "emailErrorMsgFormat", "integerErrorMsgFormat", 
+	"floatErrorMsgFormat", and "alphanumericErrorMsgFormat" - that can be used to customize each of these error messages.  If "[LABEL]" is found within the error message, it will be replaced
 	by the appropriate element's label.</p>
 
 	<?php
@@ -361,6 +362,7 @@ $form->setAttributes(array(
 	"errorMsgFormat" => "Oops! You didn\'t fill in the [LABEL] field.",
 	"emailErrorMsgFormat" => "You didn\'t supply a valid email address in the [LABEL] field.",
 	"integerErrorMsgFormat" => "[LABEL] can only contain numbers. No letters or special character allowed!",
+	"floatErrorMsgFormat" => "[LABEL] can only contain float/decimal numbers. No letters or special character allowed!",
 	"alphanumericErrorMsgFormat" => "There were invalid character found in this field.  [LABEL] can only contain letters and/or numbers.",
 	"width" => 400
 ));
@@ -372,6 +374,7 @@ $form->addHidden("cmd", "submit_4");
 $form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
 $form->addEmail("Email Address:", "MyEmail");
 $form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
+$form->addTextbox("Textbox w/Float Validation:", "MyFloatTextbox", "", array("float" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
 $form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
 $form->addButton();
 $form->render();

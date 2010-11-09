@@ -32,7 +32,7 @@ The goals of this project are to...
 		<li>Hybrid Form Element Types - state, country, yesno, truefalse, date, daterange, expdate, sort, latlng, checksort, webeditor, slider, rating, captcha, html, color, email, button, htmlexternal</li>
 		<li>File Upload Support</li>
 		<li>Email Address Validation</li>
-		<li>Integer and Alphanumeric Validation</li>
+		<li>Integer, Float, and Alphanumeric Validation</li>
 		<li>Two Wysiwyg Web Editors (<a href="http://tinymce.moxiecode.com/">TinyMCE</a>, <a href="http://ckeditor.com/">CKEditor</a>)</li>
 		<li>Tooltips (<a href="http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/">jQuery Poshy Tip Plugin</a>)</li>
 		<li>Captcha (<a href="http://recaptcha.net">reCAPTCHA</a>)</li>
