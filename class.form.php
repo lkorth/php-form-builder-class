@@ -85,6 +85,7 @@ class form extends pfbc {
 	protected $emailErrorMsgFormat;
 	protected $errorDisplayOption;
 	protected $errorMsgFormat;
+	protected $decimalErrorMsgFormat;
 	protected $integerErrorMsgFormat;
 	protected $jqueryDateFormat;
 	protected $jqueryNoConflict;
@@ -123,6 +124,7 @@ class form extends pfbc {
 	private $emailError;
 	private $emailExists;
 	private $expdateExists;
+	private $floatExists;
 	private $focusElement;
 	private $gsErrorMsg;
 	private $hasFormTag;
@@ -164,6 +166,7 @@ class form extends pfbc {
 		//[LABEL] is replaced with the appropriate element's label for both emailErrorMsgFormat and errorMsgFormat attributes.
 		$this->emailErrorMsgFormat = "Error: [LABEL] contains an invalid email address.";
 		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
+		$this->floatErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers, decimals and signs are allowed.";
 		if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
 			$this->https = 1;
 		$this->integerErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers are allowed.";
@@ -684,6 +687,9 @@ class form extends pfbc {
 		
 		if(!empty($ele->integer) && empty($this->integerExists))
 			$this->integerExists = 1;
+
+		if(!empty($ele->float) && empty($this->floatExists))
+			$this->floatExists = 1;
 		
 		if(!empty($ele->alphanumeric) && empty($this->alphanumericExists))
 			$this->alphanumericExists = 1;
@@ -1077,6 +1083,8 @@ STR;
 					$ele->applyClass("pfbc-textbox");	
 					if(!empty($ele->integer))
 						$ele->applyClass("pfbc-integer");	
+					elseif(!empty($ele->float))
+						$ele->applyClass("pfbc-float");	
 					elseif(!empty($ele->alphanumeric))
 						$ele->applyClass("pfbc-alphanumeric");
 						
@@ -2124,7 +2132,21 @@ STR;
 				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->integerErrorMsgFormat);
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
-		if(!formObj.elements["$eleName"].value.match(/^\d+$/)) {
+		if(!formObj.elements["$eleName"].value.match(/^[-+]*\d+$/)) {
+			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+			if(js_errors_{$this->attributes["id"]}.length == 1)
+				formObj.elements["$eleName"].focus();
+		}		
+	}
+
+STR;
+				
+			}
+			elseif(empty($this->preventJSValidation) && !empty($ele->float)) {
+				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->floatErrorMsgFormat);
+				$str .= <<<STR
+	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
+		if(!formObj.elements["$eleName"].value.match(/^[-+]*[0-9]*\.?[0-9]+$/)) {
 			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 			if(js_errors_{$this->attributes["id"]}.length == 1)
 				formObj.elements["$eleName"].focus();
@@ -2235,8 +2257,10 @@ STR;
 					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
 			}
 
-			if(empty($errorMsg) && !empty($ele->integer) && $validValue && !preg_match("/^\d+$/", $eleValue))
+			if(empty($errorMsg) && !empty($ele->integer) && $validValue && !preg_match("/^[-+]*\d+$/", $eleValue))
 				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->integerErrorMsgFormat);
+			elseif(empty($errorMsg) && !empty($ele->float) && $validValue && !preg_match("/^[-+]*[0-9]*\.?[0-9]+$/", $eleValue))
+				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->floatErrorMsgFormat);
 			elseif(empty($errorMsg) && !empty($ele->alphanumeric) && $validValue && !preg_match("/^[0-9a-zA-Z]+$/", $eleValue))
 				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->alphanumericErrorMsgFormat);
 
@@ -3039,7 +3063,7 @@ jQuery.noConflict();
 STR;
 			}
 
-			if(!empty($form->integerExists) || !empty($form->alphanumericExists)) {
+			if(!empty($form->integerExists) || !empty($form->floatExists) || !empty($form->alphanumericExists)) {
 			$str .= <<<STR
 var pfbc_allowed_keys = [8, 9, 13, 37, 39, 46];			
 
@@ -3052,6 +3076,27 @@ jQuery("#{$this->attributes["id"]} .pfbc-integer").bind("keydown", function(even
 	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1
 		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))
 		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))
+		|| (event.keyCode == 109)
+		|| (event.keyCode == 107)
+		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))
+	)
+		return true;
+	else
+		return false;
+});
+
+STR;
+			}
+
+			if(!empty($form->floatExists)) {
+				$str .= <<<STR
+jQuery("#{$this->attributes["id"]} .pfbc-float").bind("keydown", function(event) {
+	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1
+		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))
+		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))
+		|| (event.keyCode == 109)
+		|| (event.keyCode == 107)
+		|| (event.keyCode == 190)
 		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))
 	)
 		return true;

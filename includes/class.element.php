@@ -4,6 +4,7 @@ class element extends pfbc {
 	public $attributes;
 	public $basic;
 	public $container;
+	public $float;
 	public $height;
 	public $hint;
 	public $hideCancel;

@@ -25,7 +25,7 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	include("../header.php");
 	?>
 
-	<p><b>Validation</b> - Javascript/PHP validation within this project occurs when a form element meets one of five scenarios listed below.</p>
+	<p><b>Validation</b> - Javascript/PHP validation within this project occurs when a form element meets one of six scenarios listed below.</p>
 	<ol style="margin: 0;">
 		<li>When the "required" element attribute is applied.  The "required" attribute places a red asterisks to the left of the element's label to provide
 		a visual notification to the user that this field must be populated.</li>
@@ -33,7 +33,9 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 		the reCAPTCHA challenge phrase was answered correctly.</li>
 		<li>The element is of type "email".  Elements added to the form by the addEmail function are checked before (javascript) and after (php) submission to ensure
 		they contain an email address that is formatted correctly.</li>
-		<li>When the "integer" element attribute is applied.  The "integer" attribute allows only numbers to be typed into textboxes.  Copy-and-paste is allowed, so the
+		<li>When the "integer" element attribute is applied.  The "integer" attribute allows only plus/minus signs and numbers to be typed into textboxes.  Copy-and-paste is allowed, so the
+		element's value is checked before (javascript) and after (php) submission to ensure no illegal characters exist.</li>
+		<li>When the "float" element attribute is applied.  The "float" attribute allows only plus/minus signs, numbers, and decimal points to be typed into textboxes.  Copy-and-paste is allowed, so the
 		element's value is checked before (javascript) and after (php) submission to ensure no illegal characters exist.</li>
 		<li>When the "alphanumeric" element attribute is applied.  The "alphanumeric" attribute allows only numbers and/or letters to be typed into textboxes.  Copy-and-paste is allowed, so the
 		element's value is checked before (javascript) and after (php) submission to ensure no illegal characters exist.</li>
@@ -54,6 +56,7 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->addCaptcha("Captcha:");
 	$form->addEmail("Email Address:", "MyEmail");
 	$form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
+	$form->addTextbox("Textbox w/Float Validation:", "MyFloatTextbox", "", array("float" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
 	$form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
 	$form->addButton();
 	$form->render();
@@ -335,6 +338,7 @@ $form->render();
 		"errorMsgFormat" => "Oops! You didn't fill in the [LABEL] field.",
 		"emailErrorMsgFormat" => "You didn't supply a valid email address in the [LABEL] field.",
 		"integerErrorMsgFormat" => "[LABEL] can only contain numbers. No letters or special character allowed!",
+		"floatErrorMsgFormat" => "[LABEL] can only contain float/decimal numbers. No letters or special character allowed!",
 		"alphanumericErrorMsgFormat" => "There were invalid character found in this field.  [LABEL] can only contain letters and/or numbers.",
 		"width" => 400
 	));
@@ -346,6 +350,7 @@ $form->render();
 	$form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
 	$form->addEmail("Email Address:", "MyEmail");
 	$form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
+	$form->addTextbox("Textbox w/Float Validation:", "MyFloatTextbox", "", array("float" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
 	$form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1, "postHTML" => '<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>'));
 	$form->addButton();
 	$form->render();
