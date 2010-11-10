@@ -190,6 +190,7 @@ class form extends pfbc {
 			"radio" => array("checked", "disabled", "name", "size", "type", "accesskey", "class", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
 			"checksort" => array("checked", "disabled", "size", "accesskey", "class", "dir", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
 			"latlng" => array("disabled", "maxlength", "name", "readonly", "size", "type", "accesskey", "class", "dir", "id", "lang", "style", "tabindex", "title", "xml:lang", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup", "onselect"),
+			"fieldset" => array("class", "dir", "id", "lang", "style", "title", "xml:lang", "onclick", "ondblclick", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "onkeydown", "onkeypress", "onkeyup")
 		);
 
 		$this->setIncludePaths();
@@ -2189,7 +2190,18 @@ STR;
 	}
 
 	public function openFieldset($legend, $additionalParams="") {
-		$this->addElement("", "", "htmlexternal", '<fieldset class="pfbc-fieldset"><legend>' . $legend . "</legend>");
+		$params = array();
+		if(!empty($additionalParams) && is_array($additionalParams)) {
+			foreach($additionalParams as $key => $value)
+				$params[$key] = $value;
+		}
+
+		$ele = new element();
+		$ele->setAttributes($params);
+		$ele->applyClass("pfbc-fieldset");
+
+		$str = "<fieldset" . $this->attributesToHTML($ele->attributes, $this->allowedFields["fieldset"]) . "><legend>" . $legend . "</legend>";
+		$this->addElement("", "", "htmlexternal", $str);
 	}
 
 	private function phpCycleElements($elements, $referenceValues, $form) {
