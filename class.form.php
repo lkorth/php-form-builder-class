@@ -9,10 +9,12 @@ Developer Google Group - http://groups.google.com/group/php-form-builder-class-d
 
 abstract class pfbc {
 	protected function applyClass($class) {
-		if(!empty($this->attributes["class"]))
-			$this->attributes["class"] .= " " . $class;
-		else
-			$this->attributes["class"] = $class;
+		if(empty($this->attributes["class"]) || strpos($this->attributes["class"], $class) === false) {
+			if(!empty($this->attributes["class"]))
+				$this->attributes["class"] .= " " . $class;
+			else
+				$this->attributes["class"] = $class;
+		}	
 	}
 
 	protected function attributesToHTML($attributes, $allow, $exclude="") {
@@ -1088,6 +1090,8 @@ STR;
 						$ele->applyClass("pfbc-float");	
 					elseif(!empty($ele->alphanumeric))
 						$ele->applyClass("pfbc-alphanumeric");
+					if(!empty($ele->hint) && $ele->attributes["value"] == $ele->hint)
+						$ele->applyClass("pfbc-hint");	
 						
 					$str .= "<input" . $this->attributesToHTML($ele->attributes, $this->allowedFields["text"]) . "/>";
 					if($focus)
@@ -1400,6 +1404,8 @@ STR;
 					$str .= $ele->attributes["value"];
 				elseif($eleType == "latlng") {
 					$ele->applyClass("pfbc-textbox");
+					if(!empty($ele->hint) && $ele->attributes["value"] == $ele->hint)
+						$ele->applyClass("pfbc-hint");	
 					if(empty($ele->attributes["style"]))
 						$ele->attributes["style"] = "";
 
@@ -1427,8 +1433,11 @@ STR;
 						$str .= ' width: ' . $ele->width . 'px;';
 					$str .= '"></div>';
 
-					if(empty($ele->hideJump))
-						$str .= $this->indent("\t") . '<input id="' . $latlngID . '_locationJump" type="text" value="Location Jump: Enter Keyword, City/State, Address, or Zip Code" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onfocus="focusJumpToLatLng_' . $this->attributes["id"] . '(this);" onblur="blurJumpToLatLng_' . $this->attributes["id"] . '(this);" onkeyup="jumpToLatLng_' . $this->attributes["id"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');"/>';
+					if(empty($ele->hideJump)) {
+						$ele->applyClass("pfbc-hint");	
+						$hint = "Location Jump: Enter Keyword, City/State, Address, or Zip Code";
+						$str .= $this->indent("\t") . '<input id="' . $latlngID . '_locationJump" type="text" value="' . $hint . '" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onclick="hintfocus_' . $this->attributes["id"] . '(this, \'' . $hint . '\');" onblur="hintblur_' . $this->attributes["id"] . '(this, \'' . $hint . '\');" onkeyup="jumpToLatLng_' . $this->attributes["id"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');"/>';
+					}	
 
 					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_clearDiv" style="';
 					if(empty($ele->attributes["value"]) || !is_array($ele->attributes["value"]))
@@ -3319,10 +3328,7 @@ jQuery("#{$form->jqueryColorIDArr[$c]}").ColorPicker({
 	onSubmit: function(hsb, hex, rgb, el) { 
 		jQuery(el).val(hex); 
 		jQuery(el).ColorPickerHide(); 
-	}, 
-	onBeforeShow: function() { 
-		if(this.value != "Click to Select Color..." && this.value != "") 
-			jQuery(this).ColorPickerSetColor(this.value); 
+		jQuery(el).removeClass("pfbc-hint");
 	} 
 }).bind("keyup", function(){ 
 	jQuery(this).ColorPickerSetColor(this.value); 
@@ -3391,6 +3397,7 @@ STR;
 		var lat = latlng.lat();
 		var lng = latlng.lng();
 		document.getElementById("$latlngID").value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
+		jQuery("#$latlngID").removeClass("pfbc-hint");
 		document.getElementById("{$latlngID}_clearDiv").style.display = "block";
 	});	
 
@@ -3411,23 +3418,17 @@ function jumpToLatLng_{$this->attributes["id"]}(fieldObj, latlngID, fieldName) {
 				var lat = results[0].geometry.location.lat();
 				var lng = results[0].geometry.location.lng();
 				document.getElementById(latlngID).value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
+				jQuery("#" + latlngID).removeClass("pfbc-hint");
 				document.getElementById(latlngID + "_clearDiv").style.display = "block";
 			}
 		});
 	}
 }
-function focusJumpToLatLng_{$this->attributes["id"]}(fieldObj) {
-	if(fieldObj.value == 'Location Jump: Enter Keyword, City/State, Address, or Zip Code')
-		fieldObj.value = '';
-}
-function blurJumpToLatLng_{$this->attributes["id"]}(fieldObj) {
-	if(fieldObj.value == '')
-		fieldObj.value = 'Location Jump: Enter Keyword, City/State, Address, or Zip Code';
-}
 function clearLatLng_{$this->attributes["id"]}(latlngID, latlngHint) {
 	if(document.getElementById(latlngID + "_locationJump"))
 		document.getElementById(latlngID + "_locationJump").value = "Location Jump: Enter Keyword, City/State, Address, or Zip Code";
 	document.getElementById(latlngID).value = latlngHint
+	jQuery("#" + latlngID).addClass("pfbc-hint");
 	document.getElementById(latlngID + "_clearDiv").style.display = "none";
 }
 
@@ -3530,12 +3531,20 @@ STR;
 			if(!empty($form->hintExists)) {
 				$str .= <<<STR
 function hintfocus_{$this->attributes["id"]}(eleObj, hint) {
-	if(eleObj.value == hint)
-		eleObj.value = '';
+	if(jQuery(eleObj).val() == hint) {
+		jQuery(eleObj).val("");
+		jQuery(eleObj).removeClass("pfbc-hint");
+	}	
 }
 function hintblur_{$this->attributes["id"]}(eleObj, hint) {
-	if(eleObj.value == '')
-		eleObj.value = hint;
+	window.setTimeout(function() {
+		if(jQuery(eleObj).val() == "") {
+			jQuery(eleObj).val(hint);
+			jQuery(eleObj).addClass("pfbc-hint");
+		}	
+		else
+			jQuery(eleObj).removeClass("pfbc-hint");
+	}, 250);	
 }
 
 STR;
