@@ -32,7 +32,6 @@ $form->addSort("Sort:", "MySort", array("Option #0", "Option #1", "Option #2"));
 $form->addCheckSort("Checksort:", "MyChecksort", "", array("Option #0", "Option #1", "Option #2"));
 $form->addCaptcha("Captcha:");
 $form->addSlider("Slider:", "MySlider");
-$form->addRating("Rating:", "MyRating", "", range(1, 10));
 $form->addColor("Color:", "MyColor");
 $form->addEmail("Email:", "MyEmail");
 $form->addButton();

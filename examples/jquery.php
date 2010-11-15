@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1", "submit_2", "submit_3", "submit_4", "submit_5", "submit_6", "submit_7", "submit_8"))) {
+if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1", "submit_2", "submit_3", "submit_4", "submit_5", "submit_6", "submit_7"))) {
 	$form = new form("jquery_" . substr($_POST["cmd"], -1));
 	if($form->validate())
 		header("Location: jquery.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
@@ -42,7 +42,6 @@ STR;
 		<li><a href="#daterange">jQuery Date Range Picker Plugin</a></li>
 		<li><a href="#slider">jQueryUI Slider Widget</a></li>
 		<li><a href="#sort">jQueryUI Sortable Interaction</a></li>
-		<li><a href="#rating">jQuery Star Rating Plugin</a></li>
 		<li><a href="#color">jQuery Color Picker Plugin</a></li>
 		<li><a href="#button">jQueryUI Button Widget</a></li>
 		<li><a href="#tooltip">jQuery Poshy Tip Plugin</a></li>
@@ -241,7 +240,7 @@ $form->render();
 ?>', true), '</pre>';
 	?>
 
-	<p><b><a name="rating">jQuery Star Rating Plugin</a></b> - The rating element utilizes the Star Rating jQuery plugin.  Below, you'll find several ways you can use the addRating function in your forms.  See <a href="http://orkans-tmp.22web.net/star_rating/index.html">http://orkans-tmp.22web.net/star_rating/index.html</a> for more information on this jQuery plugin.</p>
+	<p><b><a name="color">jQuery Color Picker Plugin</a></b> - The color element utilizes the Color Picker jQuery plugin.  Below, you'll find several ways you can use the addColor function in your forms.  See <a href="http://eyecon.ro/colorpicker/">http://eyecon.ro/colorpicker/</a> for more information on this jQuery plugin.</p>
 
 	<?php
 	$form = new form("jquery_4");
@@ -256,11 +255,9 @@ $form->render();
 		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_4"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_4");
-	$form->addRating("Rating:", "MyRating", "", range(1, 10));
-	$form->addRating("Rating w/Associative Array of Options:", "MyRatingAssociative", "", array("1" => "Poor", "2" => "Below Average", "3" => "Average", "4" => "Above Average", "5" => "Excellent"));
-	$form->addRating("Rating w/Partial Star:", "MyRatingPartial", "", range(1, 10), array("jqueryOptions" => array("split" => 2)));
-	$form->addRating("Rating w/No Cancel Button and No Caption:", "MyRatingNoCancel", "", range(1, 10), array("hideCaption" => 1, "jqueryOptions" => array("cancelShow" => false)));
-	$form->addRating('Rating w/Custom Caption Location: <span id="customRatingCaption"></span>', "MyRatingCaption", "", range(1, 10), array("jqueryOptions" => array("captionEl" => 'js:jQuery("#customRatingCaption")')));
+	$form->addColor("Color:", "MyColor");
+	$form->addColor("Color w/Custom Hint:", "MyColorHint", "", array("hint" => "Click here to select your paint color."));
+	$form->addColor("Color w/Default Value:", "MyColorPrefilled", "660099");
 	$form->addButton();
 	$form->render();
 
@@ -274,47 +271,6 @@ if(!empty($_GET["errormsg_4"]))
 	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_4"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_4");
-$form->addRating("Rating:", "MyRating", "", range(1, 10));
-$form->addRating("Rating w/Associative Array of Options:", "MyRatingAssociative", "", array("1" => "Poor", "2" => "Below Average", "3" => "Average", "4" => "Above Average", "5" => "Excellent"));
-$form->addRating("Rating w/Partial Star:", "MyRatingPartial", "", range(1, 10), array("jqueryOptions" => array("split" => 2)));
-$form->addRating("Rating w/No Cancel Button and No Caption:", "MyRatingNoCancel", "", range(1, 10), array("hideCaption" => 1, "jqueryOptions" => array("cancelShow" => false)));
-$form->addRating(\'Rating w/Custom Caption Location: <span id="customRatingCaption"></span>\', "MyRatingCaption", "", range(1, 10), array("jqueryOptions" => array("captionEl" => \'js:jQuery("#customRatingCaption")\')));
-$form->addButton();
-$form->render();
-?>', true), '</pre>';
-	?>
-
-	<p><b><a name="color">jQuery Color Picker Plugin</a></b> - The color element utilizes the Color Picker jQuery plugin.  Below, you'll find several ways you can use the addColor function in your forms.  See <a href="http://eyecon.ro/colorpicker/">http://eyecon.ro/colorpicker/</a> for more information on this jQuery plugin.</p>
-
-	<?php
-	$form = new form("jquery_5");
-	$form->setAttributes(array(
-		"noAutoFocus" => 1,
-		"preventJQueryLoad" => 1,
-		"preventJQueryUILoad" => 1,
-		"width" => 400
-	));
-
-	if(!empty($_GET["errormsg_5"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_5"]), FILTER_SANITIZE_SPECIAL_CHARS);
-
-	$form->addHidden("cmd", "submit_5");
-	$form->addColor("Color:", "MyColor");
-	$form->addColor("Color w/Custom Hint:", "MyColorHint", "", array("hint" => "Click here to select your paint color."));
-	$form->addColor("Color w/Default Value:", "MyColorPrefilled", "660099");
-	$form->addButton();
-	$form->render();
-
-	echo '<pre>', highlight_string('<?php
-$form = new form("jquery_5");
-$form->setAttributes(array(
-	"width" => 400
-));
-
-if(!empty($_GET["errormsg_5"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_5"]), FILTER_SANITIZE_SPECIAL_CHARS);
-
-$form->addHidden("cmd", "submit_5");
 $form->addColor("Color:", "MyColor");
 $form->addColor("Color w/Custom Hint:", "MyColorHint", "", array("hint" => "Click here to select your paint color."));
 $form->addColor("Color w/Default Value:", "MyColorPrefilled", "660099");
@@ -328,7 +284,7 @@ $form->render();
 	button.  See <a href="http://jqueryui.com/demos/button/">http://jqueryui.com/demos/button/</a> for more information on this jQueryUI widget.</p>
 
 	<?php
-	$form = new form("jquery_6");
+	$form = new form("jquery_5");
 	$form->setAttributes(array(
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
@@ -337,10 +293,10 @@ $form->render();
 		"width" => 400
 	));
 
-	if(!empty($_GET["errormsg_6"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_6"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	if(!empty($_GET["errormsg_5"]))
+		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_5"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
-	$form->addHidden("cmd", "submit_6");
+	$form->addHidden("cmd", "submit_5");
 	$form->addTextbox('Enable all form buttons w/"jqueryUIButtons" form attribute:', "MyTextbox");
 	$form->addButton("Button #1");
 	$form->addButton("Button #2");
@@ -349,6 +305,65 @@ $form->render();
 	?>
 
 	<br/><br/>
+
+	<?php
+	$form = new form("jquery_6");
+	$form->setAttributes(array(
+		"noAutoFocus" => 1,
+		"preventJQueryLoad" => 1,
+		"preventJQueryUILoad" => 1,
+		"width" => 400
+	));
+
+	if(!empty($_GET["errormsg_6"]))
+		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_6"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+	$form->addHidden("cmd", "submit_6");
+	$form->addTextbox('Enable single button w/"jqueryUI" element attribute:', "MyTextbox");
+	$form->addButton("Button #1");
+	$form->addButton("Button #2", "submit", array("jqueryUI" => 1));
+	$form->addButton("Button #3");
+	$form->render();
+
+	echo '<pre>', highlight_string('<?php
+$form = new form("jquery_5");
+$form->setAttributes(array(
+	"jqueryUIButtons" => 1,
+	"width" => 400
+));
+
+if(!empty($_GET["errormsg_5"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_5"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_5");
+$form->addTextbox(\'Enable all form buttons w/"jqueryUIButtons" form attribute:\', "MyTextbox");
+$form->addButton("Button #1");
+$form->addButton("Button #2");
+$form->addButton("Button #3");
+$form->render();
+?>
+
+<br/><br/>
+
+<?php
+$form = new form("jquery_6");
+$form->setAttributes(array(
+	"width" => 400
+));
+
+if(!empty($_GET["errormsg_6"]))
+	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_6"]), FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_6");
+$form->addTextbox(\'Enable single button w/"jqueryUI" element attribute:\', "MyTextbox");
+$form->addButton("Button #1");
+$form->addButton("Button #2", "submit", array("jqueryUI" => 1));
+$form->addButton("Button #3");
+$form->render();
+?>', true), '</pre>';
+	?>
+
+	<p><b><a name="tooltip">jQuery Tooltip Plugin</a></b> - This project utilizes the Poshy Tip jQuery plugin for handling tooltips.  To activate a tooltip, simply set the "tooltip" element attribute to a string.  Both plain-text and html content are supported.  See <a href="http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/">http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/</a> for more information on this jQuery plugin.</p>
 
 	<?php
 	$form = new form("jquery_7");
@@ -363,33 +378,13 @@ $form->render();
 		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_7"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_7");
-	$form->addTextbox('Enable single button w/"jqueryUI" element attribute:', "MyTextbox");
-	$form->addButton("Button #1");
-	$form->addButton("Button #2", "submit", array("jqueryUI" => 1));
-	$form->addButton("Button #3");
+	$form->addTextbox("Tooltip:", "MyTextbox", "", array("tooltip" => "This is a text-only tooltip."));
+	$form->addTextbox("Tooltip w/Rich Text:", "MyTextboxRichText", "", array("tooltip" => '<div class="tooltipTitle">This is my rich-text tooltip.</div><div class="tooltipBody">The "tooltip" element attribute can accept either text or html.</div>'));
+	$form->addTextbox("Tooltip w/Image:", "MyTextboxImage", "", array("tooltip" => '<img src="http://www.imavex.com/php-form-builder-class/screenshots/1.png" style="background: #fff; padding: 10px; border: 1px solid #ccc;"/>'));
+	$form->addButton();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("jquery_6");
-$form->setAttributes(array(
-	"jqueryUIButtons" => 1,
-	"width" => 400
-));
-
-if(!empty($_GET["errormsg_6"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_6"]), FILTER_SANITIZE_SPECIAL_CHARS);
-
-$form->addHidden("cmd", "submit_6");
-$form->addTextbox(\'Enable all form buttons w/"jqueryUIButtons" form attribute:\', "MyTextbox");
-$form->addButton("Button #1");
-$form->addButton("Button #2");
-$form->addButton("Button #3");
-$form->render();
-?>
-
-<br/><br/>
-
-<?php
 $form = new form("jquery_7");
 $form->setAttributes(array(
 	"width" => 400
@@ -399,45 +394,6 @@ if(!empty($_GET["errormsg_7"]))
 	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_7"]), FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_7");
-$form->addTextbox(\'Enable single button w/"jqueryUI" element attribute:\', "MyTextbox");
-$form->addButton("Button #1");
-$form->addButton("Button #2", "submit", array("jqueryUI" => 1));
-$form->addButton("Button #3");
-$form->render();
-?>', true), '</pre>';
-	?>
-
-	<p><b><a name="tooltip">jQuery Tooltip Plugin</a></b> - This project utilizes the Poshy Tip jQuery plugin for handling tooltips.  To activate a tooltip, simply set the "tooltip" element attribute to a string.  Both plain-text and html content are supported.  See <a href="http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/">http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/</a> for more information on this jQuery plugin.</p>
-
-	<?php
-	$form = new form("jquery_8");
-	$form->setAttributes(array(
-		"noAutoFocus" => 1,
-		"preventJQueryLoad" => 1,
-		"preventJQueryUILoad" => 1,
-		"width" => 400
-	));
-
-	if(!empty($_GET["errormsg_8"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_8"]), FILTER_SANITIZE_SPECIAL_CHARS);
-
-	$form->addHidden("cmd", "submit_8");
-	$form->addTextbox("Tooltip:", "MyTextbox", "", array("tooltip" => "This is a text-only tooltip."));
-	$form->addTextbox("Tooltip w/Rich Text:", "MyTextboxRichText", "", array("tooltip" => '<div class="tooltipTitle">This is my rich-text tooltip.</div><div class="tooltipBody">The "tooltip" element attribute can accept either text or html.</div>'));
-	$form->addTextbox("Tooltip w/Image:", "MyTextboxImage", "", array("tooltip" => '<img src="http://www.imavex.com/php-form-builder-class/screenshots/1.png" style="background: #fff; padding: 10px; border: 1px solid #ccc;"/>'));
-	$form->addButton();
-	$form->render();
-
-	echo '<pre>', highlight_string('<?php
-$form = new form("jquery_8");
-$form->setAttributes(array(
-	"width" => 400
-));
-
-if(!empty($_GET["errormsg_8"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_8"]), FILTER_SANITIZE_SPECIAL_CHARS);
-
-$form->addHidden("cmd", "submit_8");
 $form->addTextbox("Tooltip:", "MyTextbox", "", array("tooltip" => "This is a text-only tooltip."));
 $form->addTextbox("Tooltip w/Rich Text:", "MyTextboxRichText", "", array("tooltip" => \'<div class="tooltipTitle">This is my rich-text tooltip.</div><div class="tooltipBody">The "tooltip" element attribute can accept either text or html.</div>\'));
 $form->addTextbox("Tooltip w/Image:", "MyTextboxImage", "", array("tooltip" => \'<img src="http://www.imavex.com/php-form-builder-class/screenshots/1.png" style="background: #fff; padding: 10px; border: 1px solid #ccc;"/>\'));

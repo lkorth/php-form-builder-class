@@ -1545,11 +1545,8 @@ STR;
 		}
 
 		//This javascript section loads all required js and css files needed for a specific form.  CSS files are loaded into the <head> tag with javascript.
-		$str .= <<<STR
+		$str .= "\n\t" . '<div class="pfbc-script">' . "\n";
 
-	<div class="pfbc-script">
-
-STR;
 		//Serialize the form and store it in a session array.  This variable will be unserialized and used within js/css.php and the validate() method.
 		$_SESSION["pfbc-instances"][$this->attributes["id"]] = serialize($this);
 
@@ -1558,19 +1555,10 @@ STR;
 		else
 			$prefix = "http";
 
-		if(empty($this->preventJQueryLoad)) {
-			$str .= <<<STR
-		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
-
-STR;
-		}
-
-		if(empty($this->preventJQueryUILoad)) {
-			$str .= <<<STR
-		<script type="text/javascript" src="$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js"></script>
-
-STR;
-		}
+		if(empty($this->preventJQueryLoad))
+			$str .= "\t\t<script type='text/javascript' src='$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js'></script>\n";
+		if(empty($this->preventJQueryUILoad))
+			$str .= "\t\t<script type='text/javascript' src='$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js'></script>\n";
 
 		$session_param = "";
 		$session_name = session_name();
@@ -1648,36 +1636,25 @@ STR;
 		</script>
 
 STR;
+		if(empty($this->preventGoogleMapsLoad) && !empty($this->latlngIDArr))
+			$str .= "\t\t<script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>\n";
 
 		if(!empty($this->tinymceIDArr)) {
-			if(empty($this->preventTinyMCELoad)) {
-				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/tiny_mce/tiny_mce.js"></script>
-
-STR;
-			}
+			if(empty($this->preventTinyMCELoad))
+				$str .= "\t\t<script type='text/javascript' src='{$this->jsIncludesPath}/tiny_mce/tiny_mce.js'></script>\n";
 		}
 
 		if(!empty($this->ckeditorIDArr)) {
-			if(empty($this->preventCKEditorLoad)) {
-				$str .= <<<STR
-		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/ckeditor.js"></script>
-		<script type="text/javascript" src="{$this->jsIncludesPath}/ckeditor/adapters/jquery.js"></script>
-
-STR;
-			}
+			if(empty($this->preventCKEditorLoad))
+				$str .= "\t\t<script type='text/javascript' src='{$this->jsIncludesPath}/ckeditor/ckeditor.js'></script><script type='text/javascript' src='{$this->jsIncludesPath}/ckeditor/adapters/jquery.js'></script>\n";
 		}
-		$str .= <<<STR
-	</div>	
 
-STR;
-
-		$str .= "</div>";
+		$str .= "\t</div>\n</div>";
 
 		if(empty($this->hasFormTag))
 			$str .= "\n</div>";
 		else {
-			$str .= "\n\t" . '<div class="pfbc-loading">' . $this->processingMsg . '</div>';
+			$str .= "\n" . '<div class="pfbc-loading">' . $this->processingMsg . '</div>';
 			$str .= "\n</form>";
 		}	
 
@@ -2304,7 +2281,7 @@ STR;
 			if(empty($form->synchronousResources)) {
 				$str .= str_replace("images/", "$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
 				if(!empty($form->jqueryDateRangeIDArr))
-					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/ui/ui.daterangepicker.css");
+					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/daterangepicker/ui.daterangepicker.css");
 				if(!empty($form->jqueryColorIDArr))
 					$str .= str_replace("images/", "{$form->jsIncludesPath}/jquery/plugins/colorpicker/images/", file_get_contents("{$form->phpIncludesPath}/jquery/plugins/colorpicker/colorpicker.css"));
 				if(!empty($form->tooltipIDArr))
@@ -2312,7 +2289,7 @@ STR;
 			} else  {
 				$str .= "<link href='$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css' rel='stylesheet' type='text/css'/>";
 				if(!empty($form->jqueryDateRangeIDArr))
-					$str .= "<link href='{$form->jsIncludesPath}/jquery/ui/ui.daterangepicker.css' rel='stylesheet' type='text/css'/>";
+					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/daterangepicker/ui.daterangepicker.css' rel='stylesheet' type='text/css'/>";
 				if(!empty($form->jqueryColorIDArr))
 					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css' rel='stylesheet' type='text/css'/>";
 				if(!empty($form->tooltipIDArr))
@@ -2909,22 +2886,18 @@ STR;
 				if(!empty($form->tooltipIDArr))
 					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
 				if(!empty($form->jqueryDateRangeIDArr))
-					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/ui/daterangepicker.jQuery.js");
+					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/daterangepicker/daterangepicker.jQuery.js");
 				if(!empty($form->jqueryColorIDArr))
 					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/colorpicker/colorpicker.js");
-				if(empty($form->preventGoogleMapsLoad) && !empty($form->latlngIDArr))
-					$str .= file_get_contents("http://maps.google.com/maps/api/js?callback=myfunction&sensor=false");
 				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID))
 					$str .= file_get_contents("$prefix://www.google.com/recaptcha/api/js/recaptcha_ajax.js");
 			} else {
 				if(!empty($form->tooltipIDArr))
 					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js'></script>";
 				if(!empty($form->jqueryDateRangeIDArr))
-					$str .= "\n<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js'></script>";
+					$str .= "\n<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/daterangepicker/daterangepicker.jQuery.js'></script>";
 				if(!empty($form->jqueryColorIDArr))
 					$str .= "\n<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.js'></script>";
-				if(empty($form->preventGoogleMapsLoad) && !empty($form->latlngIDArr))
-					$str .= "\n<script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>";
 				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID))
 					$str .= "<script type='text/javascript' src='$prefix://www.google.com/recaptcha/api/js/recaptcha_ajax.js'></script>";
 				$str .= "\n" . '<script type="text/javascript">';

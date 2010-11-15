@@ -16,8 +16,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	include("../header.php");
 	?>
 
-	<p><b>All Supported Form Elements</b> - This example demonstrates all 28 supported form element types: hidden, textbox, textarea, webeditor, password, file, date, daterange, expdate, state, country, yesno, truefalse, select, radio, checkbox, latlng,
-	sort, checksort, captcha, slider, rating, html, color, email, htmlexternal, button.  More information on each of these form elements can be found in the <a href="../documentation/index.php#Form-Elements">Supported Form Elements section of the documentation</a>.</p>
+	<p><b>All Supported Form Elements</b> - This example demonstrates all 26 supported form element types: hidden, textbox, textarea, webeditor, password, file, date, daterange, expdate, state, country, yesno, truefalse, select, radio, checkbox, latlng,
+	sort, checksort, captcha, slider, html, color, email, htmlexternal, button.  More information on each of these form elements can be found in the <a href="../documentation/index.php#Form-Elements">Supported Form Elements section of the documentation</a>.</p>
 
 	<?php
 	$form = new form("formelements_0");
@@ -48,7 +48,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->addCheckSort("Checksort:", "MyChecksort", "", array("Option #0", "Option #1", "Option #2"));
 	$form->addCaptcha("Captcha:");
 	$form->addSlider("Slider:", "MySlider");
-	$form->addRating("Rating:", "MyRating", "", range(1, 5));
 	$form->addHTML("HTML:");
 	$form->addColor("Color:", "MyColor");
 	$form->addEmail("Email:", "MyEmail");
@@ -106,7 +105,6 @@ $form->addSort("Sort:", "MySort", array("Option #0", "Option #1", "Option #2"));
 $form->addCheckSort("Checksort:", "MyChecksort", "", array("Option #0", "Option #1", "Option #2"));
 $form->addCaptcha("Captcha:");
 $form->addSlider("Slider:", "MySlider");
-$form->addRating("Rating:", "MyRating", "", range(1, 10));
 $form->addHTML("HTML:");
 $form->addColor("Color:", "MyColor");
 $form->addEmail("Email:", "MyEmail");

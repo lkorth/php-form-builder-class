@@ -144,9 +144,9 @@ $form->render();
 <div class="pfbc_doc_section">
 	<a name="Form-Elements"></a>
 	<h3>Form Elements</h3>
-	<p>The latest release of this project - version <?php echo(file_get_contents('../version'));?> - contains support for 27 form element types.  These 
+	<p>The latest release of this project - version <?php echo(file_get_contents('../version'));?> - contains support for 26 form element types.  These 
 	include button, captcha, checkbox, checksort, ckeditor, colorpicker, country, date, daterange, email, expdate, file, hidden, html, htmlexternal, latlng, 
-	password, radio, rating, select, sort, state, textarea, textbox, truefalse, webeditor, and yesno.  Let's take a closer look at how each of these form element
+	password, radio, select, sort, state, textarea, textbox, truefalse, webeditor, and yesno.  Let's take a closer look at how each of these form element
 	types can be used in your development.</p>
 
 	<a name="Form-Elements-Textbox"></a>
@@ -1095,7 +1095,7 @@ $form->addTextbox("My Textbox", "Textbox", "", array("integer" => 1));
 		</tr>
 		<tr>
 			<td>jqueryOptions</td>
-			<td>addDate, addDateRange, addSlider, addRating</td>
+			<td>addDate, addDateRange, addSlider</td>
 			<td>Allows jQuery options to be applied to various form elements that leverage jQuery plugins/UI.  This option needs to be passed as an associative array of key/value pairs where the key corresponds to the jQuery option's
 			name.  If the jQuery option's value is javascript code, "js:" will need to prepended in order to distinguish itself from a string.  Use the example below for reference.
 
