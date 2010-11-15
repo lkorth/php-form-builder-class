@@ -139,7 +139,6 @@ class form extends pfbc {
 	private $jqueryDateIDArr;
 	private $jqueryDateRangeIDArr;
 	private $jquerySliderIDArr;
-	private $jqueryStarRatingIDArr;
 	private $jqueryUIButtonExists;
 	private $labelWidthExists;
 	private $latlngIDArr;
@@ -315,13 +314,6 @@ class form extends pfbc {
 			$additionalParams = array();
 		$additionalParams["options"] = $options;	
 		$this->addElement($label, $name, "radio", $value, $additionalParams);
-	}
-
-	public function addRating($label, $name, $value="", $options="", $additionalParams="") {
-		if(!is_array($additionalParams))
-			$additionalParams = array();
-		$additionalParams["options"] = $options;	
-		$this->addElement($label, $name, "rating", $value, $additionalParams);
 	}
 
 	public function addSelect($label, $name, $value="", $options="", $additionalParams="") {
@@ -530,34 +522,6 @@ class form extends pfbc {
 			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Drag Map Marker to Select Location...";
-		}
-		elseif($eleType == "rating") {
-			$ele->ratingID = "starrating_" . rand(0, 999);
-			if(!isset($this->jqueryStarRatingIDArr))
-				$this->jqueryStarRatingIDArr = array();
-			while(array_key_exists($ele->ratingID, $this->jqueryStarRatingIDArr))
-				$ele->ratingID = "starrating_" . rand(0, 999);
-			$this->jqueryStarRatingIDArr[$ele->ratingID] = "";
-
-			$jqueryOptions = array("inputType" => "select", "cancelValue" => "");
-			if(empty($this->jqueryAllowedParams["rating"]))
-				$this->jqueryAllowedParams["rating"] = array("disabled", "split", "oneVoteOnly", "captionEl", "cancelShow");
-			if(!empty($ele->jqueryOptions)) {
-				foreach($ele->jqueryOptions as $key => $val) {
-					if(in_array($key, $this->jqueryAllowedParams["rating"])) 
-						$jqueryOptions[$key] = $val;
-				}
-			}
-
-			//Added for backwards compatibility to ensure the hideCancel element attribute is still functional in future releases.
-			if(!empty($ele->hideCancel) && !array_key_exists("cancelShow", $jqueryOptions))
-				$jqueryOptions["cancelShow"] = false;
-
-			//Set default values if not specified by user.
-			if(empty($ele->hideCaption) && !array_key_exists("captionEl", $jqueryOptions))
-				$jqueryOptions["captionEl"] = 'js:jQuery("#' . $ele->ratingID . '_caption")';
-
-			$ele->jqueryOptions = $jqueryOptions;
 		}
 		elseif($eleType == "slider") {
 			if(empty($ele->attributes["id"]))
@@ -1125,13 +1089,10 @@ STR;
 					if($eleType == "ckeditor")
 						$this->ckeditorIDArr[$ele->attributes["id"]] = $ele; 
 				}
-				elseif($eleType == "select" || $eleType == "rating") {
+				elseif($eleType == "select") {
 					$ele->applyClass("pfbc-select");
 					if(!empty($ele->attributes["multiple"]) && substr($ele->attributes["name"], -2) != "[]")
 						$ele->attributes["name"] .= "[]";
-
-					if($eleType == "rating")
-						$str .= '<table cellpadding="0" cellspacing="0" border="0"><tr><td valign="middle"><div id="' . $ele->ratingID . '">';
 
 					$str .= "<select" . $this->attributesToHTML($ele->attributes, $this->allowedFields["select"]) . ">";
 
@@ -1170,16 +1131,6 @@ STR;
 					}
 
 					$str .= $this->indent() . "</select>";
-
-					if($eleType == "rating") {
-						$str .= $this->indent() . '</div></td>';
-
-						if(empty($ele->hideCaption))
-							$str .= '<td valign="middle"><div id="' . $ele->ratingID . '_caption" style="padding-left: 0.5em;"></div></td>';
-
-						$str .= '</tr></table>';
-						$this->jqueryStarRatingIDArr[$ele->ratingID] = $ele;
-					}
 				}
 				elseif($eleType == "captcha")
 					$str .= '<div id="' . $ele->attributes["id"] . '" class="pfbc-captcha"></div>';
@@ -1937,22 +1888,6 @@ STR;
 		if(js_errors_{$this->attributes["id"]}.length == 1)
 			formObj.elements["$eleName"].focus();
 	}
-
-STR;
-				}
-			}
-			elseif($eleType == "rating") {
-				if(!empty($this->ajax)) {
-					$str .= <<<STR
-	if(formObj.elements["$eleName"].value != "")
-		form_data += "&$eleName=" + escape(formObj.elements["$eleName"].value);
-
-STR;
-				}	
-				if($isRequired) {
-					$str .= <<<STR
-	if(formObj.elements["$eleName"].value == "")
-		js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 
 STR;
 				}
@@ -2774,15 +2709,6 @@ STR;
 
 STR;
 									}
-									elseif(in_array($eleType, array("select", "rating"))) {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-select {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
-
-STR;
-									}
 									elseif($eleType == "radio") {
 										$str .= <<<STR
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
@@ -2944,59 +2870,6 @@ STR;
 STR;
 			}	
 
-			if(!empty($form->jqueryStarRatingIDArr)) {
-				$str .= <<<STR
-.ui-stars-star,
-.ui-stars-cancel {
-	float: left;
-	display: block;
-	overflow: hidden;
-	text-indent: -999em;
-	cursor: pointer;
-}
-.ui-stars-star a,
-.ui-stars-cancel a {
-	width: 28px;
-	height: 26px;
-	display: block;
-	position: relative;
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_inactive.png", sizingMethod="scale");
-}
-.ui-stars-star a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_inactive.png", sizingMethod="scale");
-}
-.ui-stars-star-on a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_active.png", sizingMethod="scale");
-}
-.ui-stars-star-hover a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/star_hot.png", sizingMethod="scale");
-}
-.ui-stars-cancel-hover a {
-	background: transparent url("$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png") 0 0 no-repeat;
-	_background: none;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader
-		(src="$form->jsIncludesPath/jquery/plugins/starrating/images/remove_active.png", sizingMethod="scale");
-}
-.ui-stars-star-disabled,
-.ui-stars-star-disabled a,
-.ui-stars-cancel-disabled a {
-	cursor: default !important;
-}
-
-STR;
-			}
 		}
 
 		if(!empty($form->synchronousResources)) {
@@ -3035,8 +2908,6 @@ STR;
 			if(empty($form->synchronousResources)) {
 				if(!empty($form->tooltipIDArr))
 					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js");
-				if(!empty($form->jqueryStarRatingIDArr))
-					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js");
 				if(!empty($form->jqueryDateRangeIDArr))
 					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/ui/daterangepicker.jQuery.js");
 				if(!empty($form->jqueryColorIDArr))
@@ -3048,8 +2919,6 @@ STR;
 			} else {
 				if(!empty($form->tooltipIDArr))
 					$str .= "<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/poshytip/jquery.poshytip.min.js'></script>";
-				if(!empty($form->jqueryStarRatingIDArr))
-					$str .= "\n<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/plugins/starrating/jquery.ui.stars.js'></script>";
 				if(!empty($form->jqueryDateRangeIDArr))
 					$str .= "\n<script type='text/javascript' src='{$form->jsIncludesPath}/jquery/ui/daterangepicker.jQuery.js'></script>";
 				if(!empty($form->jqueryColorIDArr))
@@ -3278,31 +3147,6 @@ STR;
 
 STR;
 				}
-			}
-
-			//For more information on the jQuery rating plugin, visit http://plugins.jquery.com/project/Star_Rating_widget.
-			if(!empty($form->jqueryStarRatingIDArr)) {
-				$ratingKeys = array_keys($form->jqueryStarRatingIDArr);
-				$ratingSize = sizeof($form->jqueryStarRatingIDArr);
-				for($r = 0; $r < $ratingSize; ++$r) {
-					$rating = $form->jqueryStarRatingIDArr[$ratingKeys[$r]];
-
-					$jqueryOptionStr = "";
-					foreach($rating->jqueryOptions as $key => $val) {
-						if(!empty($jqueryOptionStr))
-							$jqueryOptionStr .= ", ";
-						$jqueryOptionStr .= $key . ': ';
-						if(is_string($val) && substr($val, 0, 3) == "js:")
-							$jqueryOptionStr .= substr($val, 3);
-						else
-							$jqueryOptionStr .= var_export($val, true);
-					}
-
-					$str .= <<<STR
-jQuery("#{$ratingKeys[$r]}").stars({ $jqueryOptionStr });
-
-STR;
-				}	
 			}
 
 			//For more information on the jQuery colorpicker plugin, visit http://plugins.jquery.com/project/color_picker.
