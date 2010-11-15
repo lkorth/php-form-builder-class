@@ -6,8 +6,8 @@ for($y = 0; $y < $numberofyears; ++$y) {
 	$yearKeys .= '"' . date("y", strtotime("+$y years")) . '"';
 	$yearVals .= '"' . date("Y", strtotime("+$y years")) . '"';
 	if($y < ($numberofyears - 1)) {
-		$yearKeys .= ",\n";
-		$yearVals .= ",\n";
+		$yearKeys .= ",";
+		$yearVals .= ",";
 	}	
 }
 

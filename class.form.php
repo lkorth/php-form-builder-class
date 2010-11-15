@@ -3016,7 +3016,7 @@ STR;
 					}
 
 					$str .= <<<STR
-jQuery("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr } });
+jQuery("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr }, onChange: function() { jQuery("#{$dateRangeKeys[$d]}").removeClass("pfbc-hint"); }});
 
 STR;
 				}	
