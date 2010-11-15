@@ -869,11 +869,6 @@ STR;
 		if(empty($this->tooltipIcon))
 			$this->tooltipIcon = $this->jsIncludesPath . "/jquery/plugins/poshytip/tooltip-icon.gif";
 
-		if(empty($this->noAutoFocus))
-			$focus = true;
-		else
-			$focus = false;
-
 		if(empty($this->hasFormTag))
 			$str .= "\n" . '<div id="' . $this->attributes["id"] . '">';
 		else {
@@ -1521,12 +1516,15 @@ STR;
 					}	
 				}
 				++$nonHiddenInternalElementCount;
-			}
 
-			if($focus && in_array($eleType, array("text", "password", "email", "textarea"))) {
-				$this->focusElement = $ele->attributes["name"];
-				$focus = false;
-			}	
+				//Set focus on the initial form element if appropriate.
+				if(empty($this->noAutoFocus) && !isset($this->focusElement)) {
+					if(in_array($eleType, array("text", "password", "email", "textarea")))
+						$this->focusElement = $ele->attributes["name"];
+					elseif($eleType != "html")
+						$this->focusElement = "";
+				}
+			}
 		}
 
 		if(!empty($this->hasFormTag)) {

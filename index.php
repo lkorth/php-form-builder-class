@@ -26,10 +26,10 @@ The goals of this project are to...
 	<ul style="margin-top: 0; padding-top: 0;">
 		<li>Ajax Form Submission</li>
 		<li>Javascript and PHP Validation</li>
-		<li>jQuery Elements - date, daterange, sort, checksort, slider, rating, color (<a href="http://www.jquery.com/">jQuery</a>)</li>
+		<li>jQuery Elements - date, daterange, sort, checksort, slider, color (<a href="http://www.jquery.com/">jQuery</a>)</li>
 		<li>jQuery UI Themes - (<a href="http://jqueryui.com">jQuery UI</a>)</li>
 		<li>Google Maps Element - latlng (<a href="http://code.google.com/apis/maps/documentation/v3/">Google Maps API v3</a>)</li>
-		<li>Hybrid Form Element Types - state, country, yesno, truefalse, date, daterange, expdate, sort, latlng, checksort, webeditor, slider, rating, captcha, html, color, email, button, htmlexternal</li>
+		<li>Hybrid Form Element Types - state, country, yesno, truefalse, date, daterange, expdate, sort, latlng, checksort, webeditor, slider, captcha, html, color, email, button, htmlexternal</li>
 		<li>File Upload Support</li>
 		<li>Email Address Validation</li>
 		<li>Integer, Float, and Alphanumeric Validation</li>

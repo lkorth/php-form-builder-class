@@ -7,8 +7,6 @@ class element extends pfbc {
 	public $float;
 	public $height;
 	public $hint;
-	public $hideCancel;
-	public $hideCaption;
 	public $hideDisplay;
 	public $hideJump;
 	public $ignoreGSSend;

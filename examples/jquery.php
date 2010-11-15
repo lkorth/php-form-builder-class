@@ -49,7 +49,7 @@ STR;
 
 	<h4 style="margin-top: 1em;">Form/Element Attributes</h4>
 	<ul style="margin: 0;">
-		<li>preventJQueryLoad - Including jQuery and jQueryUI's core javascript files are a requirement for this project to function correctly.  Because of this, the latest versions, 1.4.2 and 1.8.4 respectively, are automatically included with every form rendered.
+		<li>preventJQueryLoad - Including jQuery and jQueryUI's core javascript files are a requirement for this project to function correctly.  Because of this, the latest versions, 1.4.3 and 1.8.6 respectively, are automatically included with every form rendered.
 		The "preventJQueryLoad" form attribute can be used to prevent jQuery's js file from being loaded by the project.  If you're already including jQuery's js file outside of this project, you will need to make use of this attribute to prevent
 		duplicate includes.</li>
 		<li>preventJQueryUILoad - This form attribute is identical to "preventJQueryLoad" except it affects jQueryUI's js file.  See the previous attribute for more information.</li>
