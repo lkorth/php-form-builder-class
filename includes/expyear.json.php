@@ -1,10 +1,14 @@
 <?php
 $numberofyears = 10;
-$years = "";
+$yearKeys = "";
+$yearVals = "";
 for($y = 0; $y < $numberofyears; ++$y) {
-	$years .= '"' . date("y", strtotime("+$y years")) . '"';
-	if($y < ($numberofyears - 1))
-		$years .= ",\n";
+	$yearKeys .= '"' . date("y", strtotime("+$y years")) . '"';
+	$yearVals .= '"' . date("Y", strtotime("+$y years")) . '"';
+	if($y < ($numberofyears - 1)) {
+		$yearKeys .= ",\n";
+		$yearVals .= ",\n";
+	}	
 }
 
 $jsonExpYear = <<<STR
@@ -12,12 +16,12 @@ $jsonExpYear = <<<STR
 	"keys": 
 	[ 
 		"", 
-		$years
+		$yearKeys
 	], 
 	"values": 
 	[ 
 		"--Select a Year --", 
-		$years
+		$yearVals
 	] 
 }
 STR;

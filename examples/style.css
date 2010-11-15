@@ -33,3 +33,9 @@
 	color: #ccc;
 	font-style: italic
 }
+a.pfbc-link {
+	text-decoration: none;
+}
+a.pfbc-link:hover, a.pfbc-link:active {
+	text-decoration: underline;
+}

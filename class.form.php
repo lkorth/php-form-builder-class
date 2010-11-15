@@ -1094,8 +1094,6 @@ STR;
 						$ele->applyClass("pfbc-hint");	
 						
 					$str .= "<input" . $this->attributesToHTML($ele->attributes, $this->allowedFields["text"]) . "/>";
-					if($focus)
-						$this->focusElement = $ele->attributes["name"];
 					
 					//Now that <input> tag his been rendered, change type attribute back appropriately.
 					if(isset($resetTypeTo)) {
@@ -1123,8 +1121,6 @@ STR;
 					$ele->applyClass($class);
 
 					$str .= "<textarea" . $this->attributesToHTML($ele->attributes, $this->allowedFields["textarea"]) . ">" . $ele->attributes["value"] . "</textarea>";
-					if($focus)
-						$this->focusElement = $ele->attributes["name"];
 
 					if($eleType == "ckeditor")
 						$this->ckeditorIDArr[$ele->attributes["id"]] = $ele; 
@@ -1184,9 +1180,6 @@ STR;
 						$str .= '</tr></table>';
 						$this->jqueryStarRatingIDArr[$ele->ratingID] = $ele;
 					}
-
-					if($focus)
-						$this->focusElement = $ele->attributes["name"];
 				}
 				elseif($eleType == "captcha")
 					$str .= '<div id="' . $ele->attributes["id"] . '" class="pfbc-captcha"></div>';
@@ -1240,9 +1233,6 @@ STR;
 							$str .= $this->indent("\t") . '<div style="clear: both;"></div>';
 
 						$str .= $this->indent() . '</div>';
-
-						if($focus)
-							$this->focusElement = $ele->attributes["name"];
 					}
 				}
 				elseif($eleType == "checksort") {
@@ -1397,8 +1387,6 @@ STR;
 				elseif($eleType == "file") {
 					$ele->applyClass("pfbc-file");
 					$str .= "<input" . $this->attributesToHTML($ele->attributes, $this->allowedFields["text"]) . "/>";
-					if($focus)
-						$this->focusElement = $ele->attributes["name"];
 				}
 				elseif($eleType == "html")
 					$str .= $ele->attributes["value"];
@@ -1479,9 +1467,6 @@ STR;
 							$str .= $this->indent("\t") . '<div style="clear: both;"></div>';
 
 						$str .= $this->indent() . '</div>';
-
-						if($focus)
-							$this->focusElement = $ele->attributes["name"];
 					}
 				}
 				elseif($eleType == "slider") {
@@ -1584,12 +1569,13 @@ STR;
 						$str .= "\n\t</div>";
 					}	
 				}
-
-				if($focus && $ele->attributes["type"] != "html")
-					$focus = false;
-
 				++$nonHiddenInternalElementCount;
 			}
+
+			if($focus && in_array($eleType, array("text", "password", "email", "textarea"))) {
+				$this->focusElement = $ele->attributes["name"];
+				$focus = false;
+			}	
 		}
 
 		if(!empty($this->hasFormTag)) {
@@ -3757,34 +3743,7 @@ STR;
 
 				if(empty($form->noAutoFocus) && !empty($form->focusElement)) {
 					$str .= <<<STR
-function pfbc_focus_{$form->attributes["id"]}() {
-STR;
-					//The webeditor and ckeditor fields are a special case.
-					if(!empty($form->tinymceIDArr) && is_array($form->tinymceIDArr) && in_array($form->focusElement, $form->tinymceIDArr)) {
-						$str .= <<<STR
-	setTimeout("if(tinyMCE.get(\"{$form->focusElement}\")) tinyMCE.get(\"{$form->focusElement}\").focus();", 1000);
-
-STR;
-					}	
-					elseif(!empty($form->ckeditorIDArr) && is_array($form->ckeditorIDArr) && array_key_exists($form->focusElement, $form->ckeditorIDArr)) {
-						$str .= <<<STR
-	setTimeout("CKEDITOR.instances.{$form->focusElement}.focus();", 1000);
-
-STR;
-					}	
-					else {
-						//Any fields with multiple options such as radio button, checkboxes, etc. are handled accordingly.
-						$str .= <<<STR
-	if(document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-one" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].type != "select-multiple" && document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].length)
-		document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"][0].focus();
-	else
-		document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].focus();
-
-STR;
-					}		
-					$str .= <<<STR
-}				
-pfbc_focus_{$this->attributes["id"]}();
+document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].focus();
 
 STR;
 				}
