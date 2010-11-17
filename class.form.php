@@ -432,6 +432,7 @@ class form extends pfbc {
 				$ele->attributes["id"] = "colorinput_" . rand(0, 999);
 			$this->jqueryColorIDArr[] = $ele->attributes["id"];
 
+			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Color...";
 		}
@@ -454,7 +455,7 @@ class form extends pfbc {
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Date...";
 
-			$jqueryOptions = array("dateFormat" => $this->jqueryDateFormat, "changeMonth" => true, "changeYear" => true);	
+			$jqueryOptions = array("dateFormat" => $this->jqueryDateFormat, "changeMonth" => true, "changeYear" => true, "onSelect" => "js:function() { jQuery('#" . $ele->attributes["id"] . "').removeClass('pfbc-hint'); jQuery('#" . $ele->attributes["id"] . "_clear').show(); }");	
 			if(empty($this->jqueryAllowedParams["date"]))
 				$this->jqueryAllowedParams["date"] = array("disabled", "altField", "altFormat", "appendText", "autoSize", "buttonImage", "buttonImageOnly", "buttonText", "calculateWeek", "changeMonth", "changeYear", "closeText", "constrainInput", "currentText", "dateFormat", "dayNames", "dayNamesMin", "dayNamesShort", "defaultDate", "duration", "firstDay", "gotoCurrent", "hideIfNoPrevNext", "isRTL", "maxDate", "minDate", "monthNames", "monthNamesShort", "navigationAsDateFormat", "nextText", "numberOfMonths", "prevText", "selectOtherMonths", "shortYearCutoff", "showAnim", "showButtonPanel", "showCurrentAtPos", "showMonthAfterYear", "showOn", "showOptions", "showOtherMonths", "showWeek", "stepMonths", "weekHeader", "yearRange", "yearSuffix");
 			if(!empty($ele->jqueryOptions)) {
@@ -1042,6 +1043,9 @@ STR;
 						$eleType = "text";
 					}	
 
+					if(!empty($resetTypeTo) && $resetTypeTo == "color" && !empty($ele->attributes["value"]) && $ele->attributes["value"] != $ele->hint && $ele->attributes["value"][0] != "#")
+						$ele->attributes["value"] = "#" . $ele->attributes["value"];
+
 					$ele->applyClass("pfbc-textbox");	
 					if(!empty($ele->integer))
 						$ele->applyClass("pfbc-integer");	
@@ -1058,6 +1062,17 @@ STR;
 					if(isset($resetTypeTo)) {
 						$eleType = $resetTypeTo;
 						unset($resetTypeTo);
+					}
+
+					if(in_array($eleType, array("date", "daterange", "color"))) {
+						$str .= $this->indent() . '<div id="' . $ele->attributes["id"] . '_clear" style="';
+						if(empty($ele->attributes["value"]) || $ele->attributes["value"] == $ele->hint)
+							$str .= 'display: none;';
+						if($eleType == "date" || $eleType == "color")
+							$label = ucwords($eleType);
+						else
+							$label = "Date Range";
+						$str .= '"><a href="javascript: clear_' . $this->attributes["id"] . '(\'' . $ele->attributes["id"] . '\', \'' . htmlentities($ele->hint, ENT_QUOTES) . '\');" class="pfbc-link">Clear ' . $label . '</a></div>';
 					}
 				}
 				elseif(in_array($eleType, array("textarea", "webeditor", "ckeditor"))) {
@@ -1373,10 +1388,10 @@ STR;
 						$str .= $this->indent("\t") . '<input id="' . $latlngID . '_locationJump" type="text" value="' . $hint . '" class="' . str_replace('"', '&quot;', $ele->attributes["class"]) . '" style="' . str_replace('"', '&quot;', $ele->attributes["style"]) . '" onclick="hintfocus_' . $this->attributes["id"] . '(this, \'' . $hint . '\');" onblur="hintblur_' . $this->attributes["id"] . '(this, \'' . $hint . '\');" onkeyup="jumpToLatLng_' . $this->attributes["id"] . '(this, \'' . $latlngID . '\', \'' . htmlentities($ele->attributes["name"], ENT_QUOTES) . '\');"/>';
 					}	
 
-					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_clearDiv" style="';
-					if(empty($ele->attributes["value"]) || !is_array($ele->attributes["value"]))
+					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_clear" style="';
+					if(empty($ele->attributes["value"]) || $ele->attributes["value"] == $ele->hint || !is_array($ele->attributes["value"]))
 						$str .= 'display: none;';
-					$str .= '"><a href="javascript: clearLatLng_' . $this->attributes["id"] . '(\'' . $latlngID . '\', \'' . htmlentities($ele->hint, ENT_QUOTES) . '\');" class="pfbc-link">Clear Latitude/Longitude</a></div>';	
+					$str .= '"><a href="javascript: clear_' . $this->attributes["id"] . '(\'' . $latlngID . '\', \'' . htmlentities($ele->hint, ENT_QUOTES) . '\');" class="pfbc-link">Clear Latitude/Longitude</a></div>';	
 					$str .= $this->indent() . "</div>";
 
 					$this->latlngIDArr[$ele->attributes["id"]] = $ele;
@@ -1613,6 +1628,35 @@ STR;
 
 STR;
 
+		if(!empty($this->hintExists)) {
+			$str .= <<<STR
+			function hintfocus_{$this->attributes["id"]}(eleObj, hint) {
+				if(jQuery(eleObj).val() == hint) {
+					jQuery(eleObj).val("");
+					jQuery(eleObj).removeClass("pfbc-hint");
+				}	
+			}
+			function hintblur_{$this->attributes["id"]}(eleObj, hint) {
+				if(jQuery(eleObj).val() == "") {
+					jQuery(eleObj).val(hint);
+					jQuery(eleObj).addClass("pfbc-hint");
+				}	
+				else
+					jQuery(eleObj).removeClass("pfbc-hint");
+			}
+			function clear_{$this->attributes["id"]}(id, hint) {
+				jQuery("#" + id).val(hint);
+				jQuery("#" + id).addClass("pfbc-hint");
+				jQuery("#" + id + "_clear").hide();
+				if(document.getElementById(id + "_locationJump")) {
+					jQuery("#" + id + "_locationJump").val("Location Jump: Enter Keyword, City/State, Address, or Zip Code");
+					jQuery("#" + id + "_locationJump").addClass("pfbc-hint");
+				}	
+			}
+
+STR;
+		}
+
 		if(empty($this->synchronousResources)) {
 			$str .= <<<STR
 			jQuery(document).ready(function() {
@@ -1637,15 +1681,11 @@ STR;
 		if(empty($this->preventGoogleMapsLoad) && !empty($this->latlngIDArr))
 			$str .= "\t\t<script type='text/javascript' src='http://maps.google.com/maps/api/js?sensor=false'></script>\n";
 
-		if(!empty($this->tinymceIDArr)) {
-			if(empty($this->preventTinyMCELoad))
-				$str .= "\t\t<script type='text/javascript' src='{$this->jsIncludesPath}/tiny_mce/tiny_mce.js'></script>\n";
-		}
+		if(!empty($this->tinymceIDArr) && empty($this->preventTinyMCELoad))
+			$str .= "\t\t<script type='text/javascript' src='{$this->jsIncludesPath}/tiny_mce/tiny_mce.js'></script>\n";
 
-		if(!empty($this->ckeditorIDArr)) {
-			if(empty($this->preventCKEditorLoad))
-				$str .= "\t\t<script type='text/javascript' src='{$this->jsIncludesPath}/ckeditor/ckeditor.js'></script><script type='text/javascript' src='{$this->jsIncludesPath}/ckeditor/adapters/jquery.js'></script>\n";
-		}
+		if(!empty($this->ckeditorIDArr) && empty($this->preventCKEditorLoad))
+			$str .= "\t\t<script type='text/javascript' src='{$this->jsIncludesPath}/ckeditor/ckeditor.js'></script><script type='text/javascript' src='{$this->jsIncludesPath}/ckeditor/adapters/jquery.js'></script>\n";
 
 		$str .= "\t</div>\n</div>";
 
@@ -3016,7 +3056,7 @@ STR;
 					}
 
 					$str .= <<<STR
-jQuery("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr }, onChange: function() { jQuery("#{$dateRangeKeys[$d]}").removeClass("pfbc-hint"); }});
+jQuery("#{$dateRangeKeys[$d]}").daterangepicker({ dateFormat: "$jqueryDateFormat", datepickerOptions: { $jqueryOptionStr }, onChange: function() { jQuery("#{$dateRangeKeys[$d]}").removeClass("pfbc-hint"); jQuery('#{$dateRangeKeys[$d]}_clear').show(); } });
 
 STR;
 				}	
@@ -3127,12 +3167,10 @@ STR;
 					$str .= <<<STR
 jQuery("#{$form->jqueryColorIDArr[$c]}").ColorPicker({	
 	onSubmit: function(hsb, hex, rgb, el) { 
-		jQuery(el).val(hex); 
+		jQuery(el).val("#" + hex); 
 		jQuery(el).ColorPickerHide(); 
 		jQuery(el).removeClass("pfbc-hint");
 	} 
-}).bind("keyup", function(){ 
-	jQuery(this).ColorPickerSetColor(this.value); 
 });
 
 STR;
@@ -3199,7 +3237,7 @@ STR;
 		var lng = latlng.lng();
 		document.getElementById("$latlngID").value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
 		jQuery("#$latlngID").removeClass("pfbc-hint");
-		document.getElementById("{$latlngID}_clearDiv").style.display = "block";
+		document.getElementById("{$latlngID}_clear").style.display = "block";
 	});	
 
 STR;
@@ -3220,17 +3258,10 @@ function jumpToLatLng_{$this->attributes["id"]}(fieldObj, latlngID, fieldName) {
 				var lng = results[0].geometry.location.lng();
 				document.getElementById(latlngID).value = "Latitude: " + lat.toFixed(3) + ", Longitude: " + lng.toFixed(3);
 				jQuery("#" + latlngID).removeClass("pfbc-hint");
-				document.getElementById(latlngID + "_clearDiv").style.display = "block";
+				document.getElementById(latlngID + "_clear").style.display = "block";
 			}
 		});
 	}
-}
-function clearLatLng_{$this->attributes["id"]}(latlngID, latlngHint) {
-	if(document.getElementById(latlngID + "_locationJump"))
-		document.getElementById(latlngID + "_locationJump").value = "Location Jump: Enter Keyword, City/State, Address, or Zip Code";
-	document.getElementById(latlngID).value = latlngHint
-	jQuery("#" + latlngID).addClass("pfbc-hint");
-	document.getElementById(latlngID + "_clearDiv").style.display = "none";
 }
 
 STR;
@@ -3325,28 +3356,6 @@ STR;
 			if(!empty($form->captchaID)) {
 				$str .= <<<STR
 Recaptcha.create("{$form->captchaPublicKey}", "{$form->captchaID}", { theme: "{$form->captchaTheme}", lang: "{$form->captchaLang}" });
-
-STR;
-			}
-
-			if(!empty($form->hintExists)) {
-				$str .= <<<STR
-function hintfocus_{$this->attributes["id"]}(eleObj, hint) {
-	if(jQuery(eleObj).val() == hint) {
-		jQuery(eleObj).val("");
-		jQuery(eleObj).removeClass("pfbc-hint");
-	}	
-}
-function hintblur_{$this->attributes["id"]}(eleObj, hint) {
-	window.setTimeout(function() {
-		if(jQuery(eleObj).val() == "") {
-			jQuery(eleObj).val(hint);
-			jQuery(eleObj).addClass("pfbc-hint");
-		}	
-		else
-			jQuery(eleObj).removeClass("pfbc-hint");
-	}, 250);	
-}
 
 STR;
 			}

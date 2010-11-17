@@ -257,7 +257,7 @@ $form->render();
 	$form->addHidden("cmd", "submit_4");
 	$form->addColor("Color:", "MyColor");
 	$form->addColor("Color w/Custom Hint:", "MyColorHint", "", array("hint" => "Click here to select your paint color."));
-	$form->addColor("Color w/Default Value:", "MyColorPrefilled", "660099");
+	$form->addColor("Color w/Default Value:", "MyColorPrefilled", "#660099");
 	$form->addButton();
 	$form->render();
 
