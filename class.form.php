@@ -3367,7 +3367,7 @@ function pfbc_error_{$this->attributes["id"]}(errorMsg, container) {
 	if(container != undefined && container != "" && jQuery(container).length)
 		jQuery(container).prepend(error);
 	else	
-		jQuery("#{$this->attributes["id"]} .pfbc-main:first").prepend(error);
+		jQuery("#{$this->attributes["id"]} .pfbc-main").prepend(error);
 }
 
 STR;
