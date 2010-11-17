@@ -1182,12 +1182,12 @@ STR;
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-checkbox-last';
 
-							$str .= '"><input' . $this->attributesToHTML($ele->attributes, $this->allowedFields["radio"]) . ' id="' . $checkboxID . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';
+							$str .= '"><table cellpadding="0" cellspacing="0"><tr><td valign="top"><input' . $this->attributesToHTML($ele->attributes, $this->allowedFields["radio"]) . ' id="' . $checkboxID . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';
 
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->optionKeys[$o]) || (is_array($ele->attributes["value"]) && in_array($ele->optionKeys[$o], $ele->attributes["value"], true)))
 								$str .= ' checked="checked"';
-							$str .= '/><label for="' . $checkboxID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></div>';
+							$str .= '/></td><td valing="top"><label for="' . $checkboxID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></td></tr></table></div>';
 						}	
 
 						if(!empty($ele->noBreak))
@@ -1236,14 +1236,14 @@ STR;
 								$str .= ' pfbc-checkbox-first';
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-checkbox-last';
-							$str .= '"><input' . $this->attributesToHTML($ele->attributes, $this->allowedFields["checksort"]) . ' id="' . $checkboxID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionKeys[$o]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionValues[$o]) . '\');"';
+							$str .= '"><table cellpadding="0" cellspacing="0"><tr><td valign="top"><input' . $this->attributesToHTML($ele->attributes, $this->allowedFields["checksort"]) . ' id="' . $checkboxID . '" type="checkbox" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '" onclick="addOrRemoveCheckSortItem_' . $this->attributes["id"] . '(this, \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["id"]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->attributes["name"]) . '\', ' . $o . ', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionKeys[$o]) . '\', \'' . str_replace(array('"', "'"), array('&quot;', "\'"), $ele->optionValues[$o]) . '\');"';
 
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->optionKeys[$o]) || (is_array($ele->attributes["value"]) && in_array($ele->optionKeys[$o], $ele->attributes["value"], true))) {
 								$str .= ' checked="checked"';
 								$sortLIArr[$ele->optionKeys[$o]] = '<li id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . $o . '" class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"/>' . $ele->optionValues[$o] . '</li>' . "\n";
 							}	
-							$str .= '/><label for="' . $checkboxID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></div>';
+							$str .= '/></td><td valing="top"><label for="' . $checkboxID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></td></tr></table></div>';
 						}	
 						$str .= $this->indent() . "</div>";
 
@@ -1418,10 +1418,10 @@ STR;
 							elseif($o + 1 == $optionSize)	
 								$str .= ' pfbc-radio-last';
 
-							$str .= '"><input' . $this->attributesToHTML($ele->attributes, $this->allowedFields["radio"]) . ' id="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';		
+							$str .= '"><table cellpadding="0" cellspacing="0"><tr><td valign="top"><input' . $this->attributesToHTML($ele->attributes, $this->allowedFields["radio"]) . ' id="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"';		
 							if($ele->attributes["value"] === $ele->optionKeys[$o])
 								$str .= ' checked="checked"';
-							$str .= '/><label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->optionValues[$o] . "</label></div>";
+							$str .= '/></td><td valign="top"><label for="' . str_replace('"', '&quot;', $ele->attributes["name"]) . $o . '" style="cursor: pointer;">' . $ele->optionValues[$o] . "</label></td></tr></table></div>";
 						}	
 
 						if(!empty($ele->noBreak))

@@ -41,11 +41,11 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->addYesNo("Yes/No:", "MyYesNo");
 	$form->addTrueFalse("True/False:", "MyTrueFalse");
 	$form->addSelect("Select Box:", "MySelect", "", array("Option #0", "Option #1", "Option #2"));
-	$form->addRadio("Radio Buttons:", "MyRadio", "", array("Option #0", "Option #1", "Option #2"));
-	$form->addCheckbox("Checkboxes:", "MyCheckbox", "", array("Option #0", "Option #1", "Option #2"));
+	$form->addRadio("Radio Buttons:", "MyRadio", "", array("Option #0", "This is a very long checkbox label that should wrap eventually based on the form's width specified in the setAttributes function.", "Option #2"));
+	$form->addCheckbox("Checkboxes:", "MyCheckbox", "", array("This is a very long checkbox label that should wrap eventually based on the form's width specified in the setAttributes function.", "Option #1", "Option #2"));
 	$form->addLatLng("Latitude/Longitude:", "MyLatitudeLongitude");
 	$form->addSort("Sort:", "MySort", array("Option #0", "Option #1", "Option #2"));
-	$form->addCheckSort("Checksort:", "MyChecksort", "", array("Option #0", "Option #1", "Option #2"));
+	$form->addCheckSort("Checksort:", "MyChecksort", "", array("Option #0", "Option #1", "This is a very long checkbox label that should wrap eventually based on the form's width specified in the setAttributes function."));
 	$form->addCaptcha("Captcha:");
 	$form->addSlider("Slider:", "MySlider");
 	$form->addHTML("HTML:");
