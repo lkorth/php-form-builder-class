@@ -1241,7 +1241,7 @@ STR;
 							//For checkboxes, the value parameter can be an array - which allows for multiple boxes to be checked by default.
 							if((!is_array($ele->attributes["value"]) && $ele->attributes["value"] === $ele->optionKeys[$o]) || (is_array($ele->attributes["value"]) && in_array($ele->optionKeys[$o], $ele->attributes["value"], true))) {
 								$str .= ' checked="checked"';
-								$sortLIArr[$ele->optionKeys[$o]] = '<li id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . $o . '" class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"/>' . $ele->optionValues[$o] . '</li>' . "\n";
+								$sortLIArr[$ele->optionKeys[$o]] = '<li id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . $o . '" class="ui-state-default" style="margin: 0.25em 0; padding: 0.5em; font-size: 1em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"/>' . $ele->optionValues[$o] . '</li>' . "\n";
 							}	
 							$str .= '/></td><td valing="top"><label for="' . $checkboxID . '" style="cursor: pointer;">' . $ele->optionValues[$o] . '</label></td></tr></table></div>';
 						}	
@@ -1497,7 +1497,7 @@ STR;
 						$str .= '<ul id="' . str_replace('"', '&quot;', $ele->attributes["id"]) . '" class="pfbc-sort" style="list-style-type: none; margin: 0; padding: 0; cursor: pointer;">';
 
 						for($o = 0; $o < $optionSize; ++$o)
-							$str .= $this->indent("\t") . '<li class="ui-state-default" style="margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"/>' . $ele->optionValues[$o] . '</li>';
+							$str .= $this->indent("\t") . '<li class="ui-state-default" style="margin: 0.25em 0; padding: 0.5em; font-size: 1em;"><input type="hidden" name="' . str_replace('"', '&quot;', $ele->attributes["name"]) . '" value="' . str_replace('"', '&quot;', $ele->optionKeys[$o]) . '"/>' . $ele->optionValues[$o] . '</li>';
 
 						$str .= $this->indent() . "</ul>";
 					}
@@ -3283,7 +3283,7 @@ function addOrRemoveCheckSortItem_{$this->attributes["id"]}(cs_fieldObj, cs_id, 
 		var li = document.createElement('li');
 		li.id = cs_id + cs_index;
 		li.className = 'ui-state-default';
-		li.style.cssText = 'margin: 3px 0; padding-left: 0.5em; font-size: 1em; height: 2.5em; line-height: 2.5em;';
+		li.style.cssText = 'margin: 0.25em 0; padding: 0.5em; font-size: 1em;';
 		li.innerHTML = '<input type="hidden" name="' + cs_name + '" value="' + cs_value + '"/>' + cs_text;
 		document.getElementById(cs_id).appendChild(li);
 	}
