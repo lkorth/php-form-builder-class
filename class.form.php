@@ -3170,6 +3170,7 @@ jQuery("#{$form->jqueryColorIDArr[$c]}").ColorPicker({
 		jQuery(el).val("#" + hex); 
 		jQuery(el).ColorPickerHide(); 
 		jQuery(el).removeClass("pfbc-hint");
+		jQuery("#{$form->jqueryColorIDArr[$c]}_clear").show();
 	} 
 });
 
