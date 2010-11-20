@@ -1569,7 +1569,7 @@ STR;
 			$prefix = "http";
 
 		if(empty($this->preventJQueryLoad))
-			$str .= "\t\t<script type='text/javascript' src='$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js'></script>\n";
+			$str .= "\t\t<script type='text/javascript' src='$prefix://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js'></script>\n";
 		if(empty($this->preventJQueryUILoad))
 			$str .= "\t\t<script type='text/javascript' src='$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js'></script>\n";
 
@@ -1585,37 +1585,8 @@ STR;
 			function pfbc_adjust_{$this->attributes["id"]}() {
 				jQuery("#{$this->attributes["id"]} .pfbc-main .pfbc-textbox, #{$this->attributes["id"]} .pfbc-main .pfbc-textarea, #{$this->attributes["id"]} .pfbc-main .pfbc-webeditor").each(function() { 
 					jQueryElementObj = jQuery(this);
-					if(!jQueryElementObj.hasClass("pfbc-adjusted")) {
-						if(jQueryElementObj.is(":hidden")) {
-							if(jQuery("#{$this->attributes["id"]}").is(":hidden")) {
-								jQuery.swap(jQuery("#{$this->attributes["id"]}")[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
-									pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
-								});
-							}
-							else if(jQueryElementObj.parent().parent().parent().is(":hidden")) {
-								jQuery.swap(jQueryElementObj.parent().parent().parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
-									pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
-								});
-							}	
-							else if(jQueryElementObj.parent().parent().is(":hidden")) {
-								jQuery.swap(jQueryElementObj.parent().parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
-									pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
-								});
-							}	
-							else if(jQueryElementObj.parent().is(":hidden")) {
-								jQuery.swap(jQueryElementObj.parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
-									pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
-								});
-							}	
-							else {
-								jQuery.swap(jQueryElementObj[0], { position: "absolute", visibility: "hidden", display: "block" }, function() {
-									pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
-								});
-							}	
-						}	
-						else
-							pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
-					}
+					if(!jQueryElementObj.hasClass("pfbc-adjusted"))
+						pfbc_width_{$this->attributes["id"]}(jQueryElementObj);
 				});	
 			}
 			function pfbc_width_{$this->attributes["id"]}(eleObj) {
