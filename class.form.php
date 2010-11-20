@@ -1377,7 +1377,7 @@ STR;
 					//Now that <input> tag his been rendered, change type attribute back to "latlng".
 					$eleType = "latlng";
 
-					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_canvas" style="margin: 2px 0; height: ' . $ele->height . 'px;';
+					$str .= $this->indent("\t") . '<div id="' . $latlngID . '_canvas" style="margin: 2px 0; width: 100%; height: ' . $ele->height . 'px;';
 					if(!empty($ele->width))
 						$str .= ' width: ' . $ele->width . 'px;';
 					$str .= '"></div>';
@@ -2677,102 +2677,35 @@ STR;
 }
 
 STR;
-									if(in_array($eleType, array("text", "password", "email", "date", "daterange", "color"))) {
+									$class = array();
+									if(in_array($eleType, array("text", "password", "email", "date", "daterange", "color")))
+										$class[] = "pfbc-textbox";
+									elseif(in_array($eleType, array("textarea", "webeditor", "ckeditor")))	
+										$class[] = "pfbc-textarea";
+									elseif(in_array($eleType, array("select", "sort", "captcha", "slider", "latlng", "expdate")))
+										$class[] = "pfbc-" . $eleType;
+									elseif(in_array($eleType, array("checkbox", "checksort")))
+										$class[] = "pfbc-checkboxes";
+									elseif($eleType == "radio")
+										$class[] = "pfbc-radio-buttons";
+									if($eleType == "checksort")
+										$class[] = "pfbc-sort";
+									elseif($eleType == "latlng")
+										$class[] = "pfbc-textbox";
+
+									foreach($class as $identifier) {
 										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
+#pfbc-$id-element-$nonHiddenInternalElementCount .$identifier {
 	width: {$elementWidth}$labelWidthSuffix;
 	float: $elementFloat;
 }
 
 STR;
 									}
-									elseif(in_array($eleType, array("textarea", "webeditor", "ckeditor"))) {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textarea {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
 
-STR;
-									}
-									elseif($eleType == "radio") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-radio-buttons {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
-
-STR;
-									}
-									elseif($eleType == "checkbox") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
-
-STR;
-									}
-									elseif($eleType == "checksort") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-checkboxes {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
-
-STR;
-									}
-									elseif($eleType == "sort") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-sort {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
-
-STR;
-									}
-									elseif($eleType == "latlng") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-latlng {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-textbox {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
-
-STR;
-									}
-									elseif($eleType == "captcha") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-captcha {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
-
-STR;
-									}
-									elseif($eleType == "slider") {
-										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-slider {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
-
-STR;
-									}
-									elseif($eleType == "expdate") {
+									if($eleType == "expdate") {
 										$expdateWidth = floor(($elementWidth / 2) - $form->mapMargin);
 										$str .= <<<STR
-#pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-expdate {
-	width: {$elementWidth}$labelWidthSuffix;
-	float: $elementFloat;
-}
 #pfbc-$id-element-$nonHiddenInternalElementCount .pfbc-expmonth {
 	float: left;
 	width: {$expdateWidth}$formWidthSuffix !important;
