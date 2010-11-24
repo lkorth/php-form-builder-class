@@ -811,6 +811,7 @@ $form->addDateRange("My Date Range w/MySQL Formatting", "DateRange", "", array("
 $form->addDateRange("My Date Range w/Multiple Months & Restricted Range", "DateRange", "", array("jqueryOptions" => array(
 	"minDate" => "-60",
 	"maxDate" => "+60"
+)));	
 ?>', true), '</pre>';
 	?>
 	
