@@ -744,6 +744,7 @@ $form->addDate("My Date w/Multiple Months & Restricted Range", "Date", "", array
 	"numberOfMonths" => 2, 
 	"minDate" => "-30",
 	"maxDate" => "+30"
+)));	
 ?>', true), '</pre>';
 	?>
 	
