@@ -897,9 +897,9 @@ $form->addWebEditor("My Basic TinyMCE Editor", "TinyMCE", "", array("basic" => 1
 public function addCKEditor($label, $name, $value="", $additionalParams="") {}
 */
 
-$form->addCKEditor("My TinyMCE Web Editor", "TinyMCE");
-$form->addCKEditor("My Prefilled TinyMCE Editor", "TinyMCE", "This is my default value.");
-$form->addCKEditor("My Basic TinyMCE Editor", "TinyMCE", "", array("basic" => 1));
+$form->addCKEditor("My CKEditor", "CKEditor");
+$form->addCKEditor("My Prefilled CKEditor", "CKEditor", "This is my default value.");
+$form->addCKEditor("My Basic CKEditor", "CKEditor", "", array("basic" => 1));
 ?>', true), '</pre>';
 	?>
 	
@@ -941,7 +941,7 @@ public function addCaptcha($label="", $additionalParams="") {}
 
 $form->addCaptcha();
 $form->addCaptcha("My Captcha");
-$form->addCKEditor("My Required Captcha", array("required" => 1));
+$form->addCaptcha("My Required Captcha", array("required" => 1));
 ?>', true), '</pre>';
 	?>
 	

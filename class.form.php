@@ -1,6 +1,6 @@
 <?php
 /*
-php-form-builder-class v1.1.2
+php-form-builder-class v1.1.4
 
 Google Code Project Hosting - http://code.google.com/p/php-form-builder-class/
 User Google Group - http://groups.google.com/group/php-form-builder-class/
@@ -2314,6 +2314,16 @@ $id .pfbc-tokens {
 
 STR;
 
+			if(!empty($form->captchaID)) {
+                $str .= <<<STR
+$id .pfbc-captcha {
+    position: relative;
+    height: 130px;
+}
+
+STR;
+            }
+
 			if(empty($form->preventDefaultCSS)) {
 				$str .= <<<STR
 $id {
@@ -3260,7 +3270,14 @@ STR;
 
 			if(!empty($form->captchaID)) {
 				$str .= <<<STR
-Recaptcha.create("{$form->captchaPublicKey}", "{$form->captchaID}", { theme: "{$form->captchaTheme}", lang: "{$form->captchaLang}" });
+Recaptcha.create("{$form->captchaPublicKey}", "{$form->captchaID}", { 
+	theme: "{$form->captchaTheme}",
+	lang: "{$form->captchaLang}",
+	callback: function() {
+        var recaptchaObj = jQuery("#{$this->attributes["id"]} #recaptcha_area");
+        recaptchaObj.parent().height(recaptchaObj.height());
+    }
+});
 
 STR;
 			}
