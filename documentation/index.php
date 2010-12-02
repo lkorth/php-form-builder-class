@@ -12,23 +12,23 @@ include("../header.php");
 		<li><a href="#The-Hello-World-of-PHP-Form-Builder-Class">The "Hello World" of PHP Form Builder Class</a></li>
 		<li><a href="#Form-Elements">Supported Form Elements</a>
 			<ul>
-				<li><a href="#Form-Elements-Textbox">Textbox</a></li>
-				<li><a href="#Form-Elements-Selectbox">Selectbox</a></li>
-				<li><a href="#Form-Elements-Checkbox">Checkbox</a></li>
-				<li><a href="#Form-Elements-Radio-Button">Radio Button</a></li>
-				<li><a href="#Form-Elements-Textarea">Textarea</a></li>
-				<li><a href="#Form-Elements-Hidden">Hidden</a></li>
-				<li><a href="#Form-Elements-File">File</a></li>
-				<li><a href="#Form-Elements-State">State</a></li>
-				<li><a href="#Form-Elements-Country">Country</a></li>
-				<li><a href="#Form-Elements-Yes-No">Yes/No</a></li>
-				<li><a href="#Form-Elements-True-False">True/False</a></li>
-				<li><a href="#Form-Elements-Email">Email</a></li>
-				<li><a href="#Form-Elements-Date">Date</a></li>
-				<li><a href="#Form-Elements-Date-Range">Date Range</a></li>
-				<li><a href="#Form-Elements-TinyMCE">TinyMCE Web Editor</a></li>
-				<li><a href="#Form-Elements-CKEditor">CKEditor</a></li>
-				<li><a href="#Form-Elements-Captcha">Captcha</a></li>
+				<li><a href="#Textbox">Textbox</a></li>
+				<li><a href="#Selectbox">Selectbox</a></li>
+				<li><a href="#Checkbox">Checkbox</a></li>
+				<li><a href="#Radio-Button">Radio Button</a></li>
+				<li><a href="#Textarea">Textarea</a></li>
+				<li><a href="#Hidden">Hidden</a></li>
+				<li><a href="#File">File</a></li>
+				<li><a href="#State">State</a></li>
+				<li><a href="#Country">Country</a></li>
+				<li><a href="#Yes-No">Yes/No</a></li>
+				<li><a href="#True-False">True/False</a></li>
+				<li><a href="#Email">Email</a></li>
+				<li><a href="#Date">Date</a></li>
+				<li><a href="#Date-Range">Date Range</a></li>
+				<li><a href="#TinyMCE">TinyMCE Web Editor</a></li>
+				<li><a href="#CKEditor">CKEditor</a></li>
+				<li><a href="#Captcha">Captcha</a></li>
 			</ul>	
 		</li>	
 		<li><a href="#Additional-Parameters">additionalParams Element Parameter</a></li>
@@ -149,7 +149,7 @@ $form->render();
 	password, radio, select, sort, state, textarea, textbox, truefalse, webeditor, and yesno.  Let's take a closer look at how each of these form element
 	types can be used in your development.</p>
 
-	<a name="Form-Elements-Textbox"></a>
+	<a name="Textbox"></a>
 	<h4>Textbox:</h4><p>I chose to begin with textboxes because they're arguably the most frequently used form element on the web.  Chances are, the first form you build with this
 	project will contain a textbox - so, let's get started.  Textboxes are added to your forms through the addTextbox function.  See the code snippet provided below.</p>
 
@@ -193,7 +193,7 @@ $form->addTextbox("My Required Textbox", "Textbox", "", array("required" => 1));
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Selectbox"></a>
+	<a name="Selectbox"></a>
 	<h4>Selectbox:</h4><p>Selectboxes are added to your forms via the addSelect function.  This function is very similar to addTextbox; however, there is one additional parameter - options -
 	that is used to populate the selectbox's &lt;option&gt; tags.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second examples
 	provided below illustrate how the options paramter affects the value and displayed text of each &lt;option&gt; tag.</p>
@@ -265,7 +265,7 @@ $form->addSelect("My Prefilled/Multiple Selectbox", "Selectbox",
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Checkbox"></a>
+	<a name="Checkbox"></a>
 	<h4>Checkbox:</h4><p>Checkboxes are added to your forms via the addCheckbox function.  This function is used to generate a group of checkboxes, not just one.  Similar to the addSelect function, there is an options parameter
 	that is used to populate each checkbox's value and displayed text.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second examples
 	provided below illustrate how the options paramter affects each checkbox in the group.</p>
@@ -330,7 +330,7 @@ $form->addCheckbox("My Selected Checkboxes", "Checkbox", array("1", "3"), array(
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Radio-Button"></a>
+	<a name="Radio-Button"></a>
 	<h4>Radio Button:</h4><p>Radio buttons are added to your forms via the addRadio function.  This function is used to generate a group of radio buttons, not just one.  There is an options parameter
 	that is used to populate each radio button's value and displayed text.  This parameter can be passed as either a one dimensional array or as an associative array of key/value pairs.  The first and second examples
 	provided below illustrate how the options paramter affects each radio button in the group.</p>
@@ -393,7 +393,7 @@ $form->addRadio("My Selected Radio Buttons", "Radio", "1", array("1" => "Option 
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Textarea"></a>
+	<a name="Textarea"></a>
 	<h4>Textarea:</h4><p>Textboxes are added to forms by invoking the addTextarea function, which is nearly identical to the addTextbox function.</p>
 
 	<?php
@@ -433,7 +433,7 @@ $form->addTextarea("My Prefilled Textarea", "Textarea", "This is my default valu
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Hidden"></a>
+	<a name="Hidden"></a>
 	<h4>Hidden:</h4><p>Hidden inputs are added to forms by invoking the addHidden function.  The label parameter is not included in this function because hidden inputs do not make use
 	of labels.</p>
 
@@ -469,7 +469,7 @@ $form->addHidden("Hidden", "MyHiddenValue");
 		</tr>
 	</table>
 
-	<a name="Form-Elements-File"></a>
+	<a name="File"></a>
 	<h4>File:</h4><p>File inputs are added to forms by invoking the addFile function.  The &lt;form&gt; tag's enctype attribute will be automatically set to "multipart/form-data" if this function
 	is used on a form to attach a file element type.  There is no need for the value parameter, so it is omitted from the function's declaration.</p>
 
@@ -505,7 +505,7 @@ $form->addFile("My File", "File");
 		</tr>
 	</table>
 
-	<a name="Form-Elements-State"></a>
+	<a name="State"></a>
 	<h4>State:</h4><p>The state element type is a shortcut for adding a selectbox with options for each of the 50 U.S. states, 13 Canadian provinces/territories, and 7 U.S. territories.  
 	The values for these options are set to their appropriate two character code.  Because the options are pre-determined, the options parameter is omitted from the function's declaration.</p>
 
@@ -546,7 +546,7 @@ $form->addState("My State", "State");
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Country"></a>
+	<a name="Country"></a>
 	<h4>Country:</h4><p>Like the state element type, the addCountry function is a shortcut for adding a selectbox with options for countries throughout the world.  
 	The values for these options are set to their appropriate two character code.  Because the options are pre-determined, the options parameter is omitted from the function's declaration.</p>
 
@@ -587,7 +587,7 @@ $form->addCountry("My Country", "Country");
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Yes-No"></a>
+	<a name="Yes-No"></a>
 	<h4>Yes/No:</h4><p>The addYesNo function is a shortcut for adding a radio button group with options for "Yes" and "No".  
 	The values for these options are set to "1" and "0" respectively.  Because the options are pre-determined, the options parameter is omitted from the function's declaration.</p>
 
@@ -627,7 +627,7 @@ $form->addYesNo("My Yes/No", "YesNo");
 		</tr>
 	</table>
 
-	<a name="Form-Elements-True-False"></a>
+	<a name="True-False"></a>
 	<h4>True/False:</h4><p>The addTrueFalse function is a shortcut for adding a radio button group with options for "True" and "False".  
 	The values for these options are set to "1" and "0" respectively.  Because the options are pre-determined, the options parameter is omitted from the function's declaration.</p>
 
@@ -667,7 +667,7 @@ $form->addTrueFalse("My True/False", "TrueFalse");
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Email"></a>
+	<a name="Email"></a>
 	<h4>Email:</h4><p>The email element type is essentially a textbox with built-in javascript/php email validation.  Javascript validation is triggered in the form's pre-defined onsubmit function.
 	If the element's value is not empty, an AJAX call is made to validate the element's content.  If the textbox does not contain a valid email address, an appropriate error message will be dispalyed.  
 	PHP validation is triggered by making use of the validate function after the form's data has been submitted.  Both javascript and php validation make use of an open source project found at 
@@ -711,7 +711,7 @@ $form->addEmail("My Textbox w/Email Validation", "Email");
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Date"></a>
+	<a name="Date"></a>
 	<h4>Date:</h4><p>The date element type makes use of jQueryUI's datepicker functionality to allow a single date to be selected from a calendar.  The calendar is triggered from a pre-defined
 	onclick javascript event.  By default, this element will have a hint set to "Click to Select Date..."; however, this can be modified by applying the hint element attribute as seen in the third
 	example provided below.</p>
@@ -776,7 +776,7 @@ $form->addDate("My Date w/Multiple Months & Restricted Range", "Date", "", array
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Date-Range"></a>
+	<a name="Date-Range"></a>
 	<h4>Date Range:</h4><p>Like the date element, the addDateRange function makes use of jQueryUI's datepicker functionality; however, it allows a date range or single date to be selected from pre-defined list
 	or a calendar - not just a single date.  To facilitate this, a jQuery plugin developed by filament group is used.  More information about this plugin can be found at 
 	<a href="http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/">http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/</a>.  
@@ -843,7 +843,7 @@ $form->addDateRange("My Date Range w/Multiple Months & Restricted Range", "DateR
 		</tr>
 	</table>
 
-	<a name="Form-Elements-TinyMCE"></a>
+	<a name="TinyMCE"></a>
 	<h4>TinyMCE Web Editor:</h4><p>TinyMCE's javascript WYSIWYG editor can be added with the addWebEditor function.  For more information on TinyMCE, see
 	<a href="http://tinymce.moxiecode.com/">http://tinymce.moxiecode.com/</a>.  Like the CKEditor web editor, a simplified toolbar can be triggered by
 	including the basic element attribute.</p>
@@ -886,7 +886,7 @@ $form->addWebEditor("My Basic TinyMCE Editor", "TinyMCE", "", array("basic" => 1
 		</tr>
 	</table>
 
-	<a name="Form-Elements-CKEditor"></a>
+	<a name="CKEditor"></a>
 	<h4>CKEditor:</h4><p>CKEditor's WYSIWYG editor can be added with the addCKEditor function.  For more information on CKEditor, see
 	<a href="http://ckeditor.com/">http://ckeditor.com/</a>.  Like the TinyMCE web editor, a simplified toolbar can be triggered by
 	including the basic element attribute.</p>
@@ -929,9 +929,13 @@ $form->addCKEditor("My Basic CKEditor", "CKEditor", "", array("basic" => 1));
 		</tr>
 	</table>
 
-	<a name="Form-Elements-Captcha"></a>
-	<h4>Captcha:</h4><p>This project leverages reCAPTCHA's anti-bot services to help prevent non-human activity by requiring the end-user to interpret and solve a challenge phrase.  See <a href="http://www.google.com/recaptcha">http://www.google.com/recaptcha</a> for more information about reCAPTCHA.
-	The captcha form element is different in several ways from the other elements included in this project.</p>
+	<a name="Captcha"></a>
+	<h4>Captcha:</h4><p>This project leverages reCAPTCHA's anti-bot services to help prevent non-human activity by requiring the end-user to interpret and solve a challenge phrase.  See <a href="http://www.google.com/recaptcha">http://www.google.com/recaptcha</a> for more information about reCAPTCHA.</p>
+	<p>The captcha form element is different in several ways from the other elements included in this project.  The biggest difference is that it can only be used once per webpage - which is a reCAPTCHA restriction.
+	Any additional captcha elements attached to a form will be ignored.  Another difference is that the addCaptcha function can be invoked with no parameters as seen in the first example provided below.  
+	This is possible because the captcha element's name is hardcoded within the project's main file - class.form.php - and not needed to be in the addCaptcha function declaration as a parameter.</p>
+	<p>It's essential that you invoke the validate function after the form's data has been submitted. If you fail to do this, the user's reCAPTCHA solution will never be validated. If you have questions 
+	regarding how to use the validate function, you can view the <a href="../examples/captcha.php">captcha example file's</a> php source code.</p>
 
 	<?php
 	echo '<pre>', highlight_string('<?php
