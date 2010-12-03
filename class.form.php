@@ -756,6 +756,23 @@ class form extends pfbc {
 		$this->elements = array();
 	}
 
+	public function clearSessionValues() {
+		if(!empty($_SESSION["pfbc-values"][$this->attributes["id"]]))
+			unset($_SESSION["pfbc-values"][$this->attributes["id"]]);
+		if(!empty($this->bindRules)) {
+			$bindRuleKeys = array_keys($this->bindRules);
+			$bindRuleSize = sizeof($bindRuleKeys);
+			for($b = 0; $b < $bindRuleSize; ++$b) {
+				if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements)) {
+					if(empty($this->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $this->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))) {
+						if(!empty($_SESSION["pfbc-values"][$this->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]))
+							unset($_SESSION["pfbc-values"][$this->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]);
+					}
+				}	
+			}	
+		}	
+	}
+
 	public function closeFieldset() {
 		$this->addElement("", "", "htmlexternal", '</fieldset>');
 	}
@@ -851,8 +868,6 @@ STR;
 
 		if(empty($this->referenceValues) && !empty($_SESSION["pfbc-values"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-values"]))
 			$this->setValues($_SESSION["pfbc-values"][$this->attributes["id"]]);
-
-		if(empty($this->synchronousResources))
 
 		//Ensure that the jsIncludesPath attribute is set appropriately.  If not, display a javascript alert message.
 		$triggerJSIncludesError = true;
@@ -3564,7 +3579,7 @@ STR;
 		$this->referenceValues = $params;
 	}
 
-	public function validate() {
+	public function validate($clearSessionValues=true) {
 		$_SESSION["pfbc-errors"][$this->attributes["id"]] = array();
 		//Determine if the form's submit method was get or post.
 		if(!empty($_POST))
@@ -3634,20 +3649,9 @@ STR;
 				unset($_SESSION["pfbc-errors"][$this->attributes["id"]]);
 
 			//Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.
-			if(!empty($_SESSION["pfbc-values"][$this->attributes["id"]]))
-				unset($_SESSION["pfbc-values"][$this->attributes["id"]]);
-			if(!empty($form->bindRules)) {
-				$bindRuleKeys = array_keys($form->bindRules);
-				$bindRuleSize = sizeof($bindRuleKeys);
-				for($b = 0; $b < $bindRuleSize; ++$b) {
-					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))) {
-							if(!empty($_SESSION["pfbc-values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]))
-								unset($_SESSION["pfbc-values"][$form->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]);
-						}
-					}	
-				}	
-			}	
+			if($clearSessionValues)
+				$form->clearSessionValues();
+
 			return true;
 		}
 		else {
