@@ -756,7 +756,7 @@ class form extends pfbc {
 		$this->elements = array();
 	}
 
-	public function clearSessionValues() {
+	public function clearSubmissionData() {
 		if(!empty($_SESSION["pfbc-values"][$this->attributes["id"]]))
 			unset($_SESSION["pfbc-values"][$this->attributes["id"]]);
 		if(!empty($this->bindRules)) {
@@ -3579,7 +3579,7 @@ STR;
 		$this->referenceValues = $params;
 	}
 
-	public function validate($clearSessionValues=true) {
+	public function validate($clearSubmissionData=true) {
 		$_SESSION["pfbc-errors"][$this->attributes["id"]] = array();
 		//Determine if the form's submit method was get or post.
 		if(!empty($_POST))
@@ -3649,8 +3649,8 @@ STR;
 				unset($_SESSION["pfbc-errors"][$this->attributes["id"]]);
 
 			//Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.
-			if($clearSessionValues)
-				$form->clearSessionValues();
+			if($clearSubmissionData)
+				$form->clearSubmissionData();
 
 			return true;
 		}
