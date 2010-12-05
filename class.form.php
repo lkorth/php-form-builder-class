@@ -167,7 +167,7 @@ class form extends pfbc {
 		//[LABEL] is replaced with the appropriate element's label for both emailErrorMsgFormat and errorMsgFormat attributes.
 		$this->emailErrorMsgFormat = "Error: [LABEL] contains an invalid email address.";
 		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
-		$this->floatErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers, decimals and signs are allowed.";
+		$this->floatErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers, decimals, and signs are allowed.";
 		if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
 			$this->https = 1;
 		$this->integerErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers are allowed.";
@@ -756,7 +756,7 @@ class form extends pfbc {
 		$this->elements = array();
 	}
 
-	public function clearSubmissionData() {
+	public function clearSessionValues() {
 		if(!empty($_SESSION["pfbc-values"][$this->attributes["id"]]))
 			unset($_SESSION["pfbc-values"][$this->attributes["id"]]);
 		if(!empty($this->bindRules)) {
@@ -866,7 +866,7 @@ STR;
 	public function elementsToString() {
 		$str = "";
 
-		if(empty($this->referenceValues) && !empty($_SESSION["pfbc-values"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-values"]))
+		if(empty($this->referenceValues) && !empty($_SESSION["pfbc-values"][$this->attributes["id"]]))
 			$this->setValues($_SESSION["pfbc-values"][$this->attributes["id"]]);
 
 		//Ensure that the jsIncludesPath attribute is set appropriately.  If not, display a javascript alert message.
@@ -3558,6 +3558,54 @@ STR;
 		}	
 	}
 
+	private function getElementContainer($name) {
+		$container = "";
+		if(!empty($this->elements)) {
+			$nonHiddenInternalElementCount = 0;
+			$elementSize = sizeof($this->elements);
+			for($e = 0; $e < $elementSize; ++$e) {
+				$ele = $this->elements[$e];
+				if(!in_array($ele->attributes["type"], array("htmlexternal", "hidden", "button"))) {
+					$eleName = $ele->attributes["name"];
+					if(substr($eleName , -2) == "[]")
+						$eleName = substr($eleName, 0, -2);
+					if(substr($name , -2) == "[]")
+						$name = substr($name, 0, -2);
+					if($name == $eleName) {
+						$container = "#pfbc-" . $this->attributes["id"] . "-element-" . $nonHiddenInternalElementCount;
+						break;
+					}
+					++$nonHiddenInternalElementCount;
+				}
+			}
+		}
+		return $container;
+	}
+
+	public function setError($error, $name="") {
+		$container = "";
+		if(!empty($name)) {
+			if(!empty($_SESSION["pfbc-instances"][$this->attributes["id"]])) {
+				$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+
+				$container = $form->getElementContainer($name);
+				if(empty($container) && !empty($form->bindRules)) {
+					$bindRuleKeys = array_keys($form->bindRules);
+					$bindRuleSize = sizeof($bindRuleKeys);
+					for($b = 0; $b < $bindRuleSize; ++$b) {
+						if(empty($container) && (empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))))
+							$container = $form->bindRules[$bindRuleKeys[$b]][0]->getElementContainer($name);
+					}	
+				}
+			}	
+		}	
+
+		if(empty($_SESSION["pfbc-errors"][$this->attributes["id"]]))
+			$_SESSION["pfbc-errors"][$this->attributes["id"]] = array();
+		$_SESSION["pfbc-errors"][$this->attributes["id"]]["container"][] = $container;
+		$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = $error;
+	}
+
 	private function setIncludePaths() {
 		$this->phpIncludesPath = dirname(__FILE__) . "/includes";
 		if(empty($this->jsIncludesPath)) {
@@ -3579,7 +3627,7 @@ STR;
 		$this->referenceValues = $params;
 	}
 
-	public function validate($clearSubmissionData=true) {
+	public function validate($clearSessionValues=true) {
 		$_SESSION["pfbc-errors"][$this->attributes["id"]] = array();
 		//Determine if the form's submit method was get or post.
 		if(!empty($_POST))
@@ -3592,7 +3640,7 @@ STR;
 			return false;
 		}
 
-		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+		if(!empty($_SESSION["pfbc-instances"][$this->attributes["id"]])) {
 			//Prevent unauthorized bot/spam traffic.
 			$valid = false;
 			$tokenmap = $_SESSION["pfbc-tokenmap"][$this->attributes["id"]];
@@ -3649,8 +3697,8 @@ STR;
 				unset($_SESSION["pfbc-errors"][$this->attributes["id"]]);
 
 			//Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.
-			if($clearSubmissionData)
-				$form->clearSubmissionData();
+			if($clearSessionValues)
+				$form->clearSessionValues();
 
 			return true;
 		}
