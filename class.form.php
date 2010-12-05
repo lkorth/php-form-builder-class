@@ -151,14 +151,16 @@ class form extends pfbc {
 	public $errorMsg;
 	public $highlightMsg;
 
-	public function __construct($id = "myform") {
+	public function __construct($id = "myform", $width="") {
 		//Non alpha-numeric characters are replaced with underscores to prevent invalid javascript function names.
 		$id = preg_replace("/\W/", "_", $id);
 		$this->attributes = array(
 			"id" => $id,
 			"method" => "post",
-			"action" => basename($_SERVER["SCRIPT_NAME"]),
+			"action" => basename($_SERVER["SCRIPT_NAME"])
 		);
+		if(!empty($width))
+			$this->attributes["width"] = $width;
 		$this->alphanumericErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only letters and/or numbers are allowed.";
 		$this->captchaLang = "en";
 		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
@@ -805,6 +807,31 @@ class form extends pfbc {
 			return $result;	
 		}	
 	}
+
+	private function getElementContainer($name) {
+		$container = "";
+		if(!empty($this->elements)) {
+			$nonHiddenInternalElementCount = 0;
+			$elementSize = sizeof($this->elements);
+			for($e = 0; $e < $elementSize; ++$e) {
+				$ele = $this->elements[$e];
+				if(!in_array($ele->attributes["type"], array("htmlexternal", "hidden", "button"))) {
+					$eleName = $ele->attributes["name"];
+					if(substr($eleName , -2) == "[]")
+						$eleName = substr($eleName, 0, -2);
+					if(substr($name , -2) == "[]")
+						$name = substr($name, 0, -2);
+					if($name == $eleName) {
+						$container = "#pfbc-" . $this->attributes["id"] . "-element-" . $nonHiddenInternalElementCount;
+						break;
+					}
+					++$nonHiddenInternalElementCount;
+				}
+			}
+		}
+		return $container;
+	}
+
 
 	public function getEmail($textOnly=false, $additionalInfo=false) {
 		if(!empty($_POST))
@@ -3556,30 +3583,6 @@ STR;
 				return $result;
 			}	
 		}	
-	}
-
-	private function getElementContainer($name) {
-		$container = "";
-		if(!empty($this->elements)) {
-			$nonHiddenInternalElementCount = 0;
-			$elementSize = sizeof($this->elements);
-			for($e = 0; $e < $elementSize; ++$e) {
-				$ele = $this->elements[$e];
-				if(!in_array($ele->attributes["type"], array("htmlexternal", "hidden", "button"))) {
-					$eleName = $ele->attributes["name"];
-					if(substr($eleName , -2) == "[]")
-						$eleName = substr($eleName, 0, -2);
-					if(substr($name , -2) == "[]")
-						$name = substr($name, 0, -2);
-					if($name == $eleName) {
-						$container = "#pfbc-" . $this->attributes["id"] . "-element-" . $nonHiddenInternalElementCount;
-						break;
-					}
-					++$nonHiddenInternalElementCount;
-				}
-			}
-		}
-		return $container;
 	}
 
 	public function setError($error, $name="") {

@@ -20,10 +20,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	sort, checksort, captcha, slider, html, color, email, htmlexternal, button.  More information on each of these form elements can be found in the <a href="../documentation/index.php#Form-Elements">Supported Form Elements section of the documentation</a>.</p>
 
 	<?php
-	$form = new form("formelements_0");
-	$form->setAttributes(array(
-		"width" => "400"
-	));	
+	$form = new form("formelements_0", 400);
 
 	if(!empty($_GET["errormsg_0"]))
 		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
@@ -59,9 +56,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<br/><br/>
 
 	<?php
-	$form = new form("formelements_1");
+	$form = new form("formelements_1", 850);
 	$form->setAttributes(array(
-		"width" => "850",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1
@@ -77,10 +73,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("formelements_0");
-$form->setAttributes(array(
-	"width" => "400"
-));	
+$form = new form("formelements_0", 400);
 
 if(!empty($_GET["errormsg_0"]))
 	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
@@ -116,10 +109,7 @@ $form->render();
 <br/><br/>
 
 <?php
-$form = new form("formelements_1");
-$form->setAttributes(array(
-	"width" => "850"
-));	
+$form = new form("formelements_1", 850);
 
 if(!empty($_GET["errormsg_1"]))
 	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
