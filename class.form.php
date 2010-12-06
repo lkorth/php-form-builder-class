@@ -1675,11 +1675,17 @@ STR;
 			jQuery(document).ready(function() {
 				jQuery.get('{$this->jsIncludesPath}/css.php?id={$this->attributes["id"]}$session_param', function(cssText) {
 					jQuery("head").append('<style type="text/css">' + cssText + '<\/style>');
-					if(jQuery("#{$this->attributes["id"]}").parent().is(":hidden")) 
-						jQuery.swap(jQuery("#{$this->attributes["id"]}").parent()[0], { position: "absolute", visibility: "hidden", display: "block" }, pfbc_adjust_{$this->attributes["id"]});
-					else
-						pfbc_adjust_{$this->attributes["id"]}();
+					pfbc_adjust_{$this->attributes["id"]}();
 					jQuery("#{$this->attributes["id"]}").css("visibility", "visible");
+
+STR;
+			if(!empty($this->hasFormTag) && empty($this->noAutoFocus) && !empty($this->focusElement)) {
+				$str .= <<<STR
+document.getElementById("{$this->attributes["id"]}").elements["{$this->focusElement}"].focus();
+
+STR;
+			}
+			$str .= <<<STR
 				});
 				jQuery.getScript("{$this->jsIncludesPath}/js.php?id={$this->attributes["id"]}$session_param");
 			});
@@ -2345,7 +2351,7 @@ STR;
 					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/colorpicker/colorpicker.css' rel='stylesheet' type='text/css'/>";
 				if(!empty($form->tooltipIDArr))
 					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css' rel='stylesheet' type='text/css'/>";
-				$str .= '<style type="text/css">';
+				$str .= "\n" . '<style type="text/css">' . "\n";
 			}
 
 			$id = "#" . $this->attributes["id"];
@@ -2895,7 +2901,7 @@ STR;
 				if(empty($form->preventCaptchaLoad) && !empty($form->captchaID))
 					$str .= "<script type='text/javascript' src='$prefix://www.google.com/recaptcha/api/js/recaptcha_ajax.js'></script>";
 				$str .= "\n" . '<script type="text/javascript">';
-				$str .= "//<![CDATA[";
+				$str .= "\n//<![CDATA[";
 				$str .= "\npfbc_adjust_" . $this->attributes["id"] . "();";
 			}
 
@@ -3528,19 +3534,18 @@ STR;
 }
 
 STR;
-
-				if(empty($form->noAutoFocus) && !empty($form->focusElement)) {
-					$str .= <<<STR
-document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].focus();
-
-STR;
-				}
 			}	
 		}	
 
 		if(!empty($form->synchronousResources)) {
+			if(!empty($form->hasFormTag) && empty($form->noAutoFocus) && !empty($form->focusElement)) {
+				$str .= <<<STR
+document.getElementById("{$this->attributes["id"]}").elements["{$form->focusElement}"].focus();
+
+STR;
+			}
 			$str .= "//]]>";
-			$str .= "</script>\n";
+			$str .= "\n</script>\n";
 		}
 
 		if(!$returnString)
