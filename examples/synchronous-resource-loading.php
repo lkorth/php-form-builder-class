@@ -3,16 +3,13 @@ error_reporting(E_ALL);
 session_start();
 include("../class.form.php");
 
-$form = new form("synchronous");
+$form = new form("synchronous", 400);
 
 if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit") {
 	if($form->validate())
 		$form->errorMsg = "Congratulations! The information you enter passed the form's validation.";
 } 
 
-$form->setAttributes(array(
-	"width" => 400
-));
 $form->addHidden("cmd", "submit");
 $form->addTextbox("Textbox:", "MyTextbox");
 $form->addTextarea("Textarea:", "MyTextarea");

@@ -40,13 +40,10 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	submit the form's data via AJAX.</p>
 
 	<?php
-	$form = new form("captcha_0");
-	$form->setAttributes(array(
-		"width" => 400
-	));
+	$form = new form("captcha_0", 400);
 
 	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->addCaptcha("Captcha:");
@@ -54,13 +51,10 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("captcha_0");
-$form->setAttributes(array(
-	"width" => 400
-));
+$form = new form("captcha_0", 400);
 
 if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_0");
 $form->addCaptcha("Captcha:");

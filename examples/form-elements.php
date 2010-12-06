@@ -23,7 +23,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form = new form("formelements_0", 400);
 
 	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->addTextbox("Textbox:", "MyTextbox");
@@ -64,7 +64,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	));	
 
 	if(!empty($_GET["errormsg_1"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_1");
 	$form->addWebEditor("Web Editor - TinyMCE:", "MyWebEditor");
@@ -76,7 +76,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 $form = new form("formelements_0", 400);
 
 if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_0");
 $form->addTextbox("Textbox:", "MyTextbox");
@@ -112,7 +112,7 @@ $form->render();
 $form = new form("formelements_1", 850);
 
 if(!empty($_GET["errormsg_1"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_1");
 $form->addWebEditor("Web Editor - TinyMCE:", "MyWebEditor");

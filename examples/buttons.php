@@ -28,13 +28,10 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	widget functionality.  Below, you will find several ways of how you can use this project's addButton function in your development.</p>
 
 	<?php
-	$form = new form("buttons_0");
-	$form->setAttributes(array(
-		"width" => 400
-	));
+	$form = new form("buttons_0", 400);
 
 	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->addTextbox("Textbox:", "MyTextbox");
@@ -51,9 +48,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<br/><br/>
 
 	<?php
-	$form = new form("buttons_1");
+	$form = new form("buttons_1", 500);
 	$form->setAttributes(array(
-		"width" => 500,
 		"jqueryUIButtons" => 1,
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
@@ -62,7 +58,7 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	));
 
 	if(!empty($_GET["errormsg_1"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_1");
 	$form->addTextbox("First Name:", "FName");
@@ -79,13 +75,10 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("buttons_0");
-$form->setAttributes(array(
-	"width" => 400
-));
+$form = new form("buttons_0", 400);
 
 if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_0");
 $form->addTextbox("Textbox:", "MyTextbox");
@@ -102,15 +95,14 @@ $form->render();
 <br/><br/>
 
 <?
-$form = new form("buttons_1");
+$form = new form("buttons_1", 500);
 $form->setAttributes(array(
-	"width" => 500,
 	"jqueryUIButtons" => 1,
 	"map" => array(2, 2, 1, 3)
 ));
 
 if(!empty($_GET["errormsg_1"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_1");
 $form->addTextbox("First Name:", "FName");

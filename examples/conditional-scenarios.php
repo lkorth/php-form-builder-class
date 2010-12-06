@@ -21,14 +21,13 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	which properly handles validation and ajax submission.</p>
 
 	<?php
-	$billing_form = new form("conditionalscenarios_0");
+	$billing_form = new form("conditionalscenarios_0", 500);
 	$billing_form->setAttributes(array(
-		"width" => 500,
 		"map" => array(1, 2, 2, 1, 3, 1)
 	));
 
 	if(!empty($_GET["errormsg_0"]))
-		$billing_form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$billing_form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$billing_form->addHidden("cmd", "submit_0");
 	$billing_form->addHTML('<div style="font-weight: bold; padding-bottom: 5px;">Billing Address</div>');
@@ -41,9 +40,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$billing_form->addState("State:", "BillingState", "", array("required" => 1));
 	$billing_form->addTextbox("Zip Code:", "BillingZip", "", array("required" => 1));
 
-	$shipping_form = new form("shipping");
+	$shipping_form = new form("shipping", 500);
 	$shipping_form->setAttributes(array(
-		"width" => 500,
 		"map" => array(1, 2, 2, 1, 3)
 	));
 	$shipping_form->addHTML('<div style="font-weight: bold; padding-top: 15px; padding-bottom: 5px;">Shipping Address</div>');
@@ -76,14 +74,13 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 	<?php
 	echo '<pre>', highlight_string('<?php
-$billing_form = new form("conditionalscenarios_0");
+$billing_form = new form("conditionalscenarios_0", 500);
 $billing_form->setAttributes(array(
-	"width" => 500,
 	"map" => array(1, 2, 2, 1, 3, 1)
 ));
 
 if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $billing_form->addHidden("cmd", "submit_0");
 $billing_form->addHTML(\'<div style="font-weight: bold; padding-bottom: 5px;">Billing Address</div>\');
@@ -96,9 +93,8 @@ $billing_form->addTextbox("City:", "BillingCity", "", array("required" => 1));
 $billing_form->addState("State:", "BillingState", "", array("required" => 1));
 $billing_form->addTextbox("Zip Code:", "BillingZip", "", array("required" => 1));
 
-$shipping_form = new form("shipping");
+$shipping_form = new form("shipping", 500);
 $shipping_form->setAttributes(array(
-	"width" => 500,
 	"map" => array(1, 2, 2, 1, 3)
 ));
 $shipping_form->addHTML(\'<div style="font-weight: bold; padding-top: 15px; padding-bottom: 5px;">Shipping Address</div>\');
@@ -130,24 +126,19 @@ $billing_form->render();
 </script>
 ', true), '</pre>';
 
-	$location_form = new form("conditionalscenarios_1");
+	$location_form = new form("conditionalscenarios_1", 500);
 	$location_form->setAttributes(array(
-		"width" => 500,
 		"noAutoFocus" => 1
 	));	
 
 	if(!empty($_GET["errormsg_1"]))
-		$location_form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$location_form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
-	$map_form = new form("map");
-	$map_form->setAttributes(array(
-		"width" => 500
-	));	
+	$map_form = new form("map", 500);
 	$map_form->addLatLng("", "LatitudeLongitude", "", array("required" => 1));
 
-	$address_form = new form("address");
+	$address_form = new form("address", 500);
 	$address_form->setAttributes(array(
-		"width" => 500,
 		"map" => array(1, 3)
 	));	
 	$address_form->addTextbox("Address:", "BillingAddress", "", array("required" => 1));
@@ -175,25 +166,20 @@ $billing_form->render();
 
 	<?php
 	echo '<pre>', highlight_string('<?php
-$location_form = new form("conditionalscenarios_1");
+$location_form = new form("conditionalscenarios_1", 500);
 $location_form->setAttributes(array(
 	"ajax" => 1,
-	"width" => 500,
 	"noAutoFocus" => 1
 ));	
 
 if(!empty($_GET["errormsg_1"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
-$map_form = new form("map");
-$map_form->setAttributes(array(
-	"width" => 500
-));	
+$map_form = new form("map", 500);
 $map_form->addLatLng("", "LatitudeLongitude", "", array("required" => 1));
 
-$address_form = new form("address");
+$address_form = new form("address", 500);
 $address_form->setAttributes(array(
-	"width" => 500,
 	"map" => array(1, 3)
 ));	
 $address_form->addTextbox("Address:", "BillingAddress", "", array("required" => 1));

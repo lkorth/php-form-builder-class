@@ -50,14 +50,13 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<p>Below are several example forms that demo many of the attributes listed above.</p>
 
 	<?php
-	$form = new form("layout_0");
+	$form = new form("layout_0", 500);
 	$form->setAttributes(array(
-		"width" => 500,
 		"map" => array(2, 2, 1, 3)
 	));
 
 	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->addTextbox("First Name:", "FName");
@@ -72,14 +71,13 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("layout_0");
+$form = new form("layout_0", 500);
 $form->setAttributes(array(
-	"width" => 500,
 	"map" => array(2, 2, 1, 3)
 ));
 
 if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_0");
 $form->addTextbox("First Name:", "FName");
@@ -94,9 +92,8 @@ $form->addButton();
 $form->render();
 ?>', true), '</pre>';
 
-	$form = new form("layout_1");
+	$form = new form("layout_1", 400);
 	$form->setAttributes(array(
-		"width" => 400,
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -105,7 +102,7 @@ $form->render();
 	));
 
 	if(!empty($_GET["errormsg_1"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_1");
 	$form->addTextbox("Username:", "Username", "", array("required" => 1));
@@ -115,15 +112,14 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("layout_1");
+$form = new form("layout_1", 400);
 $form->setAttributes(array(
-	"width" => 400,
 	"labelWidth" => 100,
 	"labelPaddingTop" => "0.5em"
 ));
 
 if(!empty($_GET["errormsg_1"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_1");
 $form->addTextbox("Username:", "Username", "", array("required" => 1));
@@ -133,9 +129,8 @@ $form->addButton("Login");
 $form->render();
 ?>', true), '</pre>';
 
-	$form = new form("layout_2");
+	$form = new form("layout_2", 800);
 	$form->setAttributes(array(
-		"width" => 800,
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -146,7 +141,7 @@ $form->render();
 	));
 
 	if(!empty($_GET["errormsg_2"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_2"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_2"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_2");
 	$form->addTextbox("First Name:", "FName", "", array("required" => 1));
@@ -161,9 +156,8 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("layout_2");
+$form = new form("layout_2", 800);
 $form->setAttributes(array(
-	"width" => 800,
 	"labelWidth" => 125,
 	"labelRightAlign" => 1,
 	"labelPaddingTop" => "0.5em",
@@ -171,7 +165,7 @@ $form->setAttributes(array(
 ));
 
 if(!empty($_GET["errormsg_2"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_2"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_2"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_2");
 $form->addTextbox("First Name:", "FName", "", array("required" => 1));
@@ -186,9 +180,8 @@ $form->addButton();
 $form->render();
 ?>', true), '</pre>';
 	
-	$form = new form("layout_3");
+	$form = new form("layout_3", 400);
 	$form->setAttributes(array(
-		"width" => 400,
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -198,7 +191,7 @@ $form->render();
 	));
 
 	if(!empty($_GET["errormsg_3"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_3"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_3"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_3");
 	$form->addTextbox("Username:", "Username", "", array("required" => 1));
@@ -208,19 +201,15 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("layout_3");
+$form = new form("layout_3", 400);
 $form->setAttributes(array(
-	"width" => 400,
-	"noAutoFocus" => 1,
-	"preventJQueryLoad" => 1,
-	"preventJQueryUILoad" => 1,
 	"labelWidth" => 100,
 	"labelPaddingTop" => "0.5em",
 	"labelDisplayRight" => 1
 ));
 
 if(!empty($_GET["errormsg_3"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_3"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_3"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_3");
 $form->addTextbox("Username:", "Username", "", array("required" => 1));

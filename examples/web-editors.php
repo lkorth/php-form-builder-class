@@ -35,13 +35,10 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<p>Below you'll find several ways you can use the addWebEditor and addCKEditor functions in your development.</p>
 
 	<?php
-	$form = new form("webeditors_0");
-	$form->setAttributes(array(
-		"width" => 655, 
-	));
+	$form = new form("webeditors_0", 655);
 
 	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->addWebEditor("TinyMCE Web Editor:", "MyWebEditor");
@@ -53,13 +50,10 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<br/><br/>
 
 	<?php
-	$form = new form("webeditors_1");
-	$form->setAttributes(array(
-		"width" => "850"
-	));
+	$form = new form("webeditors_1", 850);
 
 	if(!empty($_GET["errormsg_1"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_1");
 	$form->addCKEditor("CKEditor Web Editor:", "MyCKEditor");
@@ -68,13 +62,10 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("webeditors_0");
-$form->setAttributes(array(
-	"width" => 655, 
-));
+$form = new form("webeditors_0", 655);
 
 if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_0");
 $form->addWebEditor("TinyMCE Web Editor:", "MyWebEditor");
@@ -86,13 +77,10 @@ $form->render();
 <br/><br/>
 
 <?php
-$form = new form("webeditors_1");
-$form->setAttributes(array(
-	"width" => "850"
-));
+$form = new form("webeditors_1", 850);
 
 if(!empty($_GET["errormsg_1"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_1");
 $form->addCKEditor("CKEditor Web Editor:", "MyCKEditor");

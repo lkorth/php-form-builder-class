@@ -43,9 +43,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	form attribute.</p>
 
 	<?php
-	$form = new form("ajax_0");
+	$form = new form("ajax_0", 500);
 	$form->setAttributes(array(
-		"width" => "500",
 		"map" => array(1, 2, 2, 2, 1, 3),
 		"ajax" => 1
 	));
@@ -66,9 +65,8 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("ajax_0");
+$form = new form("ajax_0", 500);
 $form->setAttributes(array(
-	"width" => "500",
 	"map" => array(1, 2, 2, 2, 1, 3),
 	"ajax" => 1
 ));
@@ -94,9 +92,8 @@ $form->render();
 	to convert an address into a latitude/longitude pair.  Also demonstrated here is the use of the "ajaxCallback" form attribute.</p>
 
 	<?php
-	$form = new form("ajax_1");
+	$form = new form("ajax_1", 400);
 	$form->setAttributes(array(
-		"width" => "400",
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -132,9 +129,8 @@ $form->render();
 
 	<?php
 	echo '<pre>', highlight_string('<?php
-$form = new form("ajax_1");
+$form = new form("ajax_1", 400);
 $form->setAttributes(array(
-	"width" => "400",
 	"ajaxCallback" => "parseJSONResponse",
 	"ajax" => 1
 ));

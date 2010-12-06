@@ -52,14 +52,13 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	You'll want to replace these with your information.</p>
 
 	<?php
-	$form = new form("googlespreadsheets_0");
+	$form = new form("googlespreadsheets_0", 500);
 	$form->setAttributes(array(
-		"map" => array(2, 2, 1, 3),
-		"width" => 500
+		"map" => array(2, 2, 1, 3)
 	));
 
 	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->addTextbox("First Name:", "FName");

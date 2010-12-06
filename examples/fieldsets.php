@@ -36,14 +36,13 @@ STR;
 	development.</p>
 
 	<?php
-	$form = new form("fieldsets_0");
+	$form = new form("fieldsets_0", 500);
 	$form->setAttributes(array(
-		"width" => 500,
 		"map" => array(2, 1, 3, 2, 3)
 	));
 
 	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->openFieldset("Name");
@@ -69,14 +68,13 @@ STR;
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("fieldsets_0");
+$form = new form("fieldsets_0", 500);
 $form->setAttributes(array(
-	"width" => 500,
 	"map" => array(2, 1, 3, 2, 3)
 ));
 
 if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_0");
 $form->openFieldset("Name");

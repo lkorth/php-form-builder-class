@@ -68,13 +68,10 @@ STR;
 	<p><b><a name="date">jQueryUI Datepicker Widget</a></b> - The date element utilizes jQueryUI's datepicker widget.  Below, you'll find several ways you can use the addDate function in your forms.  See <a href="http://jqueryui.com/demos/datepicker/">http://jqueryui.com/demos/datepicker/</a> for more information on this jQueryUI widget.</p>
 
 	<?php
-	$form = new form("jquery_0");
-	$form->setAttributes(array(
-		"width" => 400
-	));
+	$form = new form("jquery_0", 400);
 
 	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->addDate("Date:", "MyDate");
@@ -87,13 +84,10 @@ STR;
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("jquery_0");
-$form->setAttributes(array(
-	"width" => 400
-));
+$form = new form("jquery_0", 400);
 
 if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_0");
 $form->addDate("Date:", "MyDate");
@@ -110,16 +104,15 @@ $form->render();
 	<p><b><a name="daterange">jQuery Date Range Picker Plugin</a></b> - The daterange element utilizes the Date Range Picker jQuery plugin developed by Filament Group, Inc.  Below, you'll find several ways you can use the addDateRange function in your forms.  See <a href="http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/">http://www.filamentgroup.com/lab/date_range_picker_using_jquery_ui_16_and_jquery_ui_css_framework/</a> for more information on this jQuery plugin.</p>
 
 	<?php
-	$form = new form("jquery_1");
+	$form = new form("jquery_1", 400);
 	$form->setAttributes(array(
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
-		"preventJQueryUILoad" => 1,
-		"width" => 400
+		"preventJQueryUILoad" => 1
 	));
 
 	if(!empty($_GET["errormsg_1"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_1");
 	$form->addDateRange("Date Range:", "MyDateRange");
@@ -131,13 +124,10 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("jquery_1");
-$form->setAttributes(array(
-	"width" => 400
-));
+$form = new form("jquery_1", 400);
 
 if(!empty($_GET["errormsg_1"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_1");
 $form->addDateRange("Date Range:", "MyDateRange");
@@ -153,16 +143,15 @@ $form->render();
 	<p><b><a name="slider">jQueryUI Slider Widget</a></b> - The slider element utilizes jQueryUI's slider widget.  Below, you'll find several ways you can use the addSlider function in your forms.  See <a href="http://jqueryui.com/demos/slider/">http://jqueryui.com/demos/slider/</a> for more information on this jQueryUI widget.</p>
 
 	<?php
-	$form = new form("jquery_2");
+	$form = new form("jquery_2", 400);
 	$form->setAttributes(array(
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
-		"preventJQueryUILoad" => 1,
-		"width" => 400
+		"preventJQueryUILoad" => 1
 	));
 
 	if(!empty($_GET["errormsg_2"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_2"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_2"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_2");
 	$form->addSlider("Slider:", "MySlider");
@@ -175,13 +164,10 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("jquery_2");
-$form->setAttributes(array(
-	"width" => 400
-));
+$form = new form("jquery_2", 400);
 
 if(!empty($_GET["errormsg_2"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_2"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_2"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_2");
 $form->addSlider("Slider:", "MySlider");
@@ -198,16 +184,15 @@ $form->render();
 	<p><b><a name="sort">jQueryUI Sortable Interaction</a></b> - The sort and checksort elements utilize jQueryUI's sortable interaction.  Below, you'll find several ways you can use the addSort and addChecksort functions in your forms.  See <a href="http://jqueryui.com/demos/sortable/">http://jqueryui.com/demos/sortable/</a> for more information on this jQueryUI interaction.</p>
 
 	<?php
-	$form = new form("jquery_3");
+	$form = new form("jquery_3", 400);
 	$form->setAttributes(array(
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
-		"preventJQueryUILoad" => 1,
-		"width" => 400
+		"preventJQueryUILoad" => 1
 	));
 
 	if(!empty($_GET["errormsg_3"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_3"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_3"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_3");
 	$form->addSort("Sort:", "MySort", array("Option #1", "Option #2", "Option #3"));
@@ -220,13 +205,10 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("jquery_3");
-$form->setAttributes(array(
-	"width" => 400
-));
+$form = new form("jquery_3", 400);
 
 if(!empty($_GET["errormsg_3"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_3"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_3"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_3");
 $form->addSort("Sort:", "MySort", array("Option #1", "Option #2", "Option #3"));
@@ -243,16 +225,15 @@ $form->render();
 	<p><b><a name="color">jQuery Color Picker Plugin</a></b> - The color element utilizes the Color Picker jQuery plugin.  Below, you'll find several ways you can use the addColor function in your forms.  See <a href="http://eyecon.ro/colorpicker/">http://eyecon.ro/colorpicker/</a> for more information on this jQuery plugin.</p>
 
 	<?php
-	$form = new form("jquery_4");
+	$form = new form("jquery_4", 400);
 	$form->setAttributes(array(
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
-		"preventJQueryUILoad" => 1,
-		"width" => 400
+		"preventJQueryUILoad" => 1
 	));
 
 	if(!empty($_GET["errormsg_4"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_4"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_4"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_4");
 	$form->addColor("Color:", "MyColor");
@@ -262,13 +243,10 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("jquery_4");
-$form->setAttributes(array(
-	"width" => 400
-));
+$form = new form("jquery_4", 400);
 
 if(!empty($_GET["errormsg_4"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_4"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_4"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_4");
 $form->addColor("Color:", "MyColor");
@@ -284,17 +262,16 @@ $form->render();
 	button.  See <a href="http://jqueryui.com/demos/button/">http://jqueryui.com/demos/button/</a> for more information on this jQueryUI widget.</p>
 
 	<?php
-	$form = new form("jquery_5");
+	$form = new form("jquery_5", 400);
 	$form->setAttributes(array(
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
-		"jqueryUIButtons" => 1,
-		"width" => 400
+		"jqueryUIButtons" => 1
 	));
 
 	if(!empty($_GET["errormsg_5"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_5"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_5"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_5");
 	$form->addTextbox('Enable all form buttons w/"jqueryUIButtons" form attribute:', "MyTextbox");
@@ -307,16 +284,15 @@ $form->render();
 	<br/><br/>
 
 	<?php
-	$form = new form("jquery_6");
+	$form = new form("jquery_6", 400);
 	$form->setAttributes(array(
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
-		"preventJQueryUILoad" => 1,
-		"width" => 400
+		"preventJQueryUILoad" => 1
 	));
 
 	if(!empty($_GET["errormsg_6"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_6"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_6"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_6");
 	$form->addTextbox('Enable single button w/"jqueryUI" element attribute:', "MyTextbox");
@@ -326,14 +302,13 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("jquery_5");
+$form = new form("jquery_5", 400);
 $form->setAttributes(array(
-	"jqueryUIButtons" => 1,
-	"width" => 400
+	"jqueryUIButtons" => 1
 ));
 
 if(!empty($_GET["errormsg_5"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_5"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_5"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_5");
 $form->addTextbox(\'Enable all form buttons w/"jqueryUIButtons" form attribute:\', "MyTextbox");
@@ -346,13 +321,10 @@ $form->render();
 <br/><br/>
 
 <?php
-$form = new form("jquery_6");
-$form->setAttributes(array(
-	"width" => 400
-));
+$form = new form("jquery_6", 400);
 
 if(!empty($_GET["errormsg_6"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_6"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_6"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_6");
 $form->addTextbox(\'Enable single button w/"jqueryUI" element attribute:\', "MyTextbox");
@@ -366,16 +338,15 @@ $form->render();
 	<p><b><a name="tooltip">jQuery Tooltip Plugin</a></b> - This project utilizes the Poshy Tip jQuery plugin for handling tooltips.  To activate a tooltip, simply set the "tooltip" element attribute to a string.  Both plain-text and html content are supported.  See <a href="http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/">http://vadikom.com/tools/poshy-tip-jquery-plugin-for-stylish-tooltips/</a> for more information on this jQuery plugin.</p>
 
 	<?php
-	$form = new form("jquery_7");
+	$form = new form("jquery_7", 400);
 	$form->setAttributes(array(
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
-		"preventJQueryUILoad" => 1,
-		"width" => 400
+		"preventJQueryUILoad" => 1
 	));
 
 	if(!empty($_GET["errormsg_7"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_7"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_7"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_7");
 	$form->addTextbox("Tooltip:", "MyTextbox", "", array("tooltip" => "This is a text-only tooltip."));
@@ -385,13 +356,10 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("jquery_7");
-$form->setAttributes(array(
-	"width" => 400
-));
+$form = new form("jquery_7", 400);
 
 if(!empty($_GET["errormsg_7"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_7"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_7"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_7");
 $form->addTextbox("Tooltip:", "MyTextbox", "", array("tooltip" => "This is a text-only tooltip."));

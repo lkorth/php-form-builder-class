@@ -43,13 +43,10 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<p>The first example form provided below demonstrates each of these five scenarios.</p>
 
 	<?php
-	$form = new form("validation_0");
-	$form->setAttributes(array(
-		"width" => 400
-	));
+	$form = new form("validation_0", 400);
 
 	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
@@ -62,13 +59,10 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("validation_0");
-$form->setAttributes(array(
-	"width" => 400
-));
+$form = new form("validation_0", 400);
 
 if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_0");
 $form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
@@ -85,9 +79,8 @@ $form->render();
 	This prevents the form's structure from being misaligned by the error messages.</p>
 
 	<?php
-	$form = new form("validation_1");
+	$form = new form("validation_1", 500);
 	$form->setAttributes(array(
-		"width" => 500,
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -95,7 +88,7 @@ $form->render();
 	));
 
 	if(!empty($_GET["errormsg_1"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_1");
 	$form->addTextbox("First Name:", "FName", "", array("required" => 1));
@@ -110,14 +103,13 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("validation_1");
+$form = new form("validation_1", 500);
 $form->setAttributes(array(
-	"width" => 500,
 	"map" => array(2, 2, 1, 3)
 ));
 
 if(!empty($_GET["errormsg_1"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_1");
 $form->addTextbox("First Name:", "FName", "", array("required" => 1));
@@ -165,9 +157,8 @@ else {
 	php validation.  It is not recommended that you use this form attribute in your development.  I repeat, don't use it on your production forms!</p>
 
 	<?php
-	$form = new form("validation_2");
+	$form = new form("validation_2", 500);
 	$form->setAttributes(array(
-		"width" => 500,
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -176,7 +167,7 @@ else {
 	));
 
 	if(!empty($_GET["errormsg_2"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_2"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_2"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_2");
 	$form->addTextbox("First Name:", "FName", "", array("required" => 1));
@@ -191,15 +182,14 @@ else {
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("validation_2");
+$form = new form("validation_2", 500);
 $form->setAttributes(array(
-	"width" => 500,
 	"preventJSValidation" => 1,
 	"map" => array(2, 2, 1, 3)
 ));
 
 if(!empty($_GET["errormsg_2"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_2"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_2"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_2");
 $form->addTextbox("First Name:", "FName", "", array("required" => 1));
@@ -244,9 +234,8 @@ exit();
 	php validation.  It is not recommended that you use this form attribute in your development.  I repeat (again), don't use it on your production forms!</p>
 
 	<?php
-	$form = new form("validation_3");
+	$form = new form("validation_3", 400);
 	$form->setAttributes(array(
-		"width" => 400,
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
@@ -257,11 +246,10 @@ exit();
 	$form->addEmail("Primary Email Address:", "MyPrimaryEmail", "", array("required" => 1));
 	$form->addYesNo("Do you have any alternate email addresses?", "MyYesNo", "", array("onclick" => "toggleAlternateEmailAddresses(this.value);"));
 
-	$subform = new form("validation_3sub");
+	$subform = new form("validation_3sub", 400);
 	$subform->setAttributes(array(
 		"preventJQueryLoad" => 1,
-		"preventJQueryUILoad" => 1,
-		"width" => 400,
+		"preventJQueryUILoad" => 1
 	));
 	$subform->addEmail("Alternate Email Address #1:", "MyAlternateEmail1");
 	$subform->addEmail("Alternate Email Address #2:", "MyAlternateEmail2");
@@ -287,9 +275,8 @@ exit();
 
 	<?php
 	echo '<pre>', highlight_string('<?php
-$form = new form("validation_3");
+$form = new form("validation_3", 400);
 $form->setAttributes(array(
-	"width" => 400,
 	"ajax" => 1,
 	"preventJSValidation" => 1
 ));
@@ -297,10 +284,7 @@ $form->addHidden("cmd", "submit_3");
 $form->addEmail("Primary Email Address:", "MyPrimaryEmail", "", array("required" => 1));
 $form->addYesNo("Do you have any alternate email addresses?", "MyYesNo", "", array("onclick" => "toggleAlternateEmailAddresses(this.value);"));
 
-$subform = new form("validation_3sub");
-$subform->setAttributes(array(
-	"width" => 400,
-));
+$subform = new form("validation_3sub", 400);
 $subform->addEmail("Alternate Email Address #1:", "MyAlternateEmail1");
 $subform->addEmail("Alternate Email Address #2:", "MyAlternateEmail2");
 $subform->addEmail("Alternate Email Address #3:", "MyAlternateEmail3");
@@ -331,7 +315,7 @@ $form->render();
 	by the appropriate element's label.</p>
 
 	<?php
-	$form = new form("validation_4");
+	$form = new form("validation_4", 400);
 	$form->setAttributes(array(
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
@@ -340,12 +324,11 @@ $form->render();
 		"emailErrorMsgFormat" => "You didn't supply a valid email address in the [LABEL] field.",
 		"integerErrorMsgFormat" => "[LABEL] can only contain numbers. No letters or special character allowed!",
 		"floatErrorMsgFormat" => "[LABEL] can only contain float/decimal numbers. No letters or special character allowed!",
-		"alphanumericErrorMsgFormat" => "There were invalid character found in this field.  [LABEL] can only contain letters and/or numbers.",
-		"width" => 400
+		"alphanumericErrorMsgFormat" => "There were invalid character found in this field.  [LABEL] can only contain letters and/or numbers."
 	));
 
 	if(!empty($_GET["errormsg_4"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_4");
 	$form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
@@ -357,18 +340,17 @@ $form->render();
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("validation_4");
+$form = new form("validation_4", 400);
 $form->setAttributes(array(
 	"errorMsgFormat" => "Oops! You didn\'t fill in the [LABEL] field.",
 	"emailErrorMsgFormat" => "You didn\'t supply a valid email address in the [LABEL] field.",
 	"integerErrorMsgFormat" => "[LABEL] can only contain numbers. No letters or special character allowed!",
 	"floatErrorMsgFormat" => "[LABEL] can only contain float/decimal numbers. No letters or special character allowed!",
-	"alphanumericErrorMsgFormat" => "There were invalid character found in this field.  [LABEL] can only contain letters and/or numbers.",
-	"width" => 400
+	"alphanumericErrorMsgFormat" => "There were invalid character found in this field.  [LABEL] can only contain letters and/or numbers."
 ));
 
 if(!empty($_GET["errormsg_4"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_4");
 $form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));

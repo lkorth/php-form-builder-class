@@ -34,13 +34,10 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<p>Below you'll find several ways you can use the addLatLng function in your development.</p>
 
 	<?php
-	$form = new form("googlemaps_0");
-	$form->setAttributes(array(
-		"width" => 500
-	));
+	$form = new form("googlemaps_0", 500);
 
 	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->addLatLng("Latitude/Longitude:", "MyLatLng");
@@ -54,18 +51,17 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	<br/><br/>
 
 	<?php
-	$form = new form("googlemaps_1");
+	$form = new form("googlemaps_1", 500);
 	$form->setAttributes(array(
 		"noAutoFocus" => 1,
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1,
 		"preventGoogleMapsLoad" => 1,
-		"latlngDefaultLocation" => array(52.523, 13.411),
-		"width" => 500
+		"latlngDefaultLocation" => array(52.523, 13.411)
 	));
 
 	if(!empty($_GET["errormsg_1"]))
-		$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_1");
 	$form->addLatLng("Latitude/Longitude w/latlngDefaultLocation Attribute:", "MyLatLng");
@@ -73,13 +69,10 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->render();
 
 	echo '<pre>', highlight_string('<?php
-$form = new form("googlemaps_0");
-$form->setAttributes(array(
-	"width" => 500
-));
+$form = new form("googlemaps_0", 500);
 
 if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_0"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_0");
 $form->addLatLng("Latitude/Longitude:", "MyLatLng");
@@ -93,14 +86,13 @@ $form->render();
 <br/><br/>
 
 <?php
-$form = new form("googlemaps_1");
+$form = new form("googlemaps_1", 500);
 $form->setAttributes(array(
-	"latlngDefaultLocation" => array(52.523, 13.411),
-	"width" => 500
+	"latlngDefaultLocation" => array(52.523, 13.411)
 ));
 
 if(!empty($_GET["errormsg_1"]))
-	$form->errorMsg = filter_var(stripslashes($_GET["errormsg_1"]), FILTER_SANITIZE_SPECIAL_CHARS);
+	$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 $form->addHidden("cmd", "submit_1");
 $form->addLatLng("Latitude/Longitude w/latlngDefaultLocation Attribute:", "MyLatLng");
@@ -111,4 +103,3 @@ $form->render();
 	include("../footer.php");
 }
 ?>
-
