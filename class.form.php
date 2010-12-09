@@ -3360,7 +3360,7 @@ STR;
 					}
 					else {
 						for($e = 0; $e < $errorSize; ++$e) {
-							if(!empty($errors["container"][$e]) && !empty($errors["errormsg"][$e])) {
+							if(isset($errors["container"][$e]) && !empty($errors["errormsg"][$e])) {
 								$errorMsg = str_replace('"', '&quot;', $errors["errormsg"][$e]);
 								$str .= <<<STR
 	pfbc_error_{$this->attributes["id"]}("$errorMsg", "{$errors["container"][$e]}");

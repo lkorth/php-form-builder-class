@@ -19,6 +19,22 @@ elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "submit_3") {
 		$form->renderAjaxErrorResponse();
 	exit();
 }
+elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "submit_5") {
+	$form = new form("validation_5");
+	if($form->validate(false)) {
+		if($_POST["Password"] != $_POST["ConfirmPassword"]) {
+			$form->setError("Error: This field does not match the password you provided above.", "ConfirmPassword");
+			header("Location: validation.php");
+		}
+		else {
+			$form->clearSessionValues();
+			header("Location: validation.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
+		}
+	}	
+	else
+		header("Location: validation.php");
+	exit();
+}
 
 if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$title = "Validation";
@@ -328,7 +344,7 @@ $form->render();
 	));
 
 	if(!empty($_GET["errormsg_4"]))
-		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
+		$form->errorMsg = filter_var($_GET["errormsg_4"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_4");
 	$form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
@@ -358,6 +374,67 @@ $form->addEmail("Email Address:", "MyEmail");
 $form->addTextbox("Textbox w/Integer Validation:", "MyIntegerTextbox", "", array("integer" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
 $form->addTextbox("Textbox w/Float Validation:", "MyFloatTextbox", "", array("float" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
 $form->addTextbox("Textbox w/Alphanumeric Validation:", "MyAlphanumericTextbox", "", array("alphanumeric" => 1, "postHTML" => \'<div class="pfbc-small">Use copy-and-paste to insert invalid characters and trigger validation errors.</div>\'));
+$form->addButton();
+$form->render();
+?>', true), '</pre>';
+?>
+
+	<p><b>Custom Validation</b> - Below you will find an example of how custom validation can be applied after your form's data has been submitted.
+	Passing boolean false to the validate function will prevent the submitted data from clearing within the php session and will allow the form's
+	elements to be auto-populated if a custom validation error is discovered.  If no validation errors are found, use the clearSessionValues to
+	prevent the form's data from being auto-populated when the user returns to the form.  The setError function has two parameters - the first for 
+	providing an error message, and the second option parameter for specifying an element name to attach the error above.  If the second parameter
+	isn't provided, the error message will be displayed at the top of the form.</p>
+
+	<?php
+	$form = new form("validation_5", 400);
+	$form->setAttributes(array(
+		"map" => array(1, 2),
+		"noAutoFocus" => 1,
+		"preventJQueryLoad" => 1,
+		"preventJQueryUILoad" => 1
+	));
+
+	if(!empty($_GET["errormsg_5"]))
+		$form->errorMsg = filter_var($_GET["errormsg_5"], FILTER_SANITIZE_SPECIAL_CHARS);
+
+	$form->addHidden("cmd", "submit_5");
+	$form->addTextbox("Username:", "Username", "", array("required" => 1));
+	$form->addPassword("Password:", "Password", "", array("required" => 1));
+	$form->addPassword("Confirm Password:", "Password", "", array("required" => 1));
+	$form->addButton("Signup");
+	$form->render();
+
+	echo '<pre>', highlight_string('<?php
+if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit_5") {
+	$form = new form("validation_5");
+	if($form->validate(false)) {
+		if($_POST["Password"] != $_POST["ConfirmPassword"]) {
+			$form->setError("Error: This field does not match the password you provided above.", "ConfirmPassword");
+			header("Location: validation.php");
+		}
+		else {
+			$form->clearSessionValues();
+			header("Location: validation.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form\'s validation."));
+		}
+	}	
+	else
+		header("Location: validation.php");
+	exit();
+}
+
+$form = new form("validation_5", 400);
+$form->setAttributes(array(
+	"map" => array(1, 2)
+));
+
+if(!empty($_GET["errormsg_5"]))
+	$form->errorMsg = filter_var($_GET["errormsg_5"], FILTER_SANITIZE_SPECIAL_CHARS);
+
+$form->addHidden("cmd", "submit_5");
+$form->addTextbox("Username:", "Username", "", array("required" => 1));
+$form->addPassword("Password:", "Password", "", array("required" => 1));
+$form->addPassword("Confirm Password:", "Password", "", array("required" => 1));
 $form->addButton();
 $form->render();
 ?>', true), '</pre>';
