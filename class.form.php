@@ -2196,8 +2196,7 @@ STR;
 					$validValue = true;
 			}
 
-			//The html, sort, and hidden element types are ignored.
-			if(in_array($eleType, array("html", "sort", "hidden")))
+			if(in_array($eleType, array("html", "sort", "hidden", "file")))
 				continue;
 			elseif($eleType == "captcha") {
 				require_once($form->phpIncludesPath . "/recaptchalib.php");
