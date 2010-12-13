@@ -2196,7 +2196,7 @@ STR;
 					$validValue = true;
 			}
 
-			if(in_array($eleType, array("html", "sort", "hidden", "file")))
+			if(in_array($eleType, array("html", "sort", "hidden")))
 				continue;
 			elseif($eleType == "captcha") {
 				require_once($form->phpIncludesPath . "/recaptchalib.php");
@@ -2219,7 +2219,11 @@ STR;
 				}
 			}
 			elseif($eleType == "expdate") {
-				if(!isset($referenceValues[$eleName]) || !is_array($referenceValues[$eleName]) || sizeof($referenceValues[$eleName]) != 2  || $referenceValues[$eleName][0] === "" || $referenceValues[$eleName][1] === "")
+				if(!empty($ele->required) && (!isset($referenceValues[$eleName]) || !is_array($referenceValues[$eleName]) || sizeof($referenceValues[$eleName]) != 2 || $referenceValues[$eleName][0] === "" || $referenceValues[$eleName][1] === ""))
+					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
+			}
+			elseif($eleType == "file") {
+				if(!empty($ele->required) && (empty($_FILES[$eleName]["name"]) || (is_array($_FILES[$eleName]["name"]) && empty($_FILES[$eleName]["name"][0]))))
 					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
 			}
 			elseif(!empty($ele->required) && !$validValue)
