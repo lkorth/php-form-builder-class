@@ -916,7 +916,7 @@ STR;
 			$str .= "\n" . '<div id="' . $this->attributes["id"] . '">';
 		else {
 			$this->applyClass("pfbc-form");	
-			$str .= "\n<form" . $this->attributesToHTML($this->attributes, $this->allowedFields["form"]) . ' onsubmit="return pfbc_onsubmit_' . $this->attributes["id"] . '(this);">';
+			$str .= "\n<form" . $this->attributesToHTML($this->attributes, $this->allowedFields["form"]) . ' onsubmit="return pfbc_onsubmit_' . $this->attributes["id"] . '();">';
 		}
 
 		if(empty($this->synchronousResources) && !$triggerJSIncludesError) {
@@ -3386,7 +3386,8 @@ STR;
 function pfbc_scroll_{$this->attributes["id"]}() {
    jQuery("html, body").animate({ scrollTop: jQuery("#{$this->attributes["id"]}").offset().top }, 500 );
 }
-function pfbc_onsubmit_{$this->attributes["id"]}(formObj) {
+function pfbc_onsubmit_{$this->attributes["id"]}() {
+	var formObj = document.getElementById("{$this->attributes["id"]}");
 	jQuery("#{$this->attributes["id"]} .pfbc-error").remove();
 	jQuery("#{$this->attributes["id"]} .pfbc-loading").show();
 
