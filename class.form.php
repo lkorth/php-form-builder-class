@@ -2915,66 +2915,50 @@ jQuery.noConflict();
 STR;
 			}
 
-			if(!empty($form->integerExists) || !empty($form->floatExists) || !empty($form->alphanumericExists)) {
-			$str .= <<<STR
-var pfbc_allowed_keys = [8, 9, 13, 37, 39, 46];			
-
-STR;
-			}
-
 			if(!empty($form->integerExists)) {
-				$str .= <<<STR
-jQuery("#{$this->attributes["id"]} .pfbc-integer").bind("keydown", function(event) {
-	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1
-		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))
-		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))
-		|| (event.keyCode == 109)
-		|| (event.keyCode == 107)
-		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))
-	)
-		return true;
-	else
-		return false;
+                $str .= <<<STR
+jQuery("#{$this->attributes["id"]} .pfbc-integer").bind("keypress", function(event) {
+    var code = e.which;
+    if(jQuery.inArray(code, [0, 8, 13, 43, 45]) != -1
+        || (code >= 48 && code <= 57)
+    )
+        return true;
+    else
+        return false;
 });
 
 STR;
-			}
+            }
 
-			if(!empty($form->floatExists)) {
-				$str .= <<<STR
+            if(!empty($form->floatExists)) {
+                $str .= <<<STR
 jQuery("#{$this->attributes["id"]} .pfbc-float").bind("keydown", function(event) {
-	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1
-		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))
-		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))
-		|| (event.keyCode == 109)
-		|| (event.keyCode == 107)
-		|| (event.keyCode == 190)
-		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))
-	)
-		return true;
-	else
-		return false;
+    var code = e.which;
+    if(jQuery.inArray(code, [0, 8, 13, 43, 45, 46]) != -1
+        || (code >= 48 && code <= 57)
+    )
+        return true;
+    else
+        return false;
 });
 
 STR;
-			}
+            }
 
-			if(!empty($form->alphanumericExists)) {
-				$str .= <<<STR
-jQuery("#{$this->attributes["id"]} .pfbc-alphanumeric").bind("keydown", function(event) {
-	if(jQuery.inArray(event.keyCode, pfbc_allowed_keys) != -1
-		|| (event.keyCode == 67 && (event.ctrlKey || event.metaKey))
-		|| (event.keyCode == 86 && (event.ctrlKey || event.metaKey))
-		|| (!event.shiftKey && ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105)))
-		|| (event.keyCode >= 65 && event.keyCode <= 90)
-	)
-		return true;
-	else
-		return false;
+            if(!empty($form->alphanumericExists)) {
+                $str .= <<<STR
+jQuery("#{$this->attributes["id"]} .pfbc-alphanumeric").bind("keypress", function(e) {
+    var code = e.which;
+    if(jQuery.inArray(code, [0, 8, 13, 45, 95]) != -1
+        || (code >= 48 && code <= 57) || (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
+    )   
+        return true;
+    else
+        return false;
 });
 
 STR;
-			}
+            }
 
 			if(!empty($form->jqueryDateIDArr)) {
 				$dateKeys = array_keys($form->jqueryDateIDArr);
