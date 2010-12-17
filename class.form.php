@@ -2949,7 +2949,7 @@ STR;
                 $str .= <<<STR
 jQuery("#{$this->attributes["id"]} .pfbc-alphanumeric").bind("keypress", function(e) {
     var code = e.which;
-    if(jQuery.inArray(code, [0, 8, 13, 45, 95]) != -1
+    if(jQuery.inArray(code, [0, 8, 13]) != -1
         || (code >= 48 && code <= 57) || (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
     )   
         return true;
