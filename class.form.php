@@ -86,6 +86,7 @@ class form extends pfbc {
 	protected $ckeditorLang;
 	protected $emailErrorMsgFormat;
 	protected $errorDisplayOption;
+	protected $errorMsg;
 	protected $errorMsgFormat;
 	protected $decimalErrorMsgFormat;
 	protected $integerErrorMsgFormat;
@@ -147,9 +148,6 @@ class form extends pfbc {
 	private $tooltipIDArr;
 	private $synchronousResources;
 	private $url;
-
-	public $errorMsg;
-	public $highlightMsg;
 
 	public function __construct($id = "myform", $width="") {
 		//Non alpha-numeric characters are replaced with underscores to prevent invalid javascript function names.
@@ -758,6 +756,23 @@ class form extends pfbc {
 		$this->elements = array();
 	}
 
+	public function clearSessionErrors() {
+		if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]]))
+			unset($_SESSION["pfbc-errors"][$this->attributes["id"]]);
+		if(!empty($this->bindRules)) {
+			$bindRuleKeys = array_keys($this->bindRules);
+			$bindRuleSize = sizeof($bindRuleKeys);
+			for($b = 0; $b < $bindRuleSize; ++$b) {
+				if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements)) {
+					if(empty($this->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $this->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))) {
+						if(!empty($_SESSION["pfbc-errors"][$this->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]))
+							unset($_SESSION["pfbc-errors"][$this->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]);
+					}
+				}	
+			}	
+		}	
+	}
+
 	public function clearSessionValues() {
 		if(!empty($_SESSION["pfbc-values"][$this->attributes["id"]]))
 			unset($_SESSION["pfbc-values"][$this->attributes["id"]]);
@@ -934,8 +949,6 @@ STR;
 
 		if(!empty($this->errorMsg))
 			$str .= '<div class="pfbc-error ui-state-error ui-corner-all">' . $this->errorMsg . '</div>';
-		if(!empty($this->highlightMsg))
-			$str .= '<div class="pfbc-error ui-state-highlight ui-corner-all">' . $this->highlightMsg . '</div>';
 
 		if(!empty($this->map)) {
 			$mapIndex = 0;
@@ -2244,8 +2257,7 @@ STR;
 				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->alphanumericErrorMsgFormat);
 
 			if(!empty($errorMsg)) {
-				$_SESSION["pfbc-errors"][$form->attributes["id"]]["container"][] = $ele->container;
-				$_SESSION["pfbc-errors"][$form->attributes["id"]]["errormsg"][] = $errorMsg;
+				$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = $errorMsg;
 			}
 		}
 	}	
@@ -2267,37 +2279,22 @@ STR;
 
 	public function renderAjaxErrorResponse($returnString=false) {
 		$str = "";
-		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
-			//Unserialize the appropriate form instance stored in the session array.
-			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
-			if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
-				$errorMsg = array();
-				if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
-					$errors = $_SESSION["pfbc-errors"][$this->attributes["id"]];
-					if(!empty($errors["errormsg"])) {
-						$errorSize = sizeof($errors["errormsg"]);
-						for($e = 0; $e < $errorSize; ++$e) {
-							$error = $errors["errormsg"][$e];
-							if(!empty($error)) {
-								if(strpos($error, "Error: ") === 0)
-									$error = substr($error, 7);
-								$errorMsg[] = $error;
-							}
-						}
-					}
-				}	
-				if(!empty($errorMsg)) {
-					$errorSize = sizeof($errorMsg);
+		if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
+			$errors = $_SESSION["pfbc-errors"][$this->attributes["id"]];
+			if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+				$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+				if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
+					$errorSize = sizeof($errors);
 					if($errorSize > 1)
 						$str .= "The following " . $errorSize . " errors were found:";
 					else	
 						$str .= "The following error was found:";
-					$str .= "<ul><li>" . implode("</li><li>", $errorMsg) . "</li></ul>";
+					$str .= "<ul><li>" . implode("</li><li>", array_values($errors)) . "</li></ul>";
 					$str = json_encode(array("container" => array(""), "errormsg" => array($str)));
 				}
-			}
-			else
-				$str = json_encode($_SESSION["pfbc-errors"][$this->attributes["id"]]);
+				else
+					$str = json_encode(array("container" => array_keys($errors), "errormsg" => array_values($errors)));
+			}	
 		}	
 		if(!$returnString) {
 			header("Content-type: application/json");
@@ -3331,33 +3328,42 @@ STR;
 			//Apply error message created within the validate function if appropriate.
 			if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
 				$errors = $_SESSION["pfbc-errors"][$this->attributes["id"]];
-				if(!empty($errors["container"]) && !empty($errors["errormsg"])) {
-					$errorSize = sizeof($errors["container"]);
-					if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
-						$errorMsg = "";
-						if($errorSize == 1)
-							$errorMsg = "The following error was found:";
-						else	
-							$errorMsg = "The following " . $errorSize . " errors were found:";
-						$errorMsg .= "<ul><li>" . implode("</li><li>", $errors["errormsg"]) . "</li></ul>";	
-						$str .= <<<STR
-	pfbc_error_{$this->attributes["id"]}("$errorMsg");
+				$errorSize = sizeof($errors);
+				if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
+					$errorMsg = "";
+					if($errorSize == 1)
+						$errorMsg = "The following error was found:";
+					else	
+						$errorMsg = "The following " . $errorSize . " errors were found:";
+					$errorMsg .= "<ul><li>" . implode("</li><li>", array_values($errors)) . "</li></ul>";	
+					$str .= <<<STR
+pfbc_error_{$this->attributes["id"]}("$errorMsg");
 
 STR;
-					}
-					else {
-						for($e = 0; $e < $errorSize; ++$e) {
-							if(isset($errors["container"][$e]) && !empty($errors["errormsg"][$e])) {
-								$errorMsg = str_replace('"', '&quot;', $errors["errormsg"][$e]);
-								$str .= <<<STR
-	pfbc_error_{$this->attributes["id"]}("$errorMsg", "{$errors["container"][$e]}");
-
-STR;
+				}
+				else {
+					foreach($errors as $container => $errorMsg) {
+						if(!empty($errorMsg)) {
+							if(!empty($container) && $container[0] != "#") {
+								$container = $form->getElementContainer($container);
+								if(empty($container) && !empty($form->bindRules)) {
+									$bindRuleKeys = array_keys($form->bindRules);
+									$bindRuleSize = sizeof($bindRuleKeys);
+									for($b = 0; $b < $bindRuleSize; ++$b) {
+										if(empty($container) && (empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))))
+											$container = $form->bindRules[$bindRuleKeys[$b]][0]->getElementContainer($container);
+									}	
+								}
 							}
+							$errorMsg = str_replace('"', '&quot;', $errorMsg);
+							$str .= <<<STR
+pfbc_error_{$this->attributes["id"]}("$errorMsg", "$container");
+
+STR;
 						}
 					}
 				}
-			}
+			}	
 
 			if(!empty($form->hasFormTag)) {
 				if(empty($form->preventJSValidation) && !empty($form->emailExists)) {
@@ -3401,6 +3407,7 @@ STR;
 							if(!empty($form->bindRules[$bindRuleKeys[$b]][1])) {
 								$str .= <<<STR
 	if({$form->bindRules[$bindRuleKeys[$b]][1]}) {
+
 STR;
 							}	
 							$str .= $form->jsCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements);
@@ -3579,27 +3586,9 @@ STR;
 	}
 
 	public function setError($error, $name="") {
-		$container = "";
-		if(!empty($name)) {
-			if(!empty($_SESSION["pfbc-instances"][$this->attributes["id"]])) {
-				$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
-
-				$container = $form->getElementContainer($name);
-				if(empty($container) && !empty($form->bindRules)) {
-					$bindRuleKeys = array_keys($form->bindRules);
-					$bindRuleSize = sizeof($bindRuleKeys);
-					for($b = 0; $b < $bindRuleSize; ++$b) {
-						if(empty($container) && (empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))))
-							$container = $form->bindRules[$bindRuleKeys[$b]][0]->getElementContainer($name);
-					}	
-				}
-			}	
-		}	
-
 		if(empty($_SESSION["pfbc-errors"][$this->attributes["id"]]))
 			$_SESSION["pfbc-errors"][$this->attributes["id"]] = array();
-		$_SESSION["pfbc-errors"][$this->attributes["id"]]["container"][] = $container;
-		$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = $error;
+		$_SESSION["pfbc-errors"][$this->attributes["id"]][$name] = $error;
 	}
 
 	private function setIncludePaths() {
@@ -3631,8 +3620,7 @@ STR;
 		elseif(!empty($_GET))
 			$referenceValues = $_GET;
 		else {
-			$_SESSION["pfbc-errors"][$this->attributes["id"]]["container"][] = "";
-			$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "Your form submission does not contain any data and has been rejected.";
+			$_SESSION["pfbc-errors"][$this->attributes["id"]][""] = "Your form submission does not contain any data and has been rejected.";
 			return false;
 		}
 
@@ -3650,8 +3638,7 @@ STR;
 					$valid = true;
 			}
 			if(!$valid) {
-				$_SESSION["pfbc-errors"][$this->attributes["id"]]["container"][] = "";
-				$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "Your form submission has been rejected because it has been flagged as spam in our anti-bot detection process.";
+				$_SESSION["pfbc-errors"][$this->attributes["id"]][""] = "Your form submission has been rejected because it has been flagged as spam in our anti-bot detection process.";
 				return false;
 			}
 
@@ -3699,8 +3686,7 @@ STR;
 			return true;
 		}
 		else {
-			$_SESSION["pfbc-errors"][$this->attributes["id"]]["container"][] = "";
-			$_SESSION["pfbc-errors"][$this->attributes["id"]]["errormsg"][] = "While completing this form, your session timed out as a result of inactivity and your submission has been rejected.  Typically, you are given 20-30 minutes to complete and submit this form before timeout occurs.";
+			$_SESSION["pfbc-errors"][$this->attributes["id"]][""] = "While completing this form, your session timed out as a result of inactivity and your submission has been rejected.  Typically, you are given 20-30 minutes to complete and submit this form before timeout occurs.";
 			return false;
 		}
 	}
