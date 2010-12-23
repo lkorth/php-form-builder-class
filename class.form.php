@@ -119,11 +119,11 @@ class form extends pfbc {
 
 	private $allowedFields;
 	private $alphanumbericExists;
-	private $bindRules;
 	private $captchaExists;
 	private $checkform;
 	private $ckeditorIDArr;
 	private $elements;
+	private $errors;
 	private $emailError;
 	private $emailExists;
 	private $expdateExists;
@@ -167,6 +167,7 @@ class form extends pfbc {
 		//[LABEL] is replaced with the appropriate element's label for both emailErrorMsgFormat and errorMsgFormat attributes.
 		$this->emailErrorMsgFormat = "Error: [LABEL] contains an invalid email address.";
 		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
+		$this->errors = array();
 		$this->floatErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers, decimals, and signs are allowed.";
 		if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
 			$this->https = 1;
@@ -665,24 +666,16 @@ class form extends pfbc {
 		$this->elements[] = $ele;
 	}
 
-	public function bind($ref, $jsIfCondition = "", $phpIfCondition = "") {
-		$this->bindRules[$ref->attributes["id"]] = array($ref, $jsIfCondition, $phpIfCondition);
-		if(!empty($ref->emailExists))
-			$this->emailExists = 1;
-		if(!empty($ref->map) && empty($this->errorDisplayOption))
-			$this->errorDisplayOption = 1;
-	}
-
-	private function buildEmailBody($form, $referenceValues) {
-		$elementSize = sizeof($form->elements);
+	private function buildEmailBody($referenceValues) {
+		$elementSize = sizeof($this->elements);
 		$str = "";
 		for($e = 0; $e < $elementSize; ++$e) {
-			if(!in_array($form->elements[$e]->attributes["type"], array("hidden", "captcha", "button", "html", "htmlexternal"))) {
-				$eleName = $form->elements[$e]->attributes["name"];
+			if(!in_array($this->elements[$e]->attributes["type"], array("hidden", "captcha", "button", "html", "htmlexternal"))) {
+				$eleName = $this->elements[$e]->attributes["name"];
 				if(substr($eleName , -2) == "[]")
 					$eleName = substr($eleName, 0, -2);
 
-				$eleLabel = $form->elements[$e]->label;
+				$eleLabel = $this->elements[$e]->label;
 				if(empty($eleLabel))
 					$eleLabel = $eleName;
 				$str .= "\n\t" . '<div class="pfbc-element">';	
@@ -704,10 +697,10 @@ class form extends pfbc {
 		return $str;
 	}
 
-	private function buildSessionValues($form, $referenceValues) {
-		$elementSize = sizeof($form->elements);
+	private function buildValues($referenceValues) {
+		$elementSize = sizeof($this->elements);
 		for($e = 0; $e < $elementSize; ++$e) {
-			$eleName = $form->elements[$e]->attributes["name"];
+			$eleName = $this->elements[$e]->attributes["name"];
 			if(substr($eleName , -2) == "[]")
 				$eleName = substr($eleName, 0, -2);
 
@@ -715,28 +708,28 @@ class form extends pfbc {
 				if(is_array($referenceValues[$eleName])) {
 					$valSize = sizeof($referenceValues[$eleName]);
 					for($v = 0; $v < $valSize; ++$v)
-						$_SESSION["pfbc-values"][$form->attributes["id"]][$eleName][$v] = stripslashes($referenceValues[$eleName][$v]);
+						$_SESSION["pfbc-values"][$this->attributes["id"]][$eleName][$v] = stripslashes($referenceValues[$eleName][$v]);
 				}
 				else
-					$_SESSION["pfbc-values"][$form->attributes["id"]][$eleName] = stripslashes($referenceValues[$eleName]);
+					$_SESSION["pfbc-values"][$this->attributes["id"]][$eleName] = stripslashes($referenceValues[$eleName]);
 			}	
 		}
 
-		if(array_key_exists("recaptcha_challenge_field", $_SESSION["pfbc-values"][$form->attributes["id"]]))
-			unset($_SESSION["pfbc-values"][$form->attributes["id"]]["recaptcha_challenge_field"]);
-		if(array_key_exists("recaptcha_response_field", $_SESSION["pfbc-values"][$form->attributes["id"]]))
-			unset($_SESSION["pfbc-values"][$form->attributes["id"]]["recaptcha_response_field"]);
+		if(array_key_exists("recaptcha_challenge_field", $_SESSION["pfbc-values"][$this->attributes["id"]]))
+			unset($_SESSION["pfbc-values"][$this->attributes["id"]]["recaptcha_challenge_field"]);
+		if(array_key_exists("recaptcha_response_field", $_SESSION["pfbc-values"][$this->attributes["id"]]))
+			unset($_SESSION["pfbc-values"][$this->attributes["id"]]["recaptcha_response_field"]);
 	}
 
-	private function buildSpreadsheetData($form, $referenceValues) {
-		$elementSize = sizeof($form->elements);
+	private function buildSpreadsheetData($referenceValues) {
+		$elementSize = sizeof($this->elements);
 		for($e = 0; $e < $elementSize; ++$e) {
-			if(empty($form->elements[$e]->ignoreGSSend) && !in_array($form->elements[$e]->attributes["type"], array("hidden", "captcha", "button", "html", "htmlexternal"))) {
-				$eleName = $form->elements[$e]->attributes["name"];
+			if(empty($this->elements[$e]->ignoreGSSend) && !in_array($this->elements[$e]->attributes["type"], array("hidden", "captcha", "button", "html", "htmlexternal"))) {
+				$eleName = $this->elements[$e]->attributes["name"];
 				if(substr($eleName , -2) == "[]")
 					$eleName = substr($eleName, 0, -2);
 
-				$eleLabel = $form->elements[$e]->label;
+				$eleLabel = $this->elements[$e]->label;
 				if(empty($eleLabel))
 					$eleLabel = $eleName;
 				if(substr($eleLabel, -1) == ":")
@@ -756,38 +749,14 @@ class form extends pfbc {
 		$this->elements = array();
 	}
 
-	public function clearSessionErrors() {
+	public function clearErrors() {
 		if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]]))
 			unset($_SESSION["pfbc-errors"][$this->attributes["id"]]);
-		if(!empty($this->bindRules)) {
-			$bindRuleKeys = array_keys($this->bindRules);
-			$bindRuleSize = sizeof($bindRuleKeys);
-			for($b = 0; $b < $bindRuleSize; ++$b) {
-				if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-					if(empty($this->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $this->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))) {
-						if(!empty($_SESSION["pfbc-errors"][$this->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]))
-							unset($_SESSION["pfbc-errors"][$this->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]);
-					}
-				}	
-			}	
-		}	
 	}
 
-	public function clearSessionValues() {
+	public function clearValues() {
 		if(!empty($_SESSION["pfbc-values"][$this->attributes["id"]]))
 			unset($_SESSION["pfbc-values"][$this->attributes["id"]]);
-		if(!empty($this->bindRules)) {
-			$bindRuleKeys = array_keys($this->bindRules);
-			$bindRuleSize = sizeof($bindRuleKeys);
-			for($b = 0; $b < $bindRuleSize; ++$b) {
-				if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-					if(empty($this->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $this->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))) {
-						if(!empty($_SESSION["pfbc-values"][$this->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]))
-							unset($_SESSION["pfbc-values"][$this->bindRules[$bindRuleKeys[$b]][0]->attributes["id"]]);
-					}
-				}	
-			}	
-		}	
 	}
 
 	public function closeFieldset() {
@@ -795,7 +764,7 @@ class form extends pfbc {
 	}
 
 	public function email($username, $password, $additionalParams="") {
-		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+		if(!empty($_SESSION["pfbc-instances"][$this->attributes["id"]])) {
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
 			$params = array("username" => $username, "password" => $password);
@@ -855,17 +824,7 @@ class form extends pfbc {
 			$referenceValues = $_GET;
 
 		$str = '<div class="pfbc-email">';
-		$str .= $this->buildEmailBody($this, $referenceValues);
-		if(!empty($this->bindRules)) {
-			$bindRuleKeys = array_keys($this->bindRules);
-			$bindRuleSize = sizeof($bindRuleKeys);
-			for($b = 0; $b < $bindRuleSize; ++$b) {
-				if(!empty($this->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-					if(empty($this->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $this->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
-						$str .= $this->buildEmailBody($this->bindRules[$bindRuleKeys[$b]][0], $referenceValues);
-				}		
-			}	
-		}	
+		$str .= $this->buildEmailBody($referenceValues);
 
 		if($additionalInfo) {
 			$datetime = date("Y-m-d H:i:s");	
@@ -948,7 +907,7 @@ STR;
 		$str .= "\n" . '<div class="pfbc-main">';
 
 		if(!empty($this->errorMsg))
-			$str .= '<div class="pfbc-error ui-state-error ui-corner-all">' . $this->errorMsg . '</div>';
+			$this->errors[""] = $this->errorMsg;
 
 		if(!empty($this->map)) {
 			$mapIndex = 0;
@@ -1050,6 +1009,9 @@ STR;
 				$ele->container = "pfbc-" . $this->attributes["id"] . "-element-" . $nonHiddenInternalElementCount;
 				$str .= '<div id="' . $ele->container . '" class="pfbc-element';
 				$ele->container = "#" . $ele->container;
+
+				if(!empty($ele->errorMsg))
+					$this->errors[$ele->container] = $ele->errorMsg;
 
 				if($map_element_first && $map_element_last)
 					$str .= ' pfbc-map-element-single';
@@ -2279,10 +2241,17 @@ STR;
 
 	public function renderAjaxErrorResponse($returnString=false) {
 		$str = "";
-		if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
-			$errors = $_SESSION["pfbc-errors"][$this->attributes["id"]];
-			if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
-				$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+		if(!empty($_SESSION["pfbc-instances"][$this->attributes["id"]])) {
+			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
+
+			if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
+				$errors = array();
+				foreach($_SESSION["pfbc-errors"][$this->attributes["id"]] as $container => $errorMsg) {
+					if(!empty($container) && $container[0] != "#")
+						$container = $form->getElementContainer($container);
+					$errors[$container] = $errorMsg;	
+				}
+
 				if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
 					$errorSize = sizeof($errors);
 					if($errorSize > 1)
@@ -2296,13 +2265,14 @@ STR;
 					$str = json_encode(array("container" => array_keys($errors), "errormsg" => array_values($errors)));
 			}	
 		}	
+
 		if(!$returnString) {
 			header("Content-type: application/json");
 			echo $str;
 		}	
 		else
 			return $str;
-	}
+	}	
 
 	public function renderBody($returnString=false) {
 		if(empty($this->synchronousResources))
@@ -2321,7 +2291,7 @@ STR;
 	public function renderCSS($returnString=false) {
 		$str = "";
 		if(empty($this->synchronousResources)) {
-			if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+			if(!empty($_SESSION["pfbc-instances"][$this->attributes["id"]])) {
 				//Unserialize the appropriate form instance stored in the session array.
 				$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 			}	
@@ -2873,7 +2843,7 @@ STR;
 	//This function renders the form's javascript.  This function is invoked within includes/js.php.  The contents returned by this function are then placed in the document's head tag for xhtml strict compliance.
 	public function renderJS($returnString=false) {
 		$str = "";
-		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+		if(!empty($_SESSION["pfbc-instances"][$this->attributes["id"]])) {
 			//Unserialize the appropriate form instance stored in the session array.
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
@@ -3325,45 +3295,47 @@ function pfbc_error_{$this->attributes["id"]}(errorMsg, container) {
 
 STR;
 
-			//Apply error message created within the validate function if appropriate.
+			//Apply error message created within the validate function and/or applied in the form's setAttributes or the individual add element functions.
+			$errors = array();
 			if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]])) {
-				$errors = $_SESSION["pfbc-errors"][$this->attributes["id"]];
+				foreach($_SESSION["pfbc-errors"][$this->attributes["id"]] as $container => $errorMsg) {
+					if(!empty($container) && $container[0] != "#")
+						$container = $form->getElementContainer($container);
+					$errors[$container] = $errorMsg;	
+				}
+			}	
+			if(!empty($form->errors)) {
+				foreach($form->errors as $container => $errorMsg) {
+					if(!array_key_exists($container, $errors))
+						$errors[$container] = $errorMsg;
+				}
+			}
+
+			if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
 				$errorSize = sizeof($errors);
-				if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
-					$errorMsg = "";
-					if($errorSize == 1)
-						$errorMsg = "The following error was found:";
-					else	
-						$errorMsg = "The following " . $errorSize . " errors were found:";
-					$errorMsg .= "<ul><li>" . implode("</li><li>", array_values($errors)) . "</li></ul>";	
-					$str .= <<<STR
+				$errorMsg = "";
+				if($errorSize == 1)
+					$errorMsg = "The following error was found:";
+				else	
+					$errorMsg = "The following " . $errorSize . " errors were found:";
+				$errorMsg .= "<ul><li>" . implode("</li><li>", array_values($errors)) . "</li></ul>";	
+				$errorMsg = str_replace('"', '&quot;', $errorMsg);
+				$str .= <<<STR
 pfbc_error_{$this->attributes["id"]}("$errorMsg");
 
 STR;
-				}
-				else {
-					foreach($errors as $container => $errorMsg) {
-						if(!empty($errorMsg)) {
-							if(!empty($container) && $container[0] != "#") {
-								$container = $form->getElementContainer($container);
-								if(empty($container) && !empty($form->bindRules)) {
-									$bindRuleKeys = array_keys($form->bindRules);
-									$bindRuleSize = sizeof($bindRuleKeys);
-									for($b = 0; $b < $bindRuleSize; ++$b) {
-										if(empty($container) && (empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;"))))
-											$container = $form->bindRules[$bindRuleKeys[$b]][0]->getElementContainer($container);
-									}	
-								}
-							}
-							$errorMsg = str_replace('"', '&quot;', $errorMsg);
-							$str .= <<<STR
+			}
+			else {
+				foreach($errors as $container => $errorMsg) {
+					if(!empty($errorMsg)) {
+						$errorMsg = str_replace('"', '&quot;', $errorMsg);
+						$str .= <<<STR
 pfbc_error_{$this->attributes["id"]}("$errorMsg", "$container");
 
 STR;
-						}
 					}
 				}
-			}	
+			}
 
 			if(!empty($form->hasFormTag)) {
 				if(empty($form->preventJSValidation) && !empty($form->emailExists)) {
@@ -3399,27 +3371,6 @@ STR;
 				}	
 
 				$str .= $form->jsCycleElements($form->elements);
-				if(!empty($form->bindRules)) {
-					$bindRuleKeys = array_keys($form->bindRules);
-					$bindRuleSize = sizeof($bindRuleKeys);
-					for($b = 0; $b < $bindRuleSize; ++$b) {
-						if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-							if(!empty($form->bindRules[$bindRuleKeys[$b]][1])) {
-								$str .= <<<STR
-	if({$form->bindRules[$bindRuleKeys[$b]][1]}) {
-
-STR;
-							}	
-							$str .= $form->jsCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements);
-							if(!empty($form->bindRules[$bindRuleKeys[$b]][1])) {
-								$str .= <<<STR
-	}
-
-STR;
-							}	
-						}
-					}
-				}
 
 				if(empty($form->preventJSValidation)) {
 					$str .= <<<STR
@@ -3555,22 +3506,12 @@ STR;
 		elseif(!empty($_GET))
 			$referenceValues = $_GET;
 
-		if(!empty($_SESSION["pfbc-instances"]) && array_key_exists($this->attributes["id"], $_SESSION["pfbc-instances"])) {
+		if(!empty($_SESSION["pfbc-instances"][$this->attributes["id"]])) {
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
 			require_once($form->phpIncludesPath . "/class.spreadsheet.php");
 			$_SESSION["pfbc-spreadsheet"][$this->attributes["id"]]["Date/Time"] = date("Y-m-d H:i:s");
-			$this->buildSpreadsheetData($form, $referenceValues);
-			if(!empty($form->bindRules)) {
-				$bindRuleKeys = array_keys($form->bindRules);
-				$bindRuleSize = sizeof($bindRuleKeys);
-				for($b = 0; $b < $bindRuleSize; ++$b) {
-					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
-							$this->buildSpreadsheetData($form->bindRules[$bindRuleKeys[$b]][0], $referenceValues);
-					}		
-				}	
-			}	
+			$form->buildSpreadsheetData($referenceValues);
 
 			if(!empty($_SESSION["pfbc-spreadsheet"][$this->attributes["id"]])) {
 				$gdoc = new spreadsheet();
@@ -3612,7 +3553,7 @@ STR;
 		$this->referenceValues = $params;
 	}
 
-	public function validate($clearSessionValues=true) {
+	public function validate($clearValues=true) {
 		$_SESSION["pfbc-errors"][$this->attributes["id"]] = array();
 		//Determine if the form's submit method was get or post.
 		if(!empty($_POST))
@@ -3646,42 +3587,21 @@ STR;
 			$form = unserialize($_SESSION["pfbc-instances"][$this->attributes["id"]]);
 
 			//Store the form's submitted values in a session array for prefilling if validation fails.
-			if(isset($_SESSION["pfbc-values"][$this->attributes["id"]]))
-				unset($_SESSION["pfbc-values"][$this->attributes["id"]]);
-			$this->buildSessionValues($form, $referenceValues);
-			if(!empty($form->bindRules)) {
-				$bindRuleKeys = array_keys($form->bindRules);
-				$bindRuleSize = sizeof($bindRuleKeys);
-				for($b = 0; $b < $bindRuleSize; ++$b) {
-					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
-							$this->buildSessionValues($form->bindRules[$bindRuleKeys[$b]][0], $referenceValues);
-					}		
-				}	
-			}	
+			$form->clearValues();	
+			$form->buildValues($referenceValues);
 
 			//Cycle through the form's required elements to ensure they are valid.
 			$this->phpCycleElements($form->elements, $referenceValues, $form);
-			if(!empty($form->bindRules)) {
-				$bindRuleKeys = array_keys($form->bindRules);
-				$bindRuleSize = sizeof($bindRuleKeys);
-				for($b = 0; $b < $bindRuleSize; ++$b) {
-					if(!empty($form->bindRules[$bindRuleKeys[$b]][0]->elements)) {
-						if(empty($form->bindRules[$bindRuleKeys[$b]][2]) || (eval("if(" . $form->bindRules[$bindRuleKeys[$b]][2] . ") return true; else return false;")))
-							$this->phpCycleElements($form->bindRules[$bindRuleKeys[$b]][0]->elements, $referenceValues, $form);
-					}
-				}
-			}
+
 			if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]]))
 				return false;
 			
 			//Unset the session array(s) containing the form's errors.
-			if(!empty($_SESSION["pfbc-errors"][$this->attributes["id"]]))
-				unset($_SESSION["pfbc-errors"][$this->attributes["id"]]);
+			$this->clearErrors();
 
 			//Unset the session array(s) containing the form's submitted values to prevent unwanted prefilling.
-			if($clearSessionValues)
-				$form->clearSessionValues();
+			if($clearValues)
+				$form->clearValues();
 
 			return true;
 		}
