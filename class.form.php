@@ -118,7 +118,7 @@ class form extends pfbc {
 	protected $tooltipIcon;
 
 	private $allowedFields;
-	private $alphanumbericExists;
+	private $alphanumericExists;
 	private $captchaExists;
 	private $checkform;
 	private $ckeditorIDArr;
