@@ -2045,7 +2045,7 @@ STR;
 		jQuery.ajax({
 			async: false,
 			type: "post",
-			url: "{$this->jsIncludesPath}/php-email-address-validation/ajax-handler.php",
+			url: "{$this->jsIncludesPath}/ajax-email-validation.php",
 			dataType: "text",
 			data: "email=" + escape(formObj.elements["$eleName"].value),
 			success: function(responseMsg) {
@@ -2205,9 +2205,7 @@ STR;
 				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->errorMsgFormat);
 
 			if(empty($errorMsg) && $eleType == "email" && $validValue) {
-				require_once($form->phpIncludesPath . "/php-email-address-validation/EmailAddressValidator.php");
-				$emailObj = new EmailAddressValidator;
-				if(!$emailObj->check_email_address($eleValue))
+				if(!filter_var($eleValue, FILTER_VALIDATE_EMAIL))
 					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
 			}
 
@@ -2306,7 +2304,8 @@ STR;
 				$prefix = "http";
 
 			if(empty($form->synchronousResources)) {
-				$str .= str_replace("images/", "$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
+				if(empty($form->preventJQueryUILoad))
+					$str .= str_replace("images/", "$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/images/", file_get_contents("$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css"));
 				if(!empty($form->jqueryDateRangeIDArr))
 					$str .= file_get_contents("{$form->phpIncludesPath}/jquery/plugins/daterangepicker/ui.daterangepicker.css");
 				if(!empty($form->jqueryColorIDArr))
@@ -2314,7 +2313,8 @@ STR;
 				if(!empty($form->tooltipIDArr))
 					$str .= str_replace(array("tip-yellow_arrows.png", "tip-yellow.png"), array("{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow_arrows.png", "{$form->jsIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.png"), file_get_contents("{$form->phpIncludesPath}/jquery/plugins/poshytip/tip-yellow/tip-yellow.css"));
 			} else  {
-				$str .= "<link href='$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css' rel='stylesheet' type='text/css'/>";
+				if(empty($form->preventJQueryUILoad))
+					$str .= "<link href='$prefix://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/{$form->jqueryUITheme}/jquery-ui.css' rel='stylesheet' type='text/css'/>";
 				if(!empty($form->jqueryDateRangeIDArr))
 					$str .= "<link href='{$form->jsIncludesPath}/jquery/plugins/daterangepicker/ui.daterangepicker.css' rel='stylesheet' type='text/css'/>";
 				if(!empty($form->jqueryColorIDArr))
@@ -3311,28 +3311,30 @@ STR;
 				}
 			}
 
-			if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
-				$errorSize = sizeof($errors);
-				$errorMsg = "";
-				if($errorSize == 1)
-					$errorMsg = "The following error was found:";
-				else	
-					$errorMsg = "The following " . $errorSize . " errors were found:";
-				$errorMsg .= "<ul><li>" . implode("</li><li>", array_values($errors)) . "</li></ul>";	
-				$errorMsg = str_replace('"', '&quot;', $errorMsg);
-				$str .= <<<STR
+			if(!empty($errors)) {
+				if((!isset($form->errorDisplayOption) && !empty($form->map)) || (isset($form->errorDisplayOption) && $form->errorDisplayOption == 1)) {
+					$errorSize = sizeof($errors);
+					$errorMsg = "";
+					if($errorSize == 1)
+						$errorMsg = "The following error was found:";
+					else	
+						$errorMsg = "The following " . $errorSize . " errors were found:";
+					$errorMsg .= "<ul><li>" . implode("</li><li>", array_values($errors)) . "</li></ul>";	
+					$errorMsg = str_replace('"', '&quot;', $errorMsg);
+					$str .= <<<STR
 pfbc_error_{$this->attributes["id"]}("$errorMsg");
 
 STR;
-			}
-			else {
-				foreach($errors as $container => $errorMsg) {
-					if(!empty($errorMsg)) {
-						$errorMsg = str_replace('"', '&quot;', $errorMsg);
-						$str .= <<<STR
+				}
+				else {
+					foreach($errors as $container => $errorMsg) {
+						if(!empty($errorMsg)) {
+							$errorMsg = str_replace('"', '&quot;', $errorMsg);
+							$str .= <<<STR
 pfbc_error_{$this->attributes["id"]}("$errorMsg", "$container");
 
 STR;
+						}
 					}
 				}
 			}

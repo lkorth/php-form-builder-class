@@ -5,7 +5,7 @@ include("../class.form.php");
 
 if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0"))) {
 	$form = new form("email_" . substr($_POST["cmd"], -1));
-	if($form->validate()) {
+	if($form->validate(false)) {
 		$result = $form->email("my_username", "my_password", array(
 			"to" => "my_recipient(s)", 
 			"subject" => "my_subject", 
@@ -20,14 +20,13 @@ if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0"))) {
 			"textonly" => "true/false"
 		));
 
-		if($result)
-			header("Location: email.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter has been emailed from your Google Gmail account."));
+		if(!$result)
+			$form->setError("Oops! The following error has occurred while sending information from your Google Gmail account.  " .  $form->getEmailError());
 		else
-			header("Location: email.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Oops! The following error has occurred while sending information from your Google Gmail account.  " .  $form->getEmailError()));
+			$form->clearValues();
 	}
-	else
-		header("Location: email.php");
 
+	header("Location: email.php");
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
@@ -78,9 +77,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 	$form->setAttributes(array(
 		"map" => array(2, 2, 1, 3)
 	));
-
-	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
 
 	$form->addHidden("cmd", "submit_0");
 	$form->addTextbox("First Name:", "FName");

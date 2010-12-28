@@ -5,34 +5,51 @@ include("../class.form.php");
 
 if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1", "submit_2", "submit_4"))) {
 	$form = new form("validation_" . substr($_POST["cmd"], -1));
-	if($form->validate())
-		header("Location: validation.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
-	else
-		header("Location: validation.php");
+	if($form->validate()) {
+		//The form has passed validation.  We can now move forward with any necessary processing.
+		$form->setError("Congratulations! The information you enter passed the form's validation.");
+	}
+	else {
+		/*One or more validation errors were found.  These errors have been saved in the session 
+		and will automatically be displayed after redirecting back to the form.*/ 
+	}	
+
+	header("Location: validation.php");
 	exit();
 }
 elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "submit_3") {
 	$form = new form("validation_3");
-	if($form->validate())
+	if($form->validate()) {
+		//The form has passed validation.  We can now move forward with any necessary processing.
 		echo "Congratulations! The information you enter passed the form's validation.";
-	else
+	}	
+	else {
+		/*One or more validation errors were found.  The renderAjaxErrorResponse function formats the
+		errors in a json response and sends them back to the browser so the user can corrent and re-submit
+		their form data.*/
 		$form->renderAjaxErrorResponse();
+	}	
 	exit();
 }
 elseif(isset($_POST["cmd"]) && $_POST["cmd"] == "submit_5") {
 	$form = new form("validation_5");
+	/*Passing false to the validate function prevents the form's values from being cleared from the session.
+	This allows any additional validation to be performed.*/
 	if($form->validate(false)) {
 		if($_POST["Password"] != $_POST["ConfirmPassword"]) {
+			/*The setError function allows you to apply an error message to a specific form element.  Simply
+			pass the element's name as the second parameter.*/
 			$form->setError("Error: This field does not match the password you provided above.", "ConfirmPassword");
-			header("Location: validation.php");
 		}
 		else {
-			$form->clearSessionValues();
-			header("Location: validation.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
+			/*Once all additional validation has been completed, the clearValues function is used to prevent any
+			values stored in the session from being auto-populated when the user returns to the form.*/
+			$form->clearValues();
+			$form->setError("Congratulations! The information you enter passed the form's validation.");
 		}
 	}	
-	else
-		header("Location: validation.php");
+
+	header("Location: validation.php");
 	exit();
 }
 
@@ -60,10 +77,6 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 	<?php
 	$form = new form("validation_0", 400);
-
-	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 	$form->addHidden("cmd", "submit_0");
 	$form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
 	$form->addCaptcha("Captcha:");
@@ -76,10 +89,6 @@ if(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 	echo '<pre>', highlight_string('<?php
 $form = new form("validation_0", 400);
-
-if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 $form->addHidden("cmd", "submit_0");
 $form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
 $form->addEmail("Email Address:", "MyEmail");
@@ -102,10 +111,6 @@ $form->render();
 		"preventJQueryUILoad" => 1,
 		"map" => array(2, 2, 1, 3)
 	));
-
-	if(!empty($_GET["errormsg_1"]))
-		$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 	$form->addHidden("cmd", "submit_1");
 	$form->addTextbox("First Name:", "FName", "", array("required" => 1));
 	$form->addTextbox("Last Name:", "LName", "", array("required" => 1));
@@ -123,10 +128,6 @@ $form = new form("validation_1", 500);
 $form->setAttributes(array(
 	"map" => array(2, 2, 1, 3)
 ));
-
-if(!empty($_GET["errormsg_1"]))
-	$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 $form->addHidden("cmd", "submit_1");
 $form->addTextbox("First Name:", "FName", "", array("required" => 1));
 $form->addTextbox("Last Name:", "LName", "", array("required" => 1));
@@ -181,10 +182,6 @@ else {
 		"preventJSValidation" => 1,
 		"map" => array(2, 2, 1, 3)
 	));
-
-	if(!empty($_GET["errormsg_2"]))
-		$form->errorMsg = filter_var($_GET["errormsg_2"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 	$form->addHidden("cmd", "submit_2");
 	$form->addTextbox("First Name:", "FName", "", array("required" => 1));
 	$form->addTextbox("Last Name:", "LName", "", array("required" => 1));
@@ -203,10 +200,6 @@ $form->setAttributes(array(
 	"preventJSValidation" => 1,
 	"map" => array(2, 2, 1, 3)
 ));
-
-if(!empty($_GET["errormsg_2"]))
-	$form->errorMsg = filter_var($_GET["errormsg_2"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 $form->addHidden("cmd", "submit_2");
 $form->addTextbox("First Name:", "FName", "", array("required" => 1));
 $form->addTextbox("Last Name:", "LName", "", array("required" => 1));
@@ -261,18 +254,11 @@ exit();
 	$form->addHidden("cmd", "submit_3");
 	$form->addEmail("Primary Email Address:", "MyPrimaryEmail", "", array("required" => 1));
 	$form->addYesNo("Do you have any alternate email addresses?", "MyYesNo", "", array("onclick" => "toggleAlternateEmailAddresses(this.value);"));
-
-	$subform = new form("validation_3sub", 400);
-	$subform->setAttributes(array(
-		"preventJQueryLoad" => 1,
-		"preventJQueryUILoad" => 1
-	));
-	$subform->addEmail("Alternate Email Address #1:", "MyAlternateEmail1");
-	$subform->addEmail("Alternate Email Address #2:", "MyAlternateEmail2");
-	$subform->addEmail("Alternate Email Address #3:", "MyAlternateEmail3");
-
-	$form->addHTMLExternal('<div id="alternateEmailAddressesDiv" style="display: none; padding-bottom: 1em;">' . $subform->elementsToString() . '</div>');
-	$form->bind($subform, 'document.getElementById("validation_3").MyYesNo[0].checked' , '!empty($_POST["MyYesNo"])');
+	$form->addHTMLExternal('<div id="alternateEmailAddressesDiv" style="display: none; padding-bottom: 1em;">');
+	$form->addEmail("Alternate Email Address #1:", "MyAlternateEmail1");
+	$form->addEmail("Alternate Email Address #2:", "MyAlternateEmail2");
+	$form->addEmail("Alternate Email Address #3:", "MyAlternateEmail3");
+	$form->addHTMLExternal('</div>');
 	$form->addButton();
 	$form->render();
 	?>
@@ -299,14 +285,11 @@ $form->setAttributes(array(
 $form->addHidden("cmd", "submit_3");
 $form->addEmail("Primary Email Address:", "MyPrimaryEmail", "", array("required" => 1));
 $form->addYesNo("Do you have any alternate email addresses?", "MyYesNo", "", array("onclick" => "toggleAlternateEmailAddresses(this.value);"));
-
-$subform = new form("validation_3sub", 400);
-$subform->addEmail("Alternate Email Address #1:", "MyAlternateEmail1");
-$subform->addEmail("Alternate Email Address #2:", "MyAlternateEmail2");
-$subform->addEmail("Alternate Email Address #3:", "MyAlternateEmail3");
-
-$form->addHTMLExternal(\'<div id="alternateEmailAddressesDiv" style="display: none; padding-bottom: 1em;">\' . $subform->elementsToString() . \'</div>\');
-$form->bind($subform, \'document.getElementById("validation_3").MyYesNo[0].checked\' , \'!empty($_POST["MyYesNo"])\');
+$form->addHTMLExternal(\'<div id="alternateEmailAddressesDiv" style="display: none; padding-bottom: 1em;">\');
+$form->addEmail("Alternate Email Address #1:", "MyAlternateEmail1");
+$form->addEmail("Alternate Email Address #2:", "MyAlternateEmail2");
+$form->addEmail("Alternate Email Address #3:", "MyAlternateEmail3");
+$form->addHTMLExternal(\'</div>\');
 $form->addButton();
 $form->render();
 ?>
@@ -342,10 +325,6 @@ $form->render();
 		"floatErrorMsgFormat" => "[LABEL] can only contain float/decimal numbers. No letters or special character allowed!",
 		"alphanumericErrorMsgFormat" => "There were invalid character found in this field.  [LABEL] can only contain letters and/or numbers."
 	));
-
-	if(!empty($_GET["errormsg_4"]))
-		$form->errorMsg = filter_var($_GET["errormsg_4"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 	$form->addHidden("cmd", "submit_4");
 	$form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
 	$form->addEmail("Email Address:", "MyEmail");
@@ -364,10 +343,6 @@ $form->setAttributes(array(
 	"floatErrorMsgFormat" => "[LABEL] can only contain float/decimal numbers. No letters or special character allowed!",
 	"alphanumericErrorMsgFormat" => "There were invalid character found in this field.  [LABEL] can only contain letters and/or numbers."
 ));
-
-if(!empty($_GET["errormsg_4"]))
-	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 $form->addHidden("cmd", "submit_4");
 $form->addTextbox("Required Textbox:", "MyRequiredTextbox", "", array("required" => 1));
 $form->addEmail("Email Address:", "MyEmail");
@@ -381,7 +356,7 @@ $form->render();
 
 	<p><b>Custom Validation</b> - Below you will find an example of how custom validation can be applied after your form's data has been submitted.
 	Passing boolean false to the validate function will prevent the submitted data from clearing within the php session and will allow the form's
-	elements to be auto-populated if a custom validation error is discovered.  If no validation errors are found, use the clearSessionValues to
+	elements to be auto-populated if a custom validation error is discovered.  If no validation errors are found, use the clearValues to
 	prevent the form's data from being auto-populated when the user returns to the form.  The setError function has two parameters - the first for 
 	providing an error message, and the second option parameter for specifying an element name to attach the error above.  If the second parameter
 	isn't provided, the error message will be displayed at the top of the form.</p>
@@ -394,10 +369,6 @@ $form->render();
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1
 	));
-
-	if(!empty($_GET["errormsg_5"]))
-		$form->errorMsg = filter_var($_GET["errormsg_5"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 	$form->addHidden("cmd", "submit_5");
 	$form->addTextbox("Username:", "Username", "", array("required" => 1));
 	$form->addPassword("Password:", "Password", "", array("required" => 1));
@@ -408,18 +379,23 @@ $form->render();
 	echo '<pre>', highlight_string('<?php
 if(isset($_POST["cmd"]) && $_POST["cmd"] == "submit_5") {
 	$form = new form("validation_5");
+	/*Passing false to the validate function prevents the form\'s values from being cleared from the session.
+	This allows any additional validation to be performed.*/
 	if($form->validate(false)) {
 		if($_POST["Password"] != $_POST["ConfirmPassword"]) {
+			/*The setError function allows you to apply an error message to a specific form element.  Simply
+			pass the element\'s name as the second parameter.*/
 			$form->setError("Error: This field does not match the password you provided above.", "ConfirmPassword");
-			header("Location: validation.php");
 		}
 		else {
-			$form->clearSessionValues();
-			header("Location: validation.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form\'s validation."));
+			/*Once all additional validation has been completed, the clearValues function is used to prevent any
+			values stored in the session from being auto-populated when the user returns to the form.*/
+			$form->clearValues();
+			$form->setError("Congratulations! The information you enter passed the form\'s validation.");
 		}
 	}	
-	else
-		header("Location: validation.php");
+
+	header("Location: validation.php");
 	exit();
 }
 
@@ -427,10 +403,6 @@ $form = new form("validation_5", 400);
 $form->setAttributes(array(
 	"map" => array(1, 2)
 ));
-
-if(!empty($_GET["errormsg_5"]))
-	$form->errorMsg = filter_var($_GET["errormsg_5"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 $form->addHidden("cmd", "submit_5");
 $form->addTextbox("Username:", "Username", "", array("required" => 1));
 $form->addPassword("Password:", "Password", "", array("required" => 1));

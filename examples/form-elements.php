@@ -5,10 +5,16 @@ include("../class.form.php");
 
 if(isset($_POST["cmd"]) && in_array($_POST["cmd"], array("submit_0", "submit_1"))) {
 	$form = new form("formelements_" . substr($_POST["cmd"], -1));
-	if($form->validate())
-		header("Location: form-elements.php?errormsg_" . substr($_POST["cmd"], -1) . "=" . urlencode("Congratulations! The information you enter passed the form's validation."));
-	else
-		header("Location: form-elements.php");
+	if($form->validate()) {
+		//The form has passed validation.  We can now move forward with any necessary processing.
+		$form->setError("Congratulations! The information you enter passed the form's validation.");
+	}
+	else {
+		/*One or more validation errors were found.  These errors have been saved in the session 
+		and will automatically be displayed after redirecting back to the form.*/ 
+	}	
+
+	header("Location: form-elements.php");
 	exit();
 }
 elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
@@ -21,10 +27,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 	<?php
 	$form = new form("formelements_0", 400);
-
-	if(!empty($_GET["errormsg_0"]))
-		$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 	$form->addHidden("cmd", "submit_0");
 	$form->addTextbox("Textbox:", "MyTextbox");
 	$form->addTextarea("Textarea:", "MyTextarea");
@@ -62,10 +64,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 		"preventJQueryLoad" => 1,
 		"preventJQueryUILoad" => 1
 	));	
-
-	if(!empty($_GET["errormsg_1"]))
-		$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 	$form->addHidden("cmd", "submit_1");
 	$form->addWebEditor("Web Editor - TinyMCE:", "MyWebEditor");
 	$form->addCKEditor("Web Editor - CKEditor:", "MyCKEditor");
@@ -74,10 +72,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 
 	echo '<pre>', highlight_string('<?php
 $form = new form("formelements_0", 400);
-
-if(!empty($_GET["errormsg_0"]))
-	$form->errorMsg = filter_var($_GET["errormsg_0"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 $form->addHidden("cmd", "submit_0");
 $form->addTextbox("Textbox:", "MyTextbox");
 $form->addTextarea("Textarea:", "MyTextarea");
@@ -110,10 +104,6 @@ $form->render();
 
 <?php
 $form = new form("formelements_1", 850);
-
-if(!empty($_GET["errormsg_1"]))
-	$form->errorMsg = filter_var($_GET["errormsg_1"], FILTER_SANITIZE_SPECIAL_CHARS);
-
 $form->addHidden("cmd", "submit_1");
 $form->addWebEditor("Web Editor - TinyMCE:", "MyWebEditor");
 $form->addCKEditor("Web Editor - CKEditor:", "MyCKEditor");

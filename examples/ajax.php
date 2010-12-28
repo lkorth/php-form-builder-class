@@ -48,7 +48,6 @@ elseif(!isset($_GET["cmd"]) && !isset($_POST["cmd"])) {
 		"map" => array(1, 2, 2, 2, 1, 3),
 		"ajax" => 1
 	));
-
 	$form->addHidden("cmd", "submit_0");
 	$form->addTextbox("Username:", "Username", "", array("required" => 1));
 	$form->addPassword("Password:", "Password", "", array("required" => 1));
@@ -70,7 +69,6 @@ $form->setAttributes(array(
 	"map" => array(1, 2, 2, 2, 1, 3),
 	"ajax" => 1
 ));
-
 $form->addHidden("cmd", "submit_0");
 $form->addTextbox("Username:", "Username", "", array("required" => 1));
 $form->addPassword("Password:", "Password", "", array("required" => 1));

@@ -85,7 +85,6 @@ The goals of this project are to...
 		<li><a href="examples/web-editors.php">Web Editors</a></li>
 		<li><a href="examples/buttons.php">Buttons</a></li>
 		<li><a href="examples/fieldsets.php">Fieldsets</a></li>
-		<li><a href="examples/conditional-scenarios.php">Conditional Scenarios</a></li>
 		<li><a href="examples/synchronous-resource-loading.php">Synchronous Resource Loading</a></li>
 	</ul>
 </div>
