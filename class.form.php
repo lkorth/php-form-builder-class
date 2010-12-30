@@ -84,6 +84,7 @@ class form extends pfbc {
 	protected $captchaTheme;
 	protected $ckeditorCustomConfig;
 	protected $ckeditorLang;
+	protected $colorErrorMsgFormat;
 	protected $emailErrorMsgFormat;
 	protected $errorDisplayOption;
 	protected $errorMsg;
@@ -159,7 +160,7 @@ class form extends pfbc {
 		);
 		if(!empty($width))
 			$this->attributes["width"] = $width;
-		$this->alphanumericErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only letters and/or numbers are allowed.";
+		$this->alphanumericErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only letters, numbers, underscores, and hyphens are allowed.";
 		$this->captchaLang = "en";
 		$this->captchaPrivateKey = "6LcazwoAAAAAAD-auqUl-4txAK3Ky5jc5N3OXN0_";
 		$this->captchaPublicKey = "6LcazwoAAAAAADamFkwqj5KN1Gla7l4fpMMbdZfi";
@@ -168,9 +169,10 @@ class form extends pfbc {
 		$this->emailErrorMsgFormat = "Error: [LABEL] contains an invalid email address.";
 		$this->errorMsgFormat = "Error: [LABEL] is a required field.";
 		$this->errors = array();
-		$this->floatErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers, decimals, and signs are allowed.";
+		$this->floatErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only decimal numbers are allowed.";
 		if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
 			$this->https = 1;
+		$this->colorErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only 6 digit hexadecimal colors are allowed.";	
 		$this->integerErrorMsgFormat = "Error: [LABEL] contains one or more invalid characters - only numbers are allowed.";
 		$this->jqueryDateFormat = "MM d, yy";
 		$this->jqueryUITheme = "smoothness";
@@ -432,8 +434,8 @@ class form extends pfbc {
 			while(in_array($ele->attributes["id"], $this->jqueryColorIDArr))
 				$ele->attributes["id"] = "colorinput_" . rand(0, 999);
 			$this->jqueryColorIDArr[] = $ele->attributes["id"];
+			$ele->applyClass("pfbc-color");	
 
-			$ele->attributes["readonly"] = "readonly";
 			if(empty($ele->hint))
 				$ele->hint = "Click to Select Color...";
 		}
@@ -1081,7 +1083,7 @@ STR;
 						unset($resetTypeTo);
 					}
 
-					if(in_array($eleType, array("date", "daterange", "color"))) {
+					if(in_array($eleType, array("date", "daterange"))) {
 						$str .= $this->indent() . '<div id="' . $ele->attributes["id"] . '_clear" style="';
 						if(empty($ele->attributes["value"]) || $ele->attributes["value"] == $ele->hint)
 							$str .= 'display: none;';
@@ -2072,7 +2074,7 @@ STR;
 				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->integerErrorMsgFormat);
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
-		if(!formObj.elements["$eleName"].value.match(/^[-+]*\d+$/)) {
+		if(!formObj.elements["$eleName"].value.match(/^-?\d+$/)) {
 			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 			if(js_errors_{$this->attributes["id"]}.length == 1)
 				formObj.elements["$eleName"].focus();
@@ -2086,7 +2088,7 @@ STR;
 				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->floatErrorMsgFormat);
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
-		if(!formObj.elements["$eleName"].value.match(/^[-+]*[0-9]*\.?[0-9]+$/)) {
+		if(!formObj.elements["$eleName"].value.match(/^-?[0-9]*\.?[0-9]+$/)) {
 			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 			if(js_errors_{$this->attributes["id"]}.length == 1)
 				formObj.elements["$eleName"].focus();
@@ -2100,7 +2102,21 @@ STR;
 				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->alphanumericErrorMsgFormat);
 				$str .= <<<STR
 	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
-		if(!formObj.elements["$eleName"].value.match(/^[0-9a-zA-Z]+$/)) {
+		if(!formObj.elements["$eleName"].value.match(/^[0-9a-zA-Z_-]+$/)) {
+			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
+			if(js_errors_{$this->attributes["id"]}.length == 1)
+				formObj.elements["$eleName"].focus();
+		}		
+	}
+
+STR;
+				
+			}
+			elseif(empty($this->preventJSValidation) && $eleType == "color") {
+				$errorMsg = str_replace(array("[LABEL]", '"'), array($eleLabel, '&quot;'), $this->colorErrorMsgFormat);
+				$str .= <<<STR
+	if(formObj.elements["$eleName"].value != "$eleHint" && formObj.elements["$eleName"].value != "") {
+		if(!formObj.elements["$eleName"].value.match(/^#?[0-9a-fA-F]{6}$/)) {
 			js_errors_{$this->attributes["id"]}.push({ errormsg: "$errorMsg", container: "{$ele->container}" });
 			if(js_errors_{$this->attributes["id"]}.length == 1)
 				formObj.elements["$eleName"].focus();
@@ -2209,12 +2225,14 @@ STR;
 					$errorMsg = str_replace("[LABEL]", $eleLabel, $form->emailErrorMsgFormat);
 			}
 
-			if(empty($errorMsg) && !empty($ele->integer) && $validValue && !preg_match("/^[-+]*\d+$/", $eleValue))
+			if(empty($errorMsg) && !empty($ele->integer) && $validValue && !preg_match("/^-?\d+$/", $eleValue))
 				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->integerErrorMsgFormat);
-			elseif(empty($errorMsg) && !empty($ele->float) && $validValue && !preg_match("/^[-+]*[0-9]*\.?[0-9]+$/", $eleValue))
+			elseif(empty($errorMsg) && !empty($ele->float) && $validValue && !preg_match("/^-?[0-9]*\.?[0-9]+$/", $eleValue))
 				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->floatErrorMsgFormat);
-			elseif(empty($errorMsg) && !empty($ele->alphanumeric) && $validValue && !preg_match("/^[0-9a-zA-Z]+$/", $eleValue))
+			elseif(empty($errorMsg) && !empty($ele->alphanumeric) && $validValue && !preg_match("/^[0-9a-zA-Z-_]+$/", $eleValue))
 				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->alphanumericErrorMsgFormat);
+			elseif(empty($errorMsg) && $eleType == "color" && $validValue && !preg_match("/^#?[0-9a-gA-G]{6}$/", $eleValue))
+				$errorMsg = str_replace("[LABEL]", $eleLabel, $form->colorErrorMsgFormat);
 
 			if(!empty($errorMsg)) {
 				$_SESSION["pfbc-errors"][$form->attributes["id"]][$ele->container] = $errorMsg;
@@ -2884,14 +2902,13 @@ STR;
 
 			if(!empty($form->integerExists)) {
                 $str .= <<<STR
-jQuery("#{$this->attributes["id"]} .pfbc-integer").bind("keypress", function(event) {
+jQuery("#{$this->attributes["id"]} .pfbc-integer").bind("keypress", function(e) {
     var code = e.which;
-    if(jQuery.inArray(code, [0, 8, 13, 43, 45]) != -1
-        || (code >= 48 && code <= 57)
-    )
-        return true;
-    else
-        return false;
+	var regexp = /[0-9-]/;
+    if(jQuery.inArray(code, [0, 8, 13]) != -1 || regexp.test(String.fromCharCode(code)))
+		return true;
+	else
+		return false;
 });
 
 STR;
@@ -2899,14 +2916,13 @@ STR;
 
             if(!empty($form->floatExists)) {
                 $str .= <<<STR
-jQuery("#{$this->attributes["id"]} .pfbc-float").bind("keydown", function(event) {
+jQuery("#{$this->attributes["id"]} .pfbc-float").bind("keypress", function(e) {
     var code = e.which;
-    if(jQuery.inArray(code, [0, 8, 13, 43, 45, 46]) != -1
-        || (code >= 48 && code <= 57)
-    )
-        return true;
-    else
-        return false;
+	var regexp = /[0-9-\.]/;
+    if(jQuery.inArray(code, [0, 8, 13]) != -1 || regexp.test(String.fromCharCode(code)))
+		return true;
+	else
+		return false;
 });
 
 STR;
@@ -2916,12 +2932,25 @@ STR;
                 $str .= <<<STR
 jQuery("#{$this->attributes["id"]} .pfbc-alphanumeric").bind("keypress", function(e) {
     var code = e.which;
-    if(jQuery.inArray(code, [0, 8, 13]) != -1
-        || (code >= 48 && code <= 57) || (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
-    )   
-        return true;
-    else
-        return false;
+	var regexp = /[a-zA-Z0-9-_]/;
+    if(jQuery.inArray(code, [0, 8, 13]) != -1 || regexp.test(String.fromCharCode(code)))
+		return true;
+	else
+		return false;
+});
+
+STR;
+            }
+
+            if(!empty($form->jqueryColorIDArr)) {
+                $str .= <<<STR
+jQuery("#{$this->attributes["id"]} .pfbc-color").bind("keypress", function(e) {
+    var code = e.which;
+	var regexp = /[a-fA-f0-9#]/;
+    if(jQuery.inArray(code, [0, 8, 13]) != -1 || regexp.test(String.fromCharCode(code)))
+		return true;
+	else
+		return false;
 });
 
 STR;
@@ -3087,7 +3116,13 @@ jQuery("#{$form->jqueryColorIDArr[$c]}").ColorPicker({
 		jQuery(el).ColorPickerHide(); 
 		jQuery(el).removeClass("pfbc-hint");
 		jQuery("#{$form->jqueryColorIDArr[$c]}_clear").show();
-	} 
+	}, 
+	onBeforeShow: function() {
+		$(this).ColorPickerSetColor(this.value);
+	}
+})
+.bind('keyup', function(){
+	$(this).ColorPickerSetColor(this.value);
 });
 
 STR;
