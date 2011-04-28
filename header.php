@@ -56,7 +56,7 @@ echo <<<HTML
 					<li class="indent-l1"><a href="{$examplePath}ajax.php">Ajax</a></li>
 				</ul>
 				<h2>Sponsored By</h2>
-				<a href="http://www.imavex.com/"><img src="http://www.imavex.com/schemes/IMAVEX08/Main/images/header_logo.png" alt="Imavex" title="Imavex" width="100%"/></a>
+				<a href="http://www.imavex.com/"><img src="http://www.imavex.com/schemes/IMAVEX08/Main/images/header_logo.png" alt="Imavex" title="Imavex" border="0" width="100%"/></a>
 			</div>
 			<div id="right">
 HTML;

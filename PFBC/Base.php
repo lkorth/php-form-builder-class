@@ -4,7 +4,7 @@ namespace PFBC;
 abstract class Base {
 	public function configure(array $properties = null) {
         if(!empty($properties)) {
-			$class = get_called_class();
+			$class = get_class($this);
 
 			/*The property_reference lookup array is created so that properties can be set
 			case-insensitively.*/

@@ -62,7 +62,10 @@ abstract class Element extends Base {
 	}
 
 	public function getName() {
-		return $this->attributes["name"];
+		if(!empty($this->attributes["name"]))
+			return $this->attributes["name"];
+		else
+			return "";
 	}
 
 	/*This method provides a shortcut for checking if an element is required.*/
