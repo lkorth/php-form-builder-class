@@ -1,0 +1,91 @@
+body, td, pre {
+	font: 12px Arial, Helvetica, sans-serif;	
+	color: #666;
+}
+pre {
+	border: 1px solid #3366CC;
+	background-color: #E5ECF9;
+	padding: 0.5em;
+	font-family: Courier New, monospace;
+}
+code {
+	white-space: nowrap;
+}
+p, li, pre {
+	line-height: 1.5em;
+}
+a {
+	text-decoration: none;
+}
+a:hover, a:active {
+	text-decoration: underline;
+}
+h2.first {
+	margin: 0 0 10px;
+}
+#header {
+    border-bottom: 1px solid #ccc;
+    padding: 5px 0;
+}
+#links {
+	float: right;
+}
+#links a {
+	display: block;
+	float: left;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    background-color: #f5f4f4;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    white-space: nowrap;
+    margin-left: 0.25em;
+}
+#header {
+    margin-bottom: 10px;
+}
+#header h2 {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+#header ul {
+    margin: 0;
+    padding: 0;
+}
+#header li {
+    list-style-type: none;
+    float: left;
+    padding-right: 20px;
+    font-style: italic;
+}
+#left {
+	position: relative;
+	float: left;
+    margin-right: 15px;
+    width: 200px;
+}
+#left ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+#left li {
+    padding: 0.5em 0;
+    border-bottom: 1px solid #ccc;
+}
+#left li.indent-l1 {
+    padding-left: 2em;
+}
+#left li.indent-l2 {
+    padding-left: 4em;
+}
+#right {
+	position: relative;
+    padding-left: 15px;
+    border-left: 1px solid #ccc;
+	overflow: hidden;
+}
+#right ul {
+    margin: 0;
+}
