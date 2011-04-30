@@ -138,10 +138,17 @@ class Form extends Base {
         return $this->resourcesPath;
     }
 
-	public static function getErrors($id = "pfbc") {
+	public function getErrors() {
 		$errors = array();
-		if(!empty($_SESSION["pfbc"][$id]["errors"]))
-			$errors = $_SESSION["pfbc"][$id]["errors"];
+		if(session_id() == "")
+			$errors[""] = array("Error: The pfbc project requires an active session to function properly.  Simply add session_start() to your script before any output has been sent to the browser.");
+		else {
+			$errors = array();
+			$id = $this->attributes["id"];
+			if(!empty($_SESSION["pfbc"][$id]["errors"]))
+				$errors = $_SESSION["pfbc"][$id]["errors"];
+		}	
+
 		return $errors;	
 	}
 
@@ -199,7 +206,7 @@ class Form extends Base {
 					/*If a validation error is found, the error message is saved in the session along with
 					the element's name.*/
 					if(!$element->isValid($value)) {
-						self::setError($id, $name, $element->getErrors());
+						self::setError($id, $element->getErrors(), $name);
 						$valid = false;
 					}	
 				}
@@ -217,7 +224,7 @@ class Form extends Base {
 	}
 
 	/*This method restores the serialized form instance.*/
-	private function recover($id) {
+	private static function recover($id) {
 		if(!empty($_SESSION["pfbc"][$id]["form"]))
 			return unserialize($_SESSION["pfbc"][$id]["form"]);
 	}
@@ -375,7 +382,7 @@ JS;
 
 	/*Valldation errors are saved in the session after the form submission, and will be displayed to the user
 	when redirected back to the form.*/
-	public static function setError($id, $element, $errors) {
+	public static function setError($id, $errors, $element = "") {
 		if(!is_array($errors))
 			$errors = array($errors);
 		if(empty($_SESSION["pfbc"][$id]["errors"][$element]))

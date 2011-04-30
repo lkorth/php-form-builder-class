@@ -5,16 +5,15 @@ class Horizontal extends \PFBC\View {
 	protected $labelPaddingTop;
 
 	public function jQueryDocumentReady() {
-		$id = $this->getForm()->getId();
+		$id = $this->form->getId();
 		echo 'jQuery("#', $id, ' .pfbc-element:last").css("margin-right", "0");';
 	}
 
 	public function render() {
-		$form = $this->getForm();
-		echo '<form', $form->getAttributes(), '>';
-		$form->getError()->render();
+		echo '<form', $this->form->getAttributes(), '>';
+		$this->form->getError()->render();
 
-		$elements = $form->getElements();
+		$elements = $this->form->getElements();
 		$elementSize = sizeof($elements);
 		for($e = 0; $e < $elementSize; ++$e) {
 			$element = $elements[$e];
@@ -33,7 +32,7 @@ class Horizontal extends \PFBC\View {
     }
 
 	public function renderCSS() {
-		$id = $this->getForm()->getId();
+		$id = $this->form->getId();
 
 		parent::renderCSS();
 		echo <<<CSS

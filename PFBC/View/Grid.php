@@ -18,7 +18,7 @@ class Grid extends \PFBC\View {
 	}
 
 	public function jQueryDocumentReady() {
-		$id = $this->getForm()->getId();
+		$id = $this->form->getId();
 		/*jQuery is used to remove margin from the elements on the far left/right of each row and apply css 
 		entries to the last row.*/
 		echo <<<JS
@@ -35,11 +35,10 @@ JS;
 	}	
 
 	public function render() {
-		$form = $this->getForm();
-		echo '<form', $form->getAttributes(), '>';
-		$form->getError()->render();
+		echo '<form', $this->form->getAttributes(), '>';
+		$this->form->getError()->render();
 
-		$elements = $form->getElements();
+		$elements = $this->form->getElements();
 
 		$gridElementCount = 0;
 		$gridIndex = 0;
@@ -93,10 +92,9 @@ JS;
     }
 
 	public function renderCSS() {
-		$form = $this->getForm();
-		$id = $form->getId();
-		$width = $form->getWidth();
-		$widthSuffix = $form->getWidthSuffix();
+		$id = $this->form->getId();
+		$width = $this->form->getWidth();
+		$widthSuffix = $this->form->getWidthSuffix();
 
 		parent::renderCSS();
 		echo <<<CSS
@@ -109,7 +107,7 @@ JS;
 #$id .pfbc-textbox, #$id .pfbc-textarea, #$id .pfbc-select { width: $width{$widthSuffix}; }
 CSS;
 	
-		$elements = $form->getElements();
+		$elements = $this->form->getElements();
 		foreach($elements as $element) {
 			/*Hidden, HTMLExternal, and Button element classes aren't included in the grid.*/
 			if(!$element instanceof \PFBC\Element\Hidden && !$element instanceof \PFBC\Element\HTMLExternal && !$element instanceof \PFBC\Element\Button)

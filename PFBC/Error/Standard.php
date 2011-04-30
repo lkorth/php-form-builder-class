@@ -3,7 +3,7 @@ namespace PFBC\Error;
 
 class Standard extends \PFBC\Error {
 	public function applyAjaxErrorResponse() {
-		$id = $this->getForm()->getId();
+		$id = $this->form->getId();
 		echo <<<JS
 var errorSize = response.errors.length;
 if(errorSize == 1)
@@ -20,34 +20,35 @@ JS;
 
 	}
 
-	public function render() {
-		$errors = \PFBC\Form::getErrors($this->getForm()->getId());
-
+	private function parse($errors) {
+		$list = array();
 		if(!empty($errors)) {
-			$list = array();
-			array_walk_recursive($errors, function($value, $key, $list) {
-				$list[] = $value;
-			}, &$list);
-
-			$size = sizeof($list);
-			if($size == 1)
-				$format = "error was";
-			else
-				$format = $size . " errors were";
-
-			echo '<div class="pfbc-error ui-state-error ui-corner-all">The following ', $format, ' found:<ul><li>', implode("</li><li>", $list), "</li></ul></div>";
+			$keys = array_keys($errors);
+			$keySize = sizeof($keys);
+			for($k = 0; $k < $keySize; ++$k) 
+				$list = array_merge($list, $errors[$keys[$k]]);
 		}
+		return $list;
+	}
+
+    public function render() {
+        $errors = $this->parse($this->form->getErrors());
+        if(!empty($errors)) {
+            $size = sizeof($errors);
+            if($size == 1)
+                $format = "error was";
+            else
+                $format = $size . " errors were";
+
+            echo '<div class="pfbc-error ui-state-error ui-corner-all">The following ', $format, ' found:<ul><li>', implode("</li><li>", $errors), "</li></ul></div>";
+        }
     }
 
-	public function renderAjaxErrorResponse() {
-        $errors = \PFBC\Form::getErrors($this->getForm()->getId());
+    public function renderAjaxErrorResponse() {
+        $errors = $this->parse($this->form->getErrors());
         if(!empty($errors)) {
-            $list = array();
-            array_walk_recursive($errors, function($value, $key, $list) {
-                $list[] = $value;
-            }, &$list);
             header("Content-type: application/json");
-            echo json_encode(array("errors" => $list));
+            echo json_encode(array("errors" => $errors));
         }
-	}
+    }
 }

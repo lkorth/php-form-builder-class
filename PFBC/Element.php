@@ -3,9 +3,9 @@ namespace PFBC;
 
 abstract class Element extends Base {
 	private $errors = array();
-	private $form;
 
 	protected $attributes;
+	protected $form;
 	protected $label;
 	protected $description;
 	protected $validation = array();
@@ -40,10 +40,6 @@ abstract class Element extends Base {
 
 	public function getErrors() {
 		return $this->errors;
-	}	
-
-	public function getForm() {
-		return $this->form;
 	}	
 
 	public function getID() {

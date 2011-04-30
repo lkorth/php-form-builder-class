@@ -17,10 +17,9 @@ class SideBySide extends \PFBC\View\Standard {
 	}
 
 	public function renderCSS() {
-		$form = $this->getForm();
-		$id = $form->getId();
-		$width = $form->getWidth();
-		$widthSuffix = $form->getWidthSuffix();
+		$id = $this->form->getId();
+		$width = $this->form->getWidth();
+		$widthSuffix = $this->form->getWidthSuffix();
 		$elementWidth = $width - $this->labelWidth - $this->labelPaddingRight;
 
 		\PFBC\View::renderCSS();

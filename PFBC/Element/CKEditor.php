@@ -10,9 +10,8 @@ class CKEditor extends \PFBC\Element\Textarea {
 			echo ', { toolbar: "Basic" }';
 		echo ');';
 
-		$form = $this->getForm();
-		$ajax = $form->getAjax();
-		$id = $form->getID();
+		$ajax = $this->form->getAjax();
+		$id = $this->form->getID();
 		if(!empty($ajax)) {
 			echo <<<JS
 	jQuery("#$id").bind("submit", function() {
@@ -24,7 +23,7 @@ JS;
 
 	function getJSFiles() {
 		return array(
-			$this->getForm()->getResourcesPath() . "/ckeditor/ckeditor.js"
+			$this->form()->getResourcesPath() . "/ckeditor/ckeditor.js"
 		);
 	}
 }	

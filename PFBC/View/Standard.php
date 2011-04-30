@@ -3,11 +3,10 @@ namespace PFBC\View;
 
 class Standard extends \PFBC\View {
 	public function render() {
-		$form = $this->getForm();
-		echo '<form', $form->getAttributes(), '>';
-		$form->getError()->render();
+		echo '<form', $this->form->getAttributes(), '>';
+		$this->form->getError()->render();
 
-		$elements = $form->getElements();
+		$elements = $this->form->getElements();
 		$elementSize = sizeof($elements);
 		for($e = 0; $e < $elementSize; ++$e) {
 			$element = $elements[$e];
@@ -33,10 +32,9 @@ class Standard extends \PFBC\View {
     }
 
 	public function renderCSS() {
-		$form = $this->getForm();
-		$id = $form->getId();
-		$width = $form->getWidth();
-		$widthSuffix = $form->getWidthSuffix();
+		$id = $this->form->getId();
+		$width = $this->form->getWidth();
+		$widthSuffix = $this->form->getWidthSuffix();
 
 		parent::renderCSS();
 		echo <<<CSS

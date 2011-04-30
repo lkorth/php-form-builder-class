@@ -29,7 +29,7 @@ echo <<<HTML
             <div id="links">
                 <a href="http://groups.google.com/group/php-form-builder-class/">Mailing List - Google Groups</a>
                 <a href="http://code.google.com/p/php-form-builder-class/">Homepage - Google Code Project Hosting</a>
-                <a href="http://php-pdo-wrapper-class.googlecode.com/files/pfbc-$version.zip">
+                <a href="http://php-pdo-wrapper-class.googlecode.com/files/pfbc$version-php5.3.zip">
 				Download Version $version</a>
             </div>
             <h2>PHP Form Builder Class</h2>

@@ -2,15 +2,11 @@
 namespace PFBC;
 
 abstract class View extends Base {
-	private $form;
+	protected $form;
 	protected $style = 1;
 
 	public function __construct(array $properties = null) {
 		$this->configure($properties);
-	}
-
-	public function getForm() {
-		return $this->form;
 	}
 
 	/*This method encapsulates the various pieces that are included in an element's label.*/
@@ -35,13 +31,13 @@ abstract class View extends Base {
 
 	/*jQuery is used to apply css entries to the last element.*/
 	public function jQueryDocumentReady() {
-		echo 'jQuery("#', $this->getForm()->getId(), ' .pfbc-element:last").css({ "margin-bottom": "0", "padding-bottom": "0", "border-bottom": "none" });';
+		echo 'jQuery("#', $this->form->getId(), ' .pfbc-element:last").css({ "margin-bottom": "0", "padding-bottom": "0", "border-bottom": "none" });';
 	}	
 
 	public function render() {}
 
 	public function renderCSS() {
-		$id = $this->getForm()->getId();
+		$id = $this->form->getId();
 
 		/*For ease-of-use, default styles are applied to form elements.*/
 		if(!empty($this->style)) {
