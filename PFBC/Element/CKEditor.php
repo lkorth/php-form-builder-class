@@ -23,7 +23,7 @@ JS;
 
 	function getJSFiles() {
 		return array(
-			$this->form()->getResourcesPath() . "/ckeditor/ckeditor.js"
+			$this->form->getResourcesPath() . "/ckeditor/ckeditor.js"
 		);
 	}
 }	
