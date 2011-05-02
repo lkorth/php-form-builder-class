@@ -270,7 +270,7 @@ $form->addElement(PFBC\Element\Textbox("My Textbox:", "MyTextbox", array(
 </ul>	
 
 <h2><a name="getting-started">Getting Started</a></h2>
-<p>Before writing any code, you'll first need to <a href="http://php-pdo-wrapper-class.googlecode.com/files/pfbc<?php echo($version);?>-php5.3.zip">
+<p>Before writing any code, you'll first need to <a href="http://php-form-builder-class.googlecode.com/files/pfbc<?php echo($version);?>-php5.3.zip">
 download the latest version of PFBC</a>, extract the contents zip file, and upload the PFBC directory within 
 the document root of your web server.  NOTE: The phrase "within the document root" means that there must be a
 public path to the PFBC directory (e.g. http://www.mydomain.com/PFBC).  The other files/directories outside 
