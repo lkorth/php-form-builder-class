@@ -23,7 +23,7 @@ include("../header.php");
 
 <h2 class="first">Elements</h2>
 <p>The pfbc project includes 19 elements that added to your forms through the addElement method.  These elements are as follows:
-Button, Captcha, Checkbox, Checksort, CKEditor, Date, Email, Hidden, HTML, HTMLExternal, Password, Radio, Select, State, Textarea, 
+Button, Captcha, Checkbox, Checksort, CKEditor, Date, Email, File, Hidden, HTML, HTMLExternal, Password, Radio, Select, State, Textarea, 
 Textbox, TinyMCE, YesNo.</p>
 
 <?php
