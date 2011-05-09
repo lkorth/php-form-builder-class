@@ -323,11 +323,6 @@ class Form extends Base {
 		foreach($this->elements as $element)
 			$element->jQueryDocumentReady();
 		
-		/*
-		if(!empty($this->jQueryUIButtons))
-			echo 'jQuery("#', $id, ' input[type=button], #', $id, ' input[type=submit]").button();';
-		*/	
-		
 		/*For ajax, an anonymous onsubmit javascript function is bound to the form using jQuery.  jQuery's
 		serialize function is used to grab each element's name/value pair.*/
 		if(!empty($this->ajax)) {

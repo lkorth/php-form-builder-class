@@ -18,8 +18,13 @@ class Button extends \PFBC\Element {
 	}
 
 	public function jQueryDocumentReady() {
+		/*Unless explicitly prevented, jQueryUI's button widget functionality is applied to 
+		the each Button element.*/
 		if(!in_array("jQueryUIButtons", $this->form->getPrevent())) {
 			echo 'jQuery("#', $this->attributes["id"], '").button(';
+			/*Any of the jQueryUI framework icons can be added to your buttons via the icon 
+			property.  See http://jqueryui.com/themeroller/ for a complete list of available
+			icons.*/
 			if(!empty($this->icon))
 				echo '{ icons: { primary: "ui-icon-', $this->icon, '" } }';
 			echo ');';
@@ -27,6 +32,8 @@ class Button extends \PFBC\Element {
 	}
 
 	public function render() {
+		/*The button tag is used instead of input b/c it functions better with jQueryUI's 
+		button widget - specifically the icon option.*/
 		echo '<button', $this->getAttributes("value"), '>', $this->attributes["value"], '</button>';
 	}	
 }
