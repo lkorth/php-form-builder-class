@@ -3,7 +3,6 @@ namespace PFBC;
 
 abstract class View extends Base {
 	protected $form;
-	protected $style = 1;
 
 	public function __construct(array $properties = null) {
 		$this->configure($properties);
@@ -40,7 +39,7 @@ abstract class View extends Base {
 		$id = $this->form->getId();
 
 		/*For ease-of-use, default styles are applied to form elements.*/
-		if(!empty($this->style)) {
+		if(!in_array("style", $this->form->getPrevent())) {
 			echo <<<CSS
 #$id .pfbc-label label { font-weight: bold; }
 #$id .pfbc-label em { font-size: .9em; color: #888; }

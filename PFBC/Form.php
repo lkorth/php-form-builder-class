@@ -23,6 +23,8 @@ class Form extends Base {
 	protected $jQueryUITheme = "smoothness";
 	protected $jQueryUIButtons = 1;
 	protected $resourcesPath;
+	/*Prevents various automated from being automatically applied.  Current options for this array
+	included jQuery, jQueryUI, focus, and style.*/
 	protected $prevent = array();
 	protected $view;
 	protected $width;
@@ -132,6 +134,10 @@ class Form extends Base {
 
     public function getId() {
         return $this->attributes["id"];
+    }
+
+	public function getPrevent() {
+        return $this->prevent;
     }
 
     public function getResourcesPath() {
