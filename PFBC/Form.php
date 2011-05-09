@@ -21,10 +21,9 @@ class Form extends Base {
 	protected $error;
 	/*jQueryUI themes can be previewed at http://jqueryui.com/themeroller/.*/
 	protected $jQueryUITheme = "smoothness";
-	protected $jQueryUIButtons = 1;
 	protected $resourcesPath;
 	/*Prevents various automated from being automatically applied.  Current options for this array
-	included jQuery, jQueryUI, focus, and style.*/
+	included jQuery, jQueryUI, jQueryUIButtons, focus, and style.*/
 	protected $prevent = array();
 	protected $view;
 	protected $width;
@@ -135,6 +134,10 @@ class Form extends Base {
     public function getId() {
         return $this->attributes["id"];
     }
+
+    public function getJQueryUIButtons() {
+        return $this->jQueryUIButtons;
+	}
 
 	public function getPrevent() {
         return $this->prevent;
@@ -320,8 +323,10 @@ class Form extends Base {
 		foreach($this->elements as $element)
 			$element->jQueryDocumentReady();
 		
+		/*
 		if(!empty($this->jQueryUIButtons))
 			echo 'jQuery("#', $id, ' input[type=button], #', $id, ' input[type=submit]").button();';
+		*/	
 		
 		/*For ajax, an anonymous onsubmit javascript function is bound to the form using jQuery.  jQuery's
 		serialize function is used to grab each element's name/value pair.*/
