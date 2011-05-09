@@ -41,7 +41,7 @@ class Horizontal extends \PFBC\View {
 #$id .pfbc-label { float: left; margin-right: .25em; }
 CSS;
 
-		if(empty($this->labelPaddingTop) && !empty($this->style))
+		if(empty($this->labelPaddingTop) && !in_array("style", $this->form->getPrevent()))
 			$this->labelPaddingTop = ".75em";
 
 		if(!empty($this->labelPaddingTop)) {
