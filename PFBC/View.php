@@ -44,9 +44,9 @@ abstract class View extends Base {
 #$id .pfbc-label label { font-weight: bold; }
 #$id .pfbc-label em { font-size: .9em; color: #888; }
 #$id .pfbc-label strong { color: #990000; }
-#$id .pfbc-textbox, #$id .pfbc-textarea, #$id .pfbc-select { padding: 0.5em; border: 1px solid #ccc; font-size: 14px; }
-#$id .pfbc-textbox { height: 16px; }
-#$id .pfbc-select { height: 32px; }
+#$id .pfbc-textbox, #$id .pfbc-textarea, #$id .pfbc-select { border: 1px solid #ccc; font-size: 14px; }
+#$id .pfbc-textbox, #$id .pfbc-textarea { padding: 7px; }
+#$id .pfbc-select { padding: 6px 7px; }
 CSS;
 		}
 	}
