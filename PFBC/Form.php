@@ -289,7 +289,7 @@ class Form extends Base {
 	private function renderCSSFiles() {
 		$urls = array();
 		if(!in_array("jQueryUI", $this->prevent))
-			$urls[] = $this->prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/themes/" . $this->jQueryUITheme . "/jquery-ui.css";
+			$urls[] = $this->prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/" . $this->jQueryUITheme . "/jquery-ui.css";
 		foreach($this->elements as $element) {
 			$elementUrls = $element->getCSSFiles();
 			if(is_array($elementUrls))
@@ -364,9 +364,9 @@ JS;
 	private function renderJSFiles() {
 		$urls = array();
 		if(!in_array("jQuery", $this->prevent))
-			$urls[] = $this->prefix . "://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js";
+			$urls[] = $this->prefix . "://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js";
 		if(!in_array("jQueryUI", $this->prevent))
-			$urls[] = $this->prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js";
+			$urls[] = $this->prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js";
 		foreach($this->elements as $element) {
 			$elementUrls = $element->getJSFiles();
 			if(is_array($elementUrls))
