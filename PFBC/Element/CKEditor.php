@@ -1,7 +1,7 @@
 <?php
 namespace PFBC\Element;
 
-class CKEditor extends \PFBC\Element\Textarea {
+class CKEditor extends Textarea {
 	protected $basic;
 
 	function renderJS() {

@@ -1,7 +1,7 @@
 <?php
 namespace PFBC\Element;
 
-class Color extends \PFBC\Element\Textbox {
+class Color extends Textbox {
 	protected $jQueryOptions;
 	
 	public function jQueryDocumentReady() {

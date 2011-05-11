@@ -1,7 +1,7 @@
 <?php
 namespace PFBC\Element;
 
-class TinyMCE extends \PFBC\Element\Textarea {
+class TinyMCE extends Textarea {
 	protected $basic;
 
 	public function jQueryDocumentReady() {

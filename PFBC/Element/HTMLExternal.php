@@ -1,5 +1,4 @@
 <?php
 namespace PFBC\Element;
 
-class HTMLExternal extends \PFBC\Element\HTML {
-}
+class HTMLExternal extends HTML { }

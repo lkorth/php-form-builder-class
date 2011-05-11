@@ -1,7 +1,7 @@
 <?php
 namespace PFBC\Element;
 
-class Date extends \PFBC\Element\Textbox {
+class Date extends Textbox {
 	protected $jQueryOptions;
 	
 	public function jQueryDocumentReady() {

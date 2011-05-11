@@ -75,7 +75,7 @@ class Form extends Base {
 
 		/*For ease-of-use, the form tag's encytype attribute is automatically set if the File element
 		class is added.*/
-		if($element instanceof \PFBC\Element\File)
+		if($element instanceof Element\File)
 			$this->attributes["enctype"] = "multipart/form-data";
     }
 
@@ -197,6 +197,11 @@ class Form extends Base {
 					$name = $element->getName();
 					if(substr($name, -2) == "[]")
 						$name = substr($name, 0, -2);
+
+					/*The File element must be handled differently b/c it uses the $_FILES superglobal and
+					not $_GET or $_POST.*/
+					if($element instanceof Element\File)
+						$data[$name] = $_FILES[$name]["name"];
 
 					if(isset($data[$name])) {
 						$value = $data[$name];

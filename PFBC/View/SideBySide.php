@@ -1,7 +1,7 @@
 <?php
 namespace PFBC\View;
 
-class SideBySide extends \PFBC\View\Standard {
+class SideBySide extends Standard {
 	protected $labelWidth;
 	protected $labelRightAlign;
 	protected $labelPaddingRight = 5;
