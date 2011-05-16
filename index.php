@@ -16,7 +16,7 @@ It was moved to its current location at <a href="http://code.google.com/p/php-fo
 on November 16, 2009.  Since the initial release, the project has gone through over 20 revisions
 and is still under active development.</p>
 
-<p>Version 2.0 represents the first major rewrite in the project's history and attempts to evolve PFBC 
+<p>Version 2.x represents the first major rewrite in the project's history and attempts to evolve PFBC 
 into a code base that is more efficient, easier to manage, and extensible.</p>
 
 <h2><a name="system-requirements">System Requirements</a></h2>
@@ -42,7 +42,7 @@ done for several reasons...</p>
 	caused when the form's css is loaded and applied after the form's mark up is visible on the webpage.</li>
 </ul>
 
-<p>PFBC version 2.0 is not a direct replacement for the last 1.x version released - 1.1.4.  In other words, migrating from 
+<p>PFBC version 2.x is not a direct replacement for the last 1.x version released - 1.1.4.  In other words, migrating from 
 1.x to 2.x requires more than simply overwriting the project's directory on your web server.  Below is a list of changes 
 that you should be aware of when transitioning to using PFBC version 2.x.</p>
 
