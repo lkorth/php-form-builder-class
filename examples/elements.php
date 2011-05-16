@@ -34,7 +34,7 @@ $form->addElement(new PFBC\Element\Textbox("Textbox:", "Textbox"));
 $form->addElement(new PFBC\Element\Textarea("Textarea:", "Textarea"));
 $form->addElement(new PFBC\Element\Select("Select:", "Select", $options));
 $form->addElement(new PFBC\Element\Radio("Radio:", "Radio", $options));
-$form->addElement(new PFBC\Element\File("File:", "File", array("required" => 1)));
+$form->addElement(new PFBC\Element\File("File:", "File"));
 $form->addElement(new PFBC\Element\Password("Password:", "Password"));
 $form->addElement(new PFBC\Element\Checkbox("Checkbox:", "Checkbox", $options));
 $form->addElement(new PFBC\Element\YesNo("Yes / No:", "YesNo", array(
