@@ -17,6 +17,7 @@ class Select extends \PFBC\OptionElement {
 
 		echo '<select', $this->getAttributes(array("value", "selected")), '>';
 		foreach($this->options as $value => $text) {
+			$value = $this->getOptionValue($value);
 			echo '<option value="', $this->filter($value), '"';
 			$selected = false;
 			if(in_array($value, $this->attributes["value"]))

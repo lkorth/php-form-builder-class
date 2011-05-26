@@ -11,4 +11,15 @@ abstract class OptionElement extends Element {
 
 		parent::__construct($label, $name, $properties);
 	}
+
+	protected function getOptionValue($value) {
+        $position = strpos($value, "_pfbc");
+        if($position !== false) {
+            if($position == 0)
+                $value = "";
+            else
+                $value = substr($value, 0, $position);
+        }
+        return $value;
+    }
 }
