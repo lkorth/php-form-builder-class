@@ -9,6 +9,8 @@ class Radio extends \PFBC\OptionElement {
 	public function jQueryDocumentReady() {
 		if(!empty($this->inline))
 			echo 'jQuery("#', $this->attributes["id"], ' .pfbc-radio:last").css("margin-right", "0");';
+		else	
+			echo 'jQuery("#', $this->attributes["id"], ' .pfbc-radio:last").css({ "padding-bottom": "0", "border-bottom": "none" });';
 
 		if(!empty($this->maxheight) && is_numeric($this->maxheight)) {
 			echo <<<JS
@@ -46,5 +48,7 @@ JS;
 	public function renderCSS() {
 		if(!empty($this->inline))
 			echo '#', $this->attributes["id"], ' .pfbc-radio { float: left; margin-right: 0.5em; }';
+		else	
+			echo '#', $this->attributes["id"], ' .pfbc-radio { padding: 0.5em 0; border-bottom: 1px solid #f4f4f4; }';
 	}		
 }

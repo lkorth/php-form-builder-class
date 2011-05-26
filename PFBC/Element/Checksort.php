@@ -10,6 +10,8 @@ class Checksort extends Sort {
 		parent::jQueryDocumentReady();	
 		if(!empty($this->inline))
 			echo 'jQuery("#', $this->attributes["id"], ' .pfbc-checkbox:last").css("margin-right", "0");';
+		else	
+			echo 'jQuery("#', $this->attributes["id"], ' .pfbc-checkbox:last").css({ "padding-bottom": "0", "border-bottom": "none" });';
 
 		if(!empty($this->maxheight) && is_numeric($this->maxheight)) {
 			echo <<<JS
@@ -72,6 +74,8 @@ JS;
 	function renderCSS() {
 		if(!empty($this->inline))
 			echo '#', $this->attributes["id"], ' .pfbc-checkbox { float: left; margin-right: 0.5em; }';
+		else	
+			echo '#', $this->attributes["id"], ' .pfbc-checkbox { padding: 0.5em 0; border-bottom: 1px solid #f4f4f4; }';
 		parent::renderCSS();
 	}
 }
