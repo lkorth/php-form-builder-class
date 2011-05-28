@@ -10,19 +10,22 @@ abstract class View extends Base {
 
 	/*This method encapsulates the various pieces that are included in an element's label.*/
 	protected function renderLabel($element) {
-		$label = $element->getLabel();
-		$id = $element->getID();
-		if(!empty($label)) {
-			$description = $element->getDescription();
-			echo '<div class="pfbc-label"><label for="', $id, '">';
-			if($element->isRequired())
-				echo '<strong>*</strong> ';
-			echo $label, '</label>';	
-			if(!empty($description))
-				echo '<em>', $description, '</em>';
-			echo '</div>';
-		}	
-	}
+        $label = $element->getLabel();
+        $id = $element->getID();
+        $description = $element->getDescription();
+        if(!empty($label) || !empty($description)) {
+            echo '<div class="pfbc-label">';
+            if(!empty($label)) {
+                echo '<label for="', $id, '">';
+                if($element->isRequired())
+                    echo '<strong>*</strong> ';
+                echo $label, '</label>'; 
+            }
+            if(!empty($description))
+                echo '<em>', $description, '</em>';
+            echo '</div>';
+        }
+    }
 
 	public function setForm(Form $form) {
 		$this->form = $form;
