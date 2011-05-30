@@ -34,6 +34,9 @@ JS;
 		}
 		else
 			$this->attributes["value"] = array();
+
+		if(substr($this->attributes["name"], -2) != "[]")
+			$this->attributes["name"] .= "[]";
 		
 		$count = 0;
 		echo '<div id="', $this->attributes["id"], '"><div class="pfbc-checkboxes">';
@@ -64,7 +67,7 @@ if(typeof updateChecksort != "function") {
 		var id = element.id.substr(0, position);
 		var index = element.id.substr(position + 1);
 		if(element.checked)
-			jQuery("#" + id + " ul").append('<li id="' + id + '-sort-' + index + '" class="ui-state-default"><input type="hidden" name="' + id + '[]" value="' + element.value + '"/>' + text + '</li>');
+			jQuery("#" + id + " ul").append('<li id="' + id + '-sort-' + index + '" class="ui-state-default"><input type="hidden" name="{$this->attributes["name"]}" value="' + element.value + '"/>' + text + '</li>');
 		else
 			jQuery("#" + id + "-sort-" + index).remove();
 	}
