@@ -39,6 +39,7 @@ JS;
 			$this->attributes["name"] .= "[]";
 		
 		$count = 0;
+		$existing = "";
 		echo '<div id="', $this->attributes["id"], '"><div class="pfbc-checkboxes">';
 		foreach($this->options as $value => $text) {
 			$value = $this->getOptionValue($value);
@@ -46,6 +47,10 @@ JS;
 			if(in_array($value, $this->attributes["value"]))
 				echo ' checked="checked"';
 			echo ' onclick="updateChecksort(this, \'', $this->filter($text), '\');"/></td><td><label for="', $this->attributes["id"], "-", $count, '">', $text, '</label></td></tr></table></div>';
+
+			if(in_array($value, $this->attributes["value"]))
+				$existing .= '<li id="' . $this->attributes["id"] . "-sort-" . $count . '" class="ui-state-default"><input type="hidden" name="' . $this->attributes["name"] . '" value="' . $value . '"/>' . $text . '</li>';
+
 			++$count;
 		}	
 		echo '</div>';
@@ -53,10 +58,7 @@ JS;
 		if(!empty($this->inline))
 			echo '<div style="clear: both;"></div>';
 
-		echo '<ul>';
-		foreach($this->attributes["value"] as $value)
-			echo '<li id="', $this->attributes["id"], "-sort-", $count, '" class="ui-state-default"><input type="hidden" name="', $this->attributes["name"], '" value="', $value, '"/>', $this->options[$value], '</li>';
-		echo '</ul></div>';
+		echo '<ul>', $existing, '</ul></div>';
 	}
 
 	function renderJS() {
