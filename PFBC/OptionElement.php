@@ -13,7 +13,7 @@ abstract class OptionElement extends Element {
 	}
 
 	protected function getOptionValue($value) {
-        $position = strpos($value, "_pfbc");
+        $position = strpos($value, ":pfbc");
         if($position !== false) {
             if($position == 0)
                 $value = "";
