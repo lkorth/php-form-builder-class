@@ -48,7 +48,7 @@ abstract class Base {
 
 	/*This method prevents double/single quotes in html attributes from breaking the markup.*/
 	protected function filter($str) {
-		return htmlentities($str, ENT_QUOTES);
+		return str_replace('"', '&quot;', $str);
 	}
 
 	/*This method is used by the Form class and all Element classes to return a string of html
