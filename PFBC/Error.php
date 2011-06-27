@@ -22,6 +22,7 @@ abstract class Error extends Base {
 		echo <<<CSS
 #$id .pfbc-error { padding: .5em; margin-bottom: 1em; }
 #$id .pfbc-error ul { padding-left: 1.75em; margin: 0; margin-top: .25em; }
+#$id .pfbc-error li { padding-top: .25em; }
 CSS;
 	}
 
