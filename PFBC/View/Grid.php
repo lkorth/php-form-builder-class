@@ -101,7 +101,7 @@ JS;
 #$id { width: $width{$widthSuffix}; }
 #$id .pfbc-label { margin-bottom: .25em; }
 #$id .pfbc-label label { display: block; }
-#$id .pfbc-grid { margin-bottom: 1em; padding-bottom: 1em; border-bottom: 1px solid #f4f4f4; }
+#$id .pfbc-grid { width: 100%; margin-bottom: 1em; padding-bottom: 1em; border-bottom: 1px solid #f4f4f4; }
 #$id .pfbc-grid:after { clear: both; display: block; margin: 0; padding: 0; visibility: hidden; height: 0; content: ":)"; }
 #$id .pfbc-buttons { text-align: right; }
 #$id .pfbc-textbox, #$id .pfbc-textarea, #$id .pfbc-select { width: $width{$widthSuffix}; }
