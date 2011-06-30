@@ -235,6 +235,8 @@ class Form extends Base {
 				self::clearErrors($id);
 			}		
 		}
+		else
+			$valid = false;
 
 		return $valid;
 	}
@@ -243,6 +245,8 @@ class Form extends Base {
 	private static function recover($id) {
 		if(!empty($_SESSION["pfbc"][$id]["form"]))
 			return unserialize($_SESSION["pfbc"][$id]["form"]);
+		else
+			return "";
 	}
 
 	public function render($returnHTML = false) {
@@ -279,7 +283,8 @@ class Form extends Base {
 	form using json.*/
 	public static function renderAjaxErrorResponse($id = "pfbc") {
 		$form = self::recover($id);
-		$form->error->renderAjaxErrorResponse();
+		if(!empty($form))
+			$form->error->renderAjaxErrorResponse();
 	}
 
 	private function renderCSS() {
