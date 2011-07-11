@@ -55,11 +55,13 @@ abstract class Base {
 	attributes.  There is an ignore parameter that allows special attributes from being included.*/
 	public function getAttributes($ignore = "") {
         $str = "";
-        if(!is_array($ignore))
-            $ignore = array($ignore);
-        $attributes = array_diff(array_keys($this->attributes), $ignore);
-        foreach($attributes as $attribute)
-            $str .= ' ' . $attribute . '="' . $this->filter($this->attributes[$attribute]) . '"';
+		if(!empty($this->attributes)) {
+			if(!is_array($ignore))
+				$ignore = array($ignore);
+			$attributes = array_diff(array_keys($this->attributes), $ignore);
+			foreach($attributes as $attribute)
+				$str .= ' ' . $attribute . '="' . $this->filter($this->attributes[$attribute]) . '"';
+		}	
         return $str;
     }
 }

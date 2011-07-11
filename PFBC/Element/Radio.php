@@ -14,9 +14,9 @@ class Radio extends \PFBC\OptionElement {
 
 		if(!empty($this->maxheight) && is_numeric($this->maxheight)) {
 			echo <<<JS
-var checkboxes = jQuery("#{$this->attributes["id"]} .pfbc-radio-buttons");
-if(checkboxes.outerHeight() > {$this->maxheight}) {
-	checkboxes.css({ 
+var radiobuttons = jQuery("#{$this->attributes["id"]} .pfbc-radio-buttons");
+if(radiobuttons.outerHeight() > {$this->maxheight}) {
+	radiobuttons.css({ 
 		"height": "{$this->maxheight}px", 
 		"overflow": "auto", 
 		"overflow-x": "hidden" 
