@@ -3,6 +3,7 @@ namespace PFBC\Element;
 
 class Checkbox extends \PFBC\OptionElement {
 	protected $attributes = array("type" => "checkbox");
+	protected $inline;
 	protected $maxheight;
 
 	public function jQueryDocumentReady() {
