@@ -15,7 +15,7 @@ class Select extends \PFBC\OptionElement {
 		if(!empty($this->attributes["multiple"]) && substr($this->attributes["name"], -2) != "[]")
 			$this->attributes["name"] .= "[]";
 
-		echo '<select', $this->getAttributes(array("value", "selected")), '>';
+		echo $this->preHTML, '<select', $this->getAttributes(array("value", "selected")), '>';
 		foreach($this->options as $value => $text) {
 			$value = $this->getOptionValue($value);
 			echo '<option value="', $this->filter($value), '"';
@@ -24,6 +24,6 @@ class Select extends \PFBC\OptionElement {
 				echo ' selected="selected"';
 			echo '>', $text, '</option>';
 		}	
-		echo '</select>';
+		echo '</select>', $this->postHTML;
 	}
 }

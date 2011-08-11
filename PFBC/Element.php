@@ -9,6 +9,8 @@ abstract class Element extends Base {
 	protected $label;
 	protected $description;
 	protected $validation = array();
+	protected $preHTML;
+	protected $postHTML;
 
 	public function __construct($label, $name, array $properties = null) {
 		$configuration = array(
@@ -159,7 +161,7 @@ abstract class Element extends Base {
 	Password, Date, Color, Button, Email, and File element classes.  The project's other element classes will
 	override this method with their own implementation.*/
 	public function render() {
-		echo '<input', $this->getAttributes(), '/>';
+		echo $this->preHTML, '<input', $this->getAttributes(), '/>', $this->postHTML;
 	}
 
 	/*If an element requires inline stylesheet definitions, this method is used send them to the browser before

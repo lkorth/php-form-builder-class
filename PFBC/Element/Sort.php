@@ -13,12 +13,12 @@ class Sort extends \PFBC\OptionElement {
 		if(substr($this->attributes["name"], -2) != "[]")
 			$this->attributes["name"] .= "[]";
 
-		echo '<div id="', $this->attributes["id"], '"><ul>';
+		echo $this->preHTML, '<div id="', $this->attributes["id"], '"><ul>';
 		foreach($this->options as $value => $text) {
 			$value = $this->getOptionValue($value);
 			echo '<li class="ui-state-default"><input type="hidden" name="', $this->attributes["name"], '" value="', $value, '"/>', $text, '</li>';
 		}	
-		echo "</ul></div>";
+		echo "</ul></div>", $this->postHTML;
 	}
 
 	public function renderCSS() {
