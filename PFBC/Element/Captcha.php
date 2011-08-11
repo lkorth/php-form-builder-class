@@ -12,6 +12,6 @@ class Captcha extends \PFBC\Element {
 	public function render() {
 		$this->validation[] = new \PFBC\Validation\Captcha($this->privateKey);
 		require_once(__DIR__ . "/../Resources/recaptchalib.php");
-		echo $this->preHTML, recaptcha_get_html($this->publicKey), $this->postHTML;
+		echo recaptcha_get_html($this->publicKey);
 	}
 }

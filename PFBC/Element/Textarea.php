@@ -9,9 +9,9 @@ class Textarea extends \PFBC\Element {
 	}
 
 	public function render() {
-        echo $this->preHTML, "<textarea", $this->getAttributes("value"), ">";
+        echo "<textarea", $this->getAttributes("value"), ">";
         if(!empty($this->attributes["value"]))
             echo $this->attributes["value"];
-        echo "</textarea>", $this->postHTML;
+        echo "</textarea>";
     }
 }

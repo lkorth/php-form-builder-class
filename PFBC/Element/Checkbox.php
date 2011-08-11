@@ -38,7 +38,7 @@ JS;
 			$this->attributes["name"] .= "[]";
 
 		$count = 0;
-		echo $this->preHTML, '<div id="', $this->attributes["id"], '"><div class="pfbc-checkboxes">';
+		echo '<div id="', $this->attributes["id"], '"><div class="pfbc-checkboxes">';
 		foreach($this->options as $value => $text) {
 			$value = $this->getOptionValue($value);
 			echo '<div class="pfbc-checkbox"><table cellpadding="0" cellspacing="0"><tr><td valign="top"><input id="', $this->attributes["id"], "-", $count, '"', $this->getAttributes(array("id", "value", "checked")), ' value="', $this->filter($value), '"';
@@ -52,7 +52,7 @@ JS;
 		if(!empty($this->inline))
 			echo '<div style="clear: both;"></div>';
 
-		echo '</div>', $this->postHTML;
+		echo '</div>';
 	}
 
 	public function renderCSS() {

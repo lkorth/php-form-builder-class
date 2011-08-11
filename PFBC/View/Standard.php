@@ -21,10 +21,10 @@ class Standard extends \PFBC\View {
                     echo '</div>';
             }
             else {
-				echo '<div class="pfbc-element">';
+				echo '<div class="pfbc-element">', $element->getPreHTML();
 				$this->renderLabel($element);
 				$element->render();
-				echo '</div>';
+				echo $element->getPostHTML(), '</div>';
 			}
 		}
 

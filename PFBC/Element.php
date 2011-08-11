@@ -66,6 +66,14 @@ abstract class Element extends Base {
 			return "";
 	}
 
+	public function getPostHTML() {
+		return $this->postHTML;
+	}
+
+	public function getPreHTML() {
+		return $this->preHTML;
+	}
+
 	/*This method provides a shortcut for checking if an element is required.*/
 	public function isRequired() {
 		if(!empty($this->validation)) {
@@ -161,7 +169,7 @@ abstract class Element extends Base {
 	Password, Date, Color, Button, Email, and File element classes.  The project's other element classes will
 	override this method with their own implementation.*/
 	public function render() {
-		echo $this->preHTML, '<input', $this->getAttributes(), '/>', $this->postHTML;
+		echo '<input', $this->getAttributes(), '/>';
 	}
 
 	/*If an element requires inline stylesheet definitions, this method is used send them to the browser before

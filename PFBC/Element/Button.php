@@ -34,6 +34,6 @@ class Button extends \PFBC\Element {
 	public function render() {
 		/*The button tag is used instead of input b/c it functions better with jQueryUI's 
 		button widget - specifically the icon option.*/
-		echo $this->preHTML, '<button', $this->getAttributes("value"), '>', $this->attributes["value"], '</button>', $this->postHTML;
+		echo '<button', $this->getAttributes("value"), '>', $this->attributes["value"], '</button>';
 	}	
 }

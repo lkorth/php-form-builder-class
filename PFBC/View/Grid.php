@@ -59,6 +59,7 @@ JS;
 					echo '</div></div>';
 			}
 			else {
+				echo $element->getPreHTML();
 				if(!empty($this->grid[$gridIndex])) {
 					if($gridCount == 0)
 						echo '<div class="pfbc-grid pfbc-grid-' . $this->grid[$gridIndex] . '">';
@@ -84,6 +85,7 @@ JS;
 				}
 				else
 					echo '</div>';
+				echo $element->getPostHTML();
 				++$gridElementCount;
 			}
 		}

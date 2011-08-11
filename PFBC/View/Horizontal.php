@@ -21,10 +21,10 @@ class Horizontal extends \PFBC\View {
 			if($element instanceof \PFBC\Element\Hidden || $element instanceof \PFBC\Element\HTMLExternal)
                 $element->render();
 			else {	
-				echo '<div class="pfbc-element">';
+				echo '<div class="pfbc-element">', $this->getPreHTML();
 				$this->renderLabel($element);
 				$element->render();
-				echo '</div>';
+				echo $this->getPostHTML(), '</div>';
 			}
 		}
 

@@ -29,7 +29,7 @@ JS;
 	public function render() { 
 		$count = 0;
 		$checked = false;
-		echo $this->preHTML, '<div id="', $this->attributes["id"], '"><div class="pfbc-radio-buttons">';
+		echo '<div id="', $this->attributes["id"], '"><div class="pfbc-radio-buttons">';
 		foreach($this->options as $value => $text) {
 			$value = $this->getOptionValue($value);
 			echo '<div class="pfbc-radio"><table cellpadding="0" cellspacing="0"><tr><td valign="top"><input id="', $this->attributes["id"], "-", $count, '"', $this->getAttributes(array("id", "value", "checked")), ' value="', $this->filter($value), '"';
@@ -43,7 +43,7 @@ JS;
 		if(!empty($this->inline))
 			echo '<div style="clear: both;"></div>';
 
-		echo '</div>', $this->postHTML;
+		echo '</div>';
 	}
 
 	public function renderCSS() {
