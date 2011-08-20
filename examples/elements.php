@@ -49,6 +49,9 @@ $form->addElement(new PFBC\Element\Sort("Sort:", "Sort", $options, array(
 $form->addElement(new PFBC\Element\State("State:", "State", array(
 	"description" => "The State element provides a shortcut for adding a Select element with options for each of the 50 US states."
 )));
+$form->addElement(new PFBC\Element\Country("Country:", "Country", array(
+	"description" => "The Country element provides a shortcut for adding a Select element with options for each country on the globe."
+)));
 $form->addElement(new PFBC\Element\Email("Email:", "Email", array(
 	"description" => "The Email element provides a shortcut for adding a Textbox element with Email validation applied."
 )));
@@ -79,6 +82,7 @@ $form->addElement(new PFBC\Element\YesNo("Yes / No:", "YesNo"));
 $form->addElement(new PFBC\Element\Checksort("Checksort:", "Checksort", $options));
 $form->addElement(new PFBC\Element\Sort("Sort:", "Sort", $options));
 $form->addElement(new PFBC\Element\State("State:", "State"));
+$form->addElement(new PFBC\Element\Country("Country:", "Country"));
 $form->addElement(new PFBC\Element\Email("Email:", "Email"));
 $form->addElement(new PFBC\Element\Color("Color:", "Color"));
 $form->addElement(new PFBC\Element\Date("Date:", "Date"));
