@@ -5,16 +5,17 @@ class Button extends \PFBC\Element {
 	protected $attributes = array("type" => "submit", "value" => "Submit");
 	protected $icon;
 
-	public function __construct($value = "", $type = "", array $properties = null) {
+	public function __construct($label = "Submit", $type = "", array $properties = null) {
 		if(!is_array($properties))
 			$properties = array();
 
-		if(!empty($value))
-			$properties["value"] = $value;
 		if(!empty($type))
 			$properties["type"] = $type;
+		
+		if(empty($properties["value"]))
+			$properties["value"] = $label;
 			
-		parent::__construct("", "", $properties);
+		parent::__construct($label, "", $properties);
 	}
 
 	public function jQueryDocumentReady() {
@@ -34,6 +35,6 @@ class Button extends \PFBC\Element {
 	public function render() {
 		/*The button tag is used instead of input b/c it functions better with jQueryUI's 
 		button widget - specifically the icon option.*/
-		echo '<button', $this->getAttributes("value"), '>', $this->attributes["value"], '</button>';
+		echo '<button', $this->getAttributes(), '>', $this->label, '</button>';
 	}	
 }
