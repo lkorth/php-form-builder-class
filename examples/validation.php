@@ -47,6 +47,13 @@ $form->addElement(new PFBC\Element\Textbox("Email (Textbox element w/validation 
 	"validation" => new PFBC\Validation\Email,
 	"description" => "Email validation can also be attach to a Textbox element with the validation property."
 )));
+$form->addElement(new PFBC\Element\Date("Date (Date element):", "Date", array(
+	"description" => "The Date element class provides a shortcut for adding a jQueryUI datepicker with the Date validation attached."
+)));
+$form->addElement(new PFBC\Element\Textbox("Date (Textbox element w/validation property):", "Date2", array(
+	"validation" => new PFBC\Validation\Date,
+	"description" => "Date validation can also be attach to a Textbox element with the validation property."
+)));
 $form->addElement(new PFBC\Element\Textbox("Multiple Validation Rules (Textbox element w/Required and Email validation):", "RequiredEmail", array(
 	"validation" => array(
 		new PFBC\Validation\Required,
@@ -86,6 +93,10 @@ $form->addElement(new PFBC\Element\Email("Email (Email element):", "Email"));
 $form->addElement(new PFBC\Element\Textbox("Email (Textbox element w/validation property):", "Email2", array(
 	"validation" => new PFBC\Validation\Email
 )));
+$form->addElement(new PFBC\Element\Date("Date (Date element):", "Date"));
+$form->addElement(new PFBC\Element\Textbox("Date (Textbox element w/validation property):", "Date2", array(
+	"validation" => new PFBC\Validation\Date
+)));
 $form->addElement(new PFBC\Element\Textbox("Multiple Validation Rules (Textbox element w/Required and Email validation):", "RequiredEmail", array(
 	"validation" => array(
 		new PFBC\Validation\Required,
@@ -102,8 +113,10 @@ $form->addElement(new PFBC\Element\Textbox("Url:", "Url", array(
 	"validation" => new PFBC\Validation\Url
 )));
 $form->addElement(new PFBC\Element\Textbox("AlphaNumeric:", "AlphaNumberic", array(
-	"validation" => new PFBC\Validation\AlphaNumeric,
-	"description" => "The AlphaNumeric validation class will verify that the element\'s submitted value contains only letters, numbers, underscores, and/or hyphens."
+	"validation" => new PFBC\Validation\AlphaNumeric
+)));
+$form->addElement(new PFBC\Element\Textbox("Date:", "Date", array(
+	"validation" => new PFBC\Validation\Date
 )));
 $form->addElement(new PFBC\Element\Button);
 $form->render();

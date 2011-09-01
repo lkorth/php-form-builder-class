@@ -8,4 +8,9 @@ class Date extends Textbox {
 		parent::jQueryDocumentReady();
 		echo 'jQuery("#', $this->attributes["id"], '").datepicker(', $this->jQueryOptions(), ');';
 	}
+
+	public function render() {
+		$this->validation[] = new \PFBC\Validation\Date;
+		parent::render();
+	}
 }
