@@ -22,7 +22,8 @@ class Horizontal extends \PFBC\View {
                 $element->render();
 			else {	
 				echo '<div class="pfbc-element">', $element->getPreHTML();
-				$this->renderLabel($element);
+				if(!$element instanceof \PFBC\Element\Button)
+					$this->renderLabel($element);
 				$element->render();
 				echo $element->getPostHTML(), '</div>';
 			}

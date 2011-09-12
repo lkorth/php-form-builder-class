@@ -11,6 +11,7 @@ abstract class Element extends Base {
 	protected $validation = array();
 	protected $preHTML;
 	protected $postHTML;
+	protected $width;
 
 	public function __construct($label, $name, array $properties = null) {
 		$configuration = array(
@@ -72,6 +73,10 @@ abstract class Element extends Base {
 
 	public function getPreHTML() {
 		return $this->preHTML;
+	}
+
+	public function getWidth() {
+		return $this->width;
 	}
 
 	/*This method provides a shortcut for checking if an element is required.*/

@@ -67,7 +67,7 @@ JS;
 				else
 					echo '<div class="pfbc-grid pfbc-grid-1">';
 
-				echo '<div class="pfbc-element">';
+				echo '<div id="pfbc-element-', $gridElementCount, '" class="pfbc-element">';
 				$this->renderLabel($element);
 				$element->render();
 				echo '</div>';
@@ -110,10 +110,13 @@ JS;
 CSS;
 	
 		$elements = $this->form->getElements();
+		$gridElements = array();
 		foreach($elements as $element) {
 			/*Hidden, HTMLExternal, and Button element classes aren't included in the grid.*/
-			if(!$element instanceof \PFBC\Element\Hidden && !$element instanceof \PFBC\Element\HTMLExternal && !$element instanceof \PFBC\Element\Button)
+			if(!$element instanceof \PFBC\Element\Hidden && !$element instanceof \PFBC\Element\HTMLExternal && !$element instanceof \PFBC\Element\Button) {
 				++$this->gridIncludedElements;
+				$gridElements[] = $element;
+			}	
 		}
 
 		/*If the grid array contains more elements than the form has available, it is revised.*/
@@ -132,21 +135,39 @@ CSS;
 			$this->grid = $gridRevised;
 		}
 
+		$gridSize = sizeof($this->grid);
+		$elementWidths = array();
+		for($g = 0; $g < $gridSize; ++$g) {
+			$gridSum = array_sum(array_slice($this->grid, 0, $g));
+			$gridRemainingWidth = $width;
+			$gridRemainingElements = $this->grid[$g];
+			for($e = $gridSum; $e < ($gridSum + $this->grid[$g]); ++$e) {
+				$elementWidths[$e] = $gridElements[$e]->getWidth();
+				$gridRemainingWidth -= $elementWidths[$e];
+				if(!empty($elementWidths[$e])) {
+					--$gridRemainingElements;
+					echo '#', $id, ' #pfbc-element-', $e, ' { float: left; width: ', $elementWidths[$e], $widthSuffix, '; }';
+					echo '#', $id, ' #pfbc-element-', $e, ' .pfbc-textbox, #', $id, ' #pfbc-element-', $e, ' .pfbc-textarea, #', $id, ' #pfbc-element-', $e, ' .pfbc-select { width: ', $elementWidths[$e], $widthSuffix, '; }';
+				}	
+			}
+
+			if(!empty($gridRemainingElements)) {
+				if($widthSuffix == "px")
+					$elementWidth = floor((($gridRemainingWidth - ($this->gridMargin * 2 * ($this->grid[$g] - 1)))  / $gridRemainingElements));
+				else
+					$elementWidth = floor(((100 - ($this->gridMargin * 2 * ($this->grid[$g] - 1)))  / $gridRemainingElements));
+
+				for($e = $gridSum; $e < ($gridSum + $this->grid[$g]); ++$e) {
+					if(empty($elementWidths[$e])) {
+						echo '#', $id, ' #pfbc-element-', $e, ' { float: left; width: ', $elementWidth, $widthSuffix, '; }';
+						echo '#', $id, ' #pfbc-element-', $e, ' .pfbc-textbox, #', $id, ' #pfbc-element-', $e, ' .pfbc-textarea, #', $id, ' #pfbc-element-', $e, ' .pfbc-select { width: ', $elementWidth, $widthSuffix, '; }';
+					}	
+				}
+			}
+		}
+
 		echo <<<CSS
 #$id .pfbc-grid .pfbc-element { margin-right: {$this->gridMargin}$widthSuffix; margin-left: {$this->gridMargin}$widthSuffix; }
 CSS;
-		$gridValues = array_values(array_unique($this->grid));
-		foreach($gridValues as $gridValue) {
-			if($widthSuffix == "px")
-				$elementWidth = floor((($width - ($this->gridMargin * 2 * ($gridValue - 1)))  / $gridValue));
-			else
-				$elementWidth = floor(((100 - ($this->gridMargin * 2 * ($gridValue - 1)))  / $gridValue));
-			echo '#', $id, ' .pfbc-grid-', $gridValue, ' .pfbc-element { float: left; width: ', $elementWidth, $widthSuffix, '; }';
-
-			if($widthSuffix == "%")
-				$elementWidth = 100;
-
-			echo '#', $id, ' .pfbc-grid-', $gridValue, ' .pfbc-textbox, #', $id, ' .pfbc-grid-', $gridValue, ' .pfbc-textarea, #', $id, ' .pfbc-grid-', $gridValue, ' .pfbc-select { width: ', $elementWidth, $widthSuffix, '; }';
-		}
 	}
 }
