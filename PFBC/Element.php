@@ -139,6 +139,28 @@ abstract class Element extends Base {
         }
 	}
 
+	/*Many of the included elements make use of the <input> tag for display.  These include the Hidden, Textbox, 
+	Password, Date, Color, Button, Email, and File element classes.  The project's other element classes will
+	override this method with their own implementation.*/
+	public function render() {
+		echo '<input', $this->getAttributes(), '/>';
+	}
+
+	/*If an element requires inline stylesheet definitions, this method is used send them to the browser before
+	the form is rendered.*/
+	public function renderCSS() {}
+
+	/*If an element requires javascript to be loaded, this method is used send them to the browser after
+	the form is rendered.*/
+	public function renderJS() {}
+
+	public function setClass($class) {
+		if(!empty($this->attributes["class"]))
+			$this->attributes["class"] .= " " . $class;
+		else
+			$this->attributes["class"] = $class;
+	}
+
 	public function setForm(Form $form) {
 		$this->form = $form;
 	}
@@ -149,6 +171,14 @@ abstract class Element extends Base {
 
 	public function setValue($value) {
 		$this->attributes["value"] = $value;
+	}
+
+	public function setWidth($width) {
+		if(substr($width, -2) == "px")
+			$width = substr($width, 0, -2);
+		elseif(substr($width, -1) == "%")
+			$width = substr($width, 0, -1);
+		$this->width = $width;
 	}
 
 	/*This method provides a shortcut for applying the Required validation class to an element.*/
@@ -169,19 +199,4 @@ abstract class Element extends Base {
 				$this->validation[] = $object;
 		}	
 	}
-
-	/*Many of the included elements make use of the <input> tag for display.  These include the Hidden, Textbox, 
-	Password, Date, Color, Button, Email, and File element classes.  The project's other element classes will
-	override this method with their own implementation.*/
-	public function render() {
-		echo '<input', $this->getAttributes(), '/>';
-	}
-
-	/*If an element requires inline stylesheet definitions, this method is used send them to the browser before
-	the form is rendered.*/
-	public function renderCSS() {}
-
-	/*If an element requires javascript to be loaded, this method is used send them to the browser after
-	the form is rendered.*/
-	public function renderJS() {}
 }
