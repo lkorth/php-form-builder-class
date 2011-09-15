@@ -20,8 +20,12 @@ class SideBySide extends Standard {
 		$id = $this->form->getId();
 		$width = $this->form->getWidth();
 		$widthSuffix = $this->form->getWidthSuffix();
-		$elementWidth = $width - $this->labelWidth - $this->labelPaddingRight;
 
+		if($widthSuffix == "px")
+			$elementWidth = $width - $this->labelWidth - $this->labelPaddingRight;
+		else	
+			$elementWidth = 100 - $this->labelWidth - $this->labelPaddingRight;
+		
 		\PFBC\View::renderCSS();
 		echo <<<CSS
 #$id { width: $width{$widthSuffix}; }
@@ -41,6 +45,24 @@ CSS;
 			if(is_numeric($this->labelPaddingTop))
 				$this->labelPaddingTop .= "px";
 			echo '#', $id, ' .pfbc-label { padding-top: ', $this->labelPaddingTop, '; }';
+		}
+
+		$elements = $this->form->getElements();
+		$elementSize = sizeof($elements);
+		$elementCount = 0;
+		for($e = 0; $e < $elementSize; ++$e) {
+			$element = $elements[$e];
+			$elementWidth = $element->getWidth();
+			if(!$element instanceof \PFBC\Element\Hidden && !$element instanceof \PFBC\Element\HTMLExternal && !$element instanceof \PFBC\Element\HTMLExternal) {
+				if(!empty($elementWidth)) {
+					echo '#', $id, ' #pfbc-element-', $elementCount, ' { width: ', $elementWidth, $widthSuffix, '; }';
+					if($widthSuffix == "px") {
+						$elementWidth = $elementWidth - $this->labelWidth - $this->labelPaddingRight;
+						echo '#', $id, ' #pfbc-element-', $elementCount, ' .pfbc-textbox, #', $id, ' #pfbc-element-', $elementCount, ' .pfbc-textarea, #', $id, ' #pfbc-element-', $elementCount, ' .pfbc-select { width: ', $elementWidth, $widthSuffix, '; }';
+					}
+				}
+				$elementCount++;
+			}	
 		}
 	}
 }
