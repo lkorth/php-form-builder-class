@@ -330,8 +330,10 @@ class Form extends Base {
 
 		/*When the form is submitted, disable all submit buttons to prevent duplicate submissions.*/
 		echo 'jQuery("#', $id, '").bind("submit", function() {';
-		if(!in_array("jQueryUIButtons", $this->prevent))
+		if(!in_array("jQueryUIButtons", $this->prevent)) {
 			echo 'jQuery(this).find("button[type=submit]").button("disable");';
+			echo 'jQuery(this).find("button[type=submit] span.ui-button-text").prepend(\'<img src="', $this->resourcesPath, '/images/submit.gif" border="0" style="padding-right: .5em;"/>\');';
+		}	
 		else	
 			echo 'jQuery(this).find("button[type=submit]").attr("disabled", "disabled");';
 		echo '});';
@@ -366,8 +368,17 @@ JS;
 			/*A callback function can be specified to handle any post submission events.*/
 			if(!empty($this->ajaxCallback))
 				echo $this->ajaxCallback, "(response);";
+
+			echo '}';
+
+			if(!in_array("jQueryUIButtons", $this->prevent)) {
+				echo 'jQuery("#', $id, '").find("button[type=submit]").button("enable");';
+				echo 'jQuery("#', $id, '").find("button[type=submit] span.ui-button-text img").remove();';
+			}	
+			else	
+				echo 'jQuery("#', $id, '").find("button[type=submit]").attr("disabled", "");';
+
 			echo <<<JS
-					}
 				}
 			});
 			return false;
