@@ -327,6 +327,15 @@ class Form extends Base {
 		$id = $this->attributes["id"];
 
 		echo 'jQuery(document).ready(function() {';
+
+		/*When the form is submitted, disable all submit buttons to prevent duplicate submissions.*/
+		echo 'jQuery("#', $id, '").bind("submit", function() {';
+		if(!in_array("jQueryUIButtons", $this->prevent))
+			echo 'jQuery(this).find("button[type=submit]").button("disable");';
+		else	
+			echo 'jQuery(this).find("button[type=submit]").attr("disabled", "disabled");';
+		echo '});';
+
 		/*jQuery is used to set the focus of the form's initial element.*/
 		if(!in_array("focus", $this->prevent))
 			echo 'jQuery("#', $id, ' :input:visible:enabled:first").focus();';

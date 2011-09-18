@@ -45,8 +45,8 @@ $form->addElement(new PFBC\Element\Radio("Radio:", "Radio", $options, array(
 	"value" => "Option #2"
 )));
 $form->addElement(new PFBC\Element\Checkbox("Checkbox:", "Checkbox", $options, array(
-	"value" => array("Option #1", "Option #3"
-))));
+	"value" => array("Option #1", "Option #3")
+)));
 $form->addElement(new PFBC\Element\Button);
 $form->render();
 
@@ -67,8 +67,8 @@ $form->addElement(new PFBC\Element\Radio("Radio:", "Radio", $options, array(
 	"value" => "Option #1"
 )));
 $form->addElement(new PFBC\Element\Checkbox("Checkbox:", "Checkbox", $options, array(
-	"value" => array("Option #1", "Option #3"
-))));
+	"value" => array("Option #1", "Option #3")
+)));
 $form->addElement(new PFBC\Element\Button);
 $form->render();
 $form->render();
