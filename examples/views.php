@@ -35,7 +35,7 @@ $form = new PFBC\Form("layout_standard", 300);
 $form->addElement(new PFBC\Element\Hidden("form", "layout_standard"));
 $form->addElement(new PFBC\Element\Textbox("Username:", "Username"));
 $form->addElement(new PFBC\Element\Password("Password:", "Password"));
-$form->addElement(new PFBC\Element\Button("Login"));
+$form->addElement(new PFBC\Element\Button("Login", "submit", array("icon" => "key")));
 $form->render();
 
 echo '<pre>', highlight_string('<?php
@@ -43,7 +43,7 @@ $form = new PFBC\Form("layout_standard", 300);
 $form->addElement(new PFBC\Element\Hidden("form", "layout_standard"));
 $form->addElement(new PFBC\Element\Textbox("Username:", "Username"));
 $form->addElement(new PFBC\Element\Password("Password:", "Password"));
-$form->addElement(new PFBC\Element\Button("Login"));
+$form->addElement(new PFBC\Element\Button("Login", "submit", array("icon" => "key")));
 $form->render();
 ?>', true), '</pre>';
 ?>
@@ -64,6 +64,17 @@ $form->addElement(new PFBC\Element\Textbox("Username:", "Username"));
 $form->addElement(new PFBC\Element\Password("Password:", "Password"));
 $form->addElement(new PFBC\Element\Button("Login"));
 $form->render();
+echo '<br/>';
+$form = new PFBC\Form("layout_sidebyside2", 300);
+$form->configure(array(
+	"view" => new PFBC\View\SideBySide(100, array("labelRightAlign" => 1)),
+	"prevent" => array("focus", "jQuery", "jQueryUI")
+));
+$form->addElement(new PFBC\Element\Hidden("form", "layout_sidebyside2"));
+$form->addElement(new PFBC\Element\Textbox("Name:", "Name"));
+$form->addElement(new PFBC\Element\Email("Email Address:", "Email"));
+$form->addElement(new PFBC\Element\Button("Sign Up"));
+$form->render();
 
 echo '<pre>', highlight_string('<?php
 $form = new PFBC\Form("layout_sidebyside", 300);
@@ -75,7 +86,18 @@ $form->addElement(new PFBC\Element\Textbox("Username:", "Username"));
 $form->addElement(new PFBC\Element\Password("Password:", "Password"));
 $form->addElement(new PFBC\Element\Button("Login"));
 $form->render();
+
+$form = new PFBC\Form("layout_sidebyside2", 300);
+$form->configure(array(
+	"view" => new PFBC\View\SideBySide(100, array("labelRightAlign" => 1)),
+));
+$form->addElement(new PFBC\Element\Hidden("form", "layout_sidebyside2"));
+$form->addElement(new PFBC\Element\Textbox("Name:", "Name"));
+$form->addElement(new PFBC\Element\Email("Email Address:", "Email"));
+$form->addElement(new PFBC\Element\Button("Sign Up"));
+$form->render();
 ?>', true), '</pre>';
+
 ?>
 
 <h3>Horizontal</h3>
@@ -112,7 +134,7 @@ $form->render();
 <p>The forth and final view provided in the project's download is Grid.  Grid is similar to Standard, but provides
 the ability to display multiple elements on the same line.  Form's structure is controlled by an array that is passed
 to the Grid class' constructor.  The values of this array correspond with the number of elements to display in each
-row.</p>
+row.  As seen in the second example below, you can also customize each grid element's width.</p>
 
 <?php
 $form = new PFBC\Form("layout_grid", 500);
@@ -129,6 +151,19 @@ $form->addElement(new PFBC\Element\State("State:", "State"));
 $form->addElement(new PFBC\Element\Textbox("Zip Code:", "ZipCode"));
 $form->addElement(new PFBC\Element\Button);
 $form->render();
+echo '<br/>';
+$form = new PFBC\Form("layout_grid2", 350);
+$form->configure(array(
+	"view" => new PFBC\View\Grid(array(2, 2)),
+	"prevent" => array("focus", "jQuery", "jQueryUI")
+));
+$form->addElement(new PFBC\Element\Hidden("form", "layout_grid2"));
+$form->addElement(new PFBC\Element\Textbox("Name:", "Name"));
+$form->addElement(new PFBC\Element\Textbox("Age:", "Age", array("width" => 75)));
+$form->addElement(new PFBC\Element\Radio("Gender:", "Gender", array("Male", "Female"), array("inline" => 1)));
+$form->addElement(new PFBC\Element\Email("Email Address:", "Email", array("width" => 225)));
+$form->addElement(new PFBC\Element\Button);
+$form->render();
 
 echo '<pre>', highlight_string('<?php
 $form = new PFBC\Form("layout_grid", 500);
@@ -142,6 +177,18 @@ $form->addElement(new PFBC\Element\Textbox("Address:", "Address"));
 $form->addElement(new PFBC\Element\Textbox("City:", "City"));
 $form->addElement(new PFBC\Element\State("State:", "State"));
 $form->addElement(new PFBC\Element\Textbox("Zip Code:", "ZipCode"));
+$form->addElement(new PFBC\Element\Button);
+$form->render();
+
+$form = new PFBC\Form("layout_grid2", 350);
+$form->configure(array(
+	"view" => new PFBC\View\Grid(array(2, 2))
+));
+$form->addElement(new PFBC\Element\Hidden("form", "layout_grid2"));
+$form->addElement(new PFBC\Element\Textbox("Name:", "Name"));
+$form->addElement(new PFBC\Element\Textbox("Age:", "Age", array("width" => 75)));
+$form->addElement(new PFBC\Element\Radio("Gender:", "Gender", array("Male", "Female"), array("inline" => 1)));
+$form->addElement(new PFBC\Element\Email("Email Address:", "Email", array("width" => 225)));
 $form->addElement(new PFBC\Element\Button);
 $form->render();
 ?>', true), '</pre>';

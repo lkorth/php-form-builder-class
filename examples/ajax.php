@@ -35,7 +35,7 @@ $form->addElement(new PFBC\Element\Textbox("Address:", "Address", array("require
 $form->addElement(new PFBC\Element\HTMLExternal('<div id="GoogleGeocodeAPIReaponse" style="display: none;">'));
 $form->addElement(new PFBC\Element\Textbox("Latitude/Longitude:", "LatitudeLongitude", array("readonly" => "readonly")));
 $form->addElement(new PFBC\Element\HTMLExternal('</div>'));
-$form->addElement(new PFBC\Element\Button("Geocode", "submit", array("icon" => "key")));
+$form->addElement(new PFBC\Element\Button("Geocode", "submit", array("icon" => "search")));
 $form->render();
 ?>
 
@@ -65,7 +65,7 @@ $form->addElement(new PFBC\Element\Textbox("Address:", "Address", array("require
 $form->addElement(new PFBC\Element\HTMLExternal(\'<div id="GoogleGeocodeAPIReaponse" style="display: none;">\'));
 $form->addElement(new PFBC\Element\Textbox("Latitude/Longitude:", "LatitudeLongitude", array("readonly" => "readonly")));
 $form->addElement(new PFBC\Element\HTMLExternal(\'</div>\'));
-$form->addElement(new PFBC\Element\Button("Geocode"));
+$form->addElement(new PFBC\Element\Button("Geocode", "submit", array("icon" => "search")));
 $form->render();
 ?>
 
