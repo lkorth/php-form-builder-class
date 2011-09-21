@@ -54,6 +54,7 @@ echo <<<HTML
 					<li class="indent-l1"><a href="{$examplePath}validation.php">Validation</a></li>
 					<li class="indent-l1"><a href="{$examplePath}setting-element-values.php">Setting Element Values</a></li>
 					<li class="indent-l1"><a href="{$examplePath}ajax.php">Ajax</a></li>
+					<li class="indent-l1"><a href="{$examplePath}conditions.php">Conditions</a></li>
 				</ul>
 				<h2>Sponsored By</h2>
 				<a href="http://www.imavex.com/"><img src="http://www.imavex.com/schemes/IMAVEX08/Main/images/header_logo.png" alt="Imavex" title="Imavex" border="0" width="100%"/></a>

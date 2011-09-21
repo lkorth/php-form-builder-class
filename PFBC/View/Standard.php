@@ -44,7 +44,7 @@ class Standard extends \PFBC\View {
 #$id .pfbc-element { margin-bottom: 1em; padding-bottom: 1em; border-bottom: 1px solid #f4f4f4; }
 #$id .pfbc-label { margin-bottom: .25em; }
 #$id .pfbc-label label { display: block; }
-#$id .pfbc-textbox, #$id .pfbc-textarea, #$id .pfbc-select { width: 100%; }
+#$id .pfbc-textbox, #$id .pfbc-textarea, #$id .pfbc-select { width: $width{$widthSuffix}; }
 #$id .pfbc-buttons { text-align: right; }
 CSS;
 		
@@ -55,8 +55,10 @@ CSS;
 			$element = $elements[$e];
 			$elementWidth = $element->getWidth();
 			if(!$element instanceof \PFBC\Element\Hidden && !$element instanceof \PFBC\Element\HTMLExternal && !$element instanceof \PFBC\Element\HTMLExternal) {
-				if(!empty($elementWidth))
+				if(!empty($elementWidth)) {
 					echo '#', $id, ' #pfbc-element-', $elementCount, ' { width: ', $elementWidth, $widthSuffix, '; }';
+					echo '#', $id, ' #pfbc-element-', $elementCount, ' .pfbc-textbox, #', $id, ' #pfbc-element-', $elementCount, ' .pfbc-textarea, #', $id, ' #pfbc-element-', $elementCount, ' .pfbc-select { width: ', $elementWidth, $widthSuffix, '; }';
+				}	
 				$elementCount++;
 			}
 		}
