@@ -50,6 +50,7 @@ abstract class View extends Base {
 #$id .pfbc-textbox, #$id .pfbc-textarea, #$id .pfbc-select { border: 1px solid #ccc; font-size: 14px; }
 #$id .pfbc-textbox, #$id .pfbc-textarea { padding: 7px; }
 #$id .pfbc-select { padding: 6px 7px; }
+#$id img.pfbc-loading { position: absolute; top: 50%; right: .5em; margin-top: -8px; border: 0; }
 CSS;
 		}
 	}

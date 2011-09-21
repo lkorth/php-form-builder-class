@@ -28,7 +28,8 @@ These errors will then be displayed in the form so the end user can correct and 
 $form = new PFBC\Form("ajax", 400);
 $form->configure(array(
 	"ajax" => 1,
-	"ajaxCallback" => "parseJSONResponse",
+	"ajaxCallback" => "parseJSONResponse"
+
 ));
 $form->addElement(new PFBC\Element\Hidden("form", "ajax"));
 $form->addElement(new PFBC\Element\Textbox("Address:", "Address", array("required" => 1)));

@@ -330,9 +330,11 @@ class Form extends Base {
 
 		/*When the form is submitted, disable all submit buttons to prevent duplicate submissions.*/
 		echo 'jQuery("#', $id, '").bind("submit", function() {';
-		if(!in_array("jQueryUIButtons", $this->prevent))
+		if(!in_array("jQueryUIButtons", $this->prevent)) {
 			echo 'jQuery(this).find("button[type=submit]").button("disable");';
-		else	
+			echo 'jQuery(this).find("button[type=submit] span.ui-button-text").css("padding-right", "2.1em").append("<img class=\"pfbc-loading\" src=\"', $this->resourcesPath, '/loading.gif\"/>");';
+		}	
+		else
 			echo 'jQuery(this).find("button[type=submit]").attr("disabled", "disabled");';
 		echo '});';
 
@@ -369,10 +371,12 @@ JS;
 
 			echo '}';
 
-			if(!in_array("jQueryUIButtons", $this->prevent))
-				echo 'jQuery("#', $id, '").find("button[type=submit]").button("enable");';
-			else	
-				echo 'jQuery("#', $id, '").find("button[type=submit]").attr("disabled", "");';
+			if(!in_array("jQueryUIButtons", $this->prevent)) {
+				echo 'jQuery("#', $id, ' button[type=submit] span.ui-button-text").css("padding-right", "1em").find("img").remove();';
+				echo 'jQuery("#', $id, ' button[type=submit]").button("enable");';
+			}	
+			else
+				echo 'jQuery("#', $id, '").find("button[type=submit]").removeAttr("disabled");';
 
 			echo <<<JS
 				}
