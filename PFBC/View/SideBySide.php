@@ -1,7 +1,7 @@
 <?php
 namespace PFBC\View;
 
-class SideBySide extends Standard {
+class SideBySide extends \PFBC\View {
 	protected $labelWidth;
 	protected $labelRightAlign;
 	protected $labelPaddingRight = 5;
@@ -15,6 +15,38 @@ class SideBySide extends Standard {
 
 		parent::__construct($properties);
 	}
+
+	public function render() {
+		echo '<form', $this->form->getAttributes(), '>';
+		$this->form->getError()->render();
+
+		$elements = $this->form->getElements();
+		$elementSize = sizeof($elements);
+		$elementCount = 0;
+		for($e = 0; $e < $elementSize; ++$e) {
+			$element = $elements[$e];
+
+			if($element instanceof \PFBC\Element\Hidden || $element instanceof \PFBC\Element\HTMLExternal)
+                $element->render();
+            elseif($element instanceof \PFBC\Element\Button) {
+                if($e == 0 || !$elements[($e - 1)] instanceof \PFBC\Element\Button)
+                    echo '<div class="pfbc-element pfbc-buttons">';
+                $element->render();
+                if(($e + 1) == $elementSize || !$elements[($e + 1)] instanceof \PFBC\Element\Button)
+                    echo '</div>';
+            }
+            else {
+				echo '<div id="pfbc-element-', $elementCount, '" class="pfbc-element">', $element->getPreHTML();
+				$this->renderLabel($element);
+				echo '<div class="pfbc-right">';
+				$element->render();
+				echo '</div><div style="clear: both;"></div>', $element->getPostHTML(), '</div>';
+				++$elementCount;
+			}
+		}
+
+		echo '</form>';
+    }
 
 	public function renderCSS() {
 		$id = $this->form->getId();
@@ -32,7 +64,8 @@ class SideBySide extends Standard {
 #$id .pfbc-element { margin-bottom: 1em; padding-bottom: 1em; border-bottom: 1px solid #f4f4f4; }
 #$id .pfbc-label { width: {$this->labelWidth}$widthSuffix; float: left; padding-right: {$this->labelPaddingRight}$widthSuffix; }
 #$id .pfbc-buttons { text-align: right; }
-#$id .pfbc-textbox, #$id .pfbc-textarea, #$id .pfbc-select { width: $elementWidth{$widthSuffix}; }
+#$id .pfbc-textbox, #$id .pfbc-textarea, #$id .pfbc-select, #$id .pfbc-right { width: $elementWidth{$widthSuffix}; }
+#$id .pfbc-right { float: right; }
 CSS;
 	
 		if(!empty($this->labelRightAlign))
@@ -58,7 +91,7 @@ CSS;
 					echo '#', $id, ' #pfbc-element-', $elementCount, ' { width: ', $elementWidth, $widthSuffix, '; }';
 					if($widthSuffix == "px") {
 						$elementWidth = $elementWidth - $this->labelWidth - $this->labelPaddingRight;
-						echo '#', $id, ' #pfbc-element-', $elementCount, ' .pfbc-textbox, #', $id, ' #pfbc-element-', $elementCount, ' .pfbc-textarea, #', $id, ' #pfbc-element-', $elementCount, ' .pfbc-select { width: ', $elementWidth, $widthSuffix, '; }';
+						echo '#', $id, ' #pfbc-element-', $elementCount, ' .pfbc-textbox, #', $id, ' #pfbc-element-', $elementCount, ' .pfbc-textarea, #', $id, ' #pfbc-element-', $elementCount, ' .pfbc-select, #', $id, ' #pfbc-element-', $elementCount, ' .pfbc-right { width: ', $elementWidth, $widthSuffix, '; }';
 					}
 				}
 				$elementCount++;

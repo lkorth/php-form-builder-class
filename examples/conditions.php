@@ -22,14 +22,17 @@ include("../header.php");
 ?>
 
 <h2 class="first">Conditions</h2>
-<p>The following example demonstrates how to show/hide one or more elements based a set of conditions.  
-This is achived by using a javascript event along with the HTMLExternal element.</p>
+<p>The following example demonstrates how to show/hide one or more form elements based a set of conditions.  
+This is achieved by using a javascript event along with the HTMLExternal element.</p>
 
 <?php
 $options = array("Option #1", "Option #2", "Option #3");
 $form = new PFBC\Form("elements", 400);
 $form->addElement(new PFBC\Element\Hidden("form", "elements"));
-$form->addElement(new PFBC\Element\YesNo("Do you want to view additional form elements?", "Additional", array("onclick" => "toggleAdditionalElements(this.value);")));
+$form->addElement(new PFBC\Element\YesNo("Show / Hide Condition:", "Condition", array(
+	"description" => "Click \"Yes\" below to show additional form elements.  Click \"No\" to hide them. ", 
+	"onclick" => "toggleAdditionalElements(this.value);"
+)));
 $form->addElement(new PFBC\Element\HTMLExternal('<div id="AdditionalElements" style="display: none;">'));
 $form->addElement(new PFBC\Element\Textarea("Textarea:", "Textarea"));
 $form->addElement(new PFBC\Element\Select("Select:", "Select", $options));
@@ -52,7 +55,10 @@ echo '<pre>', highlight_string('<?php
 $options = array("Option #1", "Option #2", "Option #3");
 $form = new PFBC\Form("elements", 400);
 $form->addElement(new PFBC\Element\Hidden("form", "elements"));
-$form->addElement(new PFBC\Element\YesNo("Do you want to view additional form elements?", "Additional", array("onclick" => "toggleAdditionalElements(this.value);")));
+$form->addElement(new PFBC\Element\YesNo("Show / Hide Condition:", "Condition", array(
+	"description" => "Click \"Yes\" below to show additional form elements.  Click \"No\" to hide them. ", 
+	"onclick" => "toggleAdditionalElements(this.value);"
+)));
 $form->addElement(new PFBC\Element\HTMLExternal(\'<div id="AdditionalElements" style="display: none;">\'));
 $form->addElement(new PFBC\Element\Textarea("Textarea:", "Textarea"));
 $form->addElement(new PFBC\Element\Select("Select:", "Select", $options));
@@ -69,7 +75,7 @@ $form->render();
 			jQuery("#AdditionalElements").hide(200);
 	}
 </script>
-?>', true), '</pre>';
+', true), '</pre>';
 
 include("../footer.php");
 ?>
