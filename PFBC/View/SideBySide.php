@@ -37,11 +37,14 @@ class SideBySide extends \PFBC\View {
             }
             else {
 				echo '<div id="pfbc-element-', $elementCount, '" class="pfbc-element">', $element->getPreHTML();
-				$this->renderLabel($element);
-				echo '<div class="pfbc-right">';
-				$element->render();
-				echo '</div><div style="clear: both;"></div>', $element->getPostHTML(), '</div>';
-				++$elementCount;
+                $this->renderLabel($element);
+                if(!$element instanceof \PFBC\Element\HTML)
+                    echo '<div class="pfbc-right">';
+                $element->render();
+                if(!$element instanceof \PFBC\Element\HTML)
+                    echo '</div><div style="clear: both;"></div>';
+                echo $element->getPostHTML(), '</div>';
+                ++$elementCount;
 			}
 		}
 
