@@ -2,10 +2,10 @@
 namespace PFBC;
 
 abstract class Element extends Base {
-	private $errors = array();
+	protected $_errors = array();
+	protected $_form;
 
 	protected $attributes;
-	protected $form;
 	protected $label;
 	protected $description;
 	protected $validation = array();
@@ -42,7 +42,7 @@ abstract class Element extends Base {
 	}
 
 	public function getErrors() {
-		return $this->errors;
+		return $this->_errors;
 	}	
 
 	public function getID() {
@@ -107,7 +107,7 @@ abstract class Element extends Base {
 				if(!$validation->isValid($value)) {
 					/*In the error message, %element% will be replaced by the element's label (or 
 					name if label is not provided).*/
-					$this->errors[] = str_replace("%element%", $element, $validation->getMessage());
+					$this->_errors[] = str_replace("%element%", $element, $validation->getMessage());
 					$valid = false;
 				}	
 			}
@@ -161,8 +161,8 @@ abstract class Element extends Base {
 			$this->attributes["class"] = $class;
 	}
 
-	public function setForm(Form $form) {
-		$this->form = $form;
+	public function _setForm(Form $form) {
+		$this->_form = $form;
 	}
 
 	public function setID($id) {

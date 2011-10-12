@@ -17,10 +17,10 @@ class SideBySide extends \PFBC\View {
 	}
 
 	public function render() {
-		echo '<form', $this->form->getAttributes(), '>';
-		$this->form->getError()->render();
+		echo '<form', $this->_form->getAttributes(), '>';
+		$this->_form->getError()->render();
 
-		$elements = $this->form->getElements();
+		$elements = $this->_form->getElements();
 		$elementSize = sizeof($elements);
 		$elementCount = 0;
 		for($e = 0; $e < $elementSize; ++$e) {
@@ -52,9 +52,9 @@ class SideBySide extends \PFBC\View {
     }
 
 	public function renderCSS() {
-		$id = $this->form->getId();
-		$width = $this->form->getWidth();
-		$widthSuffix = $this->form->getWidthSuffix();
+		$id = $this->_form->getId();
+		$width = $this->_form->getWidth();
+		$widthSuffix = $this->_form->getWidthSuffix();
 
 		if($widthSuffix == "px")
 			$elementWidth = $width - $this->labelWidth - $this->labelPaddingRight;
@@ -74,7 +74,7 @@ CSS;
 		if(!empty($this->labelRightAlign))
 			echo '#', $id, ' .pfbc-label { text-align: right; }';
 		
-		if(empty($this->labelPaddingTop) && !in_array("style", $this->form->getPrevent()))
+		if(empty($this->labelPaddingTop) && !in_array("style", $this->_form->getPrevent()))
 			$this->labelPaddingTop = ".75em";
 
 		if(!empty($this->labelPaddingTop)) {
@@ -83,7 +83,7 @@ CSS;
 			echo '#', $id, ' .pfbc-label { padding-top: ', $this->labelPaddingTop, '; }';
 		}
 
-		$elements = $this->form->getElements();
+		$elements = $this->_form->getElements();
 		$elementSize = sizeof($elements);
 		$elementCount = 0;
 		for($e = 0; $e < $elementSize; ++$e) {

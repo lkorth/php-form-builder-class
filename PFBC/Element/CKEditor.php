@@ -10,8 +10,8 @@ class CKEditor extends Textarea {
 			echo ', { toolbar: "Basic" }';
 		echo ');';
 
-		$ajax = $this->form->getAjax();
-		$id = $this->form->getID();
+		$ajax = $this->_form->getAjax();
+		$id = $this->_form->getID();
 		if(!empty($ajax)) {
 			echo <<<JS
 	jQuery("#$id").bind("submit", function() {
@@ -23,7 +23,7 @@ JS;
 
 	function getJSFiles() {
 		return array(
-			$this->form->getResourcesPath() . "/ckeditor/ckeditor.js"
+			$this->_form->getResourcesPath() . "/ckeditor/ckeditor.js"
 		);
 	}
 }	

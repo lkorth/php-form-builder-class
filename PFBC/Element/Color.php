@@ -17,13 +17,13 @@ class Color extends Textbox {
 
 	function getCSSFiles() {
 		return array(
-			$this->form->getResourcesPath() . "/colorpicker/css/colorpicker.css"
+			$this->_form->getResourcesPath() . "/colorpicker/css/colorpicker.css"
 		);
 	}
 
 	function getJSFiles() {
 		return array(
-			$this->form->getResourcesPath() . "/colorpicker/js/colorpicker.js"
+			$this->_form->getResourcesPath() . "/colorpicker/js/colorpicker.js"
 		);
 	}
 }

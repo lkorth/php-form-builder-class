@@ -12,10 +12,11 @@ if(in_array("__autoload",spl_autoload_functions()))
 	spl_autoload_register("__autoload");
 
 class Form extends Base {
-	private $elements = array();
-	private $prefix = "http";
-	private $values = array();
-	private $widthSuffix = "px";
+	protected $_elements = array();
+	protected $_prefix = "http";
+	protected $_resourcesPath;
+	protected $_values = array();
+	protected $_widthSuffix = "px";
 
 	protected $ajax;
 	protected $ajaxCallback;
@@ -23,7 +24,6 @@ class Form extends Base {
 	protected $error;
 	/*jQueryUI themes can be previewed at http://jqueryui.com/themeroller/.*/
 	protected $jQueryUITheme = "smoothness";
-	protected $resourcesPath;
 	/*Prevents various automated from being automatically applied.  Current options for this array
 	included jQuery, jQueryUI, jQueryUIButtons, focus, and style.*/
 	protected $prevent = array();
@@ -39,7 +39,7 @@ class Form extends Base {
 		));
 
 		if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")
-			$this->prefix = "https";
+			$this->_prefix = "https";
 		
 		/*The Standard view class is applied by default and will be used unless a different view is
 		specified in the form's configure method*/
@@ -56,24 +56,24 @@ class Form extends Base {
 		constructor.*/
 		$path = __DIR__ . "/Resources";
 		if(strpos($path, $_SERVER["DOCUMENT_ROOT"]) !== false)
-			$this->resourcesPath = substr($path, strlen($_SERVER["DOCUMENT_ROOT"]));
+			$this->_resourcesPath = substr($path, strlen($_SERVER["DOCUMENT_ROOT"]));
 		else
-			$this->resourcesPath = "/PFBC/Resources";
+			$this->_resourcesPath = "/PFBC/Resources";
 	}
 
 	/*When a form is serialized and stored in the session, this function prevents any non-essential
 	information from being included.*/
 	public function __sleep() {
-		return array("attributes", "elements", "error");
+		return array("attributes", "_elements", "error");
 	}
 
 	public function addElement(Element $element) {
-		$element->setForm($this);
+		$element->_setForm($this);
 		//If the element doesn't have a specified id, a generic identifier is applied.
 		$id = $element->getID();
 		if(empty($id))
-			$element->setID($this->attributes["id"] . "-element-" . sizeof($this->elements));
-		$this->elements[] = $element;
+			$element->setID($this->attributes["id"] . "-element-" . sizeof($this->_elements));
+		$this->_elements[] = $element;
 
 		/*For ease-of-use, the form tag's encytype attribute is automatically set if the File element
 		class is added.*/
@@ -83,13 +83,13 @@ class Form extends Base {
 
 	/*Values that have been set through the setValues method, either manually by the developer
 	or after validation errors, are applied to elements within this method.*/
-    private function applyValues() {
-        foreach($this->elements as $element) {
+    protected function applyValues() {
+        foreach($this->_elements as $element) {
             $name = $element->getName();
-            if(isset($this->values[$name]))
-                $element->setValue($this->values[$name]);
-            elseif(substr($name, -2) == "[]" && isset($this->values[substr($name, 0, -2)]))
-                $element->setValue($this->values[substr($name, 0, -2)]);
+            if(isset($this->_values[$name]))
+                $element->setValue($this->_values[$name]);
+            elseif(substr($name, -2) == "[]" && isset($this->_values[substr($name, 0, -2)]))
+                $element->setValue($this->_values[substr($name, 0, -2)]);
         }
     }
 
@@ -109,7 +109,7 @@ class Form extends Base {
 		if(!empty($this->width)) {
 			if(substr($this->width, -1) == "%") {
 				$this->width = substr($this->width, 0, -1);
-				$this->widthSuffix = "%";
+				$this->_widthSuffix = "%";
 			}
 			elseif(substr($this->width, -2) == "px")
 				$this->width = substr($this->width, 0, -2);
@@ -117,7 +117,7 @@ class Form extends Base {
 		else {
 			/*If the form's width property is empty, 100% will be assumed.*/
 			$this->width = 100;
-			$this->widthSuffix = "%";
+			$this->_widthSuffix = "%";
 		}
 	}
 
@@ -126,7 +126,7 @@ class Form extends Base {
     }
 
     public function getElements() {
-        return $this->elements;
+        return $this->_elements;
     }
 
 	public function getError() {
@@ -146,7 +146,7 @@ class Form extends Base {
     }
 
     public function getResourcesPath() {
-        return $this->resourcesPath;
+        return $this->_resourcesPath;
     }
 
 	public function getErrors() {
@@ -175,7 +175,7 @@ class Form extends Base {
 	}	
 
 	public function getWidthSuffix() {
-		return $this->widthSuffix;
+		return $this->_widthSuffix;
 	}	
 
 	public static function isValid($id = "pfbc", $clearValues = true) {
@@ -194,8 +194,8 @@ class Form extends Base {
 
 			/*Each element's value is saved in the session and checked against any validation rules applied
 			to the element.*/
-			if(!empty($form->elements)) {
-				foreach($form->elements as $element) {
+			if(!empty($form->_elements)) {
+				foreach($form->_elements as $element) {
 					$name = $element->getName();
 					if(substr($name, -2) == "[]")
 						$name = substr($name, 0, -2);
@@ -242,7 +242,7 @@ class Form extends Base {
 	}
 
 	/*This method restores the serialized form instance.*/
-	private static function recover($id) {
+	protected static function recover($id) {
 		if(!empty($_SESSION["pfbc"][$id]["form"]))
 			return unserialize($_SESSION["pfbc"][$id]["form"]);
 		else
@@ -250,8 +250,8 @@ class Form extends Base {
 	}
 
 	public function render($returnHTML = false) {
-		$this->view->setForm($this);
-		$this->error->setForm($this);
+		$this->view->_setForm($this);
+		$this->error->_setForm($this);
 
 		/*When validation errors occur, the form's submitted values are saved in a session 
 		array, which allows them to be pre-populated when the user is redirected to the form.*/
@@ -287,22 +287,22 @@ class Form extends Base {
 			$form->error->renderAjaxErrorResponse();
 	}
 
-	private function renderCSS() {
+	protected function renderCSS() {
 		$this->renderCSSFiles();
 
 		echo '<style type="text/css">';
 		$this->view->renderCSS();
 		$this->error->renderCSS();
-		foreach($this->elements as $element)
+		foreach($this->_elements as $element)
 			$element->renderCSS();
 		echo '</style>';
 	}
 
-	private function renderCSSFiles() {
+	protected function renderCSSFiles() {
 		$urls = array();
 		if(!in_array("jQueryUI", $this->prevent))
-			$urls[] = $this->prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/" . $this->jQueryUITheme . "/jquery-ui.css";
-		foreach($this->elements as $element) {
+			$urls[] = $this->_prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/" . $this->jQueryUITheme . "/jquery-ui.css";
+		foreach($this->_elements as $element) {
 			$elementUrls = $element->getCSSFiles();
 			if(is_array($elementUrls))
 				$urls = array_merge($urls, $elementUrls);
@@ -316,12 +316,12 @@ class Form extends Base {
 		}	
 	}
 
-	private function renderJS() {
+	protected function renderJS() {
 		$this->renderJSFiles();	
 
 		echo '<script type="text/javascript">';
 		$this->view->renderJS();
-		foreach($this->elements as $element)
+		foreach($this->_elements as $element)
 			$element->renderJS();
 		
 		$id = $this->attributes["id"];
@@ -332,7 +332,7 @@ class Form extends Base {
 		echo 'jQuery("#', $id, '").bind("submit", function() {';
 		if(!in_array("jQueryUIButtons", $this->prevent)) {
 			echo 'jQuery(this).find("button[type=submit]").button("disable");';
-			echo 'jQuery(this).find("button[type=submit] span.ui-button-text").css("padding-right", "2.1em").append("<img class=\"pfbc-loading\" src=\"', $this->resourcesPath, '/loading.gif\"/>");';
+			echo 'jQuery(this).find("button[type=submit] span.ui-button-text").css("padding-right", "2.1em").append("<img class=\"pfbc-loading\" src=\"', $this->_resourcesPath, '/loading.gif\"/>");';
 		}	
 		else
 			echo 'jQuery(this).find("button[type=submit]").attr("disabled", "disabled");';
@@ -343,7 +343,7 @@ class Form extends Base {
 			echo 'jQuery("#', $id, ' :input:visible:enabled:first").focus();';
 
 		$this->view->jQueryDocumentReady();
-		foreach($this->elements as $element)
+		foreach($this->_elements as $element)
 			$element->jQueryDocumentReady();
 		
 		/*For ajax, an anonymous onsubmit javascript function is bound to the form using jQuery.  jQuery's
@@ -393,13 +393,13 @@ JS;
 JS;
 	}
 
-	private function renderJSFiles() {
+	protected function renderJSFiles() {
 		$urls = array();
 		if(!in_array("jQuery", $this->prevent))
-			$urls[] = $this->prefix . "://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js";
+			$urls[] = $this->_prefix . "://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js";
 		if(!in_array("jQueryUI", $this->prevent))
-			$urls[] = $this->prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js";
-		foreach($this->elements as $element) {
+			$urls[] = $this->_prefix . "://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js";
+		foreach($this->_elements as $element) {
 			$elementUrls = $element->getJSFiles();
 			if(is_array($elementUrls))
 				$urls = array_merge($urls, $elementUrls);
@@ -414,7 +414,7 @@ JS;
 	}
 
 	/*The save method serialized the form's instance and saves it in the session.*/
-	private function save() {
+	protected function save() {
 		$_SESSION["pfbc"][$this->attributes["id"]]["form"] = serialize($this);
 	}
 
@@ -437,6 +437,6 @@ JS;
 	/*An associative array is used to pre-populate form elements.  The keys of this array correspond with
 	the element names.*/
 	public function setValues(array $values) {
-        $this->values = array_merge($this->values, $values);
+        $this->_values = array_merge($this->_values, $values);
     }
 }

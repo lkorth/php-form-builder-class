@@ -12,7 +12,7 @@ abstract class Base {
             $property_reference = array();
             foreach($available as $property)
                 $property_reference[strtolower($property)] = $property;
-
+			
 			/*The method reference lookup array is created so that "set" methods can be called
 			case-insensitively.*/
             $available = get_class_methods($class);
@@ -23,7 +23,7 @@ abstract class Base {
             foreach($properties as $property => $value) {
 				$property = strtolower($property);
 				/*The attributes property cannot be set directly.*/
-				if($property != "attributes") {
+				if(!empty($property) && $property != "attributes" && $property[0] != "_") {
 					/*If the appropriate class has a "set" method for the property provided, then
 					it is called instead or setting the property directly.*/
 					if(isset($method_reference["set" . $property]))
