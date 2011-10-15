@@ -214,7 +214,7 @@ class Form extends Base {
 						}
 						else
 							$value = stripslashes($value);
-						self::setSessionValue($id, $name, $value);
+						self::_setSessionValue($id, $name, $value);
 					}		
 					else
 						$value = null;
@@ -430,7 +430,7 @@ JS;
 			$_SESSION["pfbc"][$id]["errors"][$element][] = $error;
 	}
 
-	public static function setSessionValue($id, $element, $value) {
+	protected static function _setSessionValue($id, $element, $value) {
 		$_SESSION["pfbc"][$id]["values"][$element] = $value;
 	}
 
