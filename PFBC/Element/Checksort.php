@@ -48,7 +48,7 @@ JS;
 			echo '<div class="pfbc-checkbox"><table cellpadding="0" cellspacing="0"><tr><td valign="top"><input id="', $this->attributes["id"], "-", $count, '"', $this->getAttributes(array("id", "value", "checked", "name", "onclick")), ' value="', $this->filter($value), '"';
 			if(in_array($value, $this->attributes["value"]))
 				echo ' checked="checked"';
-			echo ' onclick="updateChecksort(this, \'', $this->filter($text), '\');"/></td><td><label for="', $this->attributes["id"], "-", $count, '">', $text, '</label></td></tr></table></div>';
+			echo ' onclick="updateChecksort(this, \'', str_replace("'", "\'", $this->filter($text)), '\');"/></td><td><label for="', $this->attributes["id"], "-", $count, '">', $text, '</label></td></tr></table></div>';
 
 			$index = array_search($value, $this->attributes["value"]);
 			if($index !== false)
