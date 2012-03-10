@@ -10,15 +10,27 @@ class Sort extends \PFBC\OptionElement {
 	}
 
 	public function render() { 
+		if(!isset($this->attributes["value"]) || !is_array($this->attributes["value"]))
+			$this->attributes["value"] = array();
+
 		if(substr($this->attributes["name"], -2) != "[]")
 			$this->attributes["name"] .= "[]";
-
-		echo '<div id="', $this->attributes["id"], '"><ul>';
+		
+		$count = 0;
+		$items = array();
 		foreach($this->options as $value => $text) {
 			$value = $this->getOptionValue($value);
-			echo '<li class="ui-state-default"><input type="hidden" name="', $this->attributes["name"], '" value="', $value, '"/>', $text, '</li>';
+
+			$index = array_search($value, $this->attributes["value"]);
+			if($index === false)
+				$index = $count;
+			$items[$index] = '<li class="ui-state-default"><input type="hidden" name="' . $this->attributes["name"] . '" value="' . $value . '"/>' . $text . '</li>';
+
+			++$count;
 		}	
-		echo "</ul></div>";
+
+		ksort($items);
+		echo '<div id="', $this->attributes["id"], '"><ul>', implode("", $items), '</ul></div>';
 	}
 
 	public function renderCSS() {

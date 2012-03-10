@@ -41,7 +41,7 @@ JS;
 			$this->attributes["name"] .= "[]";
 		
 		$count = 0;
-		$existing = "";
+		$items = array();
 		echo '<div id="', $this->attributes["id"], '"><div class="pfbc-checkboxes">';
 		foreach($this->options as $value => $text) {
 			$value = $this->getOptionValue($value);
@@ -50,8 +50,9 @@ JS;
 				echo ' checked="checked"';
 			echo ' onclick="updateChecksort(this, \'', $this->filter($text), '\');"/></td><td><label for="', $this->attributes["id"], "-", $count, '">', $text, '</label></td></tr></table></div>';
 
-			if(in_array($value, $this->attributes["value"]))
-				$existing .= '<li id="' . $this->attributes["id"] . "-sort-" . $count . '" class="ui-state-default"><input type="hidden" name="' . $this->attributes["name"] . '" value="' . $value . '"/>' . $text . '</li>';
+			$index = array_search($value, $this->attributes["value"]);
+			if($index !== false)
+				$items[$index] = '<li id="' . $this->attributes["id"] . "-sort-" . $count . '" class="ui-state-default"><input type="hidden" name="' . $this->attributes["name"] . '" value="' . $value . '"/>' . $text . '</li>';
 
 			++$count;
 		}	
@@ -60,7 +61,8 @@ JS;
 		if(!empty($this->inline))
 			echo '<div style="clear: both;"></div>';
 
-		echo '<ul>', $existing, '</ul></div>';
+		ksort($items);
+		echo '<ul>', implode("", $items), '</ul></div>';
 	}
 
 	function renderJS() {
