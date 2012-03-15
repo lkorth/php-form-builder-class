@@ -22,7 +22,9 @@ if(radiobuttons.outerHeight() > {$this->maxheight}) {
 		"overflow-x": "hidden" 
 	});
 
-	jQuery("#{$this->attributes["id"]} .pfbc-radio-buttons input:checked:first")[0].scrollIntoView(true);
+	var scrollTo = jQuery("#{$this->attributes["id"]} .pfbc-radio-buttons input:checked:first")[0];
+	if(scrollTo)
+		scrollTo.scrollIntoView(true);
 }	
 JS;
 		}	

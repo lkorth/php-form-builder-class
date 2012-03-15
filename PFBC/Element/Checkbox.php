@@ -22,7 +22,9 @@ if(checkboxes.outerHeight() > {$this->maxheight}) {
 		"overflow-x": "hidden" 
 	});
 
-	jQuery("#{$this->attributes["id"]} .pfbc-checkboxes input:checked:first")[0].scrollIntoView(true);
+	var scrollTo = jQuery("#{$this->attributes["id"]} .pfbc-checkboxes input:checked:first")[0];
+	if(scrollTo)
+		scrollTo.scrollIntoView(true);
 }	
 JS;
 		}	
