@@ -5,6 +5,7 @@ class Radio extends \PFBC\OptionElement {
 	protected $attributes = array("type" => "radio");
 	protected $inline;
 	protected $maxheight;
+	protected $valign;
 
 	public function jQueryDocumentReady() {
 		if(!empty($this->inline))
@@ -36,10 +37,10 @@ JS;
 		echo '<div id="', $this->attributes["id"], '"><div class="pfbc-radio-buttons">';
 		foreach($this->options as $value => $text) {
 			$value = $this->getOptionValue($value);
-			echo '<div class="pfbc-radio"><table cellpadding="0" cellspacing="0"><tr><td valign="top"><input id="', $this->attributes["id"], "-", $count, '"', $this->getAttributes(array("id", "value", "checked")), ' value="', $this->filter($value), '"';
+			echo '<div class="pfbc-radio"><table cellpadding="0" cellspacing="0"><tr><td valign="', $this->valign, '"><input id="', $this->attributes["id"], "-", $count, '"', $this->getAttributes(array("id", "value", "checked")), ' value="', $this->filter($value), '"';
 			if(isset($this->attributes["value"]) && $this->attributes["value"] == $value)
 				echo ' checked="checked"';
-			echo '/></td><td><label for="', $this->attributes["id"], "-", $count, '">', $text, '</label></td></tr></table></div>';
+			echo '/></td><td valign="', $this->valign, '"><label for="', $this->attributes["id"], "-", $count, '">', $text, '</label></td></tr></table></div>';
 			++$count;
 		}	
 		echo '</div>';
