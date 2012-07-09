@@ -43,6 +43,11 @@ class SideBySide extends \PFBC\View {
                 $element->render();
                 if(!$element instanceof \PFBC\Element\HTML)
                     echo '</div><div style="clear: both;"></div>';
+				
+				$description = $element->getDescription();
+				if(!empty($description))
+					echo '<em class="pfbc-description">', $description, '</em>';
+
                 echo $element->getPostHTML(), '</div>';
                 ++$elementCount;
 			}
@@ -66,6 +71,7 @@ class SideBySide extends \PFBC\View {
 #$id { width: $width{$widthSuffix}; }
 #$id .pfbc-element { margin-bottom: 1em; padding-bottom: 1em; border-bottom: 1px solid #f4f4f4; }
 #$id .pfbc-label { width: {$this->labelWidth}$widthSuffix; float: left; padding-right: {$this->labelPaddingRight}$widthSuffix; }
+#$id .pfbc-description { font-size: .9em; color: #888; }
 #$id .pfbc-buttons { text-align: right; }
 #$id .pfbc-textbox, #$id .pfbc-textarea, #$id .pfbc-select, #$id .pfbc-right { width: $elementWidth{$widthSuffix}; }
 #$id .pfbc-right { float: right; }
@@ -101,4 +107,19 @@ CSS;
 			}	
 		}
 	}
+
+	protected function renderLabel($element) {
+        $label = $element->getLabel();
+        $id = $element->getID();
+        if(!empty($label) || !empty($description)) {
+            echo '<div class="pfbc-label">';
+            if(!empty($label)) {
+                echo '<label for="', $id, '">';
+                if($element->isRequired())
+                    echo '<strong>*</strong> ';
+                echo $label, '</label>'; 
+            }
+            echo '</div>';
+        }
+    }
 }
