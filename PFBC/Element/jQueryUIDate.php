@@ -2,6 +2,10 @@
 namespace PFBC\Element;
 
 class jQueryUIDate extends Textbox {
+	protected $attributes = array(
+		"type" => "text",
+		"autocomplete" => "off"
+	);
     protected $jQueryOptions;
 
 	public function getCSSFiles() {
