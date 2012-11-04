@@ -23,12 +23,11 @@ class Checkbox extends \PFBC\OptionElement {
 		$count = 0;
 		foreach($this->options as $value => $text) {
 			$value = $this->getOptionValue($value);
-			if(!empty($this->inline) && $count > 0)
-				echo ' ';
-			echo '<label class="', $labelClass, '"><input id="', $this->attributes["id"], '-', $count, '"', $this->getAttributes(array("id", "value", "checked", "required")), ' value="', $this->filter($value), '"';
+
+			echo '<label class="', $labelClass, '"> <input id="', $this->attributes["id"], '-', $count, '"', $this->getAttributes(array("id", "value", "checked", "required")), ' value="', $this->filter($value), '"';
 			if(in_array($value, $this->attributes["value"]))
 				echo ' checked="checked"';
-			echo '/>', $text, '</label>';
+			echo '/> ', $text, ' </label> ';
 			++$count;
 		}	
 	}
