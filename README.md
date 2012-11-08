@@ -44,18 +44,5 @@ $form->addElement(new PFBC\Element\Select("My Select:", "MySelect", array(
 )));
 $form->addElement(new PFBC\Element\Button);
 $form->render();
-
-//PFBC 3.x PHP 5
-session_start();
-include($_SERVER["DOCUMENT_ROOT"] . "/PFBC/Form.php");
-$form = new Form("GettingStarted");
-$form->addElement(new Element_Textbox("My Textbox:", "MyTextbox"));
-$form->addElement(new Element_Select("My Select:", "MySelect", array(
-   "Option #1",
-   "Option #2",
-   "Option #3"
-)));
-$form->addElement(new Element_Button);
-$form->render();
 ?>
 ```
