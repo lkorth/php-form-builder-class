@@ -1,5 +1,5 @@
 {
-    "name": "PFBC/PFBC",
+    "name": "pfbc/pfbc",
     "type": "library",
     "description": "Rapid form bulding in PHP",
     "keywords": ["php","html","form"],
