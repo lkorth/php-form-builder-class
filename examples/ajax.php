@@ -68,12 +68,14 @@ $form->configure(array(
 	"prevent" => array("bootstrap", "jQuery"),
 	"ajax" => 1,
 	"ajaxCallback" => "parseJSONResponse",
+	"novalidate" => ""
 ));
 $form->addElement(new PFBC\Element\Hidden("form", "ajax"));
+$form->addElement(new PFBC\Element\HTML(\'<legend>Using the Google Geocoding API</legend>\'));
 $form->addElement(new PFBC\Element\Textbox("Address:", "Address", array("required" => 1)));
-$form->addElement(new PFBC\Element\HTMLExternal(\'<div id="GoogleGeocodeAPIReaponse" style="display: none;">\'));
+$form->addElement(new PFBC\Element\HTML(\'<div id="GoogleGeocodeAPIReaponse" style="display: none;">\'));
 $form->addElement(new PFBC\Element\Textbox("Latitude/Longitude:", "LatitudeLongitude", array("readonly" => "readonly")));
-$form->addElement(new PFBC\Element\HTMLExternal(\'</div>\'));
+$form->addElement(new PFBC\Element\HTML(\'</div>\'));
 $form->addElement(new PFBC\Element\Button("Geocode", "submit", array("icon" => "search")));
 $form->render();
 ?>
