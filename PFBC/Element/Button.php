@@ -15,7 +15,11 @@ class Button extends \PFBC\Element {
 		$class = "btn";
 		if(empty($type) || $type == "submit")
 			$class .= " btn-primary";
-		$properties["class"] = $class;
+			
+		if(!empty($properties["class"]))
+			$properties["class"] .= " " . $class;
+		else
+			$properties["class"] = $class;
 		
 		if(empty($properties["value"]))
 			$properties["value"] = $label;
