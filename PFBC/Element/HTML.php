@@ -8,6 +8,6 @@ class HTML extends \PFBC\Element {
 	}
 
 	public function render() { 
-		echo $this->attributes["value"];
+		echo $this->_attributes["value"];
 	}
 }

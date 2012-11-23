@@ -2,5 +2,5 @@
 namespace PFBC\Element;
 
 class Phone extends Textbox {
-	protected $attributes = array("type" => "tel");
+	protected $_attributes = array("type" => "tel");
 }

@@ -2,5 +2,5 @@
 namespace PFBC\Element;
 
 class Time extends Textbox {
-	protected $attributes = array("type" => "time");
+	protected $_attributes = array("type" => "time");
 }

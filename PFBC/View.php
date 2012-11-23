@@ -2,14 +2,14 @@
 namespace PFBC;
 
 abstract class View extends Base {
-	protected $form;
+	protected $_form;
 
 	public function __construct(array $properties = null) {
 		$this->configure($properties);
 	}
 
-	public function setForm(Form $form) {
-		$this->form = $form;
+	public function _setForm(Form $form) {
+		$this->_form = $form;
 	}
 
 	/*jQuery is used to apply css entries to the last element.*/

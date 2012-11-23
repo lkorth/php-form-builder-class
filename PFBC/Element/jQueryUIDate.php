@@ -2,7 +2,7 @@
 namespace PFBC\Element;
 
 class jQueryUIDate extends Textbox {
-	protected $attributes = array(
+	protected $_attributes = array(
 		"type" => "text",
 		"autocomplete" => "off"
 	);
@@ -10,19 +10,19 @@ class jQueryUIDate extends Textbox {
 
 	public function getCSSFiles() {
 		return array(
-			$this->form->getPrefix() . "://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css"
+			$this->_form->getPrefix() . "://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css"
 		);
 	}
 
 	public function getJSFiles() {
 		return array(
-			$this->form->getPrefix() . "://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"
+			$this->_form->getPrefix() . "://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"
 		);
 	}
 
     public function jQueryDocumentReady() {
         parent::jQueryDocumentReady();
-        echo 'jQuery("#', $this->attributes["id"], '").datepicker(', $this->jQueryOptions(), ');';
+        echo 'jQuery("#', $this->_attributes["id"], '").datepicker(', $this->jQueryOptions(), ');';
     }
 
     public function render() {

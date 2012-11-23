@@ -6,35 +6,35 @@ class Sort extends \PFBC\OptionElement {
 
 	public function getCSSFiles() {
 		return array(
-			$this->form->getPrefix() . "://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css"
+			$this->_form->getPrefix() . "://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css"
 		);
 	}
 
 	public function getJSFiles() {
 		return array(
-			$this->form->getPrefix() . "://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"
+			$this->_form->getPrefix() . "://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"
 		);
 	}
 
     public function jQueryDocumentReady() {
-        echo 'jQuery("#', $this->attributes["id"], '").sortable(', $this->jQueryOptions(), ');';
-        echo 'jQuery("#', $this->attributes["id"], '").disableSelection();';
+        echo 'jQuery("#', $this->_attributes["id"], '").sortable(', $this->jQueryOptions(), ');';
+        echo 'jQuery("#', $this->_attributes["id"], '").disableSelection();';
     }
 
     public function render() {
-        if(substr($this->attributes["name"], -2) != "[]")
-            $this->attributes["name"] .= "[]";
+        if(substr($this->_attributes["name"], -2) != "[]")
+            $this->_attributes["name"] .= "[]";
 
-        echo '<ul id="', $this->attributes["id"], '">';
+        echo '<ul id="', $this->_attributes["id"], '">';
         foreach($this->options as $value => $text) {
             $value = $this->getOptionValue($value);
-            echo '<li class="ui-state-default"><input type="hidden" name="', $this->attributes["name"], '" value="', $value, '"/>', $text, '</li>';
+            echo '<li class="ui-state-default"><input type="hidden" name="', $this->_attributes["name"], '" value="', $value, '"/>', $text, '</li>';
         }
         echo "</ul>";
     }
 
     public function renderCSS() {
-        echo '#', $this->attributes["id"], ' { list-style-type: none; margin: 0; padding: 0; cursor: pointer; max-width: 400px; }';
-        echo '#', $this->attributes["id"], ' li { margin: 0.25em 0; padding: 0.5em; font-size: 1em; }';
+        echo '#', $this->_attributes["id"], ' { list-style-type: none; margin: 0; padding: 0; cursor: pointer; max-width: 400px; }';
+        echo '#', $this->_attributes["id"], ' li { margin: 0.25em 0; padding: 0.5em; font-size: 1em; }';
     }
 }

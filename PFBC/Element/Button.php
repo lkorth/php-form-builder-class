@@ -2,7 +2,7 @@
 namespace PFBC\Element;
 
 class Button extends \PFBC\Element {
-	protected $attributes = array("type" => "submit", "value" => "Submit");
+	protected $_attributes = array("type" => "submit", "value" => "Submit");
 	protected $icon;
 
 	public function __construct($label = "Submit", $type = "", array $properties = null) {
