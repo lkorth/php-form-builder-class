@@ -1,15 +1,18 @@
 <?php
+use PFBC\Form;
+use PFBC\Element;
+
 session_start();
 error_reporting(E_ALL);
 include("../PFBC/Form.php");
 
 if(isset($_POST["form"])) {
-	if(PFBC\Form::isValid($_POST["form"])) {
+	if(Form::isValid($_POST["form"])) {
 		header("Content-type: application/json");
 		echo file_get_contents("http://maps.google.com/maps/api/geocode/json?address=" . urlencode($_POST["Address"]) . "&sensor=false");
 	}
 	else
-		PFBC\Form::renderAjaxErrorResponse($_POST["form"]);
+		Form::renderAjaxErrorResponse($_POST["form"]);
 	exit();
 }	
 
@@ -30,19 +33,19 @@ returns false, you will need to invoke the renderAjaxErrorResponse method, which
 These errors will then be displayed in the form so the user can correct and resubmit.</p>
 
 <?php
-$form = new PFBC\Form("ajax");
+$form = new Form("ajax");
 $form->configure(array(
 	"prevent" => array("bootstrap", "jQuery"),
 	"ajax" => 1,
 	"ajaxCallback" => "parseJSONResponse"
 ));
-$form->addElement(new PFBC\Element\Hidden("form", "ajax"));
-$form->addElement(new PFBC\Element\HTML('<legend>Using the Google Geocoding API</legend>'));
-$form->addElement(new PFBC\Element\Textbox("Address:", "Address", array("required" => 1)));
-$form->addElement(new PFBC\Element\HTML('<div id="GoogleGeocodeAPIReaponse" style="display: none;">'));
-$form->addElement(new PFBC\Element\Textbox("Latitude/Longitude:", "LatitudeLongitude", array("readonly" => "")));
-$form->addElement(new PFBC\Element\HTML('</div>'));
-$form->addElement(new PFBC\Element\Button("Geocode", "submit", array("icon" => "search")));
+$form->addElement(new Element\Hidden("form", "ajax"));
+$form->addElement(new Element\HTML('<legend>Using the Google Geocoding API</legend>'));
+$form->addElement(new Element\Textbox("Address:", "Address", array("required" => 1)));
+$form->addElement(new Element\HTML('<div id="GoogleGeocodeAPIReaponse" style="display: none;">'));
+$form->addElement(new Element\Textbox("Latitude/Longitude:", "LatitudeLongitude", array("readonly" => "")));
+$form->addElement(new Element\HTML('</div>'));
+$form->addElement(new Element\Button("Geocode", "submit", array("icon" => "search")));
 $form->render();
 ?>
 
@@ -62,20 +65,23 @@ $form->render();
 
 <?php
 echo '<pre>', highlight_string('<?php
-$form = new PFBC\Form("ajax");
+use PFBC\Form;
+use PFBC\Element;
+
+$form = new Form("ajax");
 $form->configure(array(
 	"prevent" => array("bootstrap", "jQuery"),
 	"ajax" => 1,
 	"ajaxCallback" => "parseJSONResponse",
 	"novalidate" => ""
 ));
-$form->addElement(new PFBC\Element\Hidden("form", "ajax"));
-$form->addElement(new PFBC\Element\HTML(\'<legend>Using the Google Geocoding API</legend>\'));
-$form->addElement(new PFBC\Element\Textbox("Address:", "Address", array("required" => 1)));
-$form->addElement(new PFBC\Element\HTML(\'<div id="GoogleGeocodeAPIReaponse" style="display: none;">\'));
-$form->addElement(new PFBC\Element\Textbox("Latitude/Longitude:", "LatitudeLongitude", array("readonly" => "")));
-$form->addElement(new PFBC\Element\HTML(\'</div>\'));
-$form->addElement(new PFBC\Element\Button("Geocode", "submit", array("icon" => "search")));
+$form->addElement(new Element\Hidden("form", "ajax"));
+$form->addElement(new Element\HTML(\'<legend>Using the Google Geocoding API</legend>\'));
+$form->addElement(new Element\Textbox("Address:", "Address", array("required" => 1)));
+$form->addElement(new Element\HTML(\'<div id="GoogleGeocodeAPIReaponse" style="display: none;">\'));
+$form->addElement(new Element\Textbox("Latitude/Longitude:", "LatitudeLongitude", array("readonly" => "")));
+$form->addElement(new Element\HTML(\'</div>\'));
+$form->addElement(new Element\Button("Geocode", "submit", array("icon" => "search")));
 $form->render();
 ?>
 
@@ -96,12 +102,12 @@ $form->render();
 <?php
 //----------AFTER THE FORM HAS BEEN SUBMITTED----------
 if(isset($_POST["form"])) {
-	if(PFBC\Form::isValid($_POST["form"])) {
+	if(Form::isValid($_POST["form"])) {
 		header("Content-type: application/json");
 		echo file_get_contents("http://maps.google.com/maps/api/geocode/json?address=" . urlencode($_POST["Address"]) . "&sensor=false");
 	}
 	else
-		PFBC\Form::renderAjaxErrorResponse($_POST["form"]);
+		Form::renderAjaxErrorResponse($_POST["form"]);
 	exit();
 }	
 ?>', true), '</pre>';
