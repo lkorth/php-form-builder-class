@@ -416,11 +416,4 @@ JS;
 	public function setValues(array $values) {
         $this->values = array_merge($this->values, $values);
     }
-
-	public function setClass($class) {
-		if(!empty($this->attributes["class"]))
-			$this->attributes["class"] .= " " . $class;
-		else	
-			$this->attributes["class"] = $class;
-	}
 }

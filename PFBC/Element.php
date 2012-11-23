@@ -146,13 +146,6 @@ abstract class Element extends Base {
 	the form is rendered.*/
 	public function renderJS() {}
 
-	public function setClass($class) {
-		if(!empty($this->attributes["class"]))
-			$this->attributes["class"] .= " " . $class;
-		else
-			$this->attributes["class"] = $class;
-	}
-
 	public function setForm(Form $form) {
 		$this->form = $form;
 	}

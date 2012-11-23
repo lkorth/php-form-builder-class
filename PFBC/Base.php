@@ -67,5 +67,12 @@ abstract class Base {
 		}	
         return $str;
     }
+
+	public function setClass($class) {
+		if(!empty($this->attributes["class"]))
+			$this->attributes["class"] .= " " . $class;
+		else	
+			$this->attributes["class"] = $class;
+	}
 }
 ?>
