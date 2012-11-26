@@ -10,12 +10,13 @@ if(isset($_POST["form"])) {
 }
 
 include("header.php");
+$version = file_get_contents("version");
 ?>
 
 <div class="hero-unit">
 	<h1>PHP Form Builder Class</h1>
 	<p>This project promotes rapid development of HTML forms through an object-oriented PHP framework.</p>
-	<p><a href="http://code.google.com/p/php-form-builder-class/downloads/list" class="btn btn-primary btn-large"><i class="icon-download icon-white"></i> Download PFBC 3.0</a></p>
+	<p><a href="http://code.google.com/p/php-form-builder-class/downloads/list" class="btn btn-primary btn-large"><i class="icon-download icon-white"></i> Download PFBC <?php echo $version; ?></a></p>
 </div>
 
 <a name="whats-new-in-3x"></a>
@@ -26,10 +27,10 @@ and validating forms has remained unchanged in this new major version release.  
 <p>The most significant enhancement is the integration with <a href="http://twitter.github.com/bootstrap/">Bootstrap</a> - a front-end 
 framework from Twitter.  Bootstrap incorporates responsive CSS, which means your forms not only look and behave great in the latest 
 desktop browser, but in tablet and smartphone browsers as well.  To see responsive CSS in action, resize your browser window and watch how the 
-login form in the Getting Started section (above) responds.</p>
+login form in the <a href="#getting-started">Getting Started </a> section responds.</p>
 
 <p>Another enhancement in version 3.x is the addition of 13 HTML5 elements, which you can check out in our <a href="examples/html5.php">HTML5 
-example</a>.  HTML5 form elements and attributes improve your form's usability - especially on tablets and smartphones where data is inputted
+example</a>.  HTML5 form elements and attributes improve your form's usability - especially on tablets and smartphones where data is entered
 with virtual keyboards.</p>
 
 <p>Here are a few more differences between PFBC 3.x and 2.x to be aware of if you're planning on upgrading.</p>
@@ -52,28 +53,80 @@ with virtual keyboards.</p>
 and upload the PFBC directory within the document root of your web server. The other files/directories outside of the PFBC 
 folder (like this one) that are included in the download are provided only for instruction and can be omitted from your production environment.</p>
 
+<p><span class="label label-important">Important</span> This project maintains two separate code bases - one for 
+<a href="http://code.google.com/p/php-form-builder-class/source/browse/#svn%2Fbranches%2F3.x-php5">PHP 5</a> and another for 
+<a href="http://code.google.com/p/php-form-builder-class/source/browse/#svn%2Ftrunk">PHP 5 >= 5.3.0</a>.  The primary
+difference is the use of namespaces in PFBC <?php echo $version; ?> (PHP 5 >= 5.3.0).  Namespaces weren't introduced in PHP until version 5.3.0, so if you're
+web server is running an older version of PHP 5, then you will need to use PFBC <?php echo $version; ?> (PHP 5).</p>
+
 <p>Once the PFBC directory is up on your web server, you're ready to create your first form.  Below you'll find a sample login 
 form that we'll talk through in detail.
 </p>
 
-<?php
-echo '<pre>', highlight_string('<?php
-session_start();
-include($_SERVER["DOCUMENT_ROOT"] . "/PFBC/Form.php");
 
-$form = new PFBC\Form("login");
-$form->addElement(new PFBC\Element\HTML(\'<legend>Login</legend>\'));
-$form->addElement(new PFBC\Element\Hidden("form", "login"));
-$form->addElement(new PFBC\Element\Email("Email Address:", "Email", array("required" => 1)));
-$form->addElement(new PFBC\Element\Password("Password:", "Password", array("required" => 1)));
-$form->addElement(new PFBC\Element\Checkbox("", "Remember", array("1" => "Remember me")));
-$form->addElement(new PFBC\Element\Button("Login"));
-$form->addElement(new PFBC\Element\Button("Cancel", "button", array(
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#php53" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5 >= 5.3.0)</a></li>
+    <li><a href="#php5" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5)</a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="php53" class="tab-pane active">
+<?php
+prettyprint('<?php
+session_start();
+
+use PFBC\Form;
+use PFBC\Element;
+
+include("PFBC/Form.php");
+$form = new Form("login");
+$form->addElement(new Element\HTML(\'<legend>Login</legend>\'));
+$form->addElement(new Element\Hidden("form", "login"));
+$form->addElement(new Element\Email("Email Address:", "Email", array(
+	"required" => 1
+)));
+$form->addElement(new Element\Password("Password:", "Password", array(
+	"required" => 1
+)));
+$form->addElement(new Element\Checkbox("", "Remember", array(
+	"1" => "Remember me"
+)));
+$form->addElement(new Element\Button("Login"));
+$form->addElement(new Element\Button("Cancel", "button", array(
 	"onclick" => "history.go(-1);"
 )));
-$form->render();
-?>', true), '</pre>';
+$form->render();');
+?>
+	</div>
 
+    <div id="php5" class="tab-pane">
+<?php
+prettyprint('<?php
+session_start();
+
+include("PFBC/Form.php");
+$form = new Form("login");
+$form->addElement(new Element_HTML(\'<legend>Login</legend>\'));
+$form->addElement(new Element_Hidden("form", "login"));
+$form->addElement(new Element_Email("Email Address:", "Email", array(
+	"required" => 1
+)));
+$form->addElement(new Element_Password("Password:", "Password", array(
+	"required" => 1
+)));
+$form->addElement(new Element_Checkbox("", "Remember", array(
+	"1" => "Remember me"
+)));
+$form->addElement(new Element_Button("Login"));
+$form->addElement(new Element_Button("Cancel", "button", array(
+    "onclick" => "history.go(-1);"
+)));
+$form->render();');
+?>
+	</div>
+</div>
+
+<?php
 $form = new PFBC\Form("login");
 $form->configure(array(
 	"prevent" => array("bootstrap", "jQuery", "focus")
@@ -90,18 +143,22 @@ $form->addElement(new PFBC\Element\Button("Cancel", "button", array(
 $form->render();
 ?>
 
-<p><strong>Line 1:</strong> PFBC users PHP sessions in the validation process, so you'll need to ensure you have session_start(); in your 
+<p><strong>Line 2:</strong> PFBC uses PHP sessions in the validation process, so you'll need to ensure you have session_start(); in your 
 webpage - before outputting anything to the browser.  If you forget, you'll be reminded by an error message displayed above your form.</p>
 
-<p><strong>Line 2:</strong> In order to create an instance of the Form class, you'll need to first include /PFBC/Form.php. The specific 
-line above assumes that the PFBC directory is sitting in your server's document root.</p>
+<p><strong>Lines 4-5:</strong> As previously mentioned, PFBC <?php echo $version; ?> (PHP 5 >= 5.3.0) makes use of namespaces. The <em>use</em>
+operator creates aliases for the various namespaces we're going to use within our form.  This way, we don't have to include the <em>PFBC\</em>
+prefix each time we reference one of the project's classes.</p>
 
-<p><strong>Line 4:</strong> In the Form class' constructor, a unique identifier is supplied - "login" in this sample.  You'll reference
+<p><strong>Line 7:</strong> In order to create an instance of the Form class, you'll need to first include PFBC/Form.php.  Any other files (elements, views, etc)
+will be autoloaded on-demand.</p>
+
+<p><strong>Line 8:</strong> In the Form class' constructor, a unique identifier is supplied - <em>login</em> in this sample.  You'll reference
 this same identifier in the validation process.</p>
 
-<p><strong>Lines 5-12:</strong> Fields are added to the form with the addElement method.</p>
+<p><strong>Lines 9-23:</strong> Fields are added to the form with the addElement method.</p>
 
-<p><strong>Line 13:</strong> The render method outputs the form's HTML, CSS, and javascript to the web browser.</p>
+<p><strong>Line 24:</strong> The render method outputs the form's HTML, CSS, and javascript to the web browser.</p>
 
 <p>Now that you've had a crash course in PFBC, go check out the example files that are included in the navigation above.  They demonstrate
 how the validation process works, what form elements are supported, and much more.</p>

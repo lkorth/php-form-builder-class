@@ -1,15 +1,23 @@
 <?php
 $directory = dirname(__FILE__);
 
-$bootstrapPath = "PFBC/Resources/bootstrap/";
 if(strpos(getcwd(), "/examples") !== false) {
-	$bootstrapPath = "../" . $bootstrapPath;
 	$examplePath = "";
 	$indexPath = "../index.php";
+	$versionPath = "../version";
+	$prettifyPath = "../prettify";
 }
 else {
 	$examplePath = "examples/";
 	$indexPath = "";
+	$versionPath = "version";
+	$prettifyPath = "prettify";
+}
+
+$version = file_get_contents($versionPath);
+
+function prettyprint($code) {
+	echo '<pre class="prettyprint linenums">', str_replace("\t", str_repeat("&nbsp", 4), htmlspecialchars($code)), '</pre>';
 }
 ?>	
 
@@ -20,7 +28,6 @@ else {
 		<title>PHP Form Builder Class</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link href="<?php echo $bootstrapPath; ?>css/bootstrap.min.css" rel="stylesheet">
 		<style type="text/css">
 			body {
 				padding-top: 60px;
@@ -30,7 +37,8 @@ else {
 				padding: 9px 0;
 			}
 		</style>
-		<link href="<?php echo $bootstrapPath; ?>css/bootstrap-responsive.min.css" rel="stylesheet">
+		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+		<link href="<?php echo $prettifyPath; ?>/prettify.css" rel="stylesheet">
 
 		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
@@ -38,11 +46,11 @@ else {
 		<![endif]-->
 
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-		<script type="text/javascript" src="<?php echo $bootstrapPath; ?>js/bootstrap.js"></script>
+		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+		<script src="<?php echo $prettifyPath; ?>/prettify.js"></script>
 	</head>
 
-	<body>
-
+	<body onload="prettyPrint()">
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container-fluid">
@@ -61,7 +69,7 @@ else {
 				<div class="span3">
 					<div class="well sidebar-nav">
 						<ul class="nav nav-list">
-							<li><a href="http://code.google.com/p/php-form-builder-class/downloads/list">Download PFBC 3.0</a></li>
+							<li><a href="http://code.google.com/p/php-form-builder-class/downloads/list">Download PFBC <?php echo $version; ?></a></li>
 							<li><a href="<?php echo $indexPath; ?>#whats-new-in-3x">What's New in 3.x</a></li>
 							<li><a href="<?php echo $indexPath; ?>#getting-started">Getting Started</a></li>
 							<li><a href="http://groups.google.com/group/php-form-builder-class/">Mailing List</a></li>
