@@ -1,7 +1,8 @@
 <?php
 $directory = dirname(__FILE__);
 
-if(strpos(getcwd(), "/examples") !== false) {
+$cwd = str_replace("\\", "/", getcwd());
+if(strpos($cwd, "/examples") !== false) {
 	$examplePath = "";
 	$indexPath = "../index.php";
 	$versionPath = "../version";
