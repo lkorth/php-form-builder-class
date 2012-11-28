@@ -17,6 +17,7 @@ if(isset($_POST["form"])) {
 }	
 
 include("../header.php");
+$version = file_get_contents("../version");
 ?>
 
 <div class="page-header">
@@ -69,9 +70,6 @@ $form->render();
 	}
 </script>
 
-<?php
-$version = file_get_contents("../version");
-?>
 <ul class="nav nav-tabs">
 	<li class="active"><a href="#php53" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5 >= 5.3.0)</a></li>
 	<li><a href="#php5" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5)</a></li>
@@ -79,6 +77,7 @@ $version = file_get_contents("../version");
 
 <div class="tab-content">
 	<div id="php53" class="tab-pane active">
+
 <?php
 prettyprint('<?php
 use PFBC\Form;
@@ -137,9 +136,10 @@ if(isset($_POST["form"])) {
 	exit();
 }');
 ?>
-	</div>
 
+	</div>
 	<div id="php5" class="tab-pane">
+
 <?php
 prettyprint('<?php
 include("PFBC/Form.php");
@@ -191,5 +191,10 @@ if(isset($_POST["form"])) {
         Form::renderAjaxErrorResponse($_POST["form"]);
     exit();
 }');
+?>
 
+	</div>
+</div>	
+
+<?php
 include("../footer.php");

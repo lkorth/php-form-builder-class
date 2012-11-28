@@ -38,6 +38,7 @@ of the isValid method.</p>
 
 <div class="tab-content">
 	<div id="php53-1" class="tab-pane active">
+
 <?php
 prettyprint('<?php
 //----------AFTER THE FORM HAS BEEN SUBMITTED----------
@@ -55,9 +56,10 @@ else {
 	re-submitted.*/
 }');	
 ?>
-	</div>
 
+	</div>
 	<div id="php5-1" class="tab-pane">
+
 <?php
 prettyprint('<?php
 //----------AFTER THE FORM HAS BEEN SUBMITTED----------
@@ -73,6 +75,7 @@ else {
 	re-submitted.*/
 }');	
 ?>
+
 	</div>
 </div>	
 
@@ -143,6 +146,7 @@ $form->render();
 
 <div class="tab-content">
 	<div id="php53-2" class="tab-pane active">
+
 <?php
 prettyprint('<?php
 use PFBC\Form;
@@ -195,9 +199,10 @@ $form->addElement(new Element\Button("Cancel", "button", array(
 )));
 $form->render();');
 ?>
-	</div>
 
+	</div>
 	<div id="php5-2" class="tab-pane">
+
 <?php
 prettyprint('<?php
 include("PFBC/Form.php");
@@ -246,6 +251,7 @@ $form->addElement(new Element_Button("Cancel", "button", array(
 )));
 $form->render();');
 ?>
+
 	</div>
 </div>	
 
@@ -262,6 +268,7 @@ Let's take a look at an example implementation.</p>
 
 <div class="tab-content">
 	<div id="php53-3" class="tab-pane active">
+
 <?php
 prettyprint('
 <?php
@@ -283,9 +290,10 @@ else
 	header("Location: login.php");
 exit();');
 ?>
-	</div>
 
+	</div>
 	<div id="php5-3" class="tab-pane">
+
 <?php
 prettyprint('
 <?php
@@ -305,6 +313,7 @@ else
 	header("Location: login.php");
 exit();');
 ?>
+
 	</div>
 </div>	
 

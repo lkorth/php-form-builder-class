@@ -63,7 +63,6 @@ web server is running an older version of PHP 5, then you will need to use PFBC 
 form that we'll talk through in detail.
 </p>
 
-
 <ul class="nav nav-tabs">
     <li class="active"><a href="#php53" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5 >= 5.3.0)</a></li>
     <li><a href="#php5" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5)</a></li>
@@ -71,6 +70,7 @@ form that we'll talk through in detail.
 
 <div class="tab-content">
     <div id="php53" class="tab-pane active">
+
 <?php
 prettyprint('<?php
 session_start();
@@ -97,9 +97,10 @@ $form->addElement(new Element\Button("Cancel", "button", array(
 )));
 $form->render();');
 ?>
-	</div>
 
+	</div>
     <div id="php5" class="tab-pane">
+
 <?php
 prettyprint('<?php
 session_start();
@@ -123,21 +124,25 @@ $form->addElement(new Element_Button("Cancel", "button", array(
 )));
 $form->render();');
 ?>
+
 	</div>
 </div>
 
 <?php
-$form = new PFBC\Form("login");
+use PFBC\Form;
+use PFBC\Element;
+
+$form = new Form("login");
 $form->configure(array(
 	"prevent" => array("bootstrap", "jQuery", "focus")
 ));
-$form->addElement(new PFBC\Element\HTML('<legend>Login</legend>'));
-$form->addElement(new PFBC\Element\Hidden("form", "login"));
-$form->addElement(new PFBC\Element\Email("Email Address:", "Email", array("required" => 1)));
-$form->addElement(new PFBC\Element\Password("Password:", "Password", array("required" => 1)));
-$form->addElement(new PFBC\Element\Checkbox("", "Remember", array("1" => "Remember me")));
-$form->addElement(new PFBC\Element\Button("Login"));
-$form->addElement(new PFBC\Element\Button("Cancel", "button", array(
+$form->addElement(new Element\HTML('<legend>Login</legend>'));
+$form->addElement(new Element\Hidden("form", "login"));
+$form->addElement(new Element\Email("Email Address:", "Email", array("required" => 1)));
+$form->addElement(new Element\Password("Password:", "Password", array("required" => 1)));
+$form->addElement(new Element\Checkbox("", "Remember", array("1" => "Remember me")));
+$form->addElement(new Element\Button("Login"));
+$form->addElement(new Element\Button("Cancel", "button", array(
 	"onclick" => "history.go(-1);"
 )));
 $form->render();

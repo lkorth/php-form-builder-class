@@ -13,7 +13,7 @@ if(isset($_POST["form"])) {
 }
 
 include("../header.php");
-
+$version = file_get_contents("../version");
 ?>
 <div class="page-header">
 	<h1>Form Elements</h1>
@@ -76,9 +76,8 @@ $form->addElement(new Element\Button("Cancel", "button", array(
 	"onclick" => "history.go(-1);"
 )));
 $form->render();
-
-$version = file_get_contents("../version");
 ?>
+
 <ul class="nav nav-tabs">
 	<li class="active"><a href="#php53" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5 >= 5.3.0)</a></li>
 	<li><a href="#php5" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5)</a></li>
@@ -86,6 +85,7 @@ $version = file_get_contents("../version");
 
 <div class="tab-content">
 	<div id="php53" class="tab-pane active">
+
 <?php
 prettyprint('<?php
 use PFBC\Form;
@@ -139,9 +139,10 @@ $form->addElement(new Element\Button("Cancel", "button", array(
 )));
 $form->render();');
 ?>
-	</div>
 
+	</div>
 	<div id="php5" class="tab-pane">
+
 <?php
 prettyprint('<?php
 $options = array("Option #1", "Option #2", "Option #3");
@@ -192,6 +193,7 @@ $form->addElement(new Element_Button("Cancel", "button", array(
 )));
 $form->render();');
 ?>
+
 	</div>
 </div>
 

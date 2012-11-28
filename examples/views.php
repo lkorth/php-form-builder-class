@@ -15,8 +15,8 @@ if(isset($_POST["form"])) {
 
 include("../header.php");
 $version = file_get_contents("../version");
-
 ?>
+
 <div class="page-header">
 	<h1>Views</h1>
 </div>
@@ -55,6 +55,7 @@ $form->render();
 
 <div class="tab-content">
 	<div id="php53-1" class="tab-pane active">
+
 <?php
 prettyprint('<?php
 use PFBC\Form;
@@ -82,9 +83,10 @@ $form->addElement(new Element\Button("Cancel", "button", array(
 )));
 $form->render();');
 ?>
-	</div>
 
+	</div>
 	<div id="php5-1" class="tab-pane">
+
 <?php
 prettyprint('<?php
 include("PFBC/Form.php");
@@ -109,6 +111,7 @@ $form->addElement(new Element_Button("Cancel", "button", array(
 )));
 $form->render();');
 ?>
+
 	</div>
 </div>	
 
@@ -130,8 +133,8 @@ $form->addElement(new Element\Button("Cancel", "button", array(
 	"onclick" => "history.go(-1);"
 )));
 $form->render();
-
 ?>
+
 <ul class="nav nav-tabs">
 	<li class="active"><a href="#php53-2" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5 >= 5.3.0)</a></li>
 	<li><a href="#php5-2" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5)</a></li>
@@ -139,6 +142,7 @@ $form->render();
 
 <div class="tab-content">
 	<div id="php53-2" class="tab-pane active">
+
 <?php
 prettyprint('<?php
 use PFBC\Form;
@@ -164,9 +168,10 @@ $form->addElement(new Element\Button("Cancel", "button", array(
 )));
 $form->render();');
 ?>
-	</div>
 
+	</div>
 	<div id="php5-2" class="tab-pane">
+
 <?php
 prettyprint('<?php
 include("PFBC/Form.php");
@@ -188,6 +193,7 @@ $form->addElement(new Element_Button("Cancel", "button", array(
 )));
 $form->render();');
 ?>
+
 	</div>
 </div>	
 
@@ -214,6 +220,7 @@ $form->render();
 
 <div class="tab-content">
 	<div id="php53-3" class="tab-pane active">
+
 <?php
 prettyprint('<?php
 use PFBC\Form;
@@ -241,8 +248,10 @@ $form->addElement(new Element\Checkbox("", "Remember", array(
 $form->addElement(new Element\Button("Login"));
 $form->render();');
 ?>
+
 	</div>
 	<div id="php5-3" class="tab-pane">
+
 <?php
 prettyprint('<?php
 include("PFBC/Form.php");
@@ -266,6 +275,7 @@ $form->addElement(new Element_Checkbox("", "Remember", array(
 $form->addElement(new Element_Button("Login"));
 $form->render();');
 ?>
+
 	</div>
 </div>
 
@@ -282,8 +292,8 @@ $form->addElement(new Element\Search("", "Search", array(
 	"append" => '<button class="btn btn-primary">Go</button>'
 )));
 $form->render();
-
 ?>
+
 <ul class="nav nav-tabs">
 	<li class="active"><a href="#php53-4" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5 >= 5.3.0)</a></li>
 	<li><a href="#php5-4" data-toggle="tab">PFBC <?php echo $version; ?> (PHP 5)</a></li>
@@ -291,6 +301,7 @@ $form->render();
 
 <div class="tab-content">
 	<div id="php53-4" class="tab-pane active">
+
 <?php
 prettyprint('<?php
 use PFBC\Form;
@@ -311,9 +322,10 @@ $form->addElement(new Element\Search("", "Search", array(
 )));
 $form->render();');
 ?>
-	</div>
 
+	</div>
 	<div id="php5-4" class="tab-pane">
+
 <?php
 prettyprint('<?php
 include("PFBC/Form.php");
@@ -330,6 +342,7 @@ $form->addElement(new Element_Search("", "Search", array(
 )));
 $form->render();');
 ?>
+
 	</div>
 </div>
 
