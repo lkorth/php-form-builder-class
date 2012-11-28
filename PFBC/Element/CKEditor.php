@@ -2,8 +2,6 @@
 namespace PFBC\Element;
 
 class CKEditor extends Textarea {
-	protected $basic;
-
     public function render() {
         echo "<textarea", $this->getAttributes(array("value", "required")), ">";
         if(!empty($this->_attributes["value"]))
@@ -12,20 +10,12 @@ class CKEditor extends Textarea {
     }
 
 	function renderJS() {
-		echo 'CKEDITOR.replace("', $this->_attributes["id"], '"';
-		if(!empty($this->basic))
-			echo ', { toolbar: "Basic" }';
-		echo ');';
+		echo 'CKEDITOR.replace("', $this->_attributes["id"], '");';
 
 		$ajax = $this->_form->getAjax();
 		$id = $this->_form->getAttribute("id");
-		if(!empty($ajax)) {
-			echo <<<JS
-	jQuery("#$id").bind("submit", function() {
-		CKEDITOR.instances["{$this->_attributes["id"]}"].updateElement();
-	});
-JS;
-		}
+		if(!empty($ajax))
+			echo 'jQuery("#', $id, '").bind("submit", function() { CKEDITOR.instances["', $this->_attributes["id"], '"].updateElement(); });';
 	}
 
 	function getJSFiles() {
