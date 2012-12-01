@@ -23,7 +23,7 @@ class RightLabel extends \PFBC\View {
 					echo '<div class="form-actions">';
 				else
 					echo ' ';
-				
+
 				$element->render();
 
                 if(($e + 1) == $elementSize || !$elements[($e + 1)] instanceof \PFBC\Element\Button)
@@ -42,9 +42,10 @@ class RightLabel extends \PFBC\View {
         $label = $element->getLabel();
         if(!empty($label)) {
 			echo '<label class="control-label" for="', $element->getAttribute("id"), '">';
-			if($element->isRequired())
-				echo '<span class="required">* </span>';
-			echo $label, '</label>'; 
+			echo $label;
+                        if($element->isRequired())
+				echo '<span class="required"> * </span>';
+                        echo '</label>';
         }
     }
 }
