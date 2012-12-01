@@ -330,11 +330,12 @@ JS;
 			$this->errorView->clear();
 
 			echo <<<JS
-				jQuery.ajax({ 
-					url: "{$this->_attributes["action"]}", 
-					type: "{$this->_attributes["method"]}", 
-					data: jQuery("#$id").serialize(), 
-					success: function(response) { 
+				jQuery.ajax({
+					url: "{$this->_attributes["action"]}",
+					type: "{$this->_attributes["method"]}",
+					data: jQuery("#$id").serialize(),
+					success: function(response) {
+                                                response = JSON.parse(response);
 						if(response != undefined && typeof response == "object" && response.errors) {
 JS;
 
