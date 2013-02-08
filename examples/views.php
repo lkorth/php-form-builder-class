@@ -15,6 +15,7 @@ if(isset($_POST["form"])) {
 
 include("../header.php");
 $version = file_get_contents("../version");
+print_r($_SESSION);
 ?>
 
 <div class="page-header">

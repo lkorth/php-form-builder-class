@@ -181,7 +181,9 @@ class Form extends Base {
 						}
 						else
 							$value = stripslashes($value);
-						self::_setSessionValue($id, $name, $value);
+						
+						if($element->prefillAfterValidation())
+							self::_setSessionValue($id, $name, $value);
 					}		
 					else
 						$value = null;
