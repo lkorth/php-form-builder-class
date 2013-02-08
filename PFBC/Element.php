@@ -147,6 +147,13 @@ abstract class Element extends Base {
 		$this->_attributes["required"] = "";	
 	}
 
+	/*This method provides a shortcut for applying the MaxLength validation class to an element.*/
+	public function setMaxLength($limit) {
+        if(!empty($limit))
+            $this->validation[] = new Validation\MaxLength($limit);
+        $this->_attributes["maxlength"] = $limit;
+    }
+
 	/*This method applies one or more validation rules to an element.  If can accept a single concrete 
 	validation class or an array of entries.*/
 	public function setValidation($validation) {
