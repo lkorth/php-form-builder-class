@@ -278,8 +278,8 @@ class Form extends Base {
 	protected function renderCSSFiles() {
 		$urls = array();
 		if(!in_array("bootstrap", $this->prevent)) {
-			$urls[] = $this->resourcesPath . "/bootstrap-2.3.0/css/bootstrap.min.css";
-			$urls[] = $this->resourcesPath . "/bootstrap-2.3.0/css/bootstrap-responsive.min.css";
+			$urls[] = $this->resourcesPath . "/bootstrap/css/bootstrap.min.css";
+			$urls[] = $this->resourcesPath . "/bootstrap/css/bootstrap-responsive.min.css";
 		}	
 
 		foreach($this->_elements as $element) {
@@ -372,9 +372,9 @@ JS;
 	protected function renderJSFiles() {
 		$urls = array();
 		if(!in_array("jQuery", $this->prevent))
-			$urls[] = $this->resourcesPath . "/jquery-1.9.1.min.js";
+			$urls[] = $this->resourcesPath . "/jquery.min.js";
 		if(!in_array("bootstrap", $this->prevent))
-			$urls[] = $this->resourcesPath . "/bootstrap-2.3.0/js/bootstrap.min.js";
+			$urls[] = $this->resourcesPath . "/bootstrap/js/bootstrap.min.js";
 
 		foreach($this->_elements as $element) {
 			$elementUrls = $element->getJSFiles();
