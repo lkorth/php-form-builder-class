@@ -10,13 +10,13 @@ class jQueryUIDate extends Textbox {
 
 	public function getCSSFiles() {
 		return array(
-			$this->_form->getPrefix() . "://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css"
+			$this->_form->getResourcesPath() . "/jquery-ui-1.10.0/css/smoothness/jquery-ui.min.css"
 		);
 	}
 
 	public function getJSFiles() {
 		return array(
-			$this->_form->getPrefix() . "://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"
+			$this->_form->getResourcesPath() . "/jquery-ui-1.10.0/js/jquery-ui.min.js"
 		);
 	}
 
