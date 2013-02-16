@@ -51,7 +51,7 @@ abstract class Base {
 	        if (is_scalar ($str)) {
 			return htmlspecialchars($str);
 		}
-		return htmlspecialchars($str);
+		return null;
 	}
 
 	public function getAttribute($attribute) {
