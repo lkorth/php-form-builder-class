@@ -48,7 +48,10 @@ abstract class Base {
 
 	/*This method prevents double/single quotes in html attributes from breaking the markup.*/
 	protected function filter($str) {
-		return htmlspecialchars($str);
+	        if (is_scalar ($str)) {
+			return htmlspecialchars($str);
+		}
+		return null;
 	}
 
 	public function getAttribute($attribute) {

@@ -17,6 +17,7 @@ class Form extends Base {
 	protected $_values = array();
 	protected $_attributes = array();
 
+	protected $alternateJsInit;
 	protected $ajax;
 	protected $ajaxCallback;
 	protected $errorView;
@@ -319,7 +320,10 @@ class Form extends Base {
 		
 		$id = $this->_attributes["id"];
 
-		echo 'jQuery(document).ready(function() {';
+		if(!empty($this->alternateJsInit))
+			echo $this->alternateJsInit;
+		else
+			echo 'jQuery(document).ready(function() {';
 
 		/*When the form is submitted, disable all submit buttons to prevent duplicate submissions.*/
 		echo <<<JS
