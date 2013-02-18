@@ -379,8 +379,15 @@ JS;
 
 		foreach($this->_elements as $element) {
 			$elementUrls = $element->getJSFiles();
-			if(is_array($elementUrls))
+			if(is_array($elementUrls)) {
+				$url4merge = array ();
+				foreach ($elementUrls as $elUrl) {
+					if (!in_array ($elUrl, $this->prevent)) {
+						$url4merge[] = $elUrl;
+					}
+				}
 				$urls = array_merge($urls, $elementUrls);
+			}
 		}		
 
 		/*This section prevents duplicate js files from being loaded.*/ 
