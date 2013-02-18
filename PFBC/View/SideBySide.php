@@ -30,7 +30,7 @@ class SideBySide extends \PFBC\View {
                     echo '</div>';
             }
             else {
-				echo '<div class="control-group">', $this->renderLabel($element), '<div class="controls">', $element->render(), $this->renderDescriptions($element), '</div></div>';
+				echo '<div class="control-group" id="element_', $element->getAttribute('id'), '">', $this->renderLabel($element), '<div class="controls">', $element->render(), $this->renderDescriptions($element), '</div></div>';
 				++$elementCount;
 			}
 		}
