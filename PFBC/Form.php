@@ -386,7 +386,7 @@ JS;
 						$url4merge[] = $elUrl;
 					}
 				}
-				$urls = array_merge($urls, $elementUrls);
+				$urls = array_merge($urls, $url4merge);
 			}
 		}		
 
