@@ -12,11 +12,26 @@ The most significant enhancement in version 3.x is the integration with Bootstra
 
 ## System Requirements
 
-PHP 5 >= 5.3
+PHP >= 5.3
 
 ## Installation Instructions
 
-Before writing any code, you'll first need to download the latest version of PFBC and upload the PFBC directory within the document root of your web server. The other files/directories outside of the PFBC folder that are included in the download are provided only for instruction and can be omitted from your production environment.
+Composer is the easiest way to manage dependencies in your project. Create a file named composer.json with the following:
+
+```json
+{
+    "require": {
+        "pfbc/pfbc": "3.1"
+    }
+}
+```
+
+And run Composer to install PFBC:
+
+```bash
+$ curl -s http://getcomposer.org/installer | php
+$ composer.phar install
+```
 
 ## Examples/Tutorials
 
@@ -32,6 +47,8 @@ The links provided below are meant to demonstrate the key features included in t
 
 ```php
 <?php
+require 'vendor/autoload.php';
+
 //PFBC 3.x PHP 5 >= 5.3
 session_start();
 include($_SERVER["DOCUMENT_ROOT"] . "/PFBC/Form.php");
