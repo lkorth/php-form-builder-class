@@ -1,9 +1,6 @@
 {
     "name": "pfbc/pfbc",
     "minimum-stability": "dev",
-    "description": "Rapid form bulding in PHP",
-    "keywords": ["php","html","form"],
-    "homepage": "http://code.google.com/p/php-form-builder-class/",
     "license": "GNU GPL v3",
     "require": {
         "php": ">=5.3.0"
