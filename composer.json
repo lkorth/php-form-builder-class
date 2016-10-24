@@ -1,6 +1,6 @@
 {
     "name": "pfbc/pfbc",
-    "type": "library",
+    "minimum-stability": "dev",
     "description": "Rapid form bulding in PHP",
     "keywords": ["php","html","form"],
     "homepage": "http://code.google.com/p/php-form-builder-class/",
