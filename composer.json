@@ -1,20 +1,7 @@
 {
     "name": "pfbc/pfbc",
-    "type": "library",
-    "description": "Rapid form bulding in PHP",
-    "keywords": ["php","html","form"],
-    "homepage": "http://code.google.com/p/php-form-builder-class/",
+    "minimum-stability": "dev",
     "license": "GNU GPL v3",
-    "authors": [
-        {
-            "email": "ajporterfield@gmail.com",
-            "role": "Owner"
-        },
-		{
-            "email": "moncojhr@gmail.com",
-            "role": "Committer"
-        }
-    ],
     "require": {
         "php": ">=5.3.0"
     },
