@@ -29,7 +29,7 @@ abstract class Base {
 					if(isset($method_reference["set" . $property]))
 						$this->{$method_reference["set" . $property]}($value);
 					elseif(isset($property_reference[$property]))
-						$this->$property_reference[$property] = $value;
+						$this->{$property_reference[$property]} = $value;
 					/*Entries that don't match an available class property are stored in the attributes
 					property if applicable.  Typically, these entries will be element attributes such as
 					class, value, onkeyup, etc.*/
