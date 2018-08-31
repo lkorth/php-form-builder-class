@@ -4,7 +4,7 @@
     "description": "Rapid form bulding in PHP",
     "keywords": ["php","html","form"],
     "homepage": "http://code.google.com/p/php-form-builder-class/",
-    "license": "GNU GPL v3",
+    "license": "GPL-3.0-only",
     "authors": [
         {
             "email": "ajporterfield@gmail.com",
